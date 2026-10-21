@@ -12,8 +12,8 @@ use hsplanner_engine::calc::{
 #[path = "gear_affixes.rs"]
 mod affix_pools;
 pub use affix_pools::{
-    affix_allowed, affix_pool_type, affix_roll_bounds, affix_tiers, jewel_affix_allowed,
-    set_affix_value, set_forge_value,
+    affix_allowed, affix_pool_type, affix_roll_bounds, affix_tiers, is_unholy_group,
+    jewel_affix_allowed, set_affix_value, set_forge_value,
 };
 
 pub fn make_item(base_id: &str) -> Result<EquippedItem, String> {
@@ -258,6 +258,11 @@ pub fn accepts(snapshot: &BuildSnapshot, slot: &str, base: &ItemBase, mercenary:
         {
             return false;
         }
+        if slot == "weapon"
+            && !crate::weapon_rules::mercenary_can_wield(snapshot.merc_class_id.as_deref(), base)
+        {
+            return false;
+        }
         if slot == "offhand" {
             return base.slot == "offhand"
                 && !snapshot
@@ -268,6 +273,8 @@ pub fn accepts(snapshot: &BuildSnapshot, slot: &str, base: &ItemBase, mercenary:
         }
     } else if slot == "offhand" {
         return snapshot.can_offhand(base);
+    } else if slot == "weapon" && !snapshot.can_wield(base) {
+        return false;
     }
     slot_group(slot) == slot_group(&base.slot)
 }
@@ -291,6 +298,19 @@ pub fn commit(
             return Err("This charm will not fit. Free up space first.".into());
         }
     }
+    let newly_equipped = item
+        .as_ref()
+        .filter(|item| {
+            !mercenary
+                && snapshot
+                    .inventory
+                    .get(slot)
+                    .is_none_or(|old| old.base_id != item.base_id)
+        })
+        .and_then(|item| data::get_item(&item.base_id));
+    if let Some(base) = newly_equipped {
+        enable_proc_buffs(snapshot, base);
+    }
     let inventory = if mercenary {
         &mut snapshot.merc_inventory
     } else {
@@ -309,10 +329,20 @@ pub fn commit(
     } else {
         inventory.remove(slot);
     }
-    if !mercenary {
-        snapshot.validate_offhand();
-    }
+    // Removing an Unbound Power item can strand a weapon the class cannot hold.
+    snapshot.validate_weapons();
     Ok(())
+}
+
+/// A relic's proc buff starts enabled in Config when the relic is equipped.
+fn enable_proc_buffs(snapshot: &mut BuildSnapshot, base: &ItemBase) {
+    for grant in data::proc_skill_grants(base) {
+        if let Some(condition) = data::get_item_granted_skill_by_name(&grant.name)
+            .and_then(|skill| skill.condition.clone())
+        {
+            snapshot.player_conditions.insert(condition, true);
+        }
+    }
 }
 
 pub fn stash(draft: &mut Draft, item: &EquippedItem) {
@@ -523,6 +553,25 @@ pub fn charm_layout(charms: &[(String, u32, u32)], extra: bool) -> CharmLayout {
 #[cfg(test)]
 mod layout_tests {
     use super::*;
+
+    #[test]
+    fn equipping_a_buff_relic_enables_its_blessing_once() {
+        let mut snapshot = BuildSnapshot::default();
+        let shiv = make_item("relic_relic_shiv").unwrap();
+        commit(&mut snapshot, "relic_1", Some(shiv.clone()), false, false).unwrap();
+        assert_eq!(
+            snapshot.player_conditions.get("live_by_the_sword_buff"),
+            Some(&true)
+        );
+        snapshot
+            .player_conditions
+            .insert("live_by_the_sword_buff".into(), false);
+        commit(&mut snapshot, "relic_1", Some(shiv), false, false).unwrap();
+        assert_eq!(
+            snapshot.player_conditions.get("live_by_the_sword_buff"),
+            Some(&false)
+        );
+    }
 
     #[test]
     fn positions_preserve_reference_order_and_blocked_cells() {

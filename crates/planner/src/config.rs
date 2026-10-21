@@ -22,7 +22,7 @@ use hsplanner_engine::calc::{
     planner::PlannerPerformance,
     rank::{item_skill_bonus_override, item_skill_rank_range},
     subskill::subskill_key,
-    types::{CustomStat, SkillKind},
+    types::{CustomStat, SkillKind, StatDef},
 };
 use hsplanner_ui::i18n::{Locale, tr, trf};
 use hsplanner_ui::scroll::PageScroll;
@@ -33,6 +33,10 @@ use hsplanner_ui::{
     tooltip_text::TooltipText,
 };
 use std::{collections::HashMap, sync::Arc};
+
+#[path = "config_custom.rs"]
+mod custom;
+use custom::custom_text;
 
 #[derive(Clone)]
 struct Choice {
@@ -151,10 +155,6 @@ pub struct ConfigView {
     numbers: HashMap<NumberField, Entity<InputState>>,
     number_drafts: HashMap<NumberField, NumberDraft>,
     number_subscriptions: HashMap<NumberField, Subscription>,
-    custom_editor: Entity<TextareaState>,
-    custom_saved: String,
-    custom_issues: Vec<String>,
-    custom_task: Option<Task<()>>,
     document: ConfigDocument,
     error: Option<String>,
     focus: FocusHandle,
@@ -196,14 +196,6 @@ impl ConfigView {
             SelectState::new(SearchableVec::new(difficulties), None, window, cx).searchable(true)
         });
         let initial_level = session.read(cx).snapshot().level as f32;
-        let custom_saved = serialize_custom_stats(&session.read(cx).snapshot().custom_stats);
-        let custom_editor = cx.new(|cx| {
-            let mut state = TextareaState::new(window, cx)
-                .auto_grow(4, 12)
-                .placeholder(tr("planner.config.custom_example"));
-            state.set_value(custom_saved.clone(), window, cx);
-            state
-        });
         let level_slider = cx.new(|_| {
             SliderState::new()
                 .min(1.)
@@ -214,31 +206,13 @@ impl ConfigView {
         let observed_performance = tree.read(cx).performance();
         let synced_calculation_revision = session.read(cx).calculation_revision();
         let subscriptions = vec![
-            cx.observe_global_in::<Locale>(window, |this, window, cx| {
-                this.custom_editor.update(cx, |input, cx| {
-                    input.set_placeholder(tr("planner.config.custom_example"), window, cx);
-                });
-                let text = this.custom_editor.read(cx).value().to_string();
-                this.custom_issues = parse_custom_text(&text).1;
+            cx.observe_global_in::<Locale>(window, |this, _, cx| {
                 if this.error.is_some() {
                     this.error = Some(tr("planner.config.finite_number").into());
                 }
                 // Choices retain canonical IDs and resolve their titles in the current locale.
                 this.difficulty.update(cx, |_, cx| cx.notify());
                 cx.notify();
-            }),
-            cx.subscribe(&custom_editor, |this, _, event: &InputEvent, cx| {
-                if matches!(event, InputEvent::Change) {
-                    this.custom_task = Some(cx.spawn(async move |this, cx| {
-                        cx.background_executor()
-                            .timer(std::time::Duration::from_millis(200))
-                            .await;
-                        let _ = this.update(cx, |this, cx| this.commit_custom_stats(cx));
-                    }));
-                } else if matches!(event, InputEvent::Blur) {
-                    this.custom_task = None;
-                    this.commit_custom_stats(cx);
-                }
             }),
             cx.observe_in(&session, window, |this, _, window, cx| {
                 let session = this.session.read(cx);
@@ -297,10 +271,6 @@ impl ConfigView {
             numbers: HashMap::new(),
             number_drafts: HashMap::new(),
             number_subscriptions: HashMap::new(),
-            custom_editor,
-            custom_saved,
-            custom_issues: Vec::new(),
-            custom_task: None,
             document,
             error: None,
             focus: cx.focus_handle(),
@@ -327,14 +297,8 @@ impl ConfigView {
         let document = ConfigDocument::from_draft(draft);
         let previous_document = std::mem::replace(&mut self.document, document);
         let changed_document = previous_document.build != self.document.build;
-        let custom = serialize_custom_stats(&snapshot.custom_stats);
-        if changed_document || custom != self.custom_saved {
-            self.custom_task = None;
-            self.custom_saved = custom.clone();
-            self.custom_issues.clear();
+        if changed_document {
             self.error = None;
-            self.custom_editor
-                .update(cx, |input, cx| input.set_value(custom, window, cx));
         }
         if self.class.read(cx).selected_value() != snapshot.class_id.as_ref() {
             self.class.update(cx, |state, cx| {
@@ -603,72 +567,39 @@ impl ConfigView {
         )
     }
 
-    fn commit_custom_stats(&mut self, cx: &mut Context<Self>) {
-        let text = self.custom_editor.read(cx).value().to_string();
-        let (stats, issues) = parse_custom_text(&text);
-        self.custom_issues = issues;
-        let saved = serialize_custom_stats(&stats);
-        if saved != self.custom_saved {
-            self.custom_saved = saved;
-            self.edit(cx, |snapshot| snapshot.custom_stats = stats);
-        }
-        cx.notify();
-    }
-
     fn custom_stats(&self, cx: &Context<Self>) -> Div {
         let p = cx.global::<TooltipTheme>();
+        let snapshot = self.session.read(cx).snapshot();
+        let text = custom_text(snapshot);
         panel_with_trailing(
             "config-custom",
             tr("planner.config.custom"),
-            count_badge(
-                "custom-count",
-                self.session.read(cx).snapshot().custom_stats.len(),
-                None,
-                cx,
-            ),
+            count_badge("custom-count", snapshot.custom_stats.len(), None, cx),
             cx,
         )
         .child(help(tr("planner.config.custom_help"), cx))
         .child(
-            Textarea::new(&self.custom_editor)
-                .w_full()
-                .font_family(theme::MONO_FONT_FAMILY)
-                .text_size(rems(12. / 13.))
-                .border_color(p.border_strong)
-                .bg(p.background),
+            Button::new("edit-custom-stats")
+                .planner_style(cx)
+                .label(tr("planner.config.custom_edit"))
+                .on_click(cx.listener(|this, _, window, cx| this.open_custom_editor(window, cx))),
         )
-        .children(self.custom_issues.iter().map(|issue| {
-            div()
-                .mt_2()
-                .px_2p5()
-                .py_1p5()
-                .rounded_sm()
-                .border_1()
-                .border_color(theme::stat_color("strength", cx).opacity(0.4))
-                .text_size(rems(10. / 13.))
-                .text_color(theme::stat_color("strength", cx))
-                .child(issue.clone())
-        }))
         .children(
-            self.session
-                .read(cx)
-                .snapshot()
-                .custom_stats
-                .iter()
-                .map(|stat| {
-                    let name = data::game_config()
-                        .stats
-                        .iter()
-                        .find(|def| def.key == stat.stat_key)
-                        .map(|def| def.name.as_str())
-                        .unwrap_or(&stat.stat_key);
-                    let name = crate::stat_labels::stat_name(&stat.stat_key, name);
+            text.lines()
+                .filter(|line| !line.trim().is_empty())
+                .map(|line| {
+                    let line = line.trim();
+                    let note = line.starts_with("//");
                     div()
                         .mt_1()
                         .font_family(theme::MONO_FONT_FAMILY)
                         .text_size(rems(10. / 13.))
-                        .text_color(p.positive)
-                        .child(format!("→ {} {name}", stat.value))
+                        .text_color(if note { p.faint } else { p.positive })
+                        .child(if note {
+                            line.to_owned()
+                        } else {
+                            format!("→ {line}")
+                        })
                 }),
         )
     }
@@ -1501,11 +1432,19 @@ impl ConfigView {
     fn blessings(&self, cx: &Context<Self>) -> Option<Div> {
         let snapshot = self.session.read(cx).snapshot();
         let mut granted = std::collections::BTreeMap::new();
-        for item in snapshot.inventory.values() {
+        // Potion buffs follow the potion's own toggle in Gear.
+        for (_, item) in snapshot
+            .inventory
+            .iter()
+            .filter(|(slot, _)| !slot.starts_with("potion_"))
+        {
             let Some(base) = data::get_item(&item.base_id) else {
                 continue;
             };
-            for (name, _) in data::skill_bonus_entries(base, item) {
+            let names = data::skill_bonus_entries(base, item)
+                .map(|(name, _)| name)
+                .chain(data::proc_skill_grants(base).map(|grant| &grant.name));
+            for name in names {
                 if let Some(skill) = data::get_item_granted_skill_by_name(name)
                     && let Some(condition) = &skill.condition
                 {
@@ -2115,63 +2054,6 @@ fn number_text(
     }
 }
 
-fn serialize_custom_stats(stats: &[CustomStat]) -> String {
-    stats
-        .iter()
-        .map(|stat| {
-            let name = data::game_config()
-                .stats
-                .iter()
-                .find(|def| def.key == stat.stat_key)
-                .map(|def| def.name.as_str())
-                .unwrap_or(&stat.stat_key);
-            format!("{} {name}", stat.value)
-        })
-        .collect::<Vec<_>>()
-        .join("\n")
-}
-
-fn parse_custom_text(text: &str) -> (Vec<CustomStat>, Vec<String>) {
-    let mut stats = Vec::new();
-    let mut issues = Vec::new();
-    for (ix, line) in text.lines().enumerate() {
-        let line = line.trim();
-        if line.is_empty() {
-            continue;
-        }
-        let lower = line.to_lowercase();
-        let matched = data::game_config()
-            .stats
-            .iter()
-            .filter(|def| !def.item_only.unwrap_or(false) && !def.skill_scoped.unwrap_or(false))
-            .find_map(|def| {
-                [def.name.as_str(), def.key.as_str()]
-                    .into_iter()
-                    .find_map(|name| {
-                        let suffix = format!(" {}", name.to_lowercase());
-                        lower
-                            .strip_suffix(&suffix)
-                            .filter(|value| parse_custom_stat_value(value).is_some())
-                            .map(|value| {
-                                (
-                                    def.key.clone(),
-                                    value.split_whitespace().collect::<String>(),
-                                )
-                            })
-                    })
-            });
-        if let Some((stat_key, value)) = matched {
-            stats.push(CustomStat { stat_key, value })
-        } else {
-            issues.push(trf(
-                "planner.config.invalid_custom_line",
-                &[("0", (ix + 1).to_string())],
-            ))
-        }
-    }
-    (stats, issues)
-}
-
 fn allocation_step(event: &ClickEvent, available: u32) -> u32 {
     let modifiers = event.modifiers();
     if modifiers.shift && (modifiers.control || modifiers.platform) {
@@ -2367,6 +2249,7 @@ const PLAYER_CONDITIONS: &[(&str, &str, &str)] = &[
 
 #[cfg(test)]
 mod tests {
+    use super::custom::parse_custom_text;
     use super::*;
 
     #[::core::prelude::v1::test]
@@ -2480,6 +2363,51 @@ mod tests {
         );
         assert_eq!(issues.len(), 1);
         assert!(issues[0].starts_with("line 4"));
+    }
+
+    #[::core::prelude::v1::test]
+    fn custom_config_skips_notes_and_keeps_line_numbers() {
+        let (stats, issues) = parse_custom_text(
+            "// Wizard's Dice\n+8 Light Radius // dice roll\n  // spare\nunknown",
+        );
+        assert_eq!(
+            stats
+                .iter()
+                .map(|stat| (stat.stat_key.as_str(), stat.value.as_str()))
+                .collect::<Vec<_>>(),
+            vec![("light_radius", "+8")]
+        );
+        assert_eq!(issues.len(), 1);
+        assert!(issues[0].starts_with("line 4"));
+    }
+
+    #[::core::prelude::v1::test]
+    fn custom_stat_names_become_tokens_and_notes_stay_text() {
+        let text = "// Wizard's Dice\n  +8 Light Radius // dice\nunknown\n+50 Life";
+        let content = super::custom::tokenized(text);
+        let tokens = content
+            .tokens()
+            .iter()
+            .map(|span| (span.token().id().to_string(), &text[span.range()]))
+            .collect::<Vec<_>>();
+        assert_eq!(
+            tokens,
+            vec![
+                ("light_radius".to_string(), "Light Radius"),
+                ("life".to_string(), "Life")
+            ]
+        );
+    }
+
+    #[::core::prelude::v1::test]
+    fn custom_text_keeps_notes_and_rebuilds_stale_or_missing_text() {
+        let mut snapshot = BuildSnapshot::default();
+        snapshot.custom_stats = parse_custom_text("+8 Light Radius").0;
+        assert_eq!(custom_text(&snapshot), "+8 Light Radius");
+        snapshot.custom_stats_text = "// Wizard's Dice\n+8 Light Radius".into();
+        assert_eq!(custom_text(&snapshot), "// Wizard's Dice\n+8 Light Radius");
+        snapshot.custom_stats = parse_custom_text("+50 Life").0;
+        assert_eq!(custom_text(&snapshot), "+50 Life");
     }
 
     #[::core::prelude::v1::test]

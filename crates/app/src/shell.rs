@@ -11,6 +11,7 @@ use hsplanner_build::{loadout::LoadoutKind, session::Session, storage::Writer};
 use hsplanner_library::LibraryView;
 use hsplanner_notes::NotesView;
 use hsplanner_planner::TreeView;
+use hsplanner_ui::components::PlannerDialogExt;
 use hsplanner_ui::controls::PlannerControl;
 use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::theme::TooltipTheme;
@@ -83,6 +84,7 @@ gpui_kit::actions!(
         Quit,
         ToggleAutoSave,
         SaveAs,
+        ShareWithStash,
         ToggleDebugOverlay,
         OpenSettings
     ]
@@ -373,12 +375,14 @@ impl Shell {
             });
         }));
     }
-    fn copy_build_code(&mut self, cx: &mut Context<Self>) {
+    fn copy_build_code(&mut self, include_stash: bool, cx: &mut Context<Self>) {
         let draft = self.session.read(cx).draft();
-        match hsplanner_build::codec::encode_loadouts(
+        let stash = if include_stash { &draft.stash[..] } else { &[] };
+        match hsplanner_build::codec::encode_loadouts_with_stash(
             &draft.snapshot,
             &draft.notes,
             &draft.loadouts,
+            stash,
         ) {
             Ok(code) => {
                 cx.write_to_clipboard(ClipboardItem::new_string(code));
@@ -405,7 +409,7 @@ impl Shell {
         let owner = cx.entity().downgrade();
         // Shell renders the dialog layer, so its builder must not read Shell.
         let dialog_error = cx.new(|_| None::<String>);
-        window.open_dialog(cx, move |dialog, _, cx| {
+        window.open_planner_dialog(cx, move |dialog, _, cx| {
             let target = owner.clone();
             let input_for_save = input.clone();
             let build_id = build_id.clone();
@@ -523,7 +527,6 @@ impl Render for Shell {
                 self.review_geometry = Some(geometry);
             }
         }
-        let dialog_layer = Root::render_dialog_layer(window, cx);
         let palette = cx.global::<TooltipTheme>();
         let (panel, text, negative) = (palette.panel, palette.text, palette.negative);
         let session = self.session.read(cx);
@@ -587,6 +590,9 @@ impl Render for Shell {
                 let _ = (this, cx);
             }))
             .on_action(cx.listener(|this, _: &SaveAs, window, cx| this.save_as_dialog(window, cx)))
+            .on_action(
+                cx.listener(|this, _: &ShareWithStash, _, cx| this.copy_build_code(true, cx)),
+            )
             .on_action(cx.listener(|this, _: &OpenSettings, window, cx| {
                 crate::settings::open(this.session.clone(), window, cx);
             }))
@@ -618,7 +624,7 @@ impl Render for Shell {
                             this.switch(Section::Library, window, cx)
                         }),
                     ),
-                    Box::new(cx.listener(|this, _, _, cx| this.copy_build_code(cx))),
+                    Box::new(cx.listener(|this, _, _, cx| this.copy_build_code(false, cx))),
                 )
                 .document(title, auto_save)
                 .ui_zoom(self.session.read(cx).state().settings.ui_zoom)
@@ -640,7 +646,7 @@ impl Render for Shell {
                     .when(self.section != Section::Library, |row| {
                         row.child(
                             div()
-                                .w_72()
+                                .w_80()
                                 .h_full()
                                 .flex_shrink_0()
                                 .child(self.sidebar.clone()),
@@ -663,7 +669,6 @@ impl Render for Shell {
                     .then(|| SharedString::from(tr(&self.status))),
                 self.updater.clone(),
             ))
-            .children(dialog_layer)
             .map(|root| {
                 #[cfg(debug_assertions)]
                 let root = root.child(self.debug.clone());
@@ -682,6 +687,7 @@ pub fn run(
             gpui_kit::init(cx);
             hsplanner_ui::theme::init(cx);
             hsplanner_ui::scroll::init(cx);
+            hsplanner_ui::tooltip::init(cx);
             cx.set_http_client(std::sync::Arc::new(
                 reqwest_client::ReqwestClient::user_agent(crate::update::USER_AGENT)
                     .expect("http client"),

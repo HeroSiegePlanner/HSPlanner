@@ -16,7 +16,7 @@ use super::skills::{
     StatMap, Weapon,
 };
 use super::stats::{
-    combine_additive_and_more, compute_build_stats, BuildStatsInput, ComputedStats,
+    compute_build_stats, BuildStatsInput, ComputedStats,
 };
 use super::subskill::subskill_key;
 use super::types::{
@@ -160,7 +160,23 @@ fn skill_spec_to_calc_skill(spec: &SkillSpec) -> CalcSkill {
 /// Hits one target takes from a volley. A fan or arc lands only a couple of
 /// its projectiles on a single enemy (`single_target_hit_cap`), and a wave
 /// proc repeats the whole volley (`extra_volleys_pct`, already chance-weighted).
-fn effective_projectile_count(base: u32, subtree_stat: &dyn Fn(&str) -> f64) -> u32 {
+/// ReturnExtraSpellProjectiles: floor(n × (1 + pct/100)) when pct > 0, then + flat.
+fn extra_spell_projectiles(count: u32, stats: &StatMap) -> u32 {
+    let pct = r_max(rg(stats, "extra_spell_projectiles_pct"));
+    let flat = r_max(rg(stats, "additional_spell_projectile"));
+    let scaled = if pct > 0.0 {
+        (count as f64 * (1.0 + pct / 100.0)).floor()
+    } else {
+        count as f64
+    };
+    (scaled + flat).max(0.0) as u32
+}
+
+fn effective_projectile_count(
+    base: u32,
+    subtree_stat: &dyn Fn(&str) -> f64,
+    spell_extra: Option<&StatMap>,
+) -> u32 {
     let transformed_count = subtree_stat("primary_projectile_count") as u32;
     let base = if transformed_count > 0 {
         transformed_count
@@ -168,16 +184,151 @@ fn effective_projectile_count(base: u32, subtree_stat: &dyn Fn(&str) -> f64) -> 
         base
     };
     let boosted = base + subtree_stat("projectile_count") as u32;
+    let boosted = spell_extra.map_or(boosted, |stats| extra_spell_projectiles(boosted, stats));
     let cap = subtree_stat("single_target_hit_cap") as u32;
     let capped = if cap > 0 { boosted.min(cap) } else { boosted };
     // ponytail: whole hits; go f64 if a 1-projectile skill ever takes a wave node
     (capped as f64 * (1.0 + subtree_stat("extra_volleys_pct") / 100.0)).round() as u32
 }
 
-/// Hits one target takes per cast. The damage object clears its hit list every
-/// `tickFrequency`, so it lands `floor(lifetime / tick) + 1` hits on a target that
-/// stays in range. Objects the game kills by animation or alarm have no extracted
-/// lifetime and count as a single hit.
+/// Hits a Player_Damage_Parent_obj child with a tick lands on a target that stays
+/// inside it (METODA rule 20, tools/tick_hits.py). Step_0 checks collision before
+/// the tick: a check runs every frame until contact, then every 3 frames; the tick
+/// starts at 0, so the first call only reloads it and the first map clear comes
+/// ceil(T) frames after activation, the next every ceil(T) + 1 frames.
+/// `active` = frames from activation (deadly, 2 frames after creation) to destruction.
+pub(crate) fn tick_hits(active: u32, tick_frames: f64, first_overlap: u32, max_ticks: u32) -> u32 {
+    let (mut tick, mut cooldown, mut hit_map, mut hits, mut ticks) = (0.0_f64, 0u32, false, 0u32, 0u32);
+    let mut deadly = true;
+    for f in 0..active {
+        if cooldown > 0 {
+            cooldown -= 1;
+        }
+        if deadly && cooldown == 0 && f >= first_overlap {
+            cooldown = 3;
+            if !hit_map {
+                hits += 1;
+                hit_map = true;
+            }
+        }
+        let mut clear = false;
+        if deadly && tick_frames > 0.0 {
+            if tick > 0.0 {
+                tick -= 1.0;
+                if tick <= 0.0 {
+                    ticks += 1;
+                    if max_ticks > 0 && ticks >= max_ticks {
+                        deadly = false;
+                    } else {
+                        clear = true;
+                    }
+                }
+            } else {
+                tick = tick_frames;
+            }
+        }
+        if clear {
+            hit_map = false;
+        }
+    }
+    hits
+}
+
+/// Hits one target takes per cast. The damage object clears its hit list on its
+/// tick (rule 20 count, `tick_hits`). Objects the game kills by animation or alarm
+/// have no extracted lifetime and count as a single hit.
+/// Allocated subskills' effects on the dummy hit model (dps_cards).
+#[derive(Debug, Default)]
+struct SubskillDummyAdjustment {
+    /// Transformation: replaces the base hits per use.
+    set_hits: Option<f64>,
+    extra_per_use: f64,
+    /// Fraction added per base hit (on-hit procs, splits).
+    extra_per_hit: f64,
+    hits_mult: f64,
+    /// Extra projectiles whose hits an `extra_hits` effect already counts.
+    covered_projectiles: f64,
+    steps: Vec<String>,
+}
+
+fn subskill_dummy_adjustment(
+    spec: &SkillSpec,
+    subskill_ranks: &HashMap<String, u32>,
+    weapon_kind: &str,
+) -> SubskillDummyAdjustment {
+    let mut adj = SubskillDummyAdjustment {
+        hits_mult: 1.0,
+        ..Default::default()
+    };
+    for node in spec.subskills.iter().flatten() {
+        let Some(dummy) = node
+            .dummy
+            .as_ref()
+            .filter(|_| super::stats::attributes::node_weapon_ok(&spec.id, &node.id, weapon_kind))
+        else {
+            continue;
+        };
+        let rank = subskill_ranks
+            .get(&subskill_key(&spec.id, &node.id))
+            .copied()
+            .unwrap_or(0);
+        if rank == 0 {
+            continue;
+        }
+        let covers = dummy
+            .effects
+            .iter()
+            .any(|e| e.kind == "extra_hits" && e.replaces_projectile_hits);
+        // Card hit numbers already include the node's own extra projectiles.
+        if node.counts_dummy_hits() && !covers {
+            adj.covered_projectiles += node.planner_stat("projectile_count", rank);
+        }
+        for e in &dummy.effects {
+            if let Some(req) = e.requires.as_deref() {
+                if subskill_ranks.get(&subskill_key(&spec.id, req)).copied().unwrap_or(0) == 0 {
+                    continue;
+                }
+            }
+            let v = e.value_at(rank);
+            let applied = match e.kind.as_str() {
+                "set_hits" => {
+                    adj.set_hits = Some(v);
+                    true
+                }
+                "hits_mult" => {
+                    adj.hits_mult *= v;
+                    true
+                }
+                "extra_hits" if e.per.as_deref() == Some("hit") => {
+                    adj.extra_per_hit += v;
+                    true
+                }
+                "extra_hits" => {
+                    adj.extra_per_use += v;
+                    true
+                }
+                "projectiles" if covers => {
+                    adj.covered_projectiles += v;
+                    false
+                }
+                _ => false,
+            };
+            if applied {
+                adj.steps.push(format!(
+                    "{} r{}: {} {}{} [{}]",
+                    node.name,
+                    rank,
+                    e.kind,
+                    number(v),
+                    e.per.as_deref().map(|p| format!(" per {}", p)).unwrap_or_default(),
+                    dummy.confidence.as_deref().unwrap_or("?")
+                ));
+            }
+        }
+    }
+    adj
+}
+
 fn hits_per_cast(spec: Option<&SkillSpec>, duration_bonus: Ranged) -> Ranged {
     let Some(model) = spec.and_then(|s| s.hit_model.as_ref()) else {
         return (1.0, 1.0);
@@ -189,7 +340,11 @@ fn hits_per_cast(spec: Option<&SkillSpec>, duration_bonus: Ranged) -> Ranged {
         return (1.0, 1.0);
     }
     // An object always lands at least one hit, even below -100% duration.
-    let hits = |bonus: f64| ((lifetime * (1.0 + bonus / 100.0) / tick).floor() + 1.0).max(1.0);
+    let hits = |bonus: f64| {
+        let life_frames = (lifetime * (1.0 + bonus / 100.0) * 60.0).round();
+        let active = (life_frames - 2.0).max(1.0) as u32;
+        (tick_hits(active, tick * 60.0, 0, 0) as f64).max(1.0)
+    };
     (hits(duration_bonus.0), hits(duration_bonus.1))
 }
 
@@ -206,6 +361,9 @@ fn attack_action_rate_override(
         let rate = super::skill_cost::entity_rate(kind, tags, stats, entity_rates);
         return Some((rate.min.max(0.0), rate.max.max(0.0)));
     }
+    if let Some(rate) = super::skill_cost::game_use_rate(spec, stats, scoped) {
+        return Some(rate);
+    }
     let cooldown = super::skill_cost::effective_cooldown(spec, scoped)?;
     let haste = rg(stats, "skill_haste");
     let gate = super::skill_cost::cooldown_rate(spec, cooldown, haste);
@@ -213,16 +371,10 @@ fn attack_action_rate_override(
         return Some(gate);
     }
     let base = rg(stats, "attacks_per_second");
-    let speed = combine_additive_and_more(
-        rg(stats, "increased_attack_speed"),
-        rg(stats, "increased_attack_speed_more"),
-    );
-    Some((
-        gate.0
-            .min(base.0.max(0.0) * (1.0 + speed.0 / 100.0).max(0.0)),
-        gate.1
-            .min(base.1.max(0.0) * (1.0 + speed.1 / 100.0).max(0.0)),
-    ))
+    let ias = rg(stats, "increased_attack_speed");
+    let more = rg(stats, "increased_attack_speed_more");
+    let rate = |b: f64, i: f64, m: f64| (super::skills::attack_rate(b.max(0.0), i) * (1.0 + m / 100.0)).max(0.0);
+    Some((gate.0.min(rate(base.0, ias.0, more.0)), gate.1.min(rate(base.1, ias.1, more.1))))
 }
 
 /// Trigger cadence is independent of the damage dealt by the triggered skill.
@@ -288,6 +440,7 @@ struct ProcContext<'a> {
     empty_scoped: &'a StatMap,
 }
 
+
 fn append_subskill_notes(
     skill: &SkillSpec,
     ranks: &HashMap<String, u32>,
@@ -301,6 +454,12 @@ fn append_subskill_notes(
             > 0
         {
             if let Some(note) = node.calculation_note.as_deref() {
+                // The dps_cards dummy model now counts these contacts.
+                let note = if node.counts_dummy_hits() && note.contains("excluded from displayed DPS") {
+                    format!("{} Superseded: the dps_cards dummy model counts these contacts (see Subskill dummy effects).", note)
+                } else {
+                    note.to_string()
+                };
                 steps.push(CalculationStep::new(
                     format!("Model note · {}", node.name),
                     note,
@@ -429,6 +588,9 @@ fn proc_target_damage(
                 .copied()
                 .unwrap_or_else(|| target_spec.base_projectiles.unwrap_or(1)),
             &subtree_stat,
+            target_spec
+                .uses_extra_spell_projectiles
+                .then_some(&computed.stats),
         ),
         of_total_damage: r_max(rg(scoped, "of_total_damage")),
         scoped,
@@ -592,8 +754,40 @@ pub(crate) fn performance_from_stats(
         .and_then(|id| computed.skill_scoped.get(id))
         .unwrap_or(&empty_scoped);
     let subtree_stat = |key: &str| -> f64 { r_max(rg(main_scoped, key)).max(0.0) };
-    let active_of_total_damage = r_max(rg(main_scoped, "of_total_damage"));
+    // Subskills whose hits the dps_cards dummy model counts drop the planner's
+    // of_total_damage stand-in for the same contacts.
+    let weapon_kind = super::stats::equipped_weapon_kind(deps.inventory);
+    let dummy_replaced = |key: &str| -> f64 {
+        active_skill
+            .filter(|s| s.dummy_hits.is_some() && s.id != "blender")
+            .map_or(0.0, |s| {
+                s.subskills
+                    .iter()
+                    .flatten()
+                    .filter(|n| n.counts_dummy_hits())
+                    .filter(|n| super::stats::attributes::node_weapon_ok(&s.id, &n.id, &weapon_kind))
+                    .map(|n| {
+                        let rank = deps
+                            .subskill_ranks
+                            .get(&subskill_key(&s.id, &n.id))
+                            .copied()
+                            .unwrap_or(0);
+                        n.planner_stat(key, rank)
+                    })
+                    .sum()
+            })
+    };
+    let dummy_replaced_of_total = dummy_replaced("of_total_damage");
+    let active_of_total_damage =
+        r_max(rg(main_scoped, "of_total_damage")) - dummy_replaced_of_total;
     let mut calculation = Vec::new();
+    if dummy_replaced_of_total != 0.0 {
+        calculation.push(CalculationStep::new(
+            "Subskill of-total replaced",
+            format!("{}% of_total_damage from subskills whose contacts the dps_cards dummy model counts is left out", number(dummy_replaced_of_total)),
+            (dummy_replaced_of_total, dummy_replaced_of_total),
+        ));
+    }
     if let Some(reason) = unavailable_reason {
         calculation.push(CalculationStep::new(
             "Skill unavailable",
@@ -627,6 +821,7 @@ pub(crate) fn performance_from_stats(
         };
         for node in skill.subskills.as_deref().unwrap_or(&[]) {
             if pending.contains(&node.id.as_str())
+                && !node.counts_dummy_hits()
                 && deps
                     .subskill_ranks
                     .get(&subskill_key(&skill.id, &node.id))
@@ -658,8 +853,10 @@ pub(crate) fn performance_from_stats(
     let blender_cast_rate = is_blender.then(|| {
         let haste = rg(&computed.stats, "skill_haste");
         let scoped = rg(main_scoped, "skill_haste");
+        // GetTalentCooldown: Blenderang lowers the 8 s base through cooldown_reduction_pct.
         let cooldown = active_skill
-            .and_then(|s| s.base_cooldown)
+            .and_then(|s| super::skill_cost::effective_cooldown(s, main_scoped))
+            .or_else(|| active_skill.and_then(|s| s.base_cooldown))
             .unwrap_or(8.0)
             .max(0.001);
         super::skill_cost::cooldown_rate(
@@ -697,10 +894,19 @@ pub(crate) fn performance_from_stats(
             ));
             return 1;
         }
-        let count = effective_projectile_count(base, &subtree_stat);
-        calculation.push(CalculationStep::new("Effective projectiles", format!("round(({} base + {} subtree, capped at {} when nonzero) × (1 + {}% extra volleys / 100)); damage uses at least 1", base, number(subtree_stat("projectile_count")), number(subtree_stat("single_target_hit_cap")), number(subtree_stat("extra_volleys_pct"))), scalar(count.max(1) as f64)));
+        let count = effective_projectile_count(
+            base,
+            &subtree_stat,
+            s.uses_extra_spell_projectiles.then_some(&computed.stats),
+        );
+        calculation.push(CalculationStep::new("Effective projectiles", format!("round(({} base + {} subtree{}, capped at {} when nonzero) × (1 + {}% extra volleys / 100)); damage uses at least 1", base, number(subtree_stat("projectile_count")), if s.uses_extra_spell_projectiles { format!(", then floor(n × (1 + {}% extra spell projectiles)) + {} additional", number(r_max(rg(&computed.stats, "extra_spell_projectiles_pct"))), number(r_max(rg(&computed.stats, "additional_spell_projectile")))) } else { String::new() }, number(subtree_stat("single_target_hit_cap")), number(subtree_stat("extra_volleys_pct"))), scalar(count.max(1) as f64)));
         count
     });
+    // dps_cards hit model: hits one use lands on the training dummy. The damage
+    // breakdown keeps its whole volley; the hits factor rescales it.
+    let dummy_hits = active_skill
+        .and_then(|s| s.dummy_hits.as_ref())
+        .filter(|_| !is_blender);
 
     let active_calc_skill: Option<&CalcSkill> =
         active_skill.and_then(|s| skills_by_name.get(&normalize_skill_name(&s.name)));
@@ -874,13 +1080,7 @@ pub(crate) fn performance_from_stats(
         (Some(swing.min), Some(swing.max))
     } else {
         let (base_rate, rate_bonus) = if active_skill.is_some_and(|s| s.uses_attack_speed) {
-            (
-                Some(r_max(stat("attacks_per_second"))),
-                combine_additive_and_more(
-                    stat("increased_attack_speed"),
-                    stat("increased_attack_speed_more"),
-                ),
-            )
+            (Some(r_max(stat("attacks_per_second"))), stat("increased_attack_speed"))
         } else if active_skill.is_some_and(|s| s.uses_skill_haste) {
             // Cooldown-gated cast: one cast per cooldown, and skill haste is what shortens it.
             (
@@ -892,19 +1092,35 @@ pub(crate) fn performance_from_stats(
                 (stat("skill_haste").0 * 0.5, stat("skill_haste").1 * 0.5),
             )
         } else {
-            (
-                active_skill.and_then(|s| s.base_cast_rate),
-                combine_additive_and_more(stat("faster_cast_rate"), stat("faster_cast_rate_more")),
-            )
+            (active_skill.and_then(|s| s.base_cast_rate), stat("faster_cast_rate"))
         };
         let base_rate_min = if active_skill.is_some_and(|s| s.uses_attack_speed) {
             Some(stat("attacks_per_second").0)
         } else {
             base_rate
         };
+        // Game rates: attacks add IAS on ≤0.75 APS, casts add FCR/100 to
+        // abilityCastSpeed, haste scales the cooldown rate; "more" multiplies after.
+        let scale = |r: f64, bonus: f64, more: f64| -> f64 {
+            let rate = match active_skill {
+                Some(s) if s.uses_attack_speed => super::skills::attack_rate(r, bonus),
+                Some(s) if s.uses_skill_haste => r * (1.0 + bonus / 100.0),
+                _ => r + bonus / 100.0,
+            };
+            (rate * (1.0 + more / 100.0)).max(0.0)
+        };
+        let more = match active_skill {
+            Some(s) if s.uses_attack_speed => {
+                let mut merged = computed.stats.clone();
+                merged.insert("skill_attack_speed_more".into(), rg(main_scoped, "skill_attack_speed_more"));
+                super::skills::attack_speed_more(&merged)
+            }
+            Some(s) if s.uses_skill_haste => (0.0, 0.0),
+            _ => stat("faster_cast_rate_more"),
+        };
         let animation_rate = (
-            base_rate_min.map(|r| (r * (1.0 + rate_bonus.0 / 100.0)).max(0.0)),
-            base_rate.map(|r| (r * (1.0 + rate_bonus.1 / 100.0)).max(0.0)),
+            base_rate_min.map(|r| scale(r, rate_bonus.0, more.0)),
+            base_rate.map(|r| scale(r, rate_bonus.1, more.1)),
         );
         let cooldown =
             active_skill.and_then(|s| super::skill_cost::effective_cooldown(s, main_scoped));
@@ -923,6 +1139,33 @@ pub(crate) fn performance_from_stats(
             }
         } else {
             animation_rate
+        };
+        // Skills with a speed path from the game data: the game's own gating
+        // (cooldown floor, skill haste, use animation, leap flight).
+        let effective_rate = match active_skill
+            .and_then(|s| super::skill_cost::game_use_rate(s, &computed.stats, main_scoped))
+        {
+            Some(rate) => {
+                let spec = active_skill.unwrap();
+                let speed = super::skill_cost::sequence_speed(spec, &computed.stats, main_scoped);
+                calculation.push(CalculationStep::new(
+                    "Game use rate",
+                    format!(
+                        "S = {} ({} path); min(cooldown floor or hasted cooldown, use animation 60 / (ceil(72/S) + 1){}{})",
+                        range(speed),
+                        spec.speed_path.as_deref().unwrap_or("cast"),
+                        if super::skill_cost::animation_locked(spec) { "" } else { " — exempt: Movement/Blink" },
+                        spec.use_period.as_ref().map_or(String::new(), |p| if p.trigger == Some(false) {
+                            format!(", {} {} frames", p.kind, number(p.extra_frames))
+                        } else {
+                            format!(", {} flight {} frames after floor(24/S) + 1 trigger frames", p.kind, number(p.extra_frames))
+                        })
+                    ),
+                    rate,
+                ));
+                (Some(rate.0), Some(rate.1))
+            }
+            None => effective_rate,
         };
         if attack_damage.is_none() {
             let rate_keys = if active_skill.is_some_and(|s| s.uses_attack_speed) {
@@ -973,7 +1216,13 @@ pub(crate) fn performance_from_stats(
     };
 
     // Skill Duration stretches the damage object's life, which buys extra ticks.
-    let duration_scoped = rg(main_scoped, "skill_duration");
+    // A node whose card hits already count its longer lifetime does not also
+    // stretch the tick model.
+    let duration_scoped = {
+        let d = rg(main_scoped, "skill_duration");
+        let replaced = dummy_replaced("skill_duration");
+        (d.0 - replaced, d.1 - replaced)
+    };
     let duration_global = stat("skill_duration");
     let (mut hits_min, mut hits_max) = hits_per_cast(
         active_skill,
@@ -992,9 +1241,12 @@ pub(crate) fn performance_from_stats(
             &mut calculation,
         );
     }
+    // Subtree waves repeat the whole use; the dummy model keeps that factor.
+    let mut wave_factor = 1.0;
     if circle_of_slugs {
         let waves = 1.0 + subtree_stat("wave_count");
         (hits_min, hits_max) = (waves, waves);
+        wave_factor = waves;
     }
     if active_skill.is_some_and(|s| {
         s.class_id == "amazon"
@@ -1005,7 +1257,61 @@ pub(crate) fn performance_from_stats(
     }) {
         let waves = 1.0 + subtree_stat("wave_count");
         (hits_min, hits_max) = (waves, waves);
+        wave_factor = waves;
         calculation.push(CalculationStep::new("Amazon wave contact estimate", "Assumes one contact with the target per wave. Repeated overlaps and travel coverage are not additional guaranteed hits; Death from Above's 0.25s re-hit interval is not a 4 casts/s rate.", (waves, waves)));
+    }
+
+    let mut exported_hits: Option<Ranged> = None;
+    if let (Some(dh), Some(spec)) = (dummy_hits, active_skill) {
+        // dps_cards: hits one use lands on the dummy at 160 px, plus the marginal
+        // hits of extra projectiles; a skill-duration bonus scales tick objects.
+        let n = effective_projectiles.unwrap_or(1) as f64;
+        // Extra projectiles count above the planner's own base count.
+        let base_n = spec.base_projectiles.unwrap_or(1) as f64;
+        let sub = subskill_dummy_adjustment(spec, deps.subskill_ranks, &weapon_kind);
+        let converted = (n - base_n - sub.covered_projectiles).max(0.0);
+        let per_hit_base = match sub.set_hits {
+            Some(set) => set,
+            None => dh.base + dh.per_extra_projectile * converted.min(n - base_n),
+        };
+        // A card transformation already counts every wave of the use.
+        let waves = if sub.set_hits.is_some() { 1.0 } else { wave_factor };
+        let per_use = ((per_hit_base * (1.0 + sub.extra_per_hit) + sub.extra_per_use)
+            * sub.hits_mult)
+            .max(0.0)
+            * waves;
+        if !sub.steps.is_empty() {
+            calculation.push(CalculationStep::new(
+                "Subskill dummy effects",
+                sub.steps.join("; "),
+                (per_use, per_use),
+            ));
+        }
+        let plain = hits_per_cast(active_skill, (0.0, 0.0));
+        let longer = hits_per_cast(
+            active_skill,
+            (
+                duration_scoped.0 + duration_global.0,
+                duration_scoped.1 + duration_global.1,
+            ),
+        );
+        let dummy = (per_use * longer.0 / plain.0, per_use * longer.1 / plain.1);
+        exported_hits = Some(dummy);
+        // The damage breakdown already holds the n-projectile volley.
+        (hits_min, hits_max) = (dummy.0 / n.max(1.0), dummy.1 / n.max(1.0));
+        calculation.push(CalculationStep::new(
+            "Dummy hits per use",
+            format!(
+                "{} base hits at {} projectiles + {} per extra projectile ({} projectiles), × skill-duration tick ratio; {} [{}]",
+                number(dh.base),
+                number(base_n),
+                number(dh.per_extra_projectile),
+                number(n),
+                dh.note.as_deref().unwrap_or(""),
+                dh.confidence.as_deref().unwrap_or("?")
+            ),
+            dummy,
+        ));
     }
 
     let multicast = damage
@@ -1088,15 +1394,8 @@ pub(crate) fn performance_from_stats(
     // With no selected skill, on-hit item/passive procs can still accompany
     // basic weapon attacks. An unlearned selected skill supplies no contacts.
     let proc_contacts = if active_skill.is_none() && deps.main_skill_id.is_none() {
-        let speed = combine_additive_and_more(
-            stat("increased_attack_speed"),
-            stat("increased_attack_speed_more"),
-        );
-        let base = stat("attacks_per_second");
-        (
-            base.0.max(0.0) * (1.0 + speed.0 / 100.0).max(0.0),
-            base.1.max(0.0) * (1.0 + speed.1 / 100.0).max(0.0),
-        )
+        let aps = super::skills::attacks_per_second(&computed.stats);
+        (aps.0.max(0.0), aps.1.max(0.0))
     } else {
         modeled_contacts
     };
@@ -1701,7 +2000,7 @@ pub(crate) fn performance_from_stats(
         item_skill_bonuses: computed.item_skill_bonuses,
         rank_bonuses: computed.rank_bonuses,
         entity_count: is_entity.then_some((count_min, count_max)),
-        hits_per_cast: (hits_max > 1.0).then_some((hits_min, hits_max)),
+        hits_per_cast: exported_hits.or((hits_max > 1.0).then_some((hits_min, hits_max))),
         ehp: computed.ehp,
         defense_insights: computed.defense_insights,
         skill_costs: computed.skill_costs,
@@ -1740,3 +2039,7 @@ mod echo_tests;
 #[cfg(test)]
 #[path = "proc_target_tests.rs"]
 mod proc_target_tests;
+
+#[cfg(test)]
+#[path = "build_dps_snapshot_tests.rs"]
+mod dps_snapshot_tests;

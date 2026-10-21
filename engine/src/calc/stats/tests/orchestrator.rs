@@ -219,10 +219,11 @@ fn blade_strike_base_crit_never_enters_global_stats() {
 
 #[test]
 fn subskill_stats_reach_only_their_own_skill() {
-    // charged_bolts/electric_vains grants lightning_skill_damage. It must
-    // not buff lightning_surge, which has its own subtree.
+    // charged_bolts/efficient_wiring grants the shared mana_cost_reduction. It
+    // must not reach lightning_surge, which has its own subtree. (Subskill
+    // LSSD such as electric_vains is skill-scoped subtree_damage now.)
     let ranks: HashMap<String, u32> =
-        HashMap::from([("charged_bolts:electric_vains".to_string(), 5)]);
+        HashMap::from([("charged_bolts:efficient_wiring".to_string(), 3)]);
     let enemy = HashMap::new();
 
     let mut attrs = HashMap::new();
@@ -237,7 +238,7 @@ fn subskill_stats_reach_only_their_own_skill() {
         "",
     );
     assert!(
-        !stats.contains_key("lightning_skill_damage"),
+        !stats.contains_key("mana_cost_reduction"),
         "another skill's subtree leaked into the stat map: {stats:?}"
     );
 
@@ -253,7 +254,7 @@ fn subskill_stats_reach_only_their_own_skill() {
         "",
     );
     assert!(
-        stats.contains_key("lightning_skill_damage"),
+        stats.contains_key("mana_cost_reduction"),
         "the owning skill lost its own subtree bonus"
     );
 }
@@ -283,11 +284,12 @@ fn skill_scoped_subskill_stats_bypass_the_shared_map() {
 
 #[test]
 fn side_skill_overrides_swap_the_main_skill_subtree() {
-    // Both charged_bolts and lightning_surge grant lightning_skill_damage; the
-    // lightning_surge card must see its own value, not the main skill's.
+    // Both charged_bolts and lightning_surge grant the shared
+    // mana_cost_reduction; the lightning_surge card must see its own value,
+    // not the main skill's.
     let ranks: HashMap<String, u32> = HashMap::from([
-        ("charged_bolts:electric_vains".to_string(), 5),
-        ("lightning_surge:amplified_storm".to_string(), 2),
+        ("charged_bolts:efficient_wiring".to_string(), 3),
+        ("lightning_surge:storms_prophet".to_string(), 1),
     ]);
     let enemy = HashMap::new();
     let mut attrs = HashMap::new();
@@ -301,13 +303,13 @@ fn side_skill_overrides_swap_the_main_skill_subtree() {
         &mut sources,
         "",
     );
-    let main_bonus = subtree["charged_bolts"].shared["lightning_skill_damage"];
-    let surge_bonus = subtree["lightning_surge"].shared["lightning_skill_damage"];
+    let main_bonus = subtree["charged_bolts"].shared["mana_cost_reduction"];
+    let surge_bonus = subtree["lightning_surge"].shared["mana_cost_reduction"];
     assert_ne!(main_bonus, surge_bonus);
 
     // Pretend the finalized map is 100 flat + the main skill's subtree.
     let stats: HashMap<String, Ranged> = HashMap::from([(
-        "lightning_skill_damage".to_string(),
+        "mana_cost_reduction".to_string(),
         (100.0 + main_bonus.0, 100.0 + main_bonus.1),
     )]);
     let overrides =
@@ -317,14 +319,14 @@ fn side_skill_overrides_swap_the_main_skill_subtree() {
         "the main skill needs no override"
     );
     assert_eq!(
-        overrides["lightning_surge"]["lightning_skill_damage"],
+        overrides["lightning_surge"]["mana_cost_reduction"],
         (100.0 + surge_bonus.0, 100.0 + surge_bonus.1)
     );
     // A skill without a subtree drops the main skill's bonus entirely.
     let plain = overrides
         .iter()
         .find(|(id, _)| !subtree.contains_key(*id))
-        .map(|(_, ov)| ov["lightning_skill_damage"]);
+        .map(|(_, ov)| ov["mana_cost_reduction"]);
     assert_eq!(plain, Some((100.0, 100.0)));
 }
 
@@ -1213,6 +1215,48 @@ fn set_sail_blessing_adds_cold_skill_damage_when_toggled() {
     );
 }
 
+// #158: a relic proc buff (Shiv casts Live by the Sword 3-30) is a Config toggle.
+#[test]
+fn shiv_live_by_the_sword_buff_applies_when_toggled() {
+    let allocated = HashMap::new();
+    let mut inventory: Inventory = HashMap::new();
+    inventory.insert(
+        "relic_1".to_string(),
+        crate::calc::types::EquippedItem {
+            base_id: "relic_relic_shiv".to_string(),
+            ..Default::default()
+        },
+    );
+    let skill_ranks = HashMap::new();
+    let active_buffs = HashMap::new();
+    let custom_stats: Vec<CustomStat> = Vec::new();
+    let alloc_tree = HashSet::new();
+    let tree_socketed = HashMap::new();
+    let subskill_ranks = HashMap::new();
+    let enemy_conditions = HashMap::new();
+    let speed = |toggled: bool| {
+        let conditions = HashMap::from([("live_by_the_sword_buff".to_string(), toggled)]);
+        let out = compute_build_stats(&empty_input(
+            &allocated,
+            &inventory,
+            &skill_ranks,
+            &active_buffs,
+            &custom_stats,
+            &alloc_tree,
+            &tree_socketed,
+            &conditions,
+            &subskill_ranks,
+            &enemy_conditions,
+        ));
+        out.stats
+            .get("movement_speed")
+            .copied()
+            .unwrap_or((0.0, 0.0))
+    };
+    let (off, on) = (speed(false), speed(true));
+    assert_eq!((on.0 - off.0, on.1 - off.1), (31.0, 58.0));
+}
+
 #[test]
 fn amazon_weapon_gates_allow_only_matching_weapons() {
     for (skill, node, weapon, key, amount) in [
@@ -1227,7 +1271,7 @@ fn amazon_weapon_gates_allow_only_matching_weapons() {
             "rebound",
             "marksmanship",
             "Bow",
-            "increased_attack_speed",
+            "skill_attack_speed_more",
             18.0,
         ),
         (
@@ -1261,4 +1305,43 @@ fn amazon_weapon_gates_allow_only_matching_weapons() {
             assert_eq!(got, (expected, expected), "{skill}/{equipped}");
         }
     }
+}
+
+// Timed buffs (rule 12/35): stats scale by min(1, D·(1 + 0.005·haste)/cd).
+#[test]
+fn timed_buff_stats_scale_by_uptime_with_skill_haste() {
+    let allocated = HashMap::new();
+    let inventory = HashMap::new();
+    let tree = HashSet::new();
+    let sockets = HashMap::new();
+    let conditions = HashMap::new();
+    let subskills = HashMap::new();
+    let stat = |class, skill: &str, key, rank, haste: &str| {
+        let ranks = HashMap::from([(skill.to_string(), rank)]);
+        let buffs = HashMap::from([(skill.to_string(), true)]);
+        let custom = vec![CustomStat {
+            stat_key: "skill_haste".into(),
+            value: haste.into(),
+        }];
+        let mut input = empty_input(
+            &allocated, &inventory, &ranks, &buffs, &custom, &tree, &sockets, &conditions,
+            &subskills, &conditions,
+        );
+        input.class_id = Some(class);
+        input.level = 50;
+        compute_build_stats(&input).stats.get(key).copied().unwrap_or((0.0, 0.0)).1
+    };
+    let gain = |class, skill, key, haste| {
+        stat(class, skill, key, 1, haste) - stat(class, skill, key, 0, haste)
+    };
+    // Live by the Sword: 30 % movement speed, 25 s of a 70 s cooldown.
+    let lbts = gain("samurai", "live_by_the_sword", "movement_speed", "0");
+    assert!((lbts - 30.0 * 25.0 / 70.0).abs() < 0.01, "{lbts}");
+    let hasted = gain("samurai", "live_by_the_sword", "movement_speed", "100");
+    assert!((hasted - 30.0 * 37.5 / 70.0).abs() < 0.01, "{hasted}");
+    // Beacon: arcane 20 % for (3.8 + 0.2·L + 2) s of 10 s, capped at full uptime.
+    let beacon = gain("marksman", "beacon", "arcane_skill_damage", "0");
+    assert!((beacon - 20.0 * 0.6).abs() < 0.01, "{beacon}");
+    let capped = gain("marksman", "beacon", "arcane_skill_damage", "200");
+    assert!((capped - 20.0).abs() < 0.01, "{capped}");
 }

@@ -16,8 +16,8 @@
     "gold_find": { "threshold": 200, "power": 0.75 },
     "movement_speed": { "threshold": 200, "power": 0.86, "cap": 600 },
     "magic_find": { "threshold": 1300, "power": 0.9 },
-    "increased_attack_speed": { "threshold": 415, "power": 0.9 },
-    "faster_cast_rate": { "threshold": 350, "power": 0.8 },
+    "increased_attack_speed": { "threshold": 400, "power": 0.85 },
+    "faster_cast_rate": { "threshold": 350, "power": 0.75 },
     "deadly_blow": { "threshold": 50, "power": 0.75, "cap": 100 },
     "skill_haste": { "threshold": 100, "power": 0.75, "cap": 200 }
   },
@@ -56,17 +56,14 @@
     "vitality": 10
   },
   "defaultStatsPerAttribute": {
-    "strength": { "enhanced_damage": 1 },
-    "dexterity": { "attack_rating": 8, "crit_damage": 0.125 },
+    "strength": { "attack_damage": 1 },
+    "dexterity": { "attack_rating": 8, "crit_damage": 0.1 },
     "intelligence": {},
-    "energy": { "mana": 4 },
-    "vitality": { "life": 5 },
+    "energy": { "mana": 4.5, "mana_replenish": 0.175 },
+    "vitality": { "life": 6.5, "life_replenish": 0.125 },
     "armor": { "defense": 5 }
   },
-  "attributeDividedStats": {
-    "energy": { "mana_replenish": 6 },
-    "vitality": { "life_replenish": 8 }
-  },
+  "attributeDividedStats": {},
   "stackTypes": [
     {
       "key": "ramping_pulse", "name": "Ramping Pulse", "maxStat": "ramping_pulse_max_stacks",
@@ -508,6 +505,27 @@
       "name": "Critical Strike Damage",
       "category": "offense",
       "format": "percent"
+    },
+    {
+      "key": "cooldown_reduction_pct",
+      "name": "Skill Cooldown Reduction",
+      "category": "base",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "skill_mana_cost_more",
+      "name": "Skill Mana Cost Multiplier",
+      "category": "base",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "skill_attack_speed_more",
+      "name": "Skill Attack Speed Multiplier",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
     },
     {
       "key": "skill_crit_chance",
@@ -3127,6 +3145,12 @@
     {
       "key": "movement_speed_to_attack_damage",
       "name": "Movement Speed Converted to Attack Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "movement_speed_to_total_damage",
+      "name": "Movement Speed Converted to Total Damage Dealt",
       "category": "offense",
       "format": "percent"
     },

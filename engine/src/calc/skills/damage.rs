@@ -506,8 +506,17 @@ fn compute_skill_damage_with_rank(
     } else {
         1.0
     };
+    // CalculateEndDamage crits each damage type on its own stats: physical uses
+    // attack crit, every element uses spell crit, whatever the skill's tags. An
+    // attack's elemental member crits before conversion, on attack crit.
+    let spell_crit = match s.damage_type.as_deref() {
+        _ if s.attack_kind == Some(super::AttackKind::Attack) => false,
+        Some("physical") => false,
+        Some(_) => true,
+        None => is_spell,
+    };
     let crit = {
-        let base = super::crit_factors_with_tags(input.stats, is_spell, &s.tags);
+        let base = super::crit_factors_with_tags(input.stats, spell_crit, &s.tags);
         super::CritFactors {
             chance: if crit_portion > 0.0 { base.chance } else { 0.0 },
             damage_pct: if crit_portion > 0.0 {
@@ -539,7 +548,8 @@ fn compute_skill_damage_with_rank(
             r_max(rg(input.stats, k.ignore_res)) + implicit
         })
         .unwrap_or(0.0);
-    let ignore_res_pct = raw_ignore.clamp(0.0, 100.0);
+    // LoadMonsterResistance: Res·(1 − Pen) with no clamp on either side.
+    let ignore_res_pct = raw_ignore;
     let eff_res_pct = enemy_res_pct * (1.0 - ignore_res_pct / 100.0);
     let resistance_mult = 1.0 - eff_res_pct / 100.0;
 
@@ -581,7 +591,16 @@ fn compute_skill_damage_with_rank(
     };
     // CalculateEndDamage adds the universal and matching typed Break fractions
     // before multiplying damage. The two bonuses do not amplify each other.
-    let combined_break_mult = 1.0 + (elemental_break_pct + element_break_pct) / 100.0;
+    // Weakening Blast-style projEffect[986] lands as enemy buff 13, the same
+    // generic elemental break K term; physical hits never read it.
+    let damage_taken_pct = if is_elemental {
+        r_max(rg(input.scoped, "enemy_damage_taken_increased")).max(0.0)
+    } else {
+        0.0
+    };
+    let damage_taken_mult = 1.0;
+    let combined_break_mult =
+        1.0 + (elemental_break_pct + element_break_pct + damage_taken_pct) / 100.0;
     let (critical_break_average, critical_break_step) = super::critical_break_average_multiplier(
         s.damage_type.as_deref().unwrap_or_default(),
         element_break_pct,
@@ -590,8 +609,6 @@ fn compute_skill_damage_with_rank(
         input.scoped,
     );
 
-    let damage_taken_pct = r_max(rg(input.scoped, "enemy_damage_taken_increased")).max(0.0);
-    let damage_taken_mult = 1.0 + damage_taken_pct / 100.0;
 
     // The runtime elemental path adds the intercept after the rank/flat
     // term's synergy and generic modifiers. Only verified metadata opts in.
@@ -940,12 +957,12 @@ fn compute_skill_damage_with_rank(
         scalar(extra_mult),
     ));
     calculation.push(CalculationStep::new(
-        "Enemy damage taken multiplier",
+        "Enemy damage taken (break total)",
         format!(
-            "1 + {}% / 100 from this skill's subtree",
+            "{}% from this skill's subtree joins the elemental break sum (enemy buff 13); physical hits ignore it",
             number(damage_taken_pct)
         ),
-        scalar(damage_taken_mult),
+        scalar(1.0 + damage_taken_pct / 100.0),
     ));
     stat_inputs(
         &mut calculation,
@@ -1547,6 +1564,26 @@ mod tests {
     }
 
     #[test]
+    fn crit_pool_follows_damage_type_not_spell_tag() {
+        let pools = stats(&[
+            ("crit_chance", 50.0),
+            ("crit_damage", 100.0),
+            ("spell_crit_chance", 10.0),
+            ("spell_crit_damage", 200.0),
+        ]);
+        let case = |damage_type: &'static str, tags_: &[&str]| Case {
+            damage_type,
+            tags: tags(tags_),
+            stats: pools.clone(),
+            ..Default::default()
+        };
+        let fire_nonspell = breakdown(&case("fire", &["Cast", "Projectile"]));
+        assert_eq!(fire_nonspell.crit_chance, 10.0);
+        let physical_spell = breakdown(&case("physical", &["Spell", "Projectile"]));
+        assert_eq!(physical_spell.crit_chance, 50.0);
+    }
+
+    #[test]
     fn archetype_spell_damage_needs_the_spell_tag() {
         let s = stats(&[("spell_damage", 10.0), ("spell_damage_more", 25.0)]);
         assert_eq!(
@@ -1775,7 +1812,7 @@ mod tests {
     }
 
     #[test]
-    fn aggregated_ignore_all_counts_once_in_elemental_damage_and_caps_at_100() {
+    fn aggregated_ignore_all_counts_once_in_elemental_damage_without_cap() {
         use crate::calc::stats::{
             apply_stat_fan_outs, compute_final_stats, push_source, SourceContribution, SourceMap,
             SourceType,
@@ -1804,8 +1841,9 @@ mod tests {
                 });
                 let expected = match damage_type {
                     "physical" => 0.,
-                    "cold" => (all + 20.).min(100.),
-                    _ => all.min(100.),
+                    // LoadMonsterResistance does not clamp penetration.
+                    "cold" => all + 20.,
+                    _ => all,
                 };
                 assert_eq!(result.resistance_ignored_pct, expected, "{damage_type}");
             }

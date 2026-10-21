@@ -122,11 +122,7 @@ fn source_value(
                 .max(0.0),
             )
         }
-        Source::EffectiveAttackSpeed => Some(
-            r_max(rg(stats, "attacks_per_second"))
-                * (1.0 + r_max(rg(stats, "increased_attack_speed")) / 100.0)
-                * (1.0 + r_max(rg(stats, "increased_attack_speed_more")) / 100.0),
-        ),
+        Source::EffectiveAttackSpeed => Some(r_max(super::attacks_per_second(stats))),
         Source::OwnDamage | Source::Unresolved => None,
     }
 }
@@ -351,7 +347,8 @@ mod tests {
                 ("increased_attack_speed", 50.0),
             ]),
         );
-        assert_eq!(out.flat, 3.0);
+        // 2 APS + min(2, 0.75) × 50% IAS.
+        assert_eq!(out.flat, 2.375);
     }
 
     #[test]

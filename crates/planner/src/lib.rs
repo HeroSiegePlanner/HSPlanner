@@ -666,7 +666,11 @@ impl TreeView {
             if self.finish_progression(cx) {
                 return;
             }
-            self.apply_node(index, cx);
+            if event.modifiers.alt && self.scene.graph.kind == TreeKind::Incarnation {
+                self.toggle_suggest_exclusion(index, cx);
+            } else {
+                self.apply_node(index, cx);
+            }
             self.inspected = Some(index);
             self.refresh_build(cx);
         }
@@ -817,6 +821,15 @@ impl Render for TreeView {
         } else {
             HashSet::new()
         };
+        let excluded: HashSet<_> = if self.scene.graph.kind == TreeKind::Incarnation {
+            self.build_input
+                .suggest_excluded_nodes
+                .iter()
+                .map(|id| *id as usize)
+                .collect()
+        } else {
+            HashSet::new()
+        };
         let tree_theme = self.tree_theme();
         let graph = div()
             .id("tree-canvas")
@@ -843,6 +856,7 @@ impl Render for TreeView {
                                 matches: &matches,
                                 searching,
                                 socketed: &socketed,
+                                excluded: &excluded,
                                 progression_marker,
                             },
                             tree_theme,

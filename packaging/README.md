@@ -7,16 +7,19 @@ and its identifier remains `com.zium.hsplanner.gpui`.
 
 ## Build locally
 
-Use Python 3.11+, the repository's stable Rust toolchain and the platform build
-requirements in `.github/workflows/native.yml`. Node.js/Tauri are not needed.
+Use the repository's stable Rust toolchain, `jq` and the platform build
+requirements in `.github/workflows/native.yml`. Python, Node.js and Tauri are not needed.
 
 ```sh
 cargo install cargo-packager --version 0.11.8 --locked
-python3 tools/package-native.py
 ```
 
-The script builds only `hsplanner`, reads the version from root `Cargo.toml`, and
-writes packages to `target/packages/release/`. Formats are host-specific:
+Packages come from the **Build native installers** step in
+`.github/workflows/native-package.yml`. To package locally, run that step's script
+from the repository root in bash with `RUNNER_OS` set to `macOS`, `Windows` or
+`Linux`. It builds only `hsplanner` in release mode, reads the version from root
+`Cargo.toml`, and writes packages plus `SHA256SUMS` to `target/packages/release/`.
+Formats are host-specific:
 
 | Host | Output |
 |---|---|
@@ -27,10 +30,6 @@ writes packages to `target/packages/release/`. Formats are host-specific:
 Linux requires native Wayland and a working Vulkan driver. Initial DEB dependencies
 target Ubuntu 24.04; other distributions need separate installation verification.
 RPM packaging is not implemented by the pinned packager and remains a follow-up.
-
-For a test package: `python3 tools/package-native.py --debug`. Use `--formats app`
-on macOS for a quick bundle, or `--skip-build` only with a matching already-built
-executable. `HSPLANNER_PACKAGER` can point to a locally installed packager binary.
 
 ## GitHub workflow and signing
 
@@ -81,8 +80,10 @@ itself is the feed:
 macOS replaces the running `.app` bundle in place and relaunches; if the bundle is not
 writable the DMG is opened in Finder instead. Windows starts the NSIS installer and
 the app quits. Linux users get the release page (deb/AppImage/pacman cannot be told
-apart). Failed checks on startup stay silent; the footer button reports errors when
-pressed by hand.
+apart). Failed checks on startup stay silent; the footer button opens the update
+dialog, which shows the release body as notes, download progress and a retry on errors.
+Debug builds read `HSPLANNER_UPDATE_FEED` (a release JSON URL) instead of GitHub, so a
+local feed and DMG can rehearse the whole update.
 
 Local/CI builds without certificates are test packages, not signed public releases.
 For macOS configure `HSPLANNER_MACOS_SIGNING_IDENTITY`, `APPLE_CERTIFICATE`,

@@ -2,6 +2,8 @@
   {
     "id": "scorching_whip",
     "activationKind": "cast",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "One Exo_Scorching_Whip_obj (attack-speed path, melee weapon spell) standing at the player (x, y+6), mask 142x22 x scale 2 = 284 px reach, +-22 px: the dummy at 160 px is inside; deadly from animation frame 5, no map clear within one swing = 1 hit of V1 = 5+10*L fire. NOT counted (separate passive talent 345 Whiplash, only when it has ranks): on the first whip hit it spawns an Exo_Whiplash_obj chain on the dummy with n+1 hits of floor(dmg*[253]) per whip object (T1, big 97x57 mask keeps the dummy), n = ceil(5.9+0.1*L_W) = 6/7/8/9 and [253] = (17.75+2.25*L_W)% -> 7/8/9/10 hits at L_W = 1 / 2-11 / 12-21 / >=22 (e.g. L_W = 20: 9 hits x 62.75% = 5.6 main-hit equivalents). Echo (p1), orbiting whips (p11/p14), fireballs (p8), procs p4/p10/p12/p13 are subskills."},
     "weaponRequirement": "melee",
     "classId": "exo",
     "name": "Scorching Whip",
@@ -18,7 +20,7 @@
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "attackKind": "spell",
     "usesAttackSpeed": true,
-    "damageFormula": { "base": 5.2, "perLevel": 10 },
+    "damageFormula": { "base": 5, "perLevel": 10 },
     "manaCostFormula": { "base": 5, "perLevel": 1.125 },
     "bonusSources": [
       { "source": "Whiplash", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
@@ -37,6 +39,7 @@
       {
         "id": "double_whip",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "use", "note": "second swing with chance 4r% (own procs); expected extra hits per use = 0.04r x 1 hit; card: x(1+p1.s9%) hits"}], "confidence": "C", "note": "card 344 table p1 + Runda 3 reguła 32 (second swing inherits procs); DPS-equivalent to planner proc of_total_damage 100 at 4r%"},
         "name": "Double Whip",
         "description": "Chance on attack to unleash an additional scorching whip.",
         "maxRank": 5,
@@ -52,28 +55,31 @@
       {
         "id": "celestial_burn",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD +8%/r fire"}], "confidence": "C", "note": "card 344 table p2"},
         "name": "Celestial Burn",
         "description": "Increases the damage dealt by scorching whip.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "overheating",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7%/r"}], "confidence": "C", "note": "card 344 table p3"},
         "name": "Overheating",
         "description": "Decreases the mana cost of scorching whip.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "punishing_flames",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0825, 0.33, 0.7425, 1.32, 2.0625], "per": "hit", "note": "Solar Burst object per proc: chance 3r% x 11 cycles x 25r% of D; value = 0.03r*11*0.25r per base hit (r5: 0.15*11*1.25=2.06). Burst hits the dummy (reguła 15), 11 hits of floor(dmg*25r%)"}], "confidence": "C", "note": "card 344 table p4 + Runda 3 (Solar Burst 11 hits, reguła 15/32); pure chance math, no cadence assumption beyond 11 x 0.4 s cycles", "plannerFix": "planner models a single on-hit 25r% damage proc; game spawns Exo_Solar_Burst_obj that hits the dummy 11 times per proc (25r% of D each)"},
         "name": "Punishing Flames",
         "description": "Chance to unleash burning fissures on hit dealing additional damage.",
         "maxRank": 5,
@@ -90,39 +96,43 @@
       {
         "id": "sun_gods_chosen",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [10, 20, 30, 40, 50], "note": "attack speed +10%/r ONLY with weapon types 1/9/8 (card: acc = p5.s9% when weapon type in {1,9,8}); skill is an attack-speed skill"}], "confidence": "C", "note": "card 344 table p5 + TalentUseSetSpeed L476-481; the weapon-type condition is the caveat", "plannerFix": "planner applies skill_attack_speed_more 10%/r unconditionally; game applies it only with weapon types 1/9/8 (names I)"},
         "name": "Sun Gods Chosen",
         "description": "Increases attack speed when using scorching whip with a sword, cane or staff.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 10 }
+          "base": {"skill_attack_speed_more": 0},
+          "perRank": {"skill_attack_speed_more": 10}
         }
       },
       {
         "id": "solar_arch",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "whip scale x(1+10r%) (reach 284*(1+p6.s9%) px, +-22 px); dummy at 160 px is already in reach, no DPS change"}], "confidence": "C", "note": "card 344 table p6 + reach note (ustalenie a)"},
         "name": "Solar Arch",
         "description": "Increases the area of effect radius of scorching whip.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 10 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 10}
         }
       },
       {
         "id": "critical_temperature",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [3, 6, 9, 12, 15], "note": "spell crit chance +3%/r; crit damage +25%/r (25,50,75,100,125); also applies to p8 fireballs"}], "confidence": "C", "note": "card 344 table p7 ([1004]=p7.s9, [1003]=p7.s10)"},
         "name": "Critical Temperature",
         "description": "Chance to critically hit dealing increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 3, "spell_crit_damage": 25 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 3, "spell_crit_damage": 25}
         }
       },
       {
         "id": "fire_starter",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5], "note": "fireballs count n = p8.s9 = r"}, {"kind": "extra_hits", "byRank": [0.05, 0.2, 0.2865, 0.4, 0.4775], "per": "hit", "replacesProjectileHits": true, "note": "chance 5r% x H(n), n = r fireballs: H(1..5) = 1, 2, 1.91, 2, 1.91 (Resztki B/D: oriented rectangle 97x57, origin (62, 28), scale 0.1 + 0.05/frame, 8 px/frame, life 90 frames, ball starts 10 px from owner (x, y) [asm 0x146780db9-0x146780e33], aim through the dummy centre (x, y+6) (rule 38), fan 15 deg C [asm 0x146780be0]; the lateral balls at +-15 deg lie 41.4 +- 6|cos| px from the axis vs thresholds 28+12 / 29+12 = 40-41 px, so odd n >= 3 give 1.91 on a ~0.4 px margin). Distance for n = 3: 140/150/155/160/165/170 px = 2.51/2.18/2.04/1.91/1.76/1.61. Cursor (x, y-24) variant (note only): H = 1.00 / 1.62 / 1.97 / 1.89 / 1.97."}], "confidence": "I", "note": "Resztki B (Scorching Whip p8, H(n)) + D; Po R4 (e, reguła 26) + (a, reguła 38); exact threshold I (dummy bitmap mask r = 12 vs analytic circle); H(1), H(2), H(even) C", "plannerFix": "planner counts chance x n fireballs (0.05r^2); game saturates at H(n) ~ 2 hits per proc (0.4775 at r5, not 1.25)"},
         "name": "Fire Starter",
         "description": "Chance on attack to unleash multiple fire balls in an arc towards target location.",
         "maxRank": 5,
@@ -138,6 +148,7 @@
       {
         "id": "scorching_snap",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [1, 4, 9, 16, 25], "note": "expected LSSD: chance 5r% x (20r%) = 0.01 r^2 in % (proc +20%/r fire dmg with 5%/r chance); engine approximation of the proc as average"}], "confidence": "C", "note": "card 344 table p9; expected value of a proc, dummy-only effect of stun/knockback is zero on a lone dummy"},
         "name": "Scorching Snap",
         "description": "Chance to knock monsters back on hit dealing increased damage.",
         "maxRank": 5,
@@ -153,6 +164,7 @@
       {
         "id": "celestial_aid",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.06, 0.14, 0.24, 0.36, 0.5], "per": "hit", "note": "new whip on the dummy with chance 5r% per hit: extra hits = 0.05r*(1+0.20r) (new whip damage floor(dmg*(1+p10.s9%)), echo ignored). Excludes Whiplash chain of the new whip (passive 345 not in base): add 0.05r*(1+0.2r)*(n+1)*[253] separately if Whiplash is modelled"}], "confidence": "I", "note": "card table p10 + Runda 3 reguła 32 (new whip inherits 848-851 procs, not counted). Echo (p1) ignored", "plannerFix": "planner models a 20r% damage proc; game adds an extra whip object (hits the dummy) with damage (1+20r%) at 5r% chance per hit"},
         "name": "Celestial Aid",
         "description": "Chance to summon an additional whip at targets location on hit targeting a nearby monster.",
         "maxRank": 5,
@@ -168,28 +180,31 @@
       {
         "id": "solar_harvester",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [-0.36, 0.92, 2.84], "per": "use", "note": "transformation: n = 1+r orbiting whips each k = 0.32r of D, each hits the dummy once; total = n*k = (1+r)*0.32r; value = n*k - 1 so it replaces the base single whip hit and combines additively with p14. Alone: 0.64 / 1.92 / 3.84 hits per use"}], "confidence": "C", "note": "card 344 table p11 + reguła 18 (orbit does not clear map, one hit per whip). When p11 and p14 are both taken the loop count is shared, sum not replace", "plannerFix": "planner gives +32%/r damage plus +1 projectile/r; game: 1+r orbiting whips each at 32r% of D, total (1+r)*0.32r main hits per use"},
         "name": "Solar Harvester",
         "description": "Slash with multiple whips in an arc dealing a portion of the damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_count": 0 },
-          "perRank": { "of_total_damage": 32, "projectile_count": 1 }
+          "base": {"of_total_damage": 0, "projectile_count": 0},
+          "perRank": {"of_total_damage": 32, "projectile_count": 1}
         }
       },
       {
         "id": "blasting_whiplash",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.25, 1.5, 1.75], "per": "hit", "note": "explosion Explosion_Item_obj on EVERY whip hit (no chance), damage floor(dmg*(1+25r%)); value = 1+0.25r per base hit; explosion r 31.5 px hits dummy at 160 px (reguła 15)"}], "confidence": "C", "note": "card table p12 (asm: no chance roll), scale 0.8*(1+35r%) is I but irrelevant at 31.5 px reach", "plannerFix": "planner models fire_skill_damage +25%/r (multiplier); game adds a second explosion on every whip hit with 25r% of D, i.e. x(2+p12.s9%)"},
         "name": "Blasting Whiplash",
         "description": "Unleash a fiery explosion on hit dealing area of effect damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "fire_skill_damage": 25, "area_of_effect": 35 }
+          "base": {"fire_skill_damage": 0, "area_of_effect": 0},
+          "perRank": {"fire_skill_damage": 25, "area_of_effect": 35}
         }
       },
       {
         "id": "flaming_whip",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.756, 3.024, 6.804], "per": "hit", "note": "Exo_Solar_Dash_Flame_obj per proc: chance 18r% x 7 ticks (3 s / 0.5 s + 1) x dmg 60r% of D; value = 0.18r*7*0.6r per base hit (r3 = 0.54*7*1.8 = 6.8); slow [53]=3 s has no dummy DPS"}], "confidence": "C", "note": "card table p13 + reguła 14/15 (flame object on the dummy, tick period 0.5 s, 3 s life)", "plannerFix": "planner models one 60r% hit at 18r% chance; game spawns a flame object with 7 ticks of 60r% D per proc"},
         "name": "Flaming Whip",
         "description": "Chance to unleash flames at target location on hit dealing damage over time and slowing monsters.",
         "maxRank": 3,
@@ -206,19 +221,23 @@
       {
         "id": "whirlwhipper",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [-0.16, 1.24, 3.2], "per": "use", "note": "transformation: n = 2+r orbiting whips each k = 0.28r of D, total n*k = (2+r)*0.28r; value = n*k - 1 (replaces the base whip, combines additively with p11). Alone: 0.84 / 2.24 / 4.2 hits per use"}], "confidence": "C", "note": "card table p14 + Po R4 (e, reguła 37): playerEffect[182] = 7 (animation 7 Player_Top_Spin_Down, 24 frames @ 24 fps) is C (asm 0x146a64a4e), so every attack with p14 has the shorter lock: t_wyw = floor(15/S)+1, period (ceil(60/S)+1)/60 s = 61/51/41/31/25/21 frames at S = 1/1.2/1.5/2/2.5/3 instead of (ceil(72/S)+1) = 73/61/49/37/30/25 (engine side, not expressible here); n = 1 + p14.s9 = 2 + r with s6 = 1 is C; one hit per orbiting whip (window +-12.3 deg, Po R4 e)", "plannerFix": "planner gives +28%/r damage plus projectile count; game: (2+r) orbiting whips each at 28r% of D, total (2+r)*0.28r main hits per use"},
         "name": "Whirlwhipper",
         "description": "Perform a spinning attack with multiple whips.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 1, "of_total_damage": 0 },
-          "perRank": { "projectile_count": 1, "of_total_damage": 28 }
+          "base": {"projectile_count": 1, "of_total_damage": 0},
+          "perRank": {"projectile_count": 1, "of_total_damage": 28}
         }
       }
     ]
   },
   {
     "id": "solar_flare",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 3.0, "baseProjectiles": 3, "perExtraProjectile": 1.0, "confidence": "C", "note": "n = XSP(3+p1.s9) = 3 Exo_Solar_Flare_obj (Player_Ability_Parent, they do not hit themselves): each homes on the nearest enemy (dummy, ~40 frames of flight at 4.05 px/frame, 1.75 s lifetime) and on contact creates one Explosion_Item_obj (r 31.5 px, 1 hit, damage[3] = V1 = 7+8.5L) = 3 hits per cast (all flares reaching the dummy before 1.75 s is I). perExtraProjectile = 1.0 (each extra XSP flare = +1 explosion hit); p12 orbit, p11 Grand Flare, p14 Solar Orbs are transformations/subskills. p6 stacks are 0 on the dummy (it never dies)."},
     "classId": "exo",
     "name": "Solar Flare",
     "kind": "active",
@@ -227,13 +246,13 @@
     "tags": ["Cast", "Active", "Spell", "Projectile", "Explosion"],
     "movementDuringUse": 65,
     "range": 320,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "maxRank": 20,
     "requiresLevel": 1,
     "tree": "Solar Prophet",
     "position": { "row": 0, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 7.84, "perLevel": 9.16 },
+    "damageFormula": { "base": 7, "perLevel": 8.5 },
     "manaCostFormula": { "base": 3.95, "perLevel": 1.05, "rankIndexing": "fullRank" },
     "bonusSources": [
       { "source": "Solar Burst", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
@@ -252,50 +271,55 @@
       {
         "id": "solar_fireworks",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4], "note": "n = XSP(3 + p1.s9): +1 flare = +1 hit per rank (perExtraProjectile 1)"}], "confidence": "C", "note": "card 346 table p1; base 3 per use"},
         "name": "Solar Fireworks",
         "description": "Increases the projectile amount of solar flare.",
         "maxRank": 4,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "blue_flame_fire",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD +10%/r fire"}], "confidence": "C", "note": "card 346 table p2"},
         "name": "Blue Flame Fire",
         "description": "Increases the damage dealt by solar flare.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "rapidfire_cannoneer",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [3.43, 6.86, 10.29, 13.71, 17.14], "note": "castRate += 0.06r absolute (p3.s9/100, 6/r) on base castRate 1.75 (+FCR): 0.06r/1.75 in %; approximate at FCR 0"}], "confidence": "C", "note": "card 346 table p3 (TalentUseSetSpeed L566); equivalent to planner faster_cast_rate 6%/r"},
         "name": "Rapidfire Cannoneer",
         "description": "Increases cast rate when using solar flare.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 6 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 6}
         }
       },
       {
         "id": "god_slayer",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "projEffect[121] extra damage vs bosses; dummy is not a boss"}], "confidence": "C", "note": "card 346 table p4"},
         "name": "God Slayer",
         "description": "Increases damage dealt to bosses for solar flare.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bosses": 0 },
-          "perRank": { "extra_damage_bosses": 8 }
+          "base": {"extra_damage_bosses": 0},
+          "perRank": {"extra_damage_bosses": 8}
         }
       },
       {
         "id": "explosive_flares",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0375, 0.09, 0.1575, 0.24, 0.3375], "per": "hit", "requires": "everburning_fire", "note": "explosion Explosion_Item_obj with dmg*(1+25r%) at chance 3r%, only while target burns; value = 0.03r*(1+0.25r) per base hit. Assumes dummy burning up (p7 gives burning at 3r% per cast; uptime < 1 in reality, so this is an upper bound)"}], "confidence": "C", "note": "card 346 table p5 (ProjectileCollision20Exo L313-327)", "plannerFix": "planner gives a 25r% on-hit damage proc without the burning condition; game spawns an extra explosion only on burning enemies (dummy burns only through p7), with dmg*(1+25r%)"},
         "name": "Explosive Flares",
         "description": "Chance to unleash fiery explosions on hit if target is burning.",
         "maxRank": 5,
@@ -312,31 +336,25 @@
       {
         "id": "solars_edge",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "marks enemy with buff 82 (2 s); stacks on player (buff 159) come only from killing a marked enemy (ProjectileKill20Exo via Enemy_Parent_obj_Destroy_0); dummy never dies, so 0 LSSD and 0 extra flares"}], "confidence": "C", "note": "card Runda 4 exo/346#0 (C)", "plannerFix": "planner gives fire_skill_damage 8.75r and +1 projectile/r; in game stacks are granted only on killing a marked enemy, so 0 on a dummy"},
         "name": "Solar's Edge",
         "description": "Monster kills grant you a stack of solar´s edge increasing the damage and projectile amount of solar flare.",
         "maxRank": 4,
         "effects": {
-          "base": {
-            "fire_skill_damage": 0,
-            "projectile_count": 0,
-            "max_skill_stacks": 0
-          },
-          "perRank": {
-            "fire_skill_damage": 8.75,
-            "projectile_count": 1,
-            "max_skill_stacks": 1
-          }
+          "base": {"fire_skill_damage": 0, "projectile_count": 0, "max_skill_stacks": 0},
+          "perRank": {"fire_skill_damage": 8.75, "projectile_count": 1, "max_skill_stacks": 1}
         }
       },
       {
         "id": "everburning_fire",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [3, 6, 9, 12, 15], "note": "burning proc chance 3r% per cast (value = chance %); burning damage floor(dmg*15r%) per tick, 5 s, 1 tick/s (reports/dot_debuffs); DoT modelled separately by engine"}], "confidence": "C", "note": "card 346 table p7 (L194-195, [18] = floor(dmg*p7.s9%)); unlocks p5 requirement"},
         "name": "Everburning Fire",
         "description": "Chance to inflict burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 15 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -349,28 +367,31 @@
       {
         "id": "flaming_hands",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7%/r"}], "confidence": "C", "note": "card 346 table p8"},
         "name": "Flaming Hands",
         "description": "Decreases the mana cost of solare flare.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "celestial_step",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "reduced movement diminish while casting; no script read"}], "confidence": "I", "note": "card 346 table p9 (no dummy DPS)"},
         "name": "Celestial Step",
         "description": "Decreases movement diminish when using solar flare.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "burst_of_power",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.048, 0.21, 0.513, 0.984, 1.65], "per": "use", "note": "on cast chance 3r%: +r flares (+1/r) and fire dmg +15r% (LSSD); expected extra hits per use = 0.03r*((3+r)(1+0.15r) - 3) at p1 = 0 (base n = 3)"}], "confidence": "C", "note": "card 346 table p10 (L198-200); planner proc chance 3r, fire 15r, projectiles +1r agree; base n=3 assumed"},
         "name": "Burst of Power",
         "description": "Chance on cast to increase damage dealt and unleash additional solar flares.",
         "maxRank": 5,
@@ -386,34 +407,37 @@
       {
         "id": "grand_flare",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD +15%/r"}, {"kind": "set_hits", "byRank": [12, 12, 12], "note": "transformation: flares replaced by Grand Flare object; 4 salvos of n = 3 hits in the 2 s window per use (~ 4n per use, cooldown 4 s, not castRate). Engine must use cooldown 4 s for the period (no base cooldown in planner). Rank-independent: flareTimerMax ~ 30 frames"}, {"kind": "cooldown_s", "byRank": [4, 4, 4], "note": "transformation cooldown 4 s from the card note (base skill has none)"}], "confidence": "I", "note": "card 346 table p11 (asm flareTimerMax; cooldown 4 s); C/I per card", "plannerFix": "planner gives faster_cast_rate 25r (castRate) on Grand Flare; game replaces the cast with a 4 s cooldown skill (4 salvos x n hits), so the cast rate effect is wrong and the period should be the cooldown"},
         "name": "Grand Flare",
         "description": "Unleash a grand flare frequently spawning smaller flares. Solar flare has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "faster_cast_rate": 0 },
-          "perRank": { "fire_skill_damage": 15, "faster_cast_rate": 25 }
+          "base": {"faster_cast_rate": 0, "cooldown_added": 4, "subtree_damage": 0},
+          "perRank": {"faster_cast_rate": 25, "cooldown_added": 0, "subtree_damage": 15}
         }
       },
       {
         "id": "suns_orbit",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD +15%/r"}, {"kind": "set_hits", "byRank": [1.9, 1.9, 2.3], "note": "transformation: n = 3+2r flares orbit the player (isOrbital); spiral hits the dummy H(n): H(5)=1.9, H(7)=1.9, H(9)=2.3 (sim at 160 px, reguła 14); not n"}], "confidence": "I", "note": "card 346 table p12 (spiral sim); C/I per card", "plannerFix": "planner adds 2 projectiles per rank (each a full hit); game orbiting spiral hits the dummy about 1.9-2.3 times per use regardless of count"},
         "name": "Sun´s Orbit",
         "description": "Summon solar flares orbiting you for a short duration.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "fire_skill_damage": 15, "projectile_count": 2 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 2, "subtree_damage": 15}
         }
       },
       {
         "id": "searing_flares",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9], "note": "n += 3r flares (+3 hits per rank via perExtraProjectile 1)"}, {"kind": "damage_mult", "byRank": [1.3, 1.6, 1.9], "note": "fire break [970] = 30r% for 5 s (buff 9): fire damage x(1+0.30r) on the dummy, no DoT"}], "confidence": "C", "note": "card 346 table p13"},
         "name": "Searing Flares",
         "description": "Increases the amount of projectiles inflicting fire break on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_break": 0, "projectile_count": 0 },
-          "perRank": { "fire_break": 30, "projectile_count": 3 }
+          "base": {"fire_break": 0, "projectile_count": 0},
+          "perRank": {"fire_break": 30, "projectile_count": 3}
         },
         "proc": {
           "trigger": "on_hit",
@@ -426,12 +450,13 @@
       {
         "id": "solar_orbs",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [9, 30, 63], "note": "transformation: r orbs (cooldown 6.5 s); card hits per use r*(1+floor((3r-0.25)/1.25))*n = 3n / 10n / 21n with n = 3 flares; card's explicit r3 value 21n used (formula text would give 24n)"}, {"kind": "cooldown_s", "byRank": [6.5, 6.5, 6.5], "note": "transformation cooldown 6.5 s: GetTalentCooldown case 346, p14 -> A = 6.5 s (asm 0x143ce9d1c, FUN_14018c5a0 = assignment of the double 6.5, not an addition; with p11 + p14 the value is 6.5 s, not 4 + 6.5); base skill has none (Rodzaj i kadencja + JSON period)"}], "confidence": "I", "note": "card 346 table p14 (asm 0x14678a423/0x14678a495) + Rodzaj i kadencja (cooldown 6.5 s); C/I per card", "plannerFix": "planner gives 1 projectile/r, skill_duration +3r and cooldown_added 6; game: orbs form a separate 6.5 s cooldown salvo cycle (3n/10n/21n hits per use), cooldown 6.5 s"},
         "name": "Solar Orbs",
         "description": "Summon multiple small suns frequently unleashing solar flares. solar flare now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "skill_duration": 0 },
-          "perRank": { "projectile_count": 1, "skill_duration": 3 }
+          "base": {"projectile_count": 0, "skill_duration": 0, "cooldown_added": 6},
+          "perRank": {"projectile_count": 1, "skill_duration": 3, "cooldown_added": 0}
         }
       }
     ]
@@ -457,6 +482,9 @@
   {
     "id": "solar_dash",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 7.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "I", "note": "Reading A (the card's own numbers, 'dash ends at the dummy'): the flame trail (Exo_Solar_Dash_Flame_obj every 3 frames at the player, tick 0.5 s = 30 frames, destroyTimer 3 s, ellipse mask +-51 x +-41 px) puts k = 1 flame on the dummy at v = 12 px/frame: tools/tick_hits.py 178 30 = 6 hits (the card's 7 uses the superseded rule-20 formula) + the end-of-dash aura Pyromancer_Scorching_Aura_obj (r 190 px) = 1 hit -> 7 hits of V1 = 6.75*L. R4 348#1 found that the base dash does NOT stop on an enemy (it passes through; only p14 stops) and has no distance/time limit in code, so the real base trajectory is reading B: k = 3 flames at v = 12 -> 3 x 6 = 18 hits (plus an aura only if the dash happens to end near the dummy); k = 6.5 at v = 6, 12.5 at v = 3, 1.7 at v = 21 (I). Where the base dash ends is the missing piece. Dummy at 160 px = cursor on the dummy. perExtraProjectile = 0 (no extra projectiles in the base)."},
+    "usePeriod": {"kind": "charge", "extraFrames": 14, "trigger": false, "note": "No playerEffect[142] is written for talent 348 (skillsCharge writes it only for talent 22 with [321] > 0, asm 0x1460a7df1, and for 292, 0x1460ccc8f; TalentsExo 348 has none), so the [142] gate is open and the Movement tag (6) bypasses the [204] animation lock: period = max(ceil(60/S), T_c) frames, S = castRate (1.75 + FCR/100 + subskill bonuses), no floor(24/S)+1 trigger frames. T_c = frames until the dash stops, convention A (start 160 px from the dummy, ramp 0.7*v growing 2.5 %/frame, contact at 24 px, v = 12 px/frame, rank 20, no subskills) = 14 frames. The base dash has no end in code (reading B), so T_c is a convention (I). At S = 1.75 the cast floor ceil(60/S) = 35 frames binds (card writes 34.3), T_c binds only for S > 4.3; the cooldown part 60/S ticks with (1 + 0.005*h_eff) (rule 35, I). Subskills change v and hence T_c: p5 r1..5 (v = 10.2/8.4/6.6/4.8/3.0) 16/19/24/31/48 frames (only r5 binds at S = 1.75: period 48 instead of 35, DPS x0.71), p13 (v = 6) 26, p14 (v = 36) 6, p1/p10 r1..5 13/11/10/10/9 (see period_frames in those subskill entries; v of p1/p5/p10 adds, T_c does not). Source: Resztki po R4 C (reguła 37, tag 6/7) Solar Dash + JSON period."},
     "classId": "exo",
     "name": "Solar Dash",
     "kind": "active",
@@ -464,14 +492,14 @@
     "damageType": "fire",
     "tags": ["Cast", "Active", "Spell", "Movement", "Charge"],
     "movementDuringUse": 0,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "maxRank": 20,
     "requiresLevel": 8,
     "tree": "Solar Prophet",
     "position": { "row": 1, "col": 2 },
     "hitModel": { "object": "Exo_Solar_Dash_Flame_Create", "tickFrequency": 0.5, "lifetime": 3 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0.63, "perLevel": 8.37 },
+    "damageFormula": { "base": 0, "perLevel": 6.75 },
     "manaCostFormula": { "base": 5, "perLevel": 1.125 },
     "bonusSources": [
       { "source": "Solar Flare", "stat": "fire_skill_damage", "value": 15, "per": "skill_level" },
@@ -490,23 +518,25 @@
       {
         "id": "interstellar_traveller",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [-0.913, -1.6154, -2.1724, -2.625, -3.0], "per": "use", "note": "v x(1+15r%): flame density k = 12/v (k=1 at v=12); extra = 7 ticks per flame x (k-1), base flame counted as 7 (card), aura unchanged"}, {"kind": "period_frames", "byRank": [-1, -3, -4, -4, -5], "note": "charge time T_c under v = 12*(1+0.15r) = 13.8/15.6/17.4/19.2/21: 13/11/10/10/9 frames vs 14 at v = 12 (convention A, Resztki C; r2 11, r4 10, r5 9 from the card, r1 13 and r3 10 from the same ramp model, I); delta on the charge extraFrames; only matters when T_c exceeds ceil(60/S) (S > 4.3); v of p1/p5/p10 adds but T_c does not"}], "confidence": "I", "note": "card 348 table p1 + Resztki C (reguła 37) T_c table; density part unchanged", "plannerFix": "movement_speed +15%/r is right, but the planner does not convert speed into flame density k=12/v, so the dummy gain (negative here, fewer flames if v grows) is not modelled"},
         "name": "Interstellar Traveller",
         "description": "Increases the speed of solar dash.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 15 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 15}
         }
       },
       {
         "id": "burn_burn_burn",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [18, 36, 54, 72, 90], "note": "burning on every hit: floor(dmg*18r%) per tick (value = burn damage %/tick); applies to flames and aura; DoT modelled separately by engine"}], "confidence": "C", "note": "card 348 table p2 ([18] = floor(dmg*p2.s9%))"},
         "name": "Burn Burn BURN",
         "description": "Inflicts burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 18 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 18}
         },
         "proc": {
           "trigger": "on_hit",
@@ -519,12 +549,13 @@
       {
         "id": "solar_burst",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.25, 1.5, 1.75, 2.0, 2.25], "per": "use", "note": "end-of-dash explosion Explosion_Item_obj once per use: dmg*(1+25r%) (31.5 px around player 24-30 px from dummy)"}, {"kind": "dot", "byRank": [8, 16, 24, 32, 40], "note": "burning +dmg*8r% added to [18] of the explosion (per use)"}], "confidence": "C", "note": "card 348 table p3 (L1227-1242)", "plannerFix": "planner applies 25%/r of total damage on EVERY hit (on_hit proc); game adds one explosion per dash end (per use), dmg*(1+25r%)"},
         "name": "Solar Burst",
         "description": "Unleash a fiery explosion at the end dealing increased damage and inflicting burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "of_total_damage": 0, "increased_burning_damage": 0 },
-          "perRank": { "of_total_damage": 25, "increased_burning_damage": 8 }
+          "base": {"of_total_damage": 0, "increased_burning_damage": 0},
+          "perRank": {"of_total_damage": 25, "increased_burning_damage": 8}
         },
         "proc": {
           "trigger": "on_hit",
@@ -537,28 +568,31 @@
       {
         "id": "restoring_flames",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "life/mana replenish buff 160 (3 s); no dummy DPS"}], "confidence": "C", "note": "card 348 table p4"},
         "name": "Restoring Flames",
         "description": "Gain increased life and mana replenish on cast for a short duration when solar form is active.",
         "maxRank": 5,
         "effects": {
-          "base": { "life_replenish_pct": 0, "mana_replenish_pct": 0 },
-          "perRank": { "life_replenish_pct": 25, "mana_replenish_pct": 25 }
+          "base": {"life_replenish_pct": 0, "mana_replenish_pct": 0},
+          "perRank": {"life_replenish_pct": 25, "mana_replenish_pct": 25}
         }
       },
       {
         "id": "cooldown_lap",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.2353, 3.0, 5.7273, 10.5, 21.0], "per": "use", "note": "v x(1-15r%): flame density k = 12/v; r5 v=3 gives k 3-4 per card (formula 4 used)"}, {"kind": "period_frames", "byRank": [2, 5, 10, 17, 34], "note": "charge time T_c under v = 12*(1-0.15r) = 10.2/8.4/6.6/4.8/3.0: 16/19/24/31/48 frames vs 14 (convention A: 160 px start, ramp 0.7*v +2.5 %/frame, contact at 24 px; card lists 19/24/31/48, r1 = 16 from the same model, I); period = max(ceil(60/S), 14 + delta): at S = 1.75 (35 frames) only r5 binds (48 frames, DPS x0.73 vs 35); at S = 2.5 (24 frames) r3+ bind"}], "confidence": "I", "note": "card 348 table p5 + Resztki C (reguła 37): T_c(v) and period max(ceil(60/S), T_c); density part unchanged", "plannerFix": "movement_speed -15%/r is right, but the planner does not convert it into flame density k=12/v (about 1.2 to 4 flames here), so extra flame ticks are missing"},
         "name": "Cooldown Lap",
         "description": "Decreases the speed of solar dash.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": -15 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": -15}
         }
       },
       {
         "id": "plasma_dash",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "stun on hit (chance 3r%), CC only"}], "confidence": "C", "note": "card 348 table p6 (L363-364, [51]=3 s)"},
         "name": "Plasma Dash",
         "description": "Chance to stun targets on hit.",
         "maxRank": 5,
@@ -571,58 +605,55 @@
       {
         "id": "to_ashes",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD +10%/r fire"}], "confidence": "C", "note": "card 348 table p7"},
         "name": "To Ashes",
         "description": "Increases the damage dealt by solar dash.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "protective_cover",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "utility", "note": "damage taken -7%/r (buff 161)"}], "confidence": "C", "note": "card 348 table p8"},
         "name": "Protective Cover",
         "description": "Gain increased damage reduction for a short duration when using solar dash.",
         "maxRank": 5,
         "effects": {
-          "base": { "all_damage_taken_reduced_pct": 0 },
-          "perRank": { "all_damage_taken_reduced_pct": 7 }
+          "base": {"all_damage_taken_reduced_pct": 0},
+          "perRank": {"all_damage_taken_reduced_pct": 7}
         }
       },
       {
         "id": "intense_flames",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, 1, 2, 4, 6], "per": "use", "note": "flame tick period T = 0.5(1-10r%) s; ticks per flame 1+floor(3/T): 7, 8, 9, 11, 13 (r5 T=0.25); extra over the card's 7 ticks"}], "confidence": "C", "note": "card 348 table p9 (T = max(0.5(1-p9.s9%), 0.1))", "plannerFix": "planner gives faster_cast_rate +10%/r, but the game shortens the flame tick period (more ticks per flame: 7 to 13), not the cast rate"},
         "name": "Intense Flames",
         "description": "Increases the tick frequency of solar dash flames.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 10 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 10}
         }
       },
       {
         "id": "shooting_star",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [-0.913, -1.6154, -2.1724, -2.625, -3.0], "per": "use", "note": "v x(1+15r%) flame density as p1 (k=12/v)"}, {"kind": "extra_hits", "byRank": [0.25, 0.5, 0.9, 1.83, 3.6125], "per": "use", "note": "on dash end p10.s11 = n balls (n = 2, 4, 6, 8, 10 for r = 1..5) at angles [154] + 360*i/n, each dmg*25r% (directions C, start 8 px from the player). Aim through the dummy centre (rule 38, main result): balls hitting the dummy H10 = 1.00 / 1.00 / 1.20 / 1.83 / 2.89 per use (Po R4 e; oriented rectangle 97x57, ramp 0.7*v +2.5 %/frame, dash ends at 24 px) -> value = H10*0.25r = 0.25 / 0.5 / 0.9 / 1.83 / 3.6125. Resztki B re-simulation (dashp10.py) gives 1.00 / 1.00 / 1.00 / 2.17 / 2.38 and the card keeps its values; the result depends on the stop distance of the dash (24-28 px: the +-45 deg balls also hit, >= 32 px: only ball 0), which is not fixed by code (I, missing). Cursor (x, y-24) variant (note only): 0.71 / 0.90 / 1.52 / 1.80 / 2.33."}, {"kind": "period_frames", "byRank": [-1, -3, -4, -4, -5], "note": "v x(1+15r%) as p1: T_c 13/11/10/10/9 frames vs 14 (see p1); only binds when T_c exceeds ceil(60/S)"}], "confidence": "I", "note": "Po R4 (e, reguła 26+38) Solar Dash p10 + Resztki B (p10 still I) + Resztki C (T_c); R4 348#0 for the C directions", "plannerFix": "planner gives 2 projectiles/r and 25%/r total damage; game: r-dependent ball count (2r balls, 1.00 / 1.00 / 1.20 / 1.83 / 2.89 hit the dummy) with 25r% each, and speed changes the flame density"},
         "name": "Shooting Star",
         "description": "Increases the speed of solar dash unleashing fireballs around you at the end dealing a portion of the damage.",
         "maxRank": 5,
         "effects": {
-          "base": {
-            "movement_speed": 0,
-            "of_total_damage": 0,
-            "projectile_count": 0
-          },
-          "perRank": {
-            "movement_speed": 15,
-            "of_total_damage": 25,
-            "projectile_count": 2
-          }
+          "base": {"movement_speed": 0, "of_total_damage": 0, "projectile_count": 0},
+          "perRank": {"movement_speed": 15, "of_total_damage": 25, "projectile_count": 2}
         }
       },
       {
         "id": "bursting_flames",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.525, 2.1, 4.725], "per": "use", "note": "each trail flame destroy spawns p11.s9 = 5r balls with chance 15r%; the balls of ALL trail flames count: sum f = 0.70 (v = 12) per use (oriented rectangle, Po R4 e; was 1.1) -> 0.70 x 0.15r x 5r = 0.525 r^2 hits per use (dmg = flame dmg). Resztki B re-simulation (p11.py, 720 directions): sum f = 0.65 (v = 12) / 1.24 (v = 6) / 2.17 (v = 3) vs the card's 0.70 / 1.27 / 2.49; the card keeps 0.70 (differences <= 8 % at v = 12 and 6, 13 % at v = 3)."}], "confidence": "I", "note": "Po R4 (e, reguła 26) Solar Dash p11 + Resztki B (p11: heading says I -> C +-10 %, text says I stays: the exact stop step of the dash is missing; kept I)", "plannerFix": "planner gives projectile_count 5r at chance 15r with perExtraProjectile 0, so nothing reaches the dummy; game: balls from each flame, expected 1.1*0.15r*5r hits per use"},
         "name": "Bursting Flames",
         "description": "Flames now have a chance to explode into multiple fire balls into all directions when expiring.",
         "maxRank": 3,
@@ -638,34 +669,37 @@
       {
         "id": "solar_carnage",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "two balls per 3 frames go backward behind the player (directions [154]-180 +- [859]); 0 hits on the dummy; [858] only a flag"}], "confidence": "C", "note": "card Runda 4 exo/348 p12 (L508-534)", "plannerFix": "planner gives fire_skill_damage 40%/r, but the card says the value does not multiply damage and the balls fly away from the dummy (0 hits)"},
         "name": "Solar Carnage",
         "description": "Rapidly unleash fire balls arcing on your sides while dashing.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 40 }
+          "base": {"fire_skill_damage": 0},
+          "perRank": {"fire_skill_damage": 40}
         }
       },
       {
         "id": "the_sun_goddess",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [7, 7, 7], "per": "use", "note": "transformation v x0.5: flame density k = 2, extra = 7 ticks x (2-1)"}, {"kind": "extra_hits", "byRank": [0.3, 1.75, 3.6], "per": "use", "note": "3r orbs (120 px around player, dmg*(1+20r%)); orbs die at dash end; hits on dummy ~ r-0.75 per use, value = (r-0.75)*(1+0.2r)"}, {"kind": "period_frames", "byRank": [12, 12, 12], "note": "transformation v x0.5 = 6 px/frame: charge time T_c = 26 frames vs 14 (Resztki C); binds when ceil(60/S) < 26, i.e. S > 2.3 (at S = 1.75 the 35-frame cast floor binds, no change)"}], "confidence": "I", "note": "card 348 table p13 (orbs sim, k=2 at v=6) + Resztki C (reguła 37) T_c(v = 6) = 26 frames", "plannerFix": "planner gives 3 projectiles/r and fire 20%/r on all hits; game: v x0.5 (2 flames) plus orbs that hit the dummy only r-0.75 times per use"},
         "name": "The Sun Goddess",
         "description": "Summon multiple orbiting solar orbs dealing increased damage but decreasing your dashing speed.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "fire_skill_damage": 20, "projectile_count": 3 }
+          "base": {"fire_skill_damage": 0, "projectile_count": 0},
+          "perRank": {"fire_skill_damage": 20, "projectile_count": 3}
         }
       },
       {
         "id": "photon_dash",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [10.5, 14.0, 17.5], "per": "use", "note": "transformation v x3, stops at first contact; each aura hit creates one 7-tick flame with dmg*(1+50r%) under the target: +7 hits x (1+0.5r). Flame trail at v x3 not modelled (card gives none)"}, {"kind": "period_frames", "byRank": [-8, -8, -8], "note": "transformation v x3 = 36 px/frame: T_c = 6 frames vs 14 (Resztki C); the dash stops at the first contact (C), so convention A holds here; never binds (ceil(60/S) >= 6 for S <= 10)"}], "confidence": "C", "note": "card Runda 4 exo/348#1 (C) + Resztki C (reguła 37) T_c(v = 36) = 6 frames", "plannerFix": "planner gives fire_skill_damage 50%/r on all hits; game: a 7-tick flame at dmg*(1+50r%) per dash end (only once per use), dash stops at first contact"},
         "name": "Photon Dash",
         "description": "Dash with the speed of light unleashing burning flames below target on collision dealing increased damage over time.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 50 }
+          "base": {"fire_skill_damage": 0},
+          "perRank": {"fire_skill_damage": 50}
         }
       }
     ]
@@ -698,7 +732,7 @@
     "damageType": "fire",
     "tags": ["Cast", "Active", "Buff", "Area of Effect", "Shape Shift"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 70,
     "effectDuration": 25,
     "maxRank": 20,
@@ -763,6 +797,8 @@
   {
     "id": "supernova",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "One Exo_Supernova_obj around the player (singleHit, precise disc r = 158.5 px x scale growing 0.1 -> 1.5 by 0.15/frame, i.e. 238 px): the dummy at 160 px is inside after ~6 frames = 1 hit per cast (no map clear). Cooldown 10 s sets the period."},
     "classId": "exo",
     "name": "Supernova",
     "kind": "active",
@@ -770,14 +806,14 @@
     "damageType": "fire",
     "tags": ["Cast", "Active", "Spell", "Area of Effect"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 10,
     "maxRank": 20,
     "requiresLevel": 30,
     "tree": "Solar Prophet",
     "position": { "row": 4, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 13 }],
-    "damageFormula": { "base": 0.11, "perLevel": 23.89 },
+    "damageFormula": { "base": 0, "perLevel": 16.5 },
     "manaCostFormula": { "base": 13, "perLevel": 1.125 },
     "bonusSources": [
       { "source": "Solar Flare", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
@@ -796,34 +832,37 @@
       {
         "id": "white_dwarf_star",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD +8%/r fire"}], "confidence": "C", "note": "card 352 table p1"},
         "name": "White Dwarf Star",
         "description": "Increases the damage dealt by supernova.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "renewing_flare",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-7, -14, -21, -28, -35], "note": "base cooldown 10 s x (1-7r%)"}], "confidence": "C", "note": "card 352 table p2 (GetTalentCooldown cd = 10 - 10*p2.s9%)"},
         "name": "Renewing Flare",
         "description": "Decreases the cooldown of supernova.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 7 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 7}
         }
       },
       {
         "id": "penetrating_blast",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "elemental break 12r% for 5 s on hit (chance 3r%) multiplies OTHER skills' hits; nova period 10 s > 5 s, so 0 for own hits"}], "confidence": "C", "note": "card 352 table p3 (buff 13, [986])"},
         "name": "Penetrating Blast",
         "description": "Chance to inflict elemental break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "elemental_break": 0 },
-          "perRank": { "elemental_break": 12 }
+          "base": {"elemental_break": 0},
+          "perRank": {"elemental_break": 12}
         },
         "proc": {
           "trigger": "on_hit",
@@ -839,6 +878,7 @@
       {
         "id": "chained_explosions",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "use", "note": "chance 4r% to cast a second nova (count += 1): extra = 0.04r hits per use"}], "confidence": "C", "note": "card 352 table p4 (asm count, L514-515)"},
         "name": "Chained Explosions",
         "description": "Chance on cast to unleash an additional supernova.",
         "maxRank": 5,
@@ -854,23 +894,25 @@
       {
         "id": "fight_the_gravity",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "maxScale x(1+15r%) = reach 238*(1+p5%) px; dummy at 160 px already inside reach"}], "confidence": "C", "note": "card 352 table p5"},
         "name": "Fight the Gravity",
         "description": "Increases the area of effect radius of supernova.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "weakening_nova",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "fire break 12r% for 5 s on hit (buff 9) multiplies OTHER fire skills; nova hits once per 10 s so 0 for own hits"}], "confidence": "C", "note": "card 352 table p6 ([970])"},
         "name": "Weakening Nova",
         "description": "Inflicts fire break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_break": 0 },
-          "perRank": { "fire_break": 12 }
+          "base": {"fire_break": 0},
+          "perRank": {"fire_break": 12}
         },
         "proc": {
           "trigger": "on_hit",
@@ -883,6 +925,7 @@
       {
         "id": "chain_reactions",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0045, 0.018, 0.0405, 0.072, 0.1125], "per": "hit", "note": "explosion with dmg*15r% at chance 3r% per hit: value = 0.03r*0.15r per base hit (card: +p7.s10%*p7.s9%*dmg)"}], "confidence": "C", "note": "card 352 table p7 (ProjectileCollision20Exo L123-137)"},
         "name": "Chain Reactions",
         "description": "Chance to unleash a fiery blast on hit dealing a portion of the damage.",
         "maxRank": 5,
@@ -898,45 +941,49 @@
       {
         "id": "fiery_frenzy",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "other", "byRank": [5, 10, 15, 20, 25], "note": "buff 162: +10r% fire damage for 5 s after each cast; time-averaged at uptime 5/10 s = 0.5 x 10r% (value in %). Applies to other fire skills; not to the nova's own hit (buff starts after cast). Uptime falls with p2 cooldown reduction"}], "confidence": "C", "note": "card 352 table p8 (L529)", "plannerFix": "planner treats the fire damage as permanent fire_skill_damage 10r%; in game it is a buff for 5 s after the cast (uptime 5/cooldown, about 50%)"},
         "name": "Fiery Frenzy",
         "description": "Gain increased fire skill damage for a short duration when using supernova.",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 10 }
+          "base": {"fire_skill_damage": 0},
+          "perRank": {"fire_skill_damage": 10}
         }
       },
       {
         "id": "blast_right_trough",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [3, 6, 9, 12, 15], "note": "spell crit chance +3%/r; crit damage +20%/r ([1003] = 20r)"}], "confidence": "C", "note": "card 352 table p9"},
         "name": "Blast Right Trough",
         "description": "Chance to critically hit dealing increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 3, "spell_crit_damage": 20 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 3, "spell_crit_damage": 20}
         }
       },
       {
         "id": "targeted_cosmic_event",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "nova stays at target point (ignoreHost); range +20r per planner stat, no DPS read in script"}], "confidence": "I", "note": "card 352 table p10 (C ignoreHost, I range)"},
         "name": "Targeted Cosmic Event",
         "description": "Supernova can be casted on target location with increased cast range.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 20 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 20}
         }
       },
       {
         "id": "particle_outflux",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [3, 6, 7], "per": "hit", "note": "each nova hit spawns Exo_Solar_Dash_Fireball_obj at the enemy with dmg (1.0), bounces 3r (capped 7); its hits on the dummy = min(max(1,[863]),7) per nova hit (r1 3, r2 6, r3 7)"}, {"kind": "dot", "byRank": [35, 70, 105], "note": "ball burning floor(dmg*35r%) per tick (DoT, modelled separately)"}], "confidence": "I", "note": "card 352 table p11 (reguła 14/15 sim); C/I per card", "plannerFix": "planner only adds burning 35r% and 3r bounces; game spawns a homing fireball per nova hit that hits the dummy min(3r,7) times at full damage"},
         "name": "Particle Outflux",
         "description": "Unleash multiple fire balls bouncing between targets on hit inflicting burning.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_burning_damage": 0, "projectile_bounces": 0 },
-          "perRank": { "increased_burning_damage": 35, "projectile_bounces": 3 }
+          "base": {"increased_burning_damage": 0, "projectile_bounces": 0},
+          "perRank": {"increased_burning_damage": 35, "projectile_bounces": 3}
         },
         "proc": {
           "trigger": "on_hit",
@@ -949,17 +996,19 @@
       {
         "id": "solar_shockwave",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD +50%/r; knockback and slow have no DPS"}], "confidence": "C", "note": "card 352 table p12"},
         "name": "Solar Shockwave",
         "description": "Supernova knocks monsters back with force dealing increased damage and slowing them.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 50 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 50}
         }
       },
       {
         "id": "connected_by_sun",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.601, 6.936, 13.005], "per": "hit", "note": "Po R4 (d, reguła 41) + Resztki B: the trail Exo_Supernova_Connected_obj is created at the PLAYER (owner (x, y) + lengthdir(12, dir to enemy)), flies 5 px/frame to the dummy and drops a flame every 45 px (distance > 40 px from the previous point); flames Exo_Solar_Dash_Flame_obj (ellipse x [-52, 50], y [-40, 42]*0.5, destroyTimer 3 s, tick 0.5 s = 6 hits per flame, tick_hits.py 178 30). Simulation (conn.py), dummy at (0, 6) + D*u: flames at 57/102/147/192 px from the player cover it 1.0 flames at D = 150, 1.71 flames at D = 160 (10.2 hits), 2.0 at D >= 165 (12 hits); card range 8-12, ~10. Value = chance 17r% x 10.2 hits x (1 + 50r%) per nova hit (one hit per use): r1 0.17*10.2*1.5 = 2.601, r2 6.936, r3 13.005. The fourth flame (192 px) sits on the ellipse edge (32-37 px), so 10.2 vs 12 depends on mask pixels (I)."}], "confidence": "I", "note": "Po R4 (d, reguła 41) Supernova p13 + Resztki B (p13: 'I -> C/I', I for the 4th flame at the ellipse edge); was zero_on_dummy (trail from the target)", "plannerFix": "planner gives a 50r% damage proc at chance 17r%; game: the trail starts at the player and flies to the enemy, ~10 flame hits (8-12) of dmg*(1+50r%) per proc on a dummy at 160 px"},
         "name": "Connected by Sun",
         "description": "Unleash trails of flaming fire towards monsters on hit dealing a portion of the damage.",
         "maxRank": 3,
@@ -975,6 +1024,7 @@
       {
         "id": "planetary_collision",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.18, 0.42, 0.72], "per": "hit", "note": "asteroid on proc: chance 15r% x (1+20r%) per hit; value = 0.15r*(1+0.2r) (asteroid explosion hits dummy at 160 px in the card)"}], "confidence": "C", "note": "card 352 table p14 (L168-179)", "plannerFix": "planner models a 20r% fire damage proc; game spawns an asteroid object with damage (1+20r%) on each proc (an extra hit)"},
         "name": "Planetary Collision",
         "description": "Chance to rain scorching comets from the sky at monsters on hit dealing increased damage.",
         "maxRank": 3,
@@ -992,6 +1042,9 @@
   {
     "id": "collision",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Leap onto the cursor (dummy within the landing zone, rule 24): 1 hit from the landing Amazon_Leaping_Ambush_obj (precise mask r~106 px x scale) + 1 hit from Viking_Charge_obj (80x80 disc, created in the first frame of the 0-frame charge at the landing spot, dummy 24-28 px from its centre) = 2 hits, both damage[2] = LTD(V1) = 9.5*L cold (the ring's LTD call with default arguments is I). Stun [51] and launch [110] on the dummy add no damage."},
+    "usePeriod": {"kind": "leap", "extraFrames": 41, "note": "Po R4 (reguła 37/28, e): t_wyw = floor(24/c) + 1 = 14 frames (these are the trigger frames the engine adds); flight: g = pSt[42] = 0.35 (I), v_z = sqrt(2*0.35*72) = 7.10, z_n = n*v - g*n*(n+1)/2 first below 0 at n = 40 (continuous 40.6) + 1 transition frame of [142] (convention viking/10#0, I) = 41 frames after the trigger; the charge lasts 0 frames; casting is blocked in flight (rule 30); the animation lock (43 frames) is shorter than the jump period, so no attack-lock floor applies. Period = 14 + 41 = 55 frames = 0.917 s at c = 1.75 (was t_wyw 7/14 + 40.6 = 0.84-1.00 s). DPS = 2*LTD/0.917 s. No in-flight effects for 353 (R3 353#0). The card writes the formula as floor(24/c)+41 but its number 55 = (floor(24/c)+1)+41."},
     "classId": "exo",
     "name": "Collision",
     "kind": "active",
@@ -999,13 +1052,13 @@
     "damageType": "cold",
     "tags": ["Cast", "Active", "Spell", "Area of Effect"],
     "movementDuringUse": 0,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "maxRank": 20,
     "requiresLevel": 1,
     "tree": "Lunar Prophet",
     "position": { "row": 0, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0.8, "perLevel": 10.18 },
+    "damageFormula": { "base": 0, "perLevel": 9.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1.125 },
     "bonusSources": [
       { "source": "Lunar Form", "stat": "cold_skill_damage", "value": 12.5, "per": "skill_level" },
@@ -1016,7 +1069,10 @@
   },
   {
     "id": "tsunami",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.925, "confidence": "C", "note": "n = XSP(1+p12.s9) = 1 Exo_Tsunami_obj (oriented rectangle x in [-110,131]*S, y in [-114,124]*S, S = 0.75; 16 px in front of the player, accelerates to 4.5 px/frame, lives 28 animation frames / 18 fps = 93 frames, ~376 px): the wave reaches the dummy at 160 px in frame ~22, no map clear = 1 hit per wave (the p13 return trip is a subskill). perExtraProjectile = 0.925 (was 1.0): extra XSP waves fan out 18 deg apart and a wave hits when 160*|sin(delta)| <= 119*S + 12, i.e. delta <= 39 deg. Resztki D (rule 38/41): the waves start at owner (x, y) and the direction is taken from (x, y+6), so the outer waves at +-36 deg lie 94 +- 6 px from the axis (threshold on the negative side 97.5): H(n) = 1, 2, 3, 4, 4.7, 4, 4.7 for n = 1..7 (was 1, 2, 3, 4, 5, 4, 5); slope (4.7 - 1)/4 over the first 4 extras. H(5) and H(7) rest on a 3-6 px margin (simulation tsu.py, I). p4 ramping does not act on the base hit (first contact before frame 30)."},
     "classId": "exo",
     "name": "Tsunami",
     "kind": "active",
@@ -1025,13 +1081,13 @@
     "tags": ["Cast", "Active", "Spell", "Projectile", "Area of Effect"],
     "movementDuringUse": 65,
     "range": 320,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "maxRank": 20,
     "requiresLevel": 1,
     "tree": "Lunar Prophet",
     "position": { "row": 0, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 6, "perLevel": 13 },
+    "damageFormula": { "base": 6, "perLevel": 12 },
     "manaCostFormula": { "base": 5, "perLevel": 1.125 },
     "bonusSources": [
       { "source": "Collision", "stat": "cold_skill_damage", "value": 10, "per": "skill_level" },
@@ -1050,23 +1106,25 @@
       {
         "id": "heavy_water",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [11, 22, 33, 44, 55], "note": "LSSD +11%/r cold"}], "confidence": "C", "note": "card 355 table p1"},
         "name": "Heavy Water",
         "description": "Increases the damage dealt by tsunami.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 11 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 11}
         }
       },
       {
         "id": "arctic_aqua",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [5, 10, 15, 20, 25], "note": "frostbite chance 5r% per hit (value = chance %); frostbite damage floor(dmg*30r%) per tick (cold DoT, reports/dot_debuffs); DoT modelled separately"}], "confidence": "C", "note": "card 355 table p2 ([35]); unlocks p7"},
         "name": "Arctic Aqua",
         "description": "Chance to inflict frostbite on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_frost_bite_damage": 0 },
-          "perRank": { "increased_frost_bite_damage": 30 }
+          "base": {"increased_frost_bite_damage": 0},
+          "perRank": {"increased_frost_bite_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1079,28 +1137,31 @@
       {
         "id": "water_walker",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "movement speed +20%/r buff 307"}], "confidence": "C", "note": "card 355 table p3"},
         "name": "Water Walker",
         "description": "Gain increased movement speed for a short duration when using tsunami.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 20 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 20}
         }
       },
       {
         "id": "ramping_waves",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "damage[2] x(1+6.5r%) every 30 frames from frame 30; first contact with the dummy at 160 px is ~frame 22, so the wave's hit is x1. Only the p13 return hit (~frame 117) carries (1+p4)^3, counted in p13 note"}], "confidence": "C", "note": "card 355 table p4 (R3, asm 0x147e87715-0x147e87b7c)", "plannerFix": "planner gives cold_skill_damage 6.5%/r as a constant, but the ramp steps every 30 frames from frame 30 and the dummy hit at ~frame 22 gets x1"},
         "name": "Ramping Waves",
         "description": "Increases the damage dealt by tsunami over time.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 6.5 }
+          "base": {"cold_skill_damage": 0},
+          "perRank": {"cold_skill_damage": 6.5}
         }
       },
       {
         "id": "waterspout",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.01, 0.04, 0.09, 0.16, 0.25], "per": "hit", "note": "waterspout on hit with chance 4r%; its destroy spawns Explosion_Item_obj with dmg*25r% on the dummy; value = 0.04r*0.25r per hit"}], "confidence": "C", "note": "card 355 table p5 (Exo_Tsunami_Waterspout_obj Destroy_0)"},
         "name": "Waterspout",
         "description": "Chance to unleash a burst of water on hit dealing a portion of the damage.",
         "maxRank": 5,
@@ -1116,108 +1177,109 @@
       {
         "id": "chaining_waves",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [4.57, 9.14, 13.71, 18.29, 22.86], "note": "castRate += 0.08r absolute (p6.s9/100) on base 1.75: approximated as percent; wave projectile speed +12.5%/r has no dummy DPS"}], "confidence": "C", "note": "card 355 table p6 (TalentUseSetSpeed L567)"},
         "name": "Chaining Waves",
         "description": "Increases cast rate and projectile speed when using tsunami.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0, "projectile_speed": 0 },
-          "perRank": { "faster_cast_rate": 8, "projectile_speed": 12.5 }
+          "base": {"faster_cast_rate": 0, "projectile_speed": 0},
+          "perRank": {"faster_cast_rate": 8, "projectile_speed": 12.5}
         }
       },
       {
         "id": "salt_balance",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "requires": "arctic_aqua", "note": "extra damage vs frostbitten (185 = 15r%); only while the dummy is frostbitten by p2 (or other source): full multiplier applies only on frostbite uptime"}], "confidence": "C", "note": "card 355 table p7 ([185])"},
         "name": "Salt Balance",
         "description": "Increases damage dealt to frostbitten targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_frost_bitten": 0 },
-          "perRank": { "extra_damage_frost_bitten": 15 }
+          "base": {"extra_damage_frost_bitten": 0},
+          "perRank": {"extra_damage_frost_bitten": 15}
         }
       },
       {
         "id": "giant_waves",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "wave scale S = 0.75(1+20r%): wider fan coverage, matters only with extra waves (n>1); alone 0 on dummy; with p12 the hit threshold widens"}], "confidence": "C", "note": "card 355 table p8 (L699)"},
         "name": "Giant Waves",
         "description": "Increases the size of tsunami.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 20 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 20}
         }
       },
       {
         "id": "asphyxiating_depths",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [4, 8, 12, 16, 20], "note": "spell crit chance +4%/r; crit damage +25%/r ([1004] += 4r, [1003] += 25r)"}], "confidence": "C", "note": "card 355 table p9"},
         "name": "Asphyxiating Depths",
         "description": "Chance to critically hit dealing increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 4, "spell_crit_damage": 25 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 4, "spell_crit_damage": 25}
         }
       },
       {
         "id": "beyond_the_horizon",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "image_speed set to 1-15r% but reset each frame by Begin Step, so lifetime unchanged; only maxSpeed -12.5%/r: range 376 px to 164 px at r5, first contact later; dummy at 160 px still hit"}], "confidence": "C", "note": "card 355 table p10 (R3 exo/355#0)", "plannerFix": "planner gives skill_duration +15%/r, but in game the wave lifetime is not extended (Begin Step resets image_speed); only the projectile speed drops (-12.5%/r)"},
         "name": "Beyond the Horizon",
         "description": "Increases the duration of tsunami decreasing its projectile speed.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0, "projectile_speed": 0 },
-          "perRank": { "skill_duration": 15, "projectile_speed": -12.5 }
+          "base": {"skill_duration": 0, "projectile_speed": 0},
+          "perRank": {"skill_duration": 15, "projectile_speed": -12.5}
         }
       },
       {
         "id": "trembling_tidalwave",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [75, 150, 225], "note": "LSSD +75%/r cold; image_yscale +2 (taller mask): alone no extra hits (single wave); with p12 all fan waves hit (cross term n - H(n), not representable per rank here)"}], "confidence": "C", "note": "card 355 table p11 (L723, [110] = 55 knockback no DPS)"},
         "name": "Trembling Tidalwave",
         "description": "Increases the width of tsunami knocking monsters up dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 75 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 75}
         }
       },
       {
         "id": "watery_turbulence",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9], "note": "n = XSP(1+3r) waves (+3 per rank via perExtraProjectile)"}, {"kind": "extra_hits", "byRank": [1, 1.85, 1], "per": "use", "replacesProjectileHits": true, "note": "card H(n) with S*0.5 = 0.375 (waves 18 deg apart, delta <= 21 deg; Resztki D: waves start at owner (x, y), direction from (x, y+6)): total hits on the dummy = 2 (n = 4), 2.85 (n = 7), 2 (n = 10); odd n >= 3 give 2.85 (+-18 deg waves lie 49.4 +- 6 px from the axis vs threshold 54.75), even n unchanged; extra = H - 1 (base 1 wave)"}, {"kind": "damage_pct", "byRank": [20, 40, 60], "note": "LSSD +20%/r cold"}], "confidence": "I", "note": "Resztki D (Tsunami p12: odd n >= 3 -> 2.85, was 3) + Po R4 (a, reguła 38); C/I per card (threshold margin 5 px, I)", "plannerFix": "planner adds 3 projectiles per rank as full hits (projectile_count); game: fan of waves 18 deg apart, only 2 or 3 hit the dummy at 160 px (H = 2 for even n, 3 for odd n >= 3), so H-1 extra hits"},
         "name": "Watery Turbulence",
         "description": "Unleash multiple smaller tsunamis.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "cold_skill_damage": 0 },
-          "perRank": { "projectile_count": 3, "cold_skill_damage": 20 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 3, "subtree_damage": 20}
         }
       },
       {
         "id": "ocean_pullback",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.5, 2.0, 2.5], "per": "use", "note": "return wave hits the dummy with dmg*(1+50r%) (card: x(2+p13.s9%) total); extra = 1+0.5r per use; with p4 the return hit also carries (1+p4)^3 (not included); return wave mask +15r% scale"}], "confidence": "C", "note": "card 355 table p13 (Other_7 oceanPullBack; mask +-89 px)", "plannerFix": "planner gives cold_skill_damage +50%/r as a multiplier; game adds a second wave hit on the return trip with dmg*(1+50r%), i.e. (1+0.5r) extra hits"},
         "name": "Ocean Pullback",
         "description": "Tsunami waves return back to you with increased damage and size.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "projectile_size": 0 },
-          "perRank": { "cold_skill_damage": 50, "projectile_size": 15 }
+          "base": {"cold_skill_damage": 0, "projectile_size": 0},
+          "perRank": {"cold_skill_damage": 50, "projectile_size": 15}
         }
       },
       {
         "id": "the_last_water_bender",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD +25%/r cold; maxSpeed +25%/r (no DPS effect)"}, {"kind": "damage_mult", "byRank": [1.45, 1.9, 2.35], "note": "cold break [973] 45%/r for 5 s applied by each hit; subsequent Tsunami casts (castRate ~1.75 per s) keep it up nearly always, so x(1+45r%) on all but the first hit (uptime ~1, I)"}], "confidence": "C", "note": "card 355 table p14 ([973] cold break, maxSpeed)"},
         "name": "The Last Water Bender",
         "description": "Increases the projectile speed of tsunami inflicting cold break on hit.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "cold_break": 0,
-            "projectile_speed": 0,
-            "cold_skill_damage": 0
-          },
-          "perRank": {
-            "cold_break": 45,
-            "projectile_speed": 25,
-            "cold_skill_damage": 25
-          }
+          "base": {"cold_break": 0, "projectile_speed": 0, "subtree_damage": 0},
+          "perRank": {"cold_break": 45, "projectile_speed": 25, "subtree_damage": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1250,6 +1312,8 @@
   {
     "id": "asteroid",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "One Exo_Asteroid_obj falls at the cursor point (cursor on the dummy, in-zone; Player_Ability_Parent, it does not hit itself) and its Destroy_0 creates one Explosion_Item_obj of radius 38.5*(1+p4%) px (the AoE indicator ~110 px is only graphic): 1 hit per cast (count = 1, +1 only with p2 chance). Falls in ~51 frames (0.84 s). p12 tsunamis, p13 cataclysm rain (p~0.08 per asteroid at D = 90 px), p14 are subskills. No cooldown in the base: the use period is the rule-37 cast lock (ceil(72/S)+1)/60 s = 43 frames at S = 1.75 (t_wyw 14), computed centrally, no period field (Po R4); p13 cooldown 6 s and p14 cooldown 12 s are unchanged."},
     "classId": "exo",
     "name": "Asteroid",
     "kind": "active",
@@ -1258,13 +1322,13 @@
     "tags": ["Cast", "Active", "Spell", "Explosion"],
     "movementDuringUse": 65,
     "range": 320,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "maxRank": 20,
     "requiresLevel": 8,
     "tree": "Lunar Prophet",
     "position": { "row": 1, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0.11, "perLevel": 15.89 },
+    "damageFormula": { "base": 0, "perLevel": 13 },
     "manaCostFormula": { "base": 3.95, "perLevel": 1.05, "rankIndexing": "fullRank" },
     "bonusSources": [
       { "source": "Collision", "stat": "cold_skill_damage", "value": 10, "per": "skill_level" },
@@ -1283,17 +1347,19 @@
       {
         "id": "astral_crush",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [11, 22, 33, 44, 55], "note": "LSSD +11%/r cold"}], "confidence": "C", "note": "card 356 table p1"},
         "name": "Astral Crush",
         "description": "Increases the damage dealt by asteroid.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 11 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 11}
         }
       },
       {
         "id": "asteroid_aftershock",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.1, 0.15, 0.2, 0.25], "per": "use", "note": "chance 5r% on cast: second asteroid (count += 1) = one more hit; value = 0.05r per use"}], "confidence": "C", "note": "card 356 table p2 (asm count L777-778)"},
         "name": "Asteroid Aftershock",
         "description": "Chance on cast to unleash an additional asteroid.",
         "maxRank": 5,
@@ -1309,56 +1375,61 @@
       {
         "id": "impact_speed",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "gravityPower x(1+18r%): shorter fall, no DPS change"}], "confidence": "C", "note": "card 356 table p3"},
         "name": "Impact Speed",
         "description": "Increases the falling speed and maximum cast range of asteroid.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0, "skill_range": 0 },
-          "perRank": { "projectile_speed": 18, "skill_range": 20 }
+          "base": {"projectile_speed": 0, "skill_range": 0},
+          "perRank": {"projectile_speed": 18, "skill_range": 20}
         }
       },
       {
         "id": "world_ending_impact",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "asteroid scale x(1+25r%): explosion radius 38.5*(1+p4%) px; the dummy at the impact point is already hit (cross term only with p13 rain probability, see p13)"}], "confidence": "C", "note": "card 356 table p4 (L752-853)"},
         "name": "World Ending Impact",
         "description": "Increases the area of effect radius of asteroid.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 25 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 25}
         }
       },
       {
         "id": "a_gift_from_space",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [5, 10, 15, 20, 25], "note": "spell crit chance +5%/r; crit damage +30%/r ([1004] += 5r, [1003] += 30r)"}], "confidence": "C", "note": "card 356 table p5"},
         "name": "A Gift From Space",
         "description": "Chance to critically hit dealing increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 5, "spell_crit_damage": 30 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 5, "spell_crit_damage": 30}
         }
       },
       {
         "id": "clairvoyant_prophet",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7%/r"}], "confidence": "C", "note": "card 356 table p6"},
         "name": "Clairvoyant Prophet",
         "description": "Reduces the mana cost of asteroid.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "sharp_asteroids",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [3, 6, 9, 12, 15], "note": "frostbite chance 3r% per hit (value = chance %); frostbite damage floor(dmg*35r%) per tick (cold DoT, reports/dot_debuffs)"}], "confidence": "C", "note": "card 356 table p7 ([35])"},
         "name": "Sharp Asteroids",
         "description": "Chance to inflict frostbite on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_frost_bite_damage": 0 },
-          "perRank": { "increased_frost_bite_damage": 35 }
+          "base": {"increased_frost_bite_damage": 0},
+          "perRank": {"increased_frost_bite_damage": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1371,12 +1442,13 @@
       {
         "id": "frozen_core",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0351, 1.1254, 1.2528, 1.4039, 1.5691], "note": "cold break 15r% for 5 s, applied with chance 3r% per hit; value = 1+0.15r*uptime, uptime = 1-(1-0.03r)^(5 s x 1.75 casts/s) (castRate 1.75 assumed); first hit not affected"}], "confidence": "C", "note": "card 356 table p8 ([973])"},
         "name": "Frozen Core",
         "description": "Chance to inflict cold break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_break": 0 },
-          "perRank": { "cold_break": 15 }
+          "base": {"cold_break": 0},
+          "perRank": {"cold_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1389,17 +1461,19 @@
       {
         "id": "coldshatter_impact",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.2, 1.4, 1.6, 1.8, 2.0], "requires": "sharp_asteroids", "note": "extra damage vs frostbitten (185 = 20r%); only while the dummy is frostbitten (p7 DoT); full multiplier here, uptime not applied"}], "confidence": "C", "note": "card 356 table p9 ([185])"},
         "name": "Coldshatter Impact",
         "description": "Increases damage dealt to frostbitten targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_frost_bitten": 0 },
-          "perRank": { "extra_damage_frost_bitten": 20 }
+          "base": {"extra_damage_frost_bitten": 0},
+          "perRank": {"extra_damage_frost_bitten": 20}
         }
       },
       {
         "id": "perseids",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.015, 0.06, 0.135, 0.24, 0.375], "per": "hit", "note": "new asteroid on hit with chance 3r%, damage dmg*50r%; value = 0.03r*0.5r per hit"}], "confidence": "C", "note": "card 356 table p10 (ProjectileCollision20Exo L147-158)"},
         "name": "Perseids",
         "description": "Chance to drop smaller asteroids at target location on hit.",
         "maxRank": 5,
@@ -1415,53 +1489,49 @@
       {
         "id": "wave_of_asteroids",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [20, 40, 60], "note": "LSSD +20%/r cold"}, {"kind": "zero_on_dummy", "note": "further asteroids land 72.6*(1+p4%) px further along the throw, outside the dummy's blast radius; 0 extra hits"}], "confidence": "C", "note": "card 356 table p11 (Step_0 L4-31)", "plannerFix": "planner gives projectile_count 4/r, but the planner does not convert projectiles for this skill (perExtraProjectile 0) and the game gives 0 extra hits on the dummy; LSSD 20%/r is right"},
         "name": "Wave of Asteroids",
         "description": "Unleash multiple asteroids in a shockwave from the point of impact.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "cold_skill_damage": 0 },
-          "perRank": { "projectile_count": 4, "cold_skill_damage": 20 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 4, "subtree_damage": 20}
         }
       },
       {
         "id": "geomagnetic_reversal",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [3, 6, 9], "per": "use", "note": "p12.s9 = 3r tsunami waves at the impact point, each full damage (ratio 1); each hits the dummy (mask +-120 px)"}, {"kind": "damage_pct", "byRank": [35, 70, 105], "note": "LSSD +35%/r cold"}], "confidence": "C", "note": "card 356 table p12 (Destroy_0 L36-50)", "plannerFix": "planner counts 3 projectiles/r but perExtraProjectile is 0, so they are dropped; game: 3r extra full tsunami hits on the dummy per cast"},
         "name": "Geomagnetic Reversal",
         "description": "Asteroid unleashes multiple tsunami waves in an arc towards target direction.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "cold_skill_damage": 0 },
-          "perRank": { "projectile_count": 3, "cold_skill_damage": 35 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 3, "subtree_damage": 35}
         }
       },
       {
         "id": "galactic_cataclysm",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1.4, 3.6, 4.4], "note": "transformation (cooldown 6 s): rain of N = 1+floor(T/f) asteroids (17/43/53 for r1-3) over a 180 px disc around the player; dummy at D = 90 px: p = 0.083 (p4 = 0) per asteroid, hits = N*p. Cooldown 6 s replaces castRate. Convention D = 90 px (I); at D = 24 px hits 4.5/11.4/14.0, at D = 160 px 0.6/1.5/1.9"}, {"kind": "damage_pct", "byRank": [40, 80, 120], "note": "LSSD +40%/r cold (rain asteroids copy controller scale)"}, {"kind": "cooldown_s", "byRank": [6, 6, 6], "note": "transformation cooldown 6 s from the card note (base skill has none)"}], "confidence": "C", "note": "card 356 table p13 (R4 convention D = 90 px, I); cooldown 6 s not in planner", "plannerFix": "planner gives faster_cast_rate 35%/r and skill_duration 25%/r; game: a rain of 17/43/53 asteroids in 3/4.5/5.25 s on a 6 s cooldown, hitting the dummy about 1.4/3.6/4.4 times (distance-dependent)"},
         "name": "Galactic Cataclysm",
         "description": "Summon a continous rain of asteroids around you for a short period. Asteroid now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "skill_duration": 0,
-            "faster_cast_rate": 0,
-            "cold_skill_damage": 0
-          },
-          "perRank": {
-            "skill_duration": 25,
-            "faster_cast_rate": 35,
-            "cold_skill_damage": 40
-          }
+          "base": {"skill_duration": 0, "faster_cast_rate": 0, "cooldown_added": 6, "subtree_damage": 0},
+          "perRank": {"skill_duration": 25, "faster_cast_rate": 35, "cooldown_added": 0, "subtree_damage": 40}
         }
       },
       {
         "id": "planetary_collapse",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 1, 1], "per": "use", "note": "transformation (cooldown 12 s): a Tsunami wave from the impact point (reguła 15) hits the dummy once per use; the asteroid itself is larger (scale +2, I) with AoE x(1+p4+30r%)"}, {"kind": "damage_pct", "byRank": [125, 250, 375], "note": "LSSD +125%/r cold"}, {"kind": "cooldown_s", "byRank": [12, 12, 12], "note": "transformation cooldown 12 s from the card note (base skill has none)"}], "confidence": "C", "note": "card 356 table p14 (Destroy_0 L56-71)", "plannerFix": "planner gives only cold +125%/r and AoE +30%/r; game also adds a Tsunami wave from the impact point (one extra hit per use) and cooldown 12 s"},
         "name": "Planetary Collapse",
         "description": "Unleash a colossal asteroid causing a massive explosion unleashing a massive tsunami dealing increased damage with increased area of effect radius. Asteroid now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "cold_skill_damage": 125, "area_of_effect": 30 }
+          "base": {"area_of_effect": 0, "cooldown_added": 12, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 30, "cooldown_added": 0, "subtree_damage": 125}
         }
       }
     ]
@@ -1476,7 +1546,7 @@
     "damageType": "cold",
     "tags": ["Cast", "Active", "Buff", "Shape Shift"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 70,
     "effectDuration": 25,
     "maxRank": 20,
@@ -1493,6 +1563,9 @@
   {
     "id": "lunar_orbit",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "baseCooldown": 8,
+    "dummyHits": {"base": 6.8, "baseProjectiles": 3, "perExtraProjectile": 2.27, "confidence": "I", "note": "Orbital with the dummy on the orbit zone (rule 24; the card's recommended D = 72 px from the orbit centre (x, y+6), where the hit count peaks): n = 3 moons (AABB 34x34) on rings cycled through 32/48/64/96/128 px (playerEffect[91] advances per moon), speeds 3-6 deg/frame, lifetime 5 s, map cleared once per revolution; a moon hits when |D - R_k| <= ~29-36 px. Frame simulation (n = 3, T = 5 s, averaged over 5 casts and 6 directions): H = 5.4 (D 40-56), 4.7 (64), 6.8 (72, maximum), 5.7 (80), 3.7 (96), 5.6 (112), 2.9 (128), 2.4-2.6 (140-154), 0 at the strict 160 px from the player (154-166 px from the orbit centre). Value used: 6.8 hits per cast = 2.27 per moon (H/n ~ 2.2-2.3 for n = 3-9); perExtraProjectile = 2.27 per extra moon (each lands on the next ring of the cycle). Period is the hardcoded 8 s cooldown (TalentUseSetSpeed: cd = 8 for talent 358)."},
     "classId": "exo",
     "name": "Lunar Orbit",
     "kind": "active",
@@ -1500,13 +1573,13 @@
     "damageType": "cold",
     "tags": ["Cast", "Active", "Spell", "Orbital"],
     "movementDuringUse": 65,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "maxRank": 20,
     "requiresLevel": 16,
     "tree": "Lunar Prophet",
     "position": { "row": 2, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0, "perLevel": 13 },
+    "damageFormula": { "base": 0, "perLevel": 12 },
     "manaCostFormula": { "base": 5, "perLevel": 1.125 },
     "bonusSources": [
       { "source": "Moonlight", "stat": "cold_skill_damage", "value": 15, "per": "skill_level" },
@@ -1525,50 +1598,55 @@
       {
         "id": "tidal_collision",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD +10%/r cold"}], "confidence": "C", "note": "card 358 table p1"},
         "name": "Tidal Collision",
         "description": "Increases the damage dealt by lunar orbit.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "full_moon",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [17, 34, 51, 68, 85], "note": "destroyTimer x(1+17r%): T = 5 s x (1+p2%); hits ~ linear in T (engine rescales ticks); at r5 9.25 s > 8 s cooldown, moons from successive casts overlap"}], "confidence": "C", "note": "card 358 table p2"},
         "name": "Full Moon",
         "description": "Increases the duration of lunar orbit.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 17 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 17}
         }
       },
       {
         "id": "extrasolar_moons",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4], "note": "n = 3 + p3.s9: +1 moon per rank; converted to hits via perExtraProjectile 2.27 (H/n at D = 72 px)"}], "confidence": "C", "note": "card 358 table p3"},
         "name": "Extrasolar Moons",
         "description": "Increases the amount of moons in lunar orbit.",
         "maxRank": 4,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "magnetic_pull",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.1, 1.2, 1.3, 1.4], "note": "orbitSpeed x(1+10r%) in every ring case of the switch (asm 0x1467b625e-0x1467b84a4); hits ~ omega, so x(1+0.1r)"}], "confidence": "C", "note": "card 358 table p4 (R4)"},
         "name": "Magnetic Pull",
         "description": "Increases the orbital speed of lunar orbit.",
         "maxRank": 4,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 10 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 10}
         }
       },
       {
         "id": "loss_of_orbit",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "chance 5r% moon leaves orbit toward ANOTHER enemy; no second target on a lone dummy"}], "confidence": "I", "note": "card 358 table p5"},
         "name": "Loss of Orbit",
         "description": "Chance to ricochet towards another nearby monster on hit before returning back to orbit.",
         "maxRank": 5,
@@ -1577,6 +1655,7 @@
       {
         "id": "celestial_collapse",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "other", "note": "shrapnel (5 objects, damage floor(baseDamage*50r%)) only when a moon vanishes at the dummy; card gives no numeric reading ('mało'); not quantified. Planner's 50%/r on every proc overstates"}], "confidence": "I", "note": "card 358 table p6 (Destroy_0 L5-16)", "plannerFix": "planner applies of_total_damage 50%/r at chance 6r% on every hit; game spawns shrapnel only when the moon ends next to the target, rare, no number in card"},
         "name": "Celestial Collapse",
         "description": "Chance for moons to explode into shrapnel when expiring dealing a portion of their damage.",
         "maxRank": 5,
@@ -1592,12 +1671,13 @@
       {
         "id": "lunar_cycle",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "other", "note": "cold break 30%/r for 5 s, applied with chance 3r% per hit; card says 'rzadko' with no numeric uptime; not quantified (could be modelled as damage_mult with uptime)"}], "confidence": "I", "note": "card 358 table p7 ([973] cold break); C/I per card"},
         "name": "Lunar Cycle",
         "description": "Chance to inflict cold break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_break": 0 },
-          "perRank": { "cold_break": 30 }
+          "base": {"cold_break": 0},
+          "perRank": {"cold_break": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1610,6 +1690,7 @@
       {
         "id": "tidalwaves",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0017188, 0.006875, 0.0154688, 0.0275, 0.0429688, 0.061875, 0.0842188, 0.11], "per": "hit", "note": "tsunami at moon hit with chance 1.25r% and dmg 13.75r% of D; value = 0.0125r*0.1375r per hit (maxRank 8)"}], "confidence": "C", "note": "card 358 table p8 ([869]); planner chance 1.25r, 13.75r agree"},
         "name": "Tidalwaves",
         "description": "Chance to unleash a tsunami towards target location on hit.",
         "maxRank": 8,
@@ -1625,69 +1706,67 @@
       {
         "id": "mass_meets_mass",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "[121] = p9.s9% extra damage vs bosses; dummy is not a boss"}], "confidence": "C", "note": "card 358 table p9"},
         "name": "Mass Meets Mass",
         "description": "Increases damage dealt to bosses.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bosses": 0 },
-          "perRank": { "extra_damage_bosses": 10 }
+          "base": {"extra_damage_bosses": 0},
+          "perRank": {"extra_damage_bosses": 10}
         }
       },
       {
         "id": "heavy_core",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [12.5, 25, 37.5, 50, 62.5], "note": "LSSD +12.5%/r cold; knockback [103] no DPS"}], "confidence": "C", "note": "card 358 table p10"},
         "name": "Heavy Core",
         "description": "Knock monsters back on hit dealing increased damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 12.5 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 12.5}
         }
       },
       {
         "id": "crescent_moon",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [41.65, 54.1, 77.3], "note": "transformation: a moon every f = (1-0.1875r) s (0.81/0.625/0.44 s) for a 5 s controller; each moon crosses the dummy on the 160 px ring T*omega/6 + 0.1 = 6.77 times (omega 8 deg/frame). Hits per use = (T/f)*6.77 = 6.15*6.77 / 8*6.77 / 11.43*6.77 (card, full-lifetime per moon assumed). Replaces the base orbit; cooldown 8 s"}, {"kind": "damage_pct", "byRank": [20, 40, 60], "note": "LSSD +20%/r cold"}, {"kind": "cooldown_s", "byRank": [8, 8, 8], "note": "transformation cooldown 8 s from the card note (base skill has none)"}], "confidence": "I", "note": "card 358 table p11 (R2 reguła 18 correction; C mechanics, I hit counts)", "plannerFix": "planner gives faster_cast_rate 25%/r and mana drain; in game Crescent Moon is a transformation with a moon spawn switch every 1-0.1875r s and LSSD 20%/r, the 8 s cooldown is fixed"},
         "name": "Crescent Moon",
         "description": "Lunar orbit is now a toggle that drains a portion of your mana to passively summon moons with increased damage while active. Recasting or running out of mana will deactivate lunar orbit.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "cold_skill_damage": 0,
-            "faster_cast_rate": 0,
-            "mana_drain_pct": 0
-          },
-          "perRank": {
-            "cold_skill_damage": 20,
-            "faster_cast_rate": 25,
-            "mana_drain_pct": 1
-          }
+          "base": {"faster_cast_rate": 0, "mana_drain_pct": 0, "cooldown_added": 8, "subtree_damage": 0},
+          "perRank": {"faster_cast_rate": 25, "mana_drain_pct": 1, "cooldown_added": 0, "subtree_damage": 20}
         }
       },
       {
         "id": "lunar_architect",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9], "note": "n += 3r moons (converted via perExtraProjectile 2.27); card adds no LSSD"}], "confidence": "C", "note": "card 358 table p12", "plannerFix": "planner adds cold_skill_damage +25%/r; card gives only +3 moons per rank (cooldown stays 8 s)"},
         "name": "Lunar Architect",
         "description": "Increases the amount of moons in lunar orbit summoning all moons at once.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "cold_skill_damage": 0 },
-          "perRank": { "projectile_count": 3, "cold_skill_damage": 25 }
+          "base": {"projectile_count": 0, "cold_skill_damage": 0},
+          "perRank": {"projectile_count": 3, "cold_skill_damage": 25}
         }
       },
       {
         "id": "orbit_breakout",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "note": "moon flies straight out after orbit end (deltaSpeed = orbitSpeed*(2+0.35r), damage x(1+0.85r)); extra hit only for a moon starting inside the dummy and aimed at it: 0 at D = 72 px, n = 3 (card); at n >= 4 about 0.21 counts x (1+0.85r) per use; at D = 100 px / 160 px 0.18 / 0.31 counts (n = 3), I"}], "confidence": "I", "note": "card 358 table p13 (R4 sim)", "plannerFix": "planner applies cold +85%/r to all hits; game: the outward-flying moon adds extra hits only sometimes (about 0 at D = 72 px, n = 3), and projectile speed +35%/r of the breakout moon"},
         "name": "Orbit Breakout",
         "description": "When moons expire they are sent outwards bouncing on walls and terrain.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "projectile_speed": 0 },
-          "perRank": { "cold_skill_damage": 85, "projectile_speed": 35 }
+          "base": {"cold_skill_damage": 0, "projectile_speed": 0},
+          "perRank": {"cold_skill_damage": 85, "projectile_speed": 35}
         }
       },
       {
         "id": "devastating_nebula",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.815, 5.06, 9.735], "per": "hit", "note": "nebula object per proc: chance 10r% x 11 ticks x dmg*(1+65r%) per moon hit; value = 0.10r*11*(1+0.65r) (r3: 9.7 x dmg); slow 3 s no DPS"}], "confidence": "C", "note": "card 358 table p14 (L237-250, nebula tick 0.5 s, 5 s)", "plannerFix": "planner gives a 65%/r damage proc (single hit); game spawns a nebula with 11 ticks of dmg*(1+65r%) per proc"},
         "name": "Devastating Nebula",
         "description": "Chance to conjure cosmic fog at target location on hit dealing a portion of the damage over time inflicting slow.",
         "maxRank": 3,
@@ -1730,7 +1809,7 @@
     "description": "Turn the orbiting moons into blood moons increasing their cold damage and causing them to inflict bleeding on hit.",
     "tags": ["Cast", "Active", "Buff"],
     "movementDuringUse": 0,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 70,
     "effectDuration": 25,
     "maxRank": 20,
@@ -1747,6 +1826,8 @@
   {
     "id": "black_hole",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 11, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "One Exo_Black_Hole_obj at the cursor (in-zone, rule 24): tick_frequency 0.4 s (24 frames), destroyTimer 4.5 s (270 frames, active 268), grows to maxScale 0.8 at 0.1/frame (AABB +-170 px x scale covers the dummy from the first frames): tools/tick_hits.py 268 24 = 11 hits of V1 = 11.5*L (the card's 12 = 1+floor(4.5/0.4) is the superseded formula; possible +1 tick in the 20-frame fade is I). Cooldown 6 s sets the period (4.5 s < 6 s, no overlap). p5 flare, p10 explosion, p12 orbiting holes are subskills."},
     "classId": "exo",
     "name": "Black Hole",
     "kind": "active",
@@ -1754,16 +1835,16 @@
     "damageType": "cold",
     "tags": ["Cast", "Active", "Spell", "Area of Effect"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 6,
     "effectDuration": 4.5,
     "maxRank": 20,
     "requiresLevel": 30,
     "tree": "Lunar Prophet",
     "position": { "row": 4, "col": 1 },
-    "hitModel": { "object": "Exo_Black_Hole_Create", "tickFrequency": 0.5, "lifetime": 1 },
+    "hitModel": { "object": "Exo_Black_Hole_Create", "tickFrequency": 0.4, "lifetime": 4.5 },
     "ranks": [{ "rank": 1, "manaCost": 13 }],
-    "damageFormula": { "base": 0.42, "perLevel": 15.58 },
+    "damageFormula": { "base": 0, "perLevel": 11.5 },
     "manaCostFormula": { "base": 13, "perLevel": 1.125 },
     "bonusSources": [
       { "source": "Lunar Orbit", "stat": "cold_skill_damage", "value": 15, "per": "skill_level" },
@@ -1782,50 +1863,55 @@
       {
         "id": "event_horizon",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD +10%/r cold"}], "confidence": "C", "note": "card 361 table p1"},
         "name": "Event Horizon",
         "description": "Increases the damage dealt by black hole.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "super_massive",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "maxScale x(1+12r%): area only; dummy sits in the centre"}], "confidence": "C", "note": "card 361 table p2"},
         "name": "Super Massive",
         "description": "Increases the area of effect radius of black hole.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 12 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 12}
         }
       },
       {
         "id": "time_space",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2, 5, 9, 17, 34], "per": "use", "note": "tick period max(0.4(1-15r%),0.1) s: ticks 1+floor(4.5/T) = 14/17/21/29/46 vs card base 12; value = extra ticks over 12"}], "confidence": "C", "note": "card 361 table p3 (tick_frequency, Create_0 override)", "plannerFix": "planner gives faster_cast_rate 15%/r; game shortens the damage tick period (more ticks, up to 46 at r5 with a 0.1 s tick), not the cast rate"},
         "name": "Time != Space",
         "description": "Increases the tick frequency of black hole.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 15 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 15}
         }
       },
       {
         "id": "mass_density",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [18, 36, 54, 72, 90], "note": "destroyTimer x(1+18r%) = 4.5 s duration; ticks scale linearly (engine rescales)"}], "confidence": "C", "note": "card 361 table p4"},
         "name": "Mass Density",
         "description": "Increases the duration of black hole.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 18 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 18}
         }
       },
       {
         "id": "interstellar_radiation",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.014, 0.056, 0.126, 0.224, 0.35], "per": "hit", "note": "cosmic flare on each tick with chance 4r% and dmg*35r% (flare hits dummy at spawn, AABB 86x56 from (71,30)); value = 0.04r*0.35r per tick"}], "confidence": "C", "note": "card 361 table p5 (L37-53); direction random (I)"},
         "name": "Interstellar Radiation",
         "description": "Chance to unleash cosmic flares from the center of the black hole towards targets on hit dealing a portion of its damage.",
         "maxRank": 5,
@@ -1841,12 +1927,13 @@
       {
         "id": "watermelting_cold",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [3, 6, 9, 12, 15], "note": "frostbite chance 3r% per cast (value = chance %); frostbite damage floor(dmg*17.5r%) on every tick; DoT modelled separately"}], "confidence": "C", "note": "card 361 table p6 ([35])"},
         "name": "Watermelting Cold",
         "description": "Chance to inflict frostbite on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_frost_bite_damage": 0 },
-          "perRank": { "increased_frost_bite_damage": 17.5 }
+          "base": {"increased_frost_bite_damage": 0},
+          "perRank": {"increased_frost_bite_damage": 17.5}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1859,39 +1946,43 @@
       {
         "id": "time_bender",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-9, -18, -27, -36, -45], "note": "base cooldown 6 s x (1-9r%): kadencja x1/(1-0.09r)"}], "confidence": "C", "note": "card 361 table p7 (GetTalentCooldown)"},
         "name": "Time Bender",
         "description": "Reduces the cooldown of black hole.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 9 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 9}
         }
       },
       {
         "id": "time_traveler",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "utility", "note": "movement speed buff 163 for 4.5 s; no dummy DPS"}], "confidence": "C", "note": "card 361 table p8"},
         "name": "Time Traveler",
         "description": "Gain increased movement speed and phasing for a short duration when inside the black hole.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 15 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 15}
         }
       },
       {
         "id": "subzero_frequency",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.155, 1.31, 1.465, 1.62, 1.775], "requires": "watermelting_cold", "note": "extra damage vs frostbitten ([185] = 15.5r%); only while dummy frostbitten (p6); full multiplier, uptime not applied"}], "confidence": "C", "note": "card 361 table p9 ([185])"},
         "name": "Subzero Frequency",
         "description": "Increases damage dealt to frostbitten targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_frost_bitten": 0 },
-          "perRank": { "extra_damage_frost_bitten": 15.5 }
+          "base": {"extra_damage_frost_bitten": 0},
+          "perRank": {"extra_damage_frost_bitten": 15.5}
         }
       },
       {
         "id": "singularity",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0125, 0.05, 0.1125, 0.2, 0.3125], "per": "hit", "note": "explosion Explosion_Item_obj on tick with chance 5r% and ceil(dmg*25r%); value = 0.05r*0.25r per tick"}], "confidence": "C", "note": "card 361 table p10 (L63-76)"},
         "name": "Singularity",
         "description": "Chance to rapidly pull monsters towards the singularity on hit dealing additional damage.",
         "maxRank": 5,
@@ -1907,6 +1998,7 @@
       {
         "id": "galaxy_devouring_growth",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [7.632, 12.528, 20.688], "note": "transformation: tick x1.5 (0.6 s), duration x0.75 (3.375 s) = 6 ticks; each tick damage x(1+0.32r*0.15r*floor(t/0.25)) expected; sum = 6 + 34*(0.048 r^2) = 7.63/12.53/20.69 main-hit units (r3 ~ 20.7 per card). Replaces base 12 ticks"}], "confidence": "I", "note": "card 361 table p11 (Step_0 L27-36, C/I per card)", "plannerFix": "planner gives cold +32%/r on hits and projectile_size; game transforms the hole into 6 ticks whose damage grows every 0.25 s (sum 7.6/12.5/20.7 hits per use)"},
         "name": "Galaxy Devouring Growth",
         "description": "Chance to frequently grow larger over time gaining increased damage. Black hole duration is decreased.",
         "maxRank": 3,
@@ -1922,34 +2014,37 @@
       {
         "id": "hidden_in_plain_sight",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [9.24, 30.8, 64.68], "note": "transformation: n = 1+2r smaller holes (maxScale x0.5) orbit the player, damage k = 0.55r each; hits per hole ~5.6 (orbit sim, card) => total 5.6*(1+2r)*0.55r = 9.24/30.8/64.7 per use. Replaces base hole"}], "confidence": "I", "note": "card 361 table p12 (orbit sim; C/I per card)", "plannerFix": "planner gives of_total_damage 55%/r and 2 projectiles/r; game: 1+2r orbiting holes each hitting ~5.6 times at 55r% damage (total 9.2 / 30.8 / 64.7 per use)"},
         "name": "Hidden in Plain Sight",
         "description": "Summon multiple smaller orbiting black holes dealing a portion of the damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "projectile_count": 0 },
-          "perRank": { "of_total_damage": 55, "projectile_count": 2 }
+          "base": {"of_total_damage": 0, "projectile_count": 0},
+          "perRank": {"of_total_damage": 55, "projectile_count": 2}
         }
       },
       {
         "id": "supermassive_black_hole",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [8.0, 16.0, 24.0], "note": "transformation: maxScale x2.25, tick x0.75 (0.3 s) -> 16 ticks (1+floor(4.5/0.3)); damage k = 50r% each; total 16*0.5r = 8/16/24 main-hit units; mana drain 3%/r per s (no DPS)"}], "confidence": "C", "note": "card 361 table p13 (Step_0 L5-21)", "plannerFix": "planner gives of_total_damage 50%/r and mana drain on the same 12 ticks; game transforms the hole to 16 ticks at 50r% damage (8/16/24 hits per use)"},
         "name": "Supermassive Black Hole",
         "description": "Summon a supermassive black hole dealing a portion of the damage frequently draining a portion of your maximum mana. Running out of mana causes the black hole to expire.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "mana_drain_pct": 0 },
-          "perRank": { "of_total_damage": 50, "mana_drain_pct": 3 }
+          "base": {"of_total_damage": 0, "mana_drain_pct": 0},
+          "perRank": {"of_total_damage": 50, "mana_drain_pct": 3}
         }
       },
       {
         "id": "empowered_singularity",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [2, 2, 2], "note": "transformation: destroyTimer 0.5 s, tick 0.4 s -> 1+floor(0.5/0.4) = 2 hits per cast (3 if tick <= 0.25 s); p4 ignored"}, {"kind": "cooldown_s", "byRank": [-5.5, -5.5, -5.5], "note": "cooldown base set to 0.5 s (period 1/castRate) from 6 s"}, {"kind": "damage_pct", "byRank": [60, 120, 180], "note": "LSSD +60%/r cold; scale x(1+20r%) and pull of enemies beyond 64 px (no DPS on dummy)"}], "confidence": "C", "note": "card 361 table p14 (L88-90, cooldown base 0.5)", "plannerFix": "planner lacks the 0.5 s cooldown (period = 1/castRate) and the 2-tick structure; game: 2 hits per cast at castRate, LSSD 60%/r is right"},
         "name": "Empowered Singularity",
         "description": "Black hole rapidly pulls monsters towards its singularity on hit before expiring. Black hole no longer has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "cold_skill_damage": 60, "area_of_effect": 20 }
+          "base": {"area_of_effect": 0, "cooldown_added": -5.5, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 20, "cooldown_added": 0, "subtree_damage": 60}
         }
       }
     ]

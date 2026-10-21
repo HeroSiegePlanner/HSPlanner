@@ -3,7 +3,32 @@ use crate::{
     theme::{self, TooltipTheme},
     tooltip_text::TooltipText,
 };
+use gpui_kit::component::{
+    WindowExt,
+    dialog::{Dialog, DialogEntrance},
+};
 use gpui_kit::{prelude::*, *};
+
+/// Every planner dialog fades in and settles briefly instead of sliding down from the top.
+pub const DIALOG_ENTRANCE: DialogEntrance = DialogEntrance::FadeSlide;
+
+pub trait PlannerDialogExt {
+    /// `WindowExt::open_dialog` with the shared planner entrance.
+    fn open_planner_dialog<F>(&mut self, cx: &mut App, build: F)
+    where
+        F: Fn(Dialog, &mut Window, &mut App) -> Dialog + 'static;
+}
+
+impl PlannerDialogExt for Window {
+    fn open_planner_dialog<F>(&mut self, cx: &mut App, build: F)
+    where
+        F: Fn(Dialog, &mut Window, &mut App) -> Dialog + 'static,
+    {
+        self.open_dialog(cx, move |dialog, window, cx| {
+            build(dialog.entrance(DIALOG_ENTRANCE), window, cx)
+        });
+    }
+}
 
 pub fn section_heading(
     id: impl Into<ElementId>,

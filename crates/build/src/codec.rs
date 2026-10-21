@@ -1,6 +1,7 @@
 use serde_json::{Value, json};
 
-use crate::{BuildSnapshot, loadout::Loadouts, notes::Notes};
+use crate::{BuildSnapshot, library::StashEntry, loadout::Loadouts, notes::Notes};
+use hsplanner_engine::calc::types::EquippedItem;
 
 pub const MAX_CODE_LENGTH: usize = 200_000;
 
@@ -110,13 +111,30 @@ pub fn encode_loadouts(
     notes: &Notes,
     loadouts: &Loadouts,
 ) -> Result<String, String> {
+    encode_loadouts_with_stash(snapshot, notes, loadouts, &[])
+}
+
+/// Like [`encode_loadouts`], plus the build's stash items when there are any.
+pub fn encode_loadouts_with_stash(
+    snapshot: &BuildSnapshot,
+    notes: &Notes,
+    loadouts: &Loadouts,
+    stash: &[StashEntry],
+) -> Result<String, String> {
     loadouts.validate()?;
     let mut loadouts = loadouts.clone();
     loadouts.capture_active(snapshot);
-    let json = serde_json::to_string(&json!({
+    let mut wire = json!({
         "v": 3, "snapshot": snapshot, "loadouts": loadouts, "n": notes.to_html(),
-    }))
-    .map_err(|error| error.to_string())?;
+    });
+    if !stash.is_empty() {
+        let mut items =
+            serde_json::to_value(stash.iter().map(|entry| &entry.item).collect::<Vec<_>>())
+                .map_err(|error| error.to_string())?;
+        remove_null_properties(&mut items);
+        wire["stash"] = items;
+    }
+    let json = serde_json::to_string(&wire).map_err(|error| error.to_string())?;
     if json.len() > MAX_CODE_LENGTH {
         return Err("This build is too large to share as a code.".into());
     }
@@ -182,6 +200,29 @@ fn decode_loadout_value(wire: &Value) -> Result<(BuildSnapshot, Notes, Loadouts)
         Notes::from_html(wire["n"].as_str().unwrap_or("")),
         loadouts,
     ))
+}
+
+/// Stash items carried by a share code; codes without a stash give none.
+pub fn decode_stash(input: &str) -> Result<Vec<EquippedItem>, String> {
+    let wire = decompress(input)?;
+    let Some(items) = wire.get("stash").and_then(Value::as_array) else {
+        return Ok(Vec::new());
+    };
+    let mut slots = Value::Object(
+        items
+            .iter()
+            .enumerate()
+            .map(|(index, item)| (index.to_string(), item.clone()))
+            .collect(),
+    );
+    normalize_loadout_inventory(&mut slots)?;
+    (0..items.len())
+        .filter_map(|index| slots.get(index.to_string()))
+        .map(|item| {
+            serde_json::from_value(item.clone())
+                .map_err(|error| format!("Invalid stash item: {error}"))
+        })
+        .collect()
 }
 
 pub fn decode(input: &str) -> Result<(BuildSnapshot, Notes), String> {

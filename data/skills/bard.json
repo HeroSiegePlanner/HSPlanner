@@ -2,6 +2,8 @@
   {
     "id": "slaying_riffs",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.75, "baseProjectiles": 1, "perExtraProjectile": 1.0, "confidence": "I", "note": "Per cast while re-casting at the default rate (period 43 frames = 0.717 s < ~0.95 s, rule 37). Amplifier lands at the cursor (in-zone, rule 24; cursor on the visible dummy centre (x, y-24); the aim point is xTarget/yTarget = owner.(x, y) + lengthdir(tupm[6], tupm[7]), i.e. 6 px ABOVE the cursor, ~30 px from the dummy centre, Resztki E): Pulse_obj 0.5*D (1 hit, I geometry) + amplifier explosion Explosion_Item_obj 0.5*D with multiplier ~0.9 = 0.45 (the amplifier stops 14.5 px before the target; distance to the dummy sqrt(1110 + 870*u_y) <= 44.5 px vs hit radius 44 px, so it misses for ~10 % of aim directions; I, boundary 44.5 vs 44; each new amplifier lands on the previous one and blows it up; no crit/LDM/penetration/conversion, rule 32 class none, so f_wyb < 1 with gear on top) + player volley: slayingRiffsMax = 1 salvo (direction 0 deg, +-3 random) of 1 note D: the Bard_Riff_spr mask is a precise ellipse 16.5 x 17.5 (not a rectangle), the note starts at (host.x, host.y+6) and aims at the point 6 px above the cursor; riffs.py gives 0.77 (0.93 -> 0.77 with the +-3 deg noise; analytic 0.87), card uses ~0.8 (+-0.05, I; was 1.0) = 0.8. The animation notes (Other_7, 5*D at full 3 s life) give 0 when re-cast faster than ~0.95 s (N_anim = multiples of 24 frames in [72, 60*T+15]); they come back only for T >= 0.95 s. Total 0.5 + 0.45 + 0.8 + 0 = 1.75 (was 2.0). perExtraProjectile: each extra note of the 0 deg salvo hits (fan 4 deg, up to 5 notes; card p12 table, not recomputed after Resztki E), 1.0 per extra; the card gives extra notes only via p12/p14, gear extra projectiles not stated (I). Bounce physics of the amplifier and the +-3 deg spread are I."},
     "classId": "bard",
     "name": "Slaying Riffs",
     "kind": "active",
@@ -16,7 +18,7 @@
     ],
     "movementDuringUse": 65,
     "range": 320,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "maxRank": 20,
     "requiresLevel": 1,
     "tree": "Metal Guitarist",
@@ -30,10 +32,7 @@
         "manaCost": 5
       }
     ],
-    "damageFormula": {
-      "base": 4,
-      "perLevel": 9.8
-    },
+    "damageFormula": { "base": 4.25, "perLevel": 8.75 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -75,78 +74,85 @@
       {
         "id": "multipicking",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5], "note": "volleys = 1+p1.s9, one note each"}, {"kind": "extra_hits", "byRank": [0.52, 1.04, 1.84, 2.36, 2.88], "per": "use", "replacesProjectileHits": true, "note": "E_s(1+r) - E_s(1) at 160 px with the Resztki E/B geometry: E_s = 0.8, 1.32, 1.84, 2.64, 3.16, 3.68 for 1..6 volleys (volley hit probabilities 0.8 / 0.52 / 0.52 / 0.8 ... for directions 0 / +10 / -10 / 0 ...; was 1 / 0.75 / 0.75 / 1 ...); base 0.8 counts the first 0 deg volley"}], "confidence": "I", "note": "card 398 table p1 + Resztki B/E (riffs.py, ellipse note mask, aim point 6 px above the cursor); hits relative to base 1.75 (1 volley 0.8 + pulse 0.5 + explosion 0.45); N_anim ignored (fast recast); +-3 deg noise and mask shape I", "plannerFix": "planner counts +1 hit per extra projectile; card gives 0.52/0.52/0.8/0.52/0.52 per added volley (spread), so cumulative 0.52, 1.04, 1.84, 2.36, 2.88"},
         "name": "Multipicking",
         "description": "Increases the projectile amount of slaying riffs.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "heavy_notes",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 8, "note": "LSSD += 8 %/r"}], "confidence": "C", "note": "card 398 table p2 (LSSD += p2.s9%); value per planner 8/r"},
         "name": "Heavy Notes",
         "description": "Increases the damage dealt by slaying riffs.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "breaking_the_soundbarrier",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "note speed only; lifetime fixed 0.8 s, no change in hits on dummy"}], "confidence": "C", "note": "card 398 table p3"},
         "name": "Breaking The Soundbarrier",
         "description": "Increases the projectile speed of slaying riffs.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "picking_skills",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "base": 0, "perRank": 6, "note": "castRate = 1.75 + FCR + p4.s9 %; additive to rate, approx as % of cast speed"}], "confidence": "C", "note": "card 398 p4 (TalentUseSetSpeed#398 L568); value per planner 6/r"},
         "name": "Picking Skills",
         "description": "Increases cast rate when using slaying riffs.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 6 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 6}
         }
       },
       {
         "id": "widened_amplifiers",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "utility", "note": "card: p5.s9 computed (L71) but no consumer found; size only"}], "confidence": "I", "note": "card 398 table p5", "plannerFix": "planner gives projectile_size 15/r; card finds no read of this value in the amplifier/notes, so no confirmed effect on dummy hits"},
         "name": "Widened Amplifiers",
         "description": "Increases the size of slaying riffs.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 15 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 15}
         }
       },
       {
         "id": "stage_agility",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "movement diminish, no read in skill script"}], "confidence": "I", "note": "card 398 table p6; no dummy DPS"},
         "name": "Stage Agility",
         "description": "Decreases movement diminish when using slaying riffs.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "ear_penetration",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.01, 1.04, 1.09, 1.16, 1.25], "note": "expected break multiplier 1 + chance*break = 1 + (0.04r)*(0.25r); one roll per CAST (irandom on cast, L73), all hits of that cast get projEffect[976]=[p7.s9,5 s]; break amount per planner 25r %; approx"}], "confidence": "C", "note": "card 398 table p7 (L73 roll per cast); magnitudes from planner (I)", "plannerFix": "planner models it as on_hit proc; card rolls once per cast (all hits of that cast get break), not per hit"},
         "name": "Ear Penetration",
         "description": "Chance to inflict lightning break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_break": 0 },
-          "perRank": { "lightning_break": 25 }
+          "base": {"lightning_break": 0},
+          "perRank": {"lightning_break": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -162,6 +168,7 @@
       {
         "id": "splitting_sound",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.08, 0.16, 0.24, 0.32, 0.4], "per": "hit", "note": "each note hit: chance 4r % to spawn 2 child notes (damage[4]=floor(D)) on the hit point, they hit same dummy after 2 frames; = 2*chance per note hit; children [880]=0 (no recursion)"}], "confidence": "C", "note": "card 398 table p8 (ProjectileCollision23Bard L13-33); chance per planner 4/r (value symbol p8.s9)", "plannerFix": "planner has a proc with chance only and no effect; card adds 2 hits D per note hit times chance"},
         "name": "Splitting Sound",
         "description": "Chance for notes to split in two on hit.",
         "maxRank": 5,
@@ -170,12 +177,13 @@
       {
         "id": "burning_acoustics",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [4, 8, 12, 16, 20], "note": "per-CAST roll chance (%) of stasis buff 61 with DoT floor(D*p9.s9 %) per card (value = chance %); DoT formula in reports/dot_debuffs.md, not modelled here"}], "confidence": "C", "note": "card 398 table p9 (L77 roll per cast, projEffect[26]); chance 4/r per planner", "plannerFix": "planner says increased_stasis_damage 25/r (that is p10 in the card); p9 in card is a per-cast stasis DoT roll"},
         "name": "Burning Acoustics",
         "description": "Chance to inflict stasis on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_stasis_damage": 0 },
-          "perRank": { "increased_stasis_damage": 25 }
+          "base": {"increased_stasis_damage": 0},
+          "perRank": {"increased_stasis_damage": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -188,64 +196,61 @@
       {
         "id": "paralyzing_volume",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "requires": "burning_acoustics", "note": "x(1+p10.s9 %) only while dummy has stasis (buff 61 from p9); conditional, dummy stasis uptime not computed; value per planner 15/r"}], "confidence": "C", "note": "card 398 table p10 (projEffect[182]); multiplier applies only with stasis"},
         "name": "Paralyzing Volume",
         "description": "Increases damage dealt to monsters inflicted with stasis.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stasis": 0 },
-          "perRank": { "extra_damage_stasis": 15 }
+          "base": {"extra_damage_stasis": 0},
+          "perRank": {"extra_damage_stasis": 15}
         }
       },
       {
         "id": "bursting_sound",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0.95, 0.95, 0.95], "note": "transformation: no player volleys (slayingRiffsMax=0), so hits per use = pulse 0.5 + explosion 0.5*0.9 = 0.45 (+ Other_7 notes only on slow recast); burst children deal 0 (damage[1] copy). Rapid recast value; replaces base 1.75 and cancels p1 volleys (was 1.0 with explosion 0.5)"}, {"kind": "damage_pct", "base": 0, "perRank": 25, "note": "LSSD += p11.s9 %, value per planner 25/r"}], "confidence": "I", "note": "card 398 table p11, decompile 0x1472e5350; Other_7 N_anim = 5 at full life for slow recast; explosion multiplier 0.9 from Resztki E (I)", "plannerFix": "planner adds +2 projectiles/r; in game bursts deal 0 and the player volleys are removed (transformation)"},
         "name": "Bursting Sound",
         "description": "Unleash a single note exploding into multiple notes on hit dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "lightning_skill_damage": 25, "projectile_count": 2 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 2, "subtree_damage": 25}
         }
       },
       {
         "id": "echoing_sound_wall",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD += p12.s9 %, value per planner"}, {"kind": "projectiles", "byRank": [1, 2, 3], "note": "notes per volley = 1 + p12.s10 (fan 4 deg)"}, {"kind": "extra_hits", "byRank": [0.78, 1.4, 2.12], "per": "use", "replacesProjectileHits": true, "note": "avg hits per volley cycle at 160 px for N=2,3,4 minus N=1 average 0.84 (card: 0.84/1.62/2.24/2.96/3.57); bounces [82]=1"}], "confidence": "I", "note": "card 398 table p12 (per-volley averages across the 0/+10/-10 cycle)", "plannerFix": "planner counts +1 hit per projectile; card gives 0.78/1.40/2.12 extra hits for 1/2/3 extra notes (spread at 160 px)"},
         "name": "Echoing Sound Wall",
         "description": "Unleash the notes in an arc bouncing off terrain dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "lightning_skill_damage": 15, "projectile_count": 1 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "subtree_damage": 15}
         }
       },
       {
         "id": "satanic_notes",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 50, "note": "LSSD += p13.s9 %, value per planner"}, {"kind": "extra_hits", "byRank": [1, 1, 1], "per": "hit", "note": "+1 explosion hit D per note hit (Satanic_Note destroy after 2 s, Explosion_Item_obj floor(D)); area/pull planner values not hits"}], "confidence": "C", "note": "card 398 table p13 (ProjectileCollision23Bard L39-74; Destroy_0 0x1472f1ae0)", "plannerFix": "planner has no extra explosion hit per note hit; LSSD/area/range values per planner"},
         "name": "Satanic Notes",
         "description": "Pull nearby monsters towards target on hit unleashing a sonar pulse.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "lightning_skill_damage": 0,
-            "area_of_effect": 0,
-            "skill_range": 0
-          },
-          "perRank": {
-            "lightning_skill_damage": 50,
-            "area_of_effect": 50,
-            "skill_range": 30
-          }
+          "base": {"area_of_effect": 0, "skill_range": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 50, "skill_range": 30, "subtree_damage": 50}
         }
       },
       {
         "id": "symphony_of_destruction",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 20, "note": "LSSD += p14.s9 %, value per planner"}, {"kind": "projectiles", "byRank": [3, 4, 5], "note": "notes per volley = 1 + p14.s10 (s10 = rank+2), fan 12 deg, bounces"}, {"kind": "extra_hits", "byRank": [7.2, 9.2, 11.2], "per": "use", "replacesProjectileHits": true, "note": "~2 hits per volley x (1 + p1 + p14.s10) volleys = 2(r+3) per cast, minus the base 0.8 volley hit (was minus 1.0). The ~2 hits per volley are the old card figure (fan 12 deg), not re-simulated after Resztki E"}], "confidence": "I", "note": "card 398 table p14 + summary 'hits ~2*(1+p1.s9+p14.s10)'; p12 and p14 share one local, p14 wins; subtracted base volley changed 1.0 -> 0.8 (Resztki E)", "plannerFix": "planner projectile_count 2+1/r; card: notes per volley and volleys both grow by rank+2, ~2 hits per volley, i.e. 2(r+3) hits per cast"},
         "name": "Symphony of Destruction",
         "description": "Increases the projectile amount and cast radius of slaying riffs.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0, "projectile_count": 2 },
-          "perRank": { "lightning_skill_damage": 20, "projectile_count": 1 }
+          "base": {"projectile_count": 2, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "subtree_damage": 20}
         }
       }
     ]
@@ -284,6 +289,8 @@
   {
     "id": "visceral_growl",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "1 Bard_Visceral_Growl_obj 16 px in front of the player (cone mask, range ~221 px, covers the dummy at 160 px from active frame k=9 on), tick 15 frames, active 32 frames (deadly from k=2, fade phase 20 frames also hits): tools/tick_hits.py 32 15 = 2 hits (map clears at active frames 15 and 31; first overlap k=9-10, second k=18-20) (R4 400#0, C; pixel collision of the scaled sector mask I). Each hit = D = 8.75*L lightning = 1.0. perExtraProjectile = 0: no extra-projectile mechanism in the base skill (p14 = 3-growl transformation, 6 hits; p11 echoes are subskills). Dummy at 160 px is inside the 221 px reach (rule 24 not needed); a dummy beyond ~233 px would get 0."},
     "classId": "bard",
     "name": "Visceral Growl",
     "kind": "active",
@@ -297,7 +304,7 @@
     ],
     "movementDuringUse": 65,
     "range": 320,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "maxRank": 20,
     "requiresLevel": 8,
     "tree": "Metal Guitarist",
@@ -312,10 +319,7 @@
         "manaCost": 5
       }
     ],
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 9.8
-    },
+    "damageFormula": { "base": 0, "perLevel": 8.75 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -357,39 +361,43 @@
       {
         "id": "amplified_sound",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 8, "note": "LSSD += p1.s9 %, value per planner"}], "confidence": "C", "note": "card 400 table p1"},
         "name": "Amplified Sound",
         "description": "Increases the damage dealt by visceral growl.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "vocal_echo",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "other", "note": "cone size/growth rate (+16 %/r of G, yscale +8 %/r); alone 0 change in dummy hits at 160 px (cone reaches ~221 px); with p11 echoes it adds the base growl hit (p2 r5 + p11: 4 hits)"}], "confidence": "C", "note": "card 400 table p2 + R4 400#0 (c)", "plannerFix": "planner models area_of_effect +8/r; card models growth rate of the cone scale (+16 %/r of G), no area value in card"},
         "name": "Vocal Echo",
         "description": "Increases the area of effect radius of visceral growl.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 8 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 8}
         }
       },
       {
         "id": "octavism",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [5, 10, 15, 20, 25], "note": "spell crit chance % (projEffect[1004] = p3.s9); crit damage projEffect[1003] = p3.s10, planner 30 %/r"}], "confidence": "C", "note": "card 400 table p3; values per planner"},
         "name": "Octavism",
         "description": "Chance to critically hit dealing increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 5, "spell_crit_damage": 30 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 5, "spell_crit_damage": 30}
         }
       },
       {
         "id": "acoustic_piercing",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0675, 0.17, 0.3075, 0.48, 0.6875], "per": "hit", "note": "chance p4.s10 (5 %/r) x chain Chain_Lightning_Parent_obj damage floor(D*(1+p4.s9 %)), p4.s9 = 35 %/r per planner; per growl hit"}], "confidence": "C", "note": "card 400 table p4 (ProjectileCollision23Bard L158-174); chain chainType -1 (one hit)", "plannerFix": "planner proc deals of_total_damage 35 %/r (reads as +0.35 D); card chain object deals D*(1+p4.s9 %) i.e. 1.35 D at r1 (unverified which is right)"},
         "name": "Acoustic Piercing",
         "description": "Chance to unleash a chain lightning from target on hit.",
         "maxRank": 5,
@@ -405,6 +413,7 @@
       {
         "id": "sound_weight",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.01, 1.04, 1.09, 1.16, 1.25], "note": "per-CAST roll chance 5r % of LSSD + 20r % for that growl; mean multiplier 1 + 0.05r*0.20r/(1+LSSD), shown at LSSD=0 (upper bound, LSSD lowers it); [103]/[104] stun/knockback not hits"}], "confidence": "C", "note": "card 400 table p5; values per planner (5 %/r chance, 20 %/r LSSD)", "plannerFix": "planner models it as on_hit proc; card rolls once per cast (irandom on cast, L-branch p5)"},
         "name": "Sound Weight",
         "description": "Chance on hit to knock monsters back dealing increased damage.",
         "maxRank": 5,
@@ -420,6 +429,7 @@
       {
         "id": "after_growl",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.1, 0.15, 0.2, 0.25], "per": "use", "note": "chance p6.s9 (5 %/r) x 1 hit of second growl (afterGrowl, range x2, no map clear); per planner chance 5/r"}], "confidence": "C", "note": "card 400 table p6 (L301); assumes second growl hits the dummy once"},
         "name": "After Growl",
         "description": "Chance on cast to unleash an additional fast and powerful growl.",
         "maxRank": 5,
@@ -435,28 +445,31 @@
       {
         "id": "reaching_roar",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "other", "note": "range only (rangeLok x(1+p7.s9 %) + p12.s10); alone no dummy hit change at 160 px (221 px reach)"}], "confidence": "C", "note": "card 400 table p7 + R4 (G +8 %/r); planner skill_range 8/r matches"},
         "name": "Reaching Roar",
         "description": "Increases the range of visceral growl.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 8 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 8}
         }
       },
       {
         "id": "vocal_therapy",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "requires": "stuttering_frequency", "note": "x(1+p8.s9 %) only while dummy has stasis (projEffect[182]); conditional on p10 stasis; value per planner 15/r"}], "confidence": "C", "note": "card 400 table p8"},
         "name": "Vocal Therapy",
         "description": "Increases damage dealt to targets inflicted by stasis.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stasis": 0 },
-          "perRank": { "extra_damage_stasis": 15 }
+          "base": {"extra_damage_stasis": 0},
+          "perRank": {"extra_damage_stasis": 15}
         }
       },
       {
         "id": "trembling_growl",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0675, 0.17, 0.3075, 0.48, 0.6875], "per": "hit", "note": "chance p9.s10 (5 %/r) x note Bard_Slaying_Riffs_obj damage floor(D*(1+p9.s9 %)), p9.s9 = 35 %/r per planner; spawns on dummy, hits after 2 frames; copies [882]"}], "confidence": "C", "note": "card 400 table p9 (ProjectileCollision23Bard L202-220)", "plannerFix": "planner proc deals of_total_damage 35 %/r (reads as +0.35 D); card note deals D*(1+p9.s9 %)"},
         "name": "Trembling Growl",
         "description": "Chance to unleash piercing notes towards target on hit.",
         "maxRank": 5,
@@ -472,12 +485,13 @@
       {
         "id": "stuttering_frequency",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [5, 10, 15, 20, 25], "note": "per-CAST roll chance (%) p10.s10 (+p13.s11) of stasis buff 61 with DoT floor(D*p10.s9 %) (value = chance %); DoT formula reports/dot_debuffs.md, not modelled"}], "confidence": "C", "note": "card 400 table p10 (L192 roll)", "plannerFix": "planner models increased_stasis_damage 30/r and on_hit stasis proc; card is a per-cast stasis DoT roll (projEffect[26], buff 61)"},
         "name": "Stuttering Frequency",
         "description": "Chance to inflict stasis on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_stasis_damage": 0 },
-          "perRank": { "increased_stasis_damage": 30 }
+          "base": {"increased_stasis_damage": 0},
+          "perRank": {"increased_stasis_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -490,40 +504,37 @@
       {
         "id": "echo_in_the_darkness",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [2, 4, 6], "note": "transformation: rank>0 makes rangeLok x0.33 so base growl (113 px reach) misses the dummy at 160 px; echoes 1-3 (55/94/133 px) hit 2 times each = 2*p11.s10 total hits per use (replaces base 2)"}, {"kind": "damage_pct", "base": 0, "perRank": 35, "note": "LSSD += p11.s9 %, value per planner"}], "confidence": "I", "note": "R4 400#0 (d) pixel sim; echo chain echoes=p11.s10, InheritModifiers 0x1472fae4f", "plannerFix": "planner adds +1 projectile per rank; card: base growl misses and echoes hit 2 times each (total 2r hits, pixel sim, I)"},
         "name": "Echo in the Darkness",
         "description": "Unleash a shockwave of visceral growls towards target location.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "lightning_skill_damage": 35, "projectile_count": 1 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "subtree_damage": 35}
         }
       },
       {
         "id": "vocal_concentration",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 50, "note": "LSSD += p12.s9 %, value per planner"}, {"kind": "other", "note": "range +p12.s10 % (planner skill_range 35/r); cone narrowed sizeMultScale 0.2, stun projEffect[51] 2 s; no hit change alone at 160 px"}], "confidence": "C", "note": "card 400 table p12", "plannerFix": "planner omits the cone narrowing (sizeMultScale 0.2) and the stun; LSSD/range values match planner"},
         "name": "Vocal Concentration",
         "description": "Unleash a narrow growl with increased length dealing increased damage and stunning targets on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0, "skill_range": 0 },
-          "perRank": { "lightning_skill_damage": 50, "skill_range": 35 }
+          "base": {"skill_range": 0, "subtree_damage": 0},
+          "perRank": {"skill_range": 35, "subtree_damage": 50}
         }
       },
       {
         "id": "tinnitus",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 35, "note": "card: LSSD += p13.s9 %; value per planner (planner names it increased_stasis_damage 35/r)"}, {"kind": "dot", "byRank": [10, 20, 30], "note": "adds p13.s11 % to the p10 stasis-DoT roll (planner 10/r), faster stasis ticks via projEffect[27] = p13.s10; only with p10"}], "confidence": "C", "note": "card 400 table p13; LSSD value taken from planner (card gives symbol)", "plannerFix": "planner names stat increased_stasis_damage; card puts p13.s9 into LSSD and p13 chance into the p10 roll"},
         "name": "Tinnitus",
         "description": "Increases the proc chance of stuttering frequency increasing the damage and tick frequency of stasis.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "increased_stasis_damage": 0,
-            "increased_ailment_frequency": 0
-          },
-          "perRank": {
-            "increased_stasis_damage": 35,
-            "increased_ailment_frequency": 20
-          }
+          "base": {"increased_stasis_damage": 0, "increased_ailment_frequency": 0, "subtree_damage": 0},
+          "perRank": {"increased_stasis_damage": 35, "increased_ailment_frequency": 20, "subtree_damage": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -536,12 +547,13 @@
       {
         "id": "unleash_the_metal",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [6, 6, 6], "note": "transformation: 3 growls at -20/0/+20 deg, echoes=-2 (fixed on player); each growl hits dummy 2 times = 6 hits (base 2 of 1 growl replaced); not combined with p11"}, {"kind": "damage_pct", "base": 0, "perRank": 50, "note": "LSSD += p14.s9 %, value per planner"}], "confidence": "C", "note": "card 400 table p14 + R4 400#0 (a)(b); 9 hits before R4 correction", "plannerFix": "planner subskill effects only give area/LSSD; the 3-growl transformation (6 hits) is only in dummyHits note"},
         "name": "Unleash The Metal",
         "description": "Increases the area of effect radius of visceral growl knocking monsters back with force dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "lightning_skill_damage": 50, "area_of_effect": 10 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 10, "subtree_damage": 50}
         }
       }
     ]
@@ -581,6 +593,8 @@
   {
     "id": "sacrilegious_symphony",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.56, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Pulse Bard_Sacrilegious_Symphony_obj created at the player (singleHit, r = 140 px fixed zone: counted as 1 hit with the dummy in-zone per rule 24; at the strict 160 px convention the dummy edge, 148 px, is outside = 0 hits, so the strict-160 px value is 1.56) + channel notes: loader throws 5 salvos x 5 Bard_Slaying_Riffs_obj = 25 notes in random directions (irandom(360), full D), each hits the 12 px dummy at 160 px with p = 22.5/360 = 6.25% -> 25*0.0625 = 1.56 (R3 402#0, C; +-1 frame of the 108-frame channel does not change the salvo count). 1 + 1.56 = 2.56. Extra projectiles: not stated for this skill, perExtraProjectile = 0 (an extra note per salvo would add 5*0.0625 = 0.31 if it applied, I). Cooldown 7 s sets the period; the channel (1.8 s) is not a leap/charge."},
     "classId": "bard",
     "name": "Sacrilegious Symphony",
     "kind": "active",
@@ -609,10 +623,7 @@
         "manaCost": 5
       }
     ],
-    "damageFormula": {
-      "base": 1,
-      "perLevel": 38
-    },
+    "damageFormula": { "base": 0, "perLevel": 35 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -654,34 +665,37 @@
       {
         "id": "marked_by_the_devil",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 8, "note": "LSSD += p1.s9 %, value per planner"}], "confidence": "C", "note": "card 402 table p1"},
         "name": "Marked By The Devil",
         "description": "Increases the damage dealt by sacrilegious symphony.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "echoing_riffs",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "other", "note": "pulse radius AoE +p2.s9 % (pulse 140 px base, 148 px dummy edge). Planner base counts the in-zone hit, so no change in planner convention; strict 160 px convention would add 1 hit at r>=1"}], "confidence": "C", "note": "card 402 table p2 (FUN_14018d070); AoE value per planner 15/r"},
         "name": "Echoing Riffs",
         "description": "Increases the area of effect radius of sacrilegious symphony.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "scorching_riffs",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [5, 10, 15, 20, 25], "note": "per-CAST roll chance (%) p3.s10 (5 %/r) of stasis buff 61 with DoT floor(D*p3.s9 %) (value = chance %); DoT formula reports/dot_debuffs.md case 26, not modelled"}], "confidence": "C", "note": "card 402 table p3", "plannerFix": "planner models increased_stasis_damage 30/r and on_hit stasis proc; card is a per-cast stasis DoT roll (projEffect[26])"},
         "name": "Scorching Riffs",
         "description": "Chance to inflict stasis on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_stasis_damage": 0 },
-          "perRank": { "increased_stasis_damage": 30 }
+          "base": {"increased_stasis_damage": 0},
+          "perRank": {"increased_stasis_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -694,28 +708,31 @@
       {
         "id": "blasting_soundwave",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [5, 10, 15, 20, 25], "note": "spell crit chance % (projEffect[1004] = p4.s9); crit damage projEffect[1003] = p4.s10, planner 30 %/r"}], "confidence": "C", "note": "card 402 table p4; values per planner"},
         "name": "Blasting Soundwave",
         "description": "Chance to critically hit with increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 5, "spell_crit_damage": 30 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 5, "spell_crit_damage": 30}
         }
       },
       {
         "id": "free_will",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "utility", "note": "BuffAdd(player, 307, 3 s) movement speed; no dummy DPS"}], "confidence": "C", "note": "card 402 table p5"},
         "name": "Free Will",
         "description": "Increases your movement speed for a short duration when casting sacrilegious symphony.",
         "maxRank": 2,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 50 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 50}
         }
       },
       {
         "id": "trembling_symphony",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.01, 1.05, 1.11, 1.2, 1.31], "note": "per-CAST roll chance p6.s10 (5 %/r) gives LSSD + p6.s9 (25 %/r per planner) for that cast; mean 1 + 0.05r*0.25r/(1+LSSD), shown at LSSD=0 (upper bound); projEffect[51] stun 2 s not hits"}], "confidence": "C", "note": "card 402 table p6", "plannerFix": "planner models on_hit proc with stun; card rolls once per cast and adds LSSD for that cast"},
         "name": "Trembling Symphony",
         "description": "Chance to stun monsters on hit dealing increased damage.",
         "maxRank": 5,
@@ -732,28 +749,31 @@
       {
         "id": "increased_tempo",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "other", "note": "card finds no read of the cooldown reduction (planner -10 % cd/r); if real it would shorten the 7 s period, not quantified"}], "confidence": "I", "note": "card 402 table p7", "plannerFix": "planner cooldown_reduction_pct 10/r is not confirmed by a read in the skill script"},
         "name": "Increased Tempo",
         "description": "Decreases the cooldown of sacrilegious Symphony",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 10 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 10}
         }
       },
       {
         "id": "symphony_of_anxiety",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, -0.3125, -0.3125, -0.3125, -0.3125], "per": "use", "note": "activationTime a = 1 + p8.s9 % (10 %/r): a<=1.1 keeps 5 volleys (25 notes, 1.56 hits); a=1.2-1.5 gives 4 volleys (20 notes, 1.25 hits); a>=2 gives 3 (0.94, not reached)"}], "confidence": "C", "note": "card 402 table p8 + R3 402#0; base channel 5 volleys at a=1", "plannerFix": "planner rapid_activation_chance 10/r without effect; card: shorter channel, 4 volleys from rank 2 (-0.31 notes hits)"},
         "name": "Symphony of Anxiety",
         "description": "Increases the activation time of sacrilegious symphony.",
         "maxRank": 5,
         "effects": {
-          "base": { "rapid_activation_chance": 0 },
-          "perRank": { "rapid_activation_chance": 10 }
+          "base": {"rapid_activation_chance": 0},
+          "perRank": {"rapid_activation_chance": 10}
         }
       },
       {
         "id": "double_the_satisfaction",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.07, 1.14, 1.21, 1.28, 1.35], "note": "per-CAST roll chance p9.s9 (7 %/r) sets M = 2 for that cast; mean 1 + chance"}], "confidence": "C", "note": "card 402 table p9 (L373-374, L445)", "plannerFix": "planner proc has a chance but no effect; card doubles the whole cast damage (M=2) on success"},
         "name": "Double the Satisfaction",
         "description": "Chance on cast to deal double damage",
         "maxRank": 5,
@@ -762,56 +782,61 @@
       {
         "id": "static_symphony",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "requires": "scorching_riffs", "note": "x(1+p10.s9 %) only while dummy has stasis (projEffect[182]); stasis from p3 roll; value per planner 15/r"}], "confidence": "C", "note": "card 402 table p10"},
         "name": "Static Symphony",
         "description": "Increases damage dealt to targets inflicted by stasis",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stasis": 0 },
-          "perRank": { "extra_damage_stasis": 15 }
+          "base": {"extra_damage_stasis": 0},
+          "perRank": {"extra_damage_stasis": 15}
         }
       },
       {
         "id": "sacrilegious_encore",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 3, 5], "note": "pulses = echoes = p11.s9 = 2r (every 0.1 s, each with own hit map) instead of 1; extra = 2r-1"}, {"kind": "extra_hits", "byRank": [1, 3, 5], "per": "use", "replacesProjectileHits": true, "note": "each extra pulse hits the dummy once (in-zone convention), so extra = 2r-1"}], "confidence": "C", "note": "card 402 table p11 (Loader_Step_0 L4-34); AoE +p11.s10 not hits", "plannerFix": "planner adds 2 per rank on top of 1 base pulse (total 1+2r); card: total pulses = p11.s9 = 2r"},
         "name": "Sacrilegious Encore",
         "description": "Sacrilegious symphony now echoes additional times with increased area of effect radius.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "area_of_effect": 0 },
-          "perRank": { "projectile_count": 2, "area_of_effect": 25 }
+          "base": {"projectile_count": 0, "area_of_effect": 0},
+          "perRank": {"projectile_count": 2, "area_of_effect": 25}
         }
       },
       {
         "id": "symphony_of_destruction",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 40, "note": "LSSD += p12.s9 %, value per planner; symphonyOfAgony=100 consumer not found (I), no hit change"}], "confidence": "I", "note": "card 402 table p12"},
         "name": "Symphony of Destruction",
         "description": "Unleash a massive shockwave knocking monsters up causing them to deal area of effect damage when landing.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 40 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 40}
         }
       },
       {
         "id": "pulling_the_crowd",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 25, "note": "LSSD += p13.s9 %, value per planner"}, {"kind": "zero_on_dummy", "note": "pull to 200*(1+AoE) and EnemyAddBuff(18,1,2 s); pull does not move the dummy (em[26]); AoE +p13.s10 % (planner 20/r) not hits"}], "confidence": "C", "note": "card 402 table p13 (L413-420); rule 22/27 stun via EnemyAddBuff passes"},
         "name": "Pulling the Crowd",
         "description": "Pull nearby monsters towards you when casting and stunning them for a short while.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "lightning_skill_damage": 25, "area_of_effect": 20 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 20, "subtree_damage": 25}
         }
       },
       {
         "id": "spiraling_to_insanity",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [2, 2, 2], "note": "transformation: loader destroyed (no pulse, no channel notes, no echoes); orbiting Note_Insanity pack (full D, one shared singleHitPackId) hits the dummy once per pack id: 2 hits per cast at a=1 (first 2-51 frames, second after the map clear at 138-177); 3 if a>=1.3 (I)"}, {"kind": "damage_pct", "base": 0, "perRank": 25, "note": "LSSD += p14.s9 %, value per planner"}], "confidence": "C", "note": "card 402 table p14 + R4 402#3; spiralingToInsanity = 5r+10 notes; ~2 hits replace base 2.56", "plannerFix": "planner models extra projectiles (10+5r, LSSD) on top of pulse+channel; card: loader is destroyed and the hits are 2 per cast from an orbiting pack (R4)"},
         "name": "Spiraling to Insanity",
         "description": "Unleash multiple piercing notes orbitting around you dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0, "projectile_count": 10 },
-          "perRank": { "lightning_skill_damage": 25, "projectile_count": 5 }
+          "base": {"projectile_count": 10, "subtree_damage": 0},
+          "perRank": {"projectile_count": 5, "subtree_damage": 25}
         }
       }
     ]
@@ -849,6 +874,7 @@
       "base": 5,
       "perLevel": 1
     },
+    "buffUptime": { "duration": 25, "cooldown": 70 },
     "passiveStats": {
       "base": {
         "lightning_skill_damage": 15,
@@ -926,6 +952,8 @@
   {
     "id": "progenies_of_the_great_cataclysm",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 100.0, "baseProjectiles": 5, "perExtraProjectile": 20.0, "confidence": "C", "note": "Per cast = one 20 s amplifier (Bard_Progenies_Amplifier_obj, destroyTimer 20 s, cooldown 40 s). While the dummy is within amplifierRange (400) it fires every 1 s (first at 0.1 s) a salvo of amplifierProjectiles = 5 + p1.s9 notes: instance_nth_nearest returns the dummy for every n (rule 17) and the loop does not skip a repeated target, so each of the 5 Bard_Slaying_Riffs_obj notes (damage[4] = D = 20*L, own hit map, spawned on the dummy, hits after 2 frames, destroyCollision) hits once: 20 salvos (0.1, 1.1, ..., 19.1 s) x 5 = 100 hits of D. perExtraProjectile = 20 (one more note per salvo over 20 salvos; the card only gives this via p1, gear extra projectiles not stated). Excluded: High dB sonar, Overheated / Tripping Cord / small amplifiers (subskills). Amplifier position (cursor) I."},
     "classId": "bard",
     "name": "Progenies of the Great Cataclysm",
     "kind": "active",
@@ -955,10 +983,7 @@
         "manaCost": 5
       }
     ],
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 25
-    },
+    "damageFormula": { "base": 0, "perLevel": 20 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -1000,17 +1025,19 @@
       {
         "id": "black_metals_reach",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5], "note": "notes per salvo = 5 + p1.s9 (salvo every 1 s, 20 salvos)"}, {"kind": "extra_hits", "byRank": [20, 40, 60, 80, 100], "per": "use", "replacesProjectileHits": true, "note": "+1 note hit per salvo per rank: 20 salvos x r; n-th nearest is the dummy every time (rule 17)"}], "confidence": "C", "note": "card 406 table p1; planner perExtraProjectile 20 matches 20 salvos x 1 note"},
         "name": "Black Metals Reach",
         "description": "Increases maximum targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "max_targets": 0 },
-          "perRank": { "max_targets": 2 }
+          "base": {"max_targets": 0},
+          "perRank": {"max_targets": 2}
         }
       },
       {
         "id": "stage_osha_violation",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "other", "note": "OSHA amplifier (chance p2.s10 %/r ~0.15 %/r per hit) deals ~0: its landing explosion copies damage[1] = 0; card value ~0"}], "confidence": "C", "note": "card 406 table p2 (ProjectileCollision23Bard L81-96; Destroy_0 0x14728f130)", "plannerFix": "planner gives LSSD 30/r, AoE 15/r and on_hit chance 4/r; card says the OSHA object deals 0 damage (explosion copies damage[1]), so ~0 DPS"},
         "name": "Stage OSHA Violation",
         "description": "Chance on hit to drop an exploding amplifier from the sky dealing area of effect damage upon landing.",
         "maxRank": 5,
@@ -1026,56 +1053,61 @@
       {
         "id": "longer_cord",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "other", "note": "amplifierRange = 400*(1+p3.s9 %); dummy at 160 px already inside range, no hit change"}], "confidence": "C", "note": "card 406 table p3; planner skill_range 15/r"},
         "name": "Longer Cord",
         "description": "Increases the range of the amplifier.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "the_sound_of_darkness",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 8, "note": "LSSD += p4.s9 %, value per planner"}], "confidence": "C", "note": "card 406 table p4"},
         "name": "The Sound of Darkness",
         "description": "Increases the damage dealt by the amplifier.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "amping_up_the_metal",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "base": 0, "perRank": -7, "note": "cooldown -p5.s9 % (GetTalentCooldown#406 L629); 40 s cd, uptime 20/cd"}], "confidence": "C", "note": "card 406 table p5; value per planner 7/r"},
         "name": "Amping Up The Metal",
         "description": "Decreases the cooldown of progenies of the great cataclysm.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 7 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 7}
         }
       },
       {
         "id": "penetrating_soundwaves",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [4, 8, 12, 16, 20], "note": "spell crit chance % (projEffect[1004] = p6.s9); crit damage projEffect[1003] = p6.s10, planner 22.5 %/r"}], "confidence": "C", "note": "card 406 table p6; values per planner"},
         "name": "Penetrating Soundwaves",
         "description": "Gain a chance to critically hit with increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 4, "spell_crit_damage": 22.5 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 4, "spell_crit_damage": 22.5}
         }
       },
       {
         "id": "broken_electric_cord",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.008, 1.032, 1.072, 1.128, 1.2], "note": "per-NOTE roll chance p7.s10 (4 %/r) gives lightning break p7.s9 (20 %/r, buff 11, 5 s) on that note; mean 1 + 0.04r*0.20r"}], "confidence": "C", "note": "card 406 table p7 (L99-102, L130); break value per planner"},
         "name": "Broken Electric Cord",
         "description": "Chance to inflict lightning break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_break": 0 },
-          "perRank": { "lightning_break": 20 }
+          "base": {"lightning_break": 0},
+          "perRank": {"lightning_break": 20}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1091,6 +1123,7 @@
       {
         "id": "electric_soundwaves",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.042, 0.088, 0.138, 0.192, 0.25], "per": "hit", "note": "chance p8.s10 (4 %/r) x chain Chain_Lightning_Parent_obj damage floor(D*(1+p8.s9 %)), p8.s9 = 5 %/r per planner; per note hit on dummy"}], "confidence": "C", "note": "card 406 table p8 (ProjectileCollision23Bard L134-148)", "plannerFix": "planner models the proc as +5 %/r lightning_skill_damage; card spawns a chain object with floor(D*(1+p8.s9 %)) damage (one extra hit with chance 4 %/r)"},
         "name": "Electric Soundwaves",
         "description": "Chance on hit to unleash a chain lightning dealing additional damage.",
         "maxRank": 5,
@@ -1106,6 +1139,7 @@
       {
         "id": "overheated_amplifier",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.82, 7.28, 16.38, 29.12, 45.5], "per": "use", "replacesProjectileHits": false, "note": "trail chance per iteration p9.s10 = 4r %, 5 iterations/s x 20 s = 100 rolls; each trail = ~1.3 hits of D*p9.s9 (p9.s9 = 35 %/r): 100 * 0.04r * 1.3 * 0.35r = 1.82 r^2 (was 1.09 hits per trail, 1.53 r^2). Amplifier 30 px from the dummy (Resztki E): 22.9-26 % of first-ember directions overlap x 5 ticks"}], "confidence": "I", "note": "card 406 table p9 + R4 406#1 + Resztki E/B (ember overlap 0.193 -> 0.229 in the sim with an ellipse 41x34, card 21.8 % -> ~26 %; bitmap shape assumed ellipse, I)", "plannerFix": "planner proc on_cast chance 4/r with of_total_damage 35/r and trail_count 2/r; card rolls per loop iteration (100 rolls per cast) and each trail is ~1.09 hits of 35 %/r D (quadratic in rank); planner trail_count not read"},
         "name": "Overheated Amplifier",
         "description": "Chance on amplifier cast to send trails of flames towards random directions.",
         "maxRank": 5,
@@ -1121,12 +1155,13 @@
       {
         "id": "electrocuting_soundblast",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [4, 8, 12, 16, 20], "note": "per-CAST roll chance (%) p10.s10 (4 %/r) of stasis DoT floor(D*p10.s9 %) for the whole 20 s; value = chance %; DoT formula reports/dot_debuffs.md, not modelled"}], "confidence": "C", "note": "card 406 table p10", "plannerFix": "planner models increased_stasis_damage 30/r with on_hit stasis; card is a per-cast stasis DoT roll (projEffect[26], 20 s)"},
         "name": "Electrocuting Soundblast",
         "description": "Chance to inflict stasis on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_stasis_damage": 0 },
-          "perRank": { "increased_stasis_damage": 30 }
+          "base": {"increased_stasis_damage": 0},
+          "perRank": {"increased_stasis_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1139,59 +1174,49 @@
       {
         "id": "increasing_sound_levels",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 25, "note": "LSSD += p11.s9 %, value per planner"}, {"kind": "other", "byRank": [20, 40, 60], "note": "p11.s10 = r small amplifiers each pulse a Sonar Pulse (r=140 px, 1 hit) once per second, 20 s: +20 hits per use per rank. Kept as other (entity count, not per-action extra_hits); engine must not multiply by summon count"}], "confidence": "C", "note": "card 406 table p11 (Small_Step L45-60); small amps 132 px from dummy, pulse 140 px (I)", "plannerFix": "planner summon_max_amount +1/r on a non-summon active; card: small amplifiers each pulse once per second (+20 hits per use per rank), engine must count pulses not entities"},
         "name": "Increasing Sound Levels",
         "description": "The main amplifier now creates additional smaller amplifiers pulsating and dealing area of effect lightning damage.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "lightning_skill_damage": 0,
-            "summon_max_amount": 0
-          },
-          "perRank": {
-            "lightning_skill_damage": 25,
-            "summon_max_amount": 1
-          }
+          "base": {"summon_max_amount": 0, "subtree_damage": 0},
+          "perRank": {"summon_max_amount": 1, "subtree_damage": 25}
         }
       },
       {
         "id": "crushing_sound_levels",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [80, 80, 80], "note": "transformation: floor((5+p1.s9)/2)=2 shockwave chains per salvo, each 2 hits on dummy (amp on dummy: 0 and 84 px), 20 salvos = 80 hits; replaces 100 notes (I: 3 hits when amp at player)"}, {"kind": "damage_pct", "base": 0, "perRank": 40, "note": "LSSD += p12.s9 %, value per planner"}], "confidence": "I", "note": "card 406 table p12 (Shockwave_Step_0 0x1472a1300)", "plannerFix": "planner has only LSSD; card transforms notes into 2 shockwave chains per salvo (80 hits per cast with p1=0)"},
         "name": "Crushing Sound Levels",
         "description": "The amplifier now sends shockwaves instead of notes with a lowered projectile count.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0 },
-          "perRank": { "lightning_skill_damage": 40 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 40}
         }
       },
       {
         "id": "orbital_soundwaves",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [25, 66.67, 150], "note": "salvo period x (1 - p13.s10 %) -> frequency 1/(1-0.2r): 1.25x, 1.67x, 2.5x (ranks 1-3); orbit radius 200 around player; kadencja, each salvo 5+p1 notes at dummy"}, {"kind": "damage_pct", "base": 0, "perRank": 10, "note": "LSSD += p13.s9 %, value per planner"}], "confidence": "C", "note": "card 406 table p13; spin_speed 15/r (planner) no dummy effect", "plannerFix": "planner faster_cast_rate 20/r (linear); card period factor 1/(1-p13.s10 %), i.e. 25 %/67 %/150 % more salvos"},
         "name": "Orbital Soundwaves",
         "description": "The amplifier now orbits you with increased cast speed.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "lightning_skill_damage": 0,
-            "faster_cast_rate": 0,
-            "spin_speed": 0
-          },
-          "perRank": {
-            "lightning_skill_damage": 10,
-            "faster_cast_rate": 20,
-            "spin_speed": 15
-          }
+          "base": {"faster_cast_rate": 0, "spin_speed": 0, "subtree_damage": 0},
+          "perRank": {"faster_cast_rate": 20, "spin_speed": 15, "subtree_damage": 10}
         }
       },
       {
         "id": "tripping_electric_cord",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [8.8, 13.2, 23.4], "per": "use", "replacesProjectileHits": false, "note": "cord ticks on dummy = P x {50,75,133} (tick 22.5/15/7.5 frames over ~1190 frames), P = 0.176 (oriented rectangle, rule 26; amplifier at (x, y-30), 30 px from the dummy centre, window +-27 deg; Po R4 0.22 with 24 px; R4 had 0.53 AABB, not valid). Variant cursor on the dummy centre (x, y): P = 1.0 -> 50 / 75 / 133"}, {"kind": "damage_pct", "base": 0, "perRank": 80, "note": "LSSD += p14.s9 %, value per planner"}], "confidence": "I", "note": "card 406 table p14 + R4 406#1 + Po R4 (e, rule 26) + Resztki E/B (cord.py reproduces 0.217 for 24 px; 0.176 for 30 px is the card's corrected value); P geometry I", "plannerFix": "planner adds faster_cast_rate 25/r (not in card; card has tick frequency p14.s10 % on the cord) and no cord ticks"},
         "name": "Tripping Electric Cord",
         "description": "The amplifier cord now deals increased damage to monsters with increased frequency.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_skill_damage": 0, "faster_cast_rate": 0 },
-          "perRank": { "lightning_skill_damage": 80, "faster_cast_rate": 25 }
+          "base": {"faster_cast_rate": 0, "subtree_damage": 0},
+          "perRank": {"faster_cast_rate": 25, "subtree_damage": 80}
         }
       }
     ]
@@ -1199,6 +1224,8 @@
   {
     "id": "crowd_dive",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Charge ends at the cursor (in-zone, rule 24; ~24 px from the dummy centre); no contact hit and no stop on the dummy (skillsCharge L208: only p13 iFist stops the charge on an enemy); landing object Bard_Crowd_Diver_obj (Universal_Charge_Mask_spr 80x80 precise, r~40*scale) hits once: D = floor(W*(1+V1%)*(1+LSSD)) with V1 = 50+30L (R3 409#0, C). Launch of the dummy (projEffect[110]=20) deals no damage in the base (no [139]). Cooldown 3 s >> charge time (~8 frames), so no period override."},
     "classId": "bard",
     "name": "Crowd Dive",
     "kind": "active",
@@ -1233,10 +1260,9 @@
       "perLevel": 1
     },
     "attackScaling": {
-      "weaponDamagePct": {
-        "base": 56,
-        "perLevel": 30
-      },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": true,
+      "weaponDamagePct": { "base": 150, "perLevel": 30 },
       "flatPhysicalMin": {
         "base": 2,
         "perLevel": 1
@@ -1277,6 +1303,7 @@
       {
         "id": "uppercuts_so_many_uppercuts",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.1, 0.15, 0.2, 0.25], "per": "hit", "note": "chance p1.s10 (5 %/r) x extra Hitbox_obj full D on the hit point (ProjectileCollision23Bard L106-125); per base hit"}, {"kind": "extra_hits", "byRank": [0.35, 0.7, 1.05, 1.4, 1.75], "per": "use", "note": "landing: projEffect[139] = p1.s9 gives B47 = floor(D*p1.s9 %) on the dummy = one extra hit of 35 %/r D at the landing (Explosion_Item class none, I)"}], "confidence": "C", "note": "card 409 table p1 + R3/R4 rule 22 (B47 via [139]); planner values per proc (5 %/r chance, 35 %/r)", "plannerFix": "planner models a proc with +35 %/r physical damage; card: chance adds a full extra D hitbox and the landing adds one hit of D*p1.s9 %"},
         "name": "Uppercuts.. So Many Uppercuts",
         "description": "Chance to knock monsters airborne on hit dealing area of effect damage when landing.",
         "maxRank": 5,
@@ -1292,23 +1319,25 @@
       {
         "id": "headbutt",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 10, "note": "LSSD += p2.s9 %, value per planner"}], "confidence": "C", "note": "card 409 table p2"},
         "name": "Headbutt",
         "description": "Increases damage dealt by crowd diver.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "colliding_masses",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.015, 1.06, 1.135, 1.24, 1.375], "note": "per-USE roll chance p3.s10 (5 %/r) gives physical break (buff, 5 s) of p3.s9 (30 %/r per planner) + RSS234; mean 1 + 0.05r*0.30r"}], "confidence": "C", "note": "card 409 table p3"},
         "name": "Colliding Masses",
         "description": "Chance to inflict armor break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "armor_break": 0 },
-          "perRank": { "armor_break": 30 }
+          "base": {"armor_break": 0},
+          "perRank": {"armor_break": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1321,17 +1350,19 @@
       {
         "id": "diving_stamina",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "other", "note": "card: no read found; no DPS"}], "confidence": "I", "note": "card 409 table p4", "plannerFix": "planner cooldown_reduction_pct 8/r is not confirmed by a read; card finds no effect"},
         "name": "Diving Stamina",
         "description": "Decreases cooldown of crowd diver",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 8 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 8}
         }
       },
       {
         "id": "get_out_the_way",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "per-use roll p5.s10 (7 %/r) gives knockback [103] 0.6 s and terrain damage [108] = floor(D*p5.s9 %); terrain damage ~0 on a stationary dummy (I)"}], "confidence": "I", "note": "card 409 table p5 (rule 22/27: knockback blocked on dummy only for [103] via em[171], see headbanger)", "plannerFix": "planner models +35 %/r physical per proc; card gives knockback plus terrain damage that is ~0 on the dummy"},
         "name": "Get Out The Way",
         "description": "Chance on cast to knock monsters back causing them to take increased damage from terrain.",
         "maxRank": 5,
@@ -1347,109 +1378,109 @@
       {
         "id": "crowd_violation",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "other", "note": "stun duration projEffect[51] = FPS*p6.s9 + 2 s; no hit change alone; enables p8 (vs stunned)"}], "confidence": "C", "note": "card 409 table p6"},
         "name": "Crowd Violation",
         "description": "Stun targets on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "stun_duration_pct": 0 },
-          "perRank": { "stun_duration_pct": 1 }
+          "base": {"stun_duration_pct": 0},
+          "perRank": {"stun_duration_pct": 1}
         }
       },
       {
         "id": "dirty_diver",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [5, 10, 15, 20, 25], "note": "attack crit chance % ([1018] = p7.s9); crit damage [1019] = p7.s10 (+p12.s10), planner 25 %/r"}], "confidence": "C", "note": "card 409 table p7; values per planner"},
         "name": "Dirty Diver",
         "description": "Chance to deal increased critical strike damage on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 5, "spell_crit_damage": 25 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 5, "spell_crit_damage": 25}
         }
       },
       {
         "id": "hammer_dive",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "requires": "crowd_violation", "note": "x(1+p8.s9 %) only vs stunned (projEffect[179]); stun from p6 [51] acts on dummy (rule 27); value per planner 15/r"}], "confidence": "C", "note": "card 409 table p8"},
         "name": "Hammer Dive",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 15 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 15}
         }
       },
       {
         "id": "quick_dive",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "charge speed x(1+p9.s9 %) (playerEffect[13]); no DPS, cooldown 3 s dominates"}], "confidence": "C", "note": "card 409 table p9", "plannerFix": "card: charge speed only; planner lists it as movement_speed 15/r (no DPS either way)"},
         "name": "Quick Dive",
         "description": "Increases the dash speed of crowd diver.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 15 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 15}
         }
       },
       {
         "id": "lengthy_dive",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "other", "note": "no read in card; charge ends at cursor (max(dist,128)), so range does not change the landing point on the dummy"}], "confidence": "I", "note": "card 409 table p10", "plannerFix": "planner skill_range 15/r; card has no read of range, and the charge ends at the cursor so no dummy effect"},
         "name": "Lengthy Dive",
         "description": "Increases the maximum length of crowd diver.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "pit_fighters",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 25, "note": "LSSD += p11.s9 %, value per planner"}, {"kind": "other", "byRank": [2, 3, 4], "note": "projEffect[889] = p11.s10 = 1 + r (base s7 = 1) Pit_Fighter_obj summons (4 s) at charge end; entity count (planner summon_max_amount 1 + 1/r matches), attacks per reports/summons.md, not hits here"}], "confidence": "I", "note": "card 409 table p11 (skillsCharge L1318-1328) + Po R4 (b, rule 39): p11.s10 = 1 + rank"},
         "name": "Pit Fighters",
         "description": "Spawn pit fighters to fight by your side for a short duration after impact.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "physical_skill_damage": 0,
-            "summon_max_amount": 1
-          },
-          "perRank": {
-            "physical_skill_damage": 25,
-            "summon_max_amount": 1
-          }
+          "base": {"summon_max_amount": 1, "subtree_damage": 0},
+          "perRank": {"summon_max_amount": 1, "subtree_damage": 25}
         }
       },
       {
         "id": "flying_fists",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 22.5, "note": "LSSD += p12.s9 %, value per planner; crit damage +p12.s10 (planner 50 %/r) not hits"}, {"kind": "extra_hits", "byRank": [19.9, 19.9, 19.9], "per": "use", "replacesProjectileHits": false, "note": "Flying_Fists_Controller 2 s, 2 fists per 3 frames = 80 fists; flight direction = controller direction - 30 + irandom(60) (no fistDir), start 128 px behind the controller: ~19.9 hits of D per cast with the controller at the cursor (x, y-24), 24 px above the dummy (19.8 with the controller on the dummy centre, 15.8 with the player 160 px from the dummy before the dive, dive phase -0.3 (I)); each fist hits once. Was ~80 (all 26 directions hit). DPS ~19.9*D/3 s = 6.6 D/s"}], "confidence": "I", "note": "card 409 table p12 + Resztki F (sim.c pixel simulation; inputs C from asm 0x147260dc9-0x147260f76, phase of the dive and fist rotation I); the Po R4 (e, rule 26) line '~80 for the 24 px variant' is superseded by Resztki F", "plannerFix": "planner omits the fist objects (about 80 hits per cast from p12); only LSSD and crit modelled"},
         "name": "Flying Fists",
         "description": "Unleash pummeling fists towards nearby monsters dealing damage with increased critical strike damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "spell_crit_damage": 0 },
-          "perRank": { "physical_skill_damage": 22.5, "spell_crit_damage": 50 }
+          "base": {"spell_crit_damage": 0, "subtree_damage": 0},
+          "perRank": {"spell_crit_damage": 50, "subtree_damage": 22.5}
         }
       },
       {
         "id": "ifist",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "landing is iFist (x(1+p13.s9 %), +30 %/r AoE) only if a wall stands in front of the player at the last charge step; open arena with dummy: ordinary landing, x1"}], "confidence": "C", "note": "card 409 table p13 + R4 409#1 (skillsCharge L201/L1278)", "plannerFix": "planner lists physical 250 %/r unconditionally; card: applies only if a wall is directly ahead, so 0 on an open arena"},
         "name": "iFist",
         "description": "Turn into a fist unleashing an area of effect pulse dealing increased damage on a large radius when hitting terrain.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "physical_skill_damage": 250, "area_of_effect": 30 }
+          "base": {"physical_skill_damage": 0, "area_of_effect": 0},
+          "perRank": {"physical_skill_damage": 250, "area_of_effect": 30}
         }
       },
       {
         "id": "blinkfist_strike",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD += p14.s9 %, value per planner"}, {"kind": "dot", "byRank": [75, 150, 225], "note": "transformation: blink replaces charge (playerEffect[155]=2, [128]=1); burn [18] = floor(D*p14.s10 %) (value per planner 75 %/r, I); blink hit model not modelled"}], "confidence": "I", "note": "card 409 table p14 (Blinking_Fiststrike_Dummy_obj, L907)", "plannerFix": "planner models increased_burning_damage 75/r with proc chance 100; card: transformation to blink with burn floor(D*p14.s10 %) and a different movement model"},
         "name": "Blinkfist Strike",
         "description": "Teleport a short distance falling down from the sky with a massive fist dealing area of effect damage inflicting burning and stunning on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "increased_burning_damage": 0 },
-          "perRank": {
-            "physical_skill_damage": 15,
-            "increased_burning_damage": 75
-          }
+          "base": {"increased_burning_damage": 0, "subtree_damage": 0},
+          "perRank": {"increased_burning_damage": 75, "subtree_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1496,6 +1527,9 @@
   {
     "id": "pyro_technician",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Blink ends on the target; skillsBlink L296 creates Bard_Pyrotechnician_Nova_obj (singleHit, mask 320x320 -> r = 160*scale, scale 0.1 -> 1+[71]) with damage[0] (phys) + damage[3] (fire) of the controller = one hit carrying both parts = 1.0 main hit (R2/R3 card 412 baza, C). The nova is at the dummy (player blinks to it), so it covers it. No extra objects without p12/p13/p14. The blink is a Movement/Blink-tag talent: period = ceil(45/S) frames, see period."},
+    "usePeriod": {"kind": "charge", "extraFrames": 2, "trigger": false, "note": "Blink (skillsBlink) does not write playerEffect[142] and the tags Movement/Blink {6, 7} let the same talent bypass the animation lock (Po R4 (e), Resztki C): period = max(ceil(45/S), blink time) frames, S = APS_eff*(1 + p4.s9 %) (p4 5 %/r); blink time ~1-2 frames (the end position is computed at once, skillsBlink L47), so 45/S binds for any S <= 22. No floor(24/S)+1 trigger frames and no rule-37 lock ceil(72/S)+1. With haste /(1 + 0.005*h_eff) (rule 35, I). I: whether a re-cast inside the running sequence fires after ~1 frame or after t_wyw (does not change the period)."},
     "weaponRequirement": "melee",
     "classId": "bard",
     "name": "Pyro Technician",
@@ -1526,20 +1560,16 @@
       }
     ],
     "attackKind": "attack",
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 28
-    },
+    "damageFormula": { "base": 0, "perLevel": 22 },
     "manaCostFormula": {
       "base": 4.75,
       "perLevel": 1.175,
       "rankIndexing": "fullRank"
     },
     "attackScaling": {
-      "weaponDamagePct": {
-        "base": 80,
-        "perLevel": 30
-      },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": true,
+      "weaponDamagePct": { "base": 170, "perLevel": 30 },
       "flatPhysicalMin": {
         "base": 4,
         "perLevel": 0
@@ -1590,34 +1620,37 @@
       {
         "id": "heat_to_the_flames",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 10, "note": "LSSD += p1.s9 % on both physical and fire parts; value per planner"}], "confidence": "C", "note": "card 412 table p1"},
         "name": "Heat To The Flames",
         "description": "Increases physical damage and fire damage dealt by pyro technician",
         "maxRank": 5,
         "effects": {
-          "base": { "fire_skill_damage": 0 },
-          "perRank": { "fire_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "amping_up_the_heat",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "base": 0, "perRank": 4, "note": "buff 167 IAS p2.s10 (2 %) per stack, max p2.s9 = 2r stacks, full uptime with continuous use: total 4 %/r"}], "confidence": "C", "note": "card 412 table p2; stacks 2/r and 2 %/stack per planner"},
         "name": "Amping Up The Heat",
         "description": "Gain maximum heat stacks increasing your attack speed per stack.",
         "maxRank": 5,
         "effects": {
-          "base": { "max_skill_stacks": 0, "increased_attack_speed": 0 },
-          "perRank": { "max_skill_stacks": 2, "increased_attack_speed": 2 }
+          "base": {"max_skill_stacks": 0, "increased_attack_speed": 0},
+          "perRank": {"max_skill_stacks": 2, "increased_attack_speed": 2}
         }
       },
       {
         "id": "lit_on_flames",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [3, 6, 9, 12, 15], "note": "per-USE roll chance p3.s10 (3 %/r) of burning (buff 1) with floor((D_phys+D_fire)*(p3.s9 %+p11.s9 %)); value = chance %; DoT per reports/dot_debuffs.md case 18, not modelled"}], "confidence": "C", "note": "card 412 table p3", "plannerFix": "planner models increased_burning_damage 40/r with an on_hit burning proc; card is a per-use burning DoT roll of floor(D*(p3.s9+p11.s9) %)"},
         "name": "Lit On Flames",
         "description": "Chance on hit to inflict burning for a portion of your physical and fire damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 40 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 40}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1630,17 +1663,19 @@
       {
         "id": "fueling_the_engine",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "base": 0, "perRank": 5, "note": "TalentUseSetSpeed 412: acc = p4.s9*0.01 (5 %/r), S = APS_eff*(1 + 0.05 r) -> period ceil(45/S) frames (asm 0x146a64fc9-0x146a651aa, RANK(.., 4) 0x15069e490)"}], "confidence": "C", "note": "card 412 table p4 + Po R4 (e, rule 37): the card previously found no read; planner skill_attack_speed_more 5/r matches"},
         "name": "Fueling The Engine",
         "description": "Increases attack speed when using pyro technician.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 5 }
+          "base": {"skill_attack_speed_more": 0},
+          "perRank": {"skill_attack_speed_more": 5}
         }
       },
       {
         "id": "afterflame",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "on-kill trigger (EnemyAddBuff 36 on kill); training dummy does not die so no effect"}], "confidence": "I", "note": "card 412 table p5 (ProjectileCollision00Skills L2621-2627)"},
         "name": "Afterflame",
         "description": "Chance on kill to unleash a flaming pulse dealing damage on a large radius around the target.",
         "maxRank": 5,
@@ -1656,73 +1691,73 @@
       {
         "id": "melting_bones",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "requires": "lit_on_flames", "note": "x(1+p6.s9 %) only vs burning (projEffect[180]); burning from p3 roll; value per planner 15/r"}], "confidence": "C", "note": "card 412 table p6"},
         "name": "Melting Bones",
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 15 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 15}
         }
       },
       {
         "id": "wounding_fire",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "vs bosses only (projEffect[121]); ordinary dummy is not a boss, 0"}], "confidence": "C", "note": "card 412 table p7"},
         "name": "Wounding Fire",
         "description": "Increases damage dealt to bosses.",
         "maxRank": 3,
         "effects": {
-          "base": { "extra_damage_bosses": 0 },
-          "perRank": { "extra_damage_bosses": 25 }
+          "base": {"extra_damage_bosses": 0},
+          "perRank": {"extra_damage_bosses": 25}
         }
       },
       {
         "id": "covering_the_stage",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "other", "note": "nova area projEffect[71] = 0.25 + p8.s9 % (max scale 1+[71]); the nova already covers the dummy, one hit"}], "confidence": "C", "note": "card 412 table p8; area 12/r per planner"},
         "name": "Covering The Stage",
         "description": "Increases the area of effect radius of pyro technician.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 12 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 12}
         }
       },
       {
         "id": "pulsating_pyrokinesis",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "execute below HP threshold (projEffect[140], ProjectileCollision00Skills L1610); dummy at full HP, 0"}], "confidence": "I", "note": "card 412 table p9", "plannerFix": "planner execute_below 1.5/r; card: execute depends on target HP, dummy at full HP gives 0 (I)"},
         "name": "Pulsating Pyrokinesis",
         "description": "Execute low life monsters below a treshold.",
         "maxRank": 5,
         "effects": {
-          "base": { "execute_below": 0 },
-          "perRank": { "execute_below": 1.5 }
+          "base": {"execute_below": 0},
+          "perRank": {"execute_below": 1.5}
         }
       },
       {
         "id": "concentrated_scorching",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [3, 6, 9, 12, 15], "note": "crit chance % for attack and spell parts ([1018]=[1004]=p10.s10); crit damage [1019]=[1003]=p10.s9, planner 22.5 %/r"}], "confidence": "C", "note": "card 412 table p10; values per planner"},
         "name": "Concentrated Scorching",
         "description": "Chance for both physical and fire damage to critically hit dealing increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0, "crit_chance": 0 },
-          "perRank": { "crit_damage": 22.5, "crit_chance": 3 }
+          "base": {"crit_damage": 0, "crit_chance": 0},
+          "perRank": {"crit_damage": 22.5, "crit_chance": 3}
         }
       },
       {
         "id": "rapid_burns",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [100, 200, 300], "requires": "lit_on_flames", "note": "burn amount +p11.s9 % (100 %/r per planner) added to p3 amount, and burn tick frequency +p11.s10 (15 %/r); value = burn damage increase %"}], "confidence": "C", "note": "card 412 table p11"},
         "name": "Rapid Burns",
         "description": "Increases the frequency and damage of inflicted burning.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "increased_burning_damage": 0,
-            "increased_ailment_frequency": 0
-          },
-          "perRank": {
-            "increased_burning_damage": 100,
-            "increased_ailment_frequency": 15
-          }
+          "base": {"increased_burning_damage": 0, "increased_ailment_frequency": 0},
+          "perRank": {"increased_burning_damage": 100, "increased_ailment_frequency": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1735,17 +1770,19 @@
       {
         "id": "traveling_pyre",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6], "note": "pyre objects p12.s10 = 2r (planner projectile_count 2/r), one shared singleHitPackId, start 12 px from player (= dummy centre after blink)"}, {"kind": "extra_hits", "byRank": [1.5, 2.0, 2.5], "per": "use", "replacesProjectileHits": true, "note": "the whole pack hits the dummy once (shared pack), damage x(1+p12.s9 %) with p12.s9 = 50 %/r per planner: 1 x (1+0.5r)"}], "confidence": "C", "note": "card 412 table p12 (skillsBlink L348-378; R4 412#0)", "plannerFix": "planner counts +1 hit per extra pyre (perExtraProjectile); card: the pyre pack shares one singleHitPackId, so it gives one hit of (1+p12.s9 %) per cast"},
         "name": "Traveling Pyre",
         "description": "Unleash multiple burning tornados on hit dealing additional damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "fire_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "fire_skill_damage": 50, "projectile_count": 2 }
+          "base": {"fire_skill_damage": 0, "projectile_count": 0},
+          "perRank": {"fire_skill_damage": 50, "projectile_count": 2}
         }
       },
       {
         "id": "circle_of_burning",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.665, 3.32, 8.955], "per": "use", "note": "per-use chance c = 25 %/r (planner) gives p13.s10 = 2r extra novas on nth-nearest targets (dummy is the nearest each time, rule 17), each x(1+0.33r) (33 %/r per planner): 0.5 r^2 (1+0.33r)"}], "confidence": "C", "note": "card 412 table p13 (skillsBlink L316-341); count and chance per planner"},
         "name": "Circle of Burning",
         "description": "Chance on attack to hit multiple targets dealing increased damage.",
         "maxRank": 3,
@@ -1761,12 +1798,13 @@
       {
         "id": "burning_surface",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.2, 2.4, 4.8], "per": "use", "note": "Scorched object stands by the dummy: ticks 3,3,4 (tick 0.33 s, life 1 s x (1+p14.s10 %)) x p14.s9 % = 0.4 r per tick; R4 counts 3 ticks at base"}], "confidence": "C", "note": "card 412 table p14 + R4 (tick_hits.py 58 20 = 3); formula 1+floor(60*(1+p14.s10 %)/20) superseded", "plannerFix": "planner of_total_damage 40/r and skill_duration 15/r without tick model; card gives ticks x p14.s9 % per use (about 3-4 ticks)"},
         "name": "Burning Surface",
         "description": "Scorch the ground below your targets dealing a portion of your damage for a short duration. Effect stacks infinitely.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "skill_duration": 0 },
-          "perRank": { "of_total_damage": 40, "skill_duration": 15 }
+          "base": {"of_total_damage": 0, "skill_duration": 0},
+          "perRank": {"of_total_damage": 40, "skill_duration": 15}
         }
       }
     ]
@@ -1841,6 +1879,8 @@
   {
     "id": "headbanger",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Plain weapon strike with projEffect[1020]: 1 hit per attack (METODA rule 6). The headbang (every 3rd attack) only enlarges the attack area ([70]/[71] = 25 + p2.s9): no extra hit on one dummy. Hair Tornado (p12), knockback (p13, = 0 on the dummy, em[171]) are subskill effects. Strike hit itself is I (no skill object), the rest C."},
     "weaponRequirement": "melee",
     "classId": "bard",
     "name": "Headbanger",
@@ -1874,10 +1914,9 @@
       "perLevel": 1
     },
     "attackScaling": {
-      "weaponDamagePct": {
-        "base": 100,
-        "perLevel": 35
-      },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 200, "perLevel": 35 },
       "flatPhysicalMin": {
         "base": 3,
         "perLevel": 1
@@ -1922,39 +1961,43 @@
       {
         "id": "banging_hard",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 10, "note": "LSSD += p1.s9 %, in [1020]; value per planner"}], "confidence": "C", "note": "card 407 table p1"},
         "name": "Banging Hard",
         "description": "Increases damage dealt by headbanger.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "hair_length",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "other", "note": "headbang radius [71] = 25 + p2.s9; single dummy gets no extra hit (1 hit per attack)"}], "confidence": "C", "note": "card 407 table p2"},
         "name": "Hair Length",
         "description": "Increases the area of effect radius of headbanger.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 25 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 25}
         }
       },
       {
         "id": "whipping_faster",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "base": 0, "perRank": 10, "note": "attack speed + p3.s9 % (TalentUseSetSpeed 407 L489-490); value per planner"}], "confidence": "C", "note": "card 407 table p3"},
         "name": "Whipping Faster",
         "description": "Increases attack speed when using headbanger.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 10 }
+          "base": {"skill_attack_speed_more": 0},
+          "perRank": {"skill_attack_speed_more": 10}
         }
       },
       {
         "id": "hair_clipping",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.016, 1.064, 1.144, 1.256, 1.4], "note": "per-USE roll chance p4.s10 (4 %/r) gives LSSD + p4.s9 (40 %/r) and stun (projEffect[51] 2 s) for that attack; mean 1 + 0.04r*0.40r/(1+LSSD), shown at LSSD=0 (upper bound)"}], "confidence": "C", "note": "card 407 table p4; values per planner"},
         "name": "Hair Clipping",
         "description": "Chance on hit to deal increased damage and stun the target.",
         "maxRank": 5,
@@ -1971,23 +2014,25 @@
       {
         "id": "taking_advantage",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.175, 1.35, 1.525, 1.7, 1.875], "requires": "hair_clipping", "note": "x(1+p5.s9 %) only vs stunned dummy (projEffect[179]); stun from p4 roll; value per planner 17.5/r"}], "confidence": "C", "note": "card 407 table p5"},
         "name": "Taking Advantage",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 17.5 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 17.5}
         }
       },
       {
         "id": "crushing_hair_sweep",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.01, 1.04, 1.09, 1.16, 1.25], "note": "per-USE roll chance p6.s10 (4 %/r) gives physical break (buff 7, 5 s) of p6.s9 (25 %/r per planner) + RSS234; mean 1 + 0.04r*0.25r"}], "confidence": "C", "note": "card 407 table p6 (projEffect[969])"},
         "name": "Crushing Hair Sweep",
         "description": "Chance to inflict armor break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "armor_break": 0 },
-          "perRank": { "armor_break": 25 }
+          "base": {"armor_break": 0},
+          "perRank": {"armor_break": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2000,12 +2045,13 @@
       {
         "id": "ripping_hair",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [4, 8, 12, 16, 20], "note": "per-USE roll chance p7.s10 (4 %/r) of bleeding (buff 3) with floor(hit*(p7.s9 % + p7.s9 %*p14.s11 %)); value = chance %; amount per planner 30 %/r; DoT formula reports/dot_debuffs.md case 22, not modelled"}], "confidence": "C", "note": "card 407 table p7", "plannerFix": "planner gives both increased_bleeding_damage 30/r and a bleed amount 30/r; card has a single bleed of floor(hit*p7.s9 %), scaled by p14"},
         "name": "Ripping Hair",
         "description": "Chance to inflict bleed on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 30 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2018,17 +2064,19 @@
       {
         "id": "vile_slash",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [4, 8, 12, 16, 20], "note": "attack crit chance % (projEffect[1018] = p8.s9); crit damage projEffect[1019] = p8.s10, planner 8 %/r"}], "confidence": "C", "note": "card 407 table p8; values per planner"},
         "name": "Vile Slash",
         "description": "Chance to deal increased critical strike damage on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0, "crit_chance": 0 },
-          "perRank": { "crit_damage": 8, "crit_chance": 4 }
+          "base": {"crit_damage": 0, "crit_chance": 0},
+          "perRank": {"crit_damage": 8, "crit_chance": 4}
         }
       },
       {
         "id": "smacking_whip",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "other", "note": "per-use roll chance p9.s9 (5 %/r) sets M=2 on the [1020] bonus only: W*(1+2B) instead of W*(1+B), B=[1020]/100; mean factor 1 + chance*B/(1+B); B depends on level (not in card numbers)"}], "confidence": "C", "note": "card 407 table p9 (L624-625)", "plannerFix": "planner proc has chance 5/r and no effect; card doubles only the [1020] bonus, not the whole hit"},
         "name": "Smacking Whip",
         "description": "Chance on hit to deal double damage.",
         "maxRank": 5,
@@ -2037,12 +2085,13 @@
       {
         "id": "rupturing_headbang",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.01, 1.04, 1.09, 1.16, 1.25], "requires": "ripping_hair", "note": "per-use roll chance p10.s11 (4 %/r) gives x(1+p10.s9 %) (25 %/r per planner) only vs bleeding (projEffect[177]); mean 1 + 0.04r*0.25r"}, {"kind": "dot", "byRank": [12.5, 25, 37.5, 50, 62.5], "requires": "ripping_hair", "note": "bleed frequency +p10.s10 % (projEffect[23]); value per planner 12.5 %/r"}], "confidence": "C", "note": "card 407 table p10"},
         "name": "Rupturing Headbang",
         "description": "Chance on hit to deal increased damage to bleeding targets and increase the frequency of bleeding.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_frequency": 0 },
-          "perRank": { "increased_bleeding_frequency": 12.5 }
+          "base": {"increased_bleeding_frequency": 0},
+          "perRank": {"increased_bleeding_frequency": 12.5}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2057,56 +2106,49 @@
       {
         "id": "hair_whipper",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.8, 2.6, 3.4], "note": "transformation: every attack is a headbang; [1020] gains LTD(V1)*p11.s9 (80 %/r) of damage, read as x(1+0.8r) of total; area +p11.s10 (planner 20/r) not hits; L-dependence of V1 not in card (I)"}, {"kind": "cast_speed_pct", "byRank": [13, 13, 13], "note": "every attack is a headbang (playerEffect[282] = 3): all attacks use the shorter A=7 lock (ceil(60/S)+1 frames) instead of the 3-attack cycle mean (2 x (ceil(72/S)+1) + (ceil(60/S)+1))/3: 61/51/41/31/25/21 vs 69.0/57.7/46.3/35.0/28.3/23.7 frames at S = 1/1.2/1.5/2/2.5/3, i.e. attack rate x1.129-1.132 (derived from the card's periods)"}], "confidence": "I", "note": "card 407 table p11 (playerEffect[282] = 3 every attack) + Po R4 (e, rule 37) periods; rate ratio derived from the card's period lists", "plannerFix": "planner does not record that p11 makes every attack a headbang (so p12 tornado fires every attack and the attack period is the shorter A=7 lock)"},
         "name": "Hair Whipper",
         "description": "Headbang with every attack dealing a portion of the damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "area_of_effect": 0 },
-          "perRank": { "of_total_damage": 80, "area_of_effect": 20 }
+          "base": {"of_total_damage": 0, "area_of_effect": 0},
+          "perRank": {"of_total_damage": 80, "area_of_effect": 20}
         }
       },
       {
         "id": "hair_tornado",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 60, "note": "LSSD += p12.s9 %, value per planner"}, {"kind": "extra_hits", "byRank": [0.3333, 0.3333, 0.3333], "per": "use", "note": "tornado (damage[0] = attack hit, no tick) +1 hit per headbang = every 3rd attack -> 1/3 per attack; with p11 every attack headbangs -> 1 per attack"}], "confidence": "C", "note": "card 407 table p12 (Bard_Hair_Tornado_Controller_obj)", "plannerFix": "planner area_of_effect 25/r has no counterpart in card (single target); card has the tornado hitting once per headbang (every 3rd attack)"},
         "name": "Hair Tornado",
         "description": "Unleash a tornado of hair dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "physical_skill_damage": 60, "area_of_effect": 25 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 25, "subtree_damage": 60}
         }
       },
       {
         "id": "slapping_around",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "knockback [103]/[104] and terrain damage [108] are 0 on dummy (em[171] = 1 blocks the block in ProjectileCrowdControlCollision)"}, {"kind": "cast_speed_pct", "base": 0, "perRank": 15, "note": "attack speed + p13.s10 %; value per planner 15/r"}], "confidence": "C", "note": "card 407 table p13 + R4 407#1", "plannerFix": "planner gives physical_skill_damage 100/r; card: terrain damage [108] is 0 on the dummy (knockback blocked), so no DPS from it"},
         "name": "Slapping Around",
         "description": "Knock monsters back when headbanging causing them to take increased damage when hitting terrain.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "increased_attack_speed": 0 },
-          "perRank": {
-            "physical_skill_damage": 100,
-            "increased_attack_speed": 15
-          }
+          "base": {"physical_skill_damage": 0, "skill_attack_speed_more": 0},
+          "perRank": {"physical_skill_damage": 100, "increased_attack_speed": 15}
         }
       },
       {
         "id": "hemorrhaging_hairbang",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 25, "note": "LSSD += p14.s9 %, value per planner"}, {"kind": "dot", "byRank": [3, 4, 5], "requires": "ripping_hair", "note": "max bleed stacks projEffect[24] = 1 + p14.s10, p14.s10 = 1 + r (base s7 = 1) -> 2 + r stacks (value = stacks); bleed p7 x(1+p14.s11 %) (planner 20 %/r) = damage_mult not split here"}], "confidence": "C", "note": "card 407 table p14 + Po R4 (b, rule 39): p14.s10 = 1 + rank (was symbolic, read as 1+r stacks)", "plannerFix": "planner gives chance 100 bleed on hit; card stacks only the p7 roll bleed, capped at 1+p14.s10 stacks"},
         "name": "Hemorrhaging Hairbang",
         "description": "Headbang now stacks bleeding with increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "physical_skill_damage": 0,
-            "max_skill_stacks": 1,
-            "increased_bleeding_damage": 0
-          },
-          "perRank": {
-            "physical_skill_damage": 25,
-            "max_skill_stacks": 1,
-            "increased_bleeding_damage": 20
-          }
+          "base": {"max_skill_stacks": 1, "increased_bleeding_damage": 0, "subtree_damage": 0},
+          "perRank": {"max_skill_stacks": 1, "increased_bleeding_damage": 20, "subtree_damage": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2151,6 +2193,7 @@
       "base": 5,
       "perLevel": 1
     },
+    "buffUptime": { "duration": 25, "cooldown": 70 },
     "passiveStats": {
       "base": {
         "attack_damage": 20,
@@ -2199,6 +2242,8 @@
   {
     "id": "moshpit_massacre",
     "activationKind": "cast",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per entity action: one Pit_Fighter_Moshpit_obj attack creates a Hitbox_Summon_obj (70x36 rotated rectangle in front of the fighter toward the dummy, singleHit, active after 2 frames) = 1 hit of fire damage damage[3] = floor(D of the zone) x (1 + summon stats) = 1.0 main hit equivalent (R4 415#1, C). Not every fighter action lands on the dummy: 3 fighters are spawned every 120 frames (life 120 frames), walk (15 frame delay, 3.42 px/frame) and strike with a 30 frame wind-up, period >= 36 frames: simulation gives H = 1.17 hits per fighter (0 hits for 9%, 1 for 65%, 2 for 26%) = ~1.75 fire hits/s from 3 fighters (range of H 1.10-1.24, path I). On top, the orbiting crowd (not entity actions, physical D): members on orbit r_k = 80+k*(R-120)/3 hit the dummy once per revolution (omega_k/6 per s) only if |r_k - rho| <= 28 px: at 160 px k=1 and k=2 reach (margin 1.3 px, I) = ~0.50 physical hits/s. Use these rates to calibrate the entity-rate knob (the zone is permanent, cooldown 5 s only toggles it)."},
     "classId": "bard",
     "name": "Moshpit Massacre",
     "kind": "active",
@@ -2232,10 +2277,9 @@
       "perLevel": 1
     },
     "attackScaling": {
-      "weaponDamagePct": {
-        "base": 88,
-        "perLevel": 30
-      },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": true,
+      "weaponDamagePct": { "base": 170, "perLevel": 30 },
       "flatPhysicalMin": {
         "base": 4,
         "perLevel": 0
@@ -2286,67 +2330,73 @@
       {
         "id": "pit_crowd",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "other", "note": "+p1.s9 to ReturnSummonAmount: more ORBITING crowd members (k = n..), not more fighters (fixed 3 per 2 s); crowd adds ~0.2-0.5 D/s on the dummy. Entity count, not per-action extra_hits"}], "confidence": "C", "note": "card 415 table p1 + R3 415#1 (ReturnSummonAmount counts crowd only)", "plannerFix": "planner summon_max_amount 2/r reads as fighters; card: it only grows the orbiting crowd (fighter count stays 3, except with p14)"},
         "name": "Pit Crowd",
         "description": "Increases the amount of fighters in the pit",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_max_amount": 0 },
-          "perRank": { "summon_max_amount": 2 }
+          "base": {"summon_max_amount": 0},
+          "perRank": {"summon_max_amount": 2}
         }
       },
       {
         "id": "moshpit_mania",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 12, "note": "LSSD += p2.s9 %, value per planner"}], "confidence": "C", "note": "card 415 table p2"},
         "name": "Moshpit Mania",
         "description": "Increases the damage dealt by pit fighters",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 12 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 12}
         }
       },
       {
         "id": "amping_up_the_crowd",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [8.1, 17.6, 29.0, 33.3, 33.3], "note": "moshpitAS += p3.s9 % (10 %/r): fighter attack period P = max(36, 48*(1-0.75*AS)) frames: 44.4/40.8/37.2/36/36 vs 48 -> speed gain vs base; hits per fighter H 1.25/1.31/1.36/1.41/1.41 (base 1.17)"}], "confidence": "C", "note": "card 415 table p3 (R4 415#1)", "plannerFix": "planner summon_attack_speed 10/r linear; card: attack period 48*(1-0.75*AS) capped by 36-frame punch animation"},
         "name": "Amping Up The Crowd",
         "description": "Increases the attack speed of pit fighters.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_attack_speed": 0 },
-          "perRank": { "summon_attack_speed": 10 }
+          "base": {"summon_attack_speed": 0},
+          "perRank": {"summon_attack_speed": 10}
         }
       },
       {
         "id": "pit_fatality",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "moshpitExecution = p4.s9 (execute below HP); 0 on dummy at full HP (I)"}], "confidence": "I", "note": "card 415 table p4", "plannerFix": "planner execute_below 1/r; card: execution depends on target HP, dummy at full HP gives 0"},
         "name": "Pit Fatality",
         "description": "Pit fighters execute low life targets",
         "maxRank": 5,
         "effects": {
-          "base": { "execute_below": 0 },
-          "perRank": { "execute_below": 1 }
+          "base": {"execute_below": 0},
+          "perRank": {"execute_below": 1}
         }
       },
       {
         "id": "make_it_bigger",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "other", "note": "moshpitRadius = 280*(1+p5.s9 %+p10.s9 %) (p5.s9 = 15 %/r -> R = 322/364/406/448/490): hits per fighter H(R) (base H 1.17 at R=280), longer walk; ratio to base 0.92/0.86/0.79/0.73/0.67 (I). Orbit radius of crowd also grows"}], "confidence": "C", "note": "card 415 table p5 (R = 280 * (1 + p5.s9 % + p10.s9 %)); H values I"},
         "name": "MAKE IT BIGGER!!",
         "description": "Increases the area of effect radius of the pit.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "broken_noses",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [4, 8, 12, 16, 20], "note": "per fighter HIT roll chance p6.s10 (4 %/r) of bleed (buff 22) with p6.s9 (30 %/r per planner) of damage; value = chance %; DoT per reports/dot_debuffs.md case 22, not modelled"}], "confidence": "C", "note": "card 415 table p6 (moshpitBleedChance)"},
         "name": "Broken Noses",
         "description": "Pit fighters have a chance to inflict bleed on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 30 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2359,97 +2409,97 @@
       {
         "id": "pit_full_of_injuries",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "requires": "broken_noses", "note": "x(1+p7.s9 %) only vs bleeding (projEffect[177]); p7.s9 = 15 %/r per planner"}], "confidence": "C", "note": "card 415 table p7"},
         "name": "Pit Full Of Injuries",
         "description": "Increases damage dealt to bleeding targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bleeding": 0 },
-          "perRank": { "extra_damage_bleeding": 15 }
+          "base": {"extra_damage_bleeding": 0},
+          "perRank": {"extra_damage_bleeding": 15}
         }
       },
       {
         "id": "going_crazy",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "other", "note": "moshpitMS += p8.s9 % (20 %/r): fighter speed x(1+0.5*extraMS/100); more contacts with dummy, hits per fighter H 1.25/1.32/1.38/1.42/1.46 (base 1.17); I"}], "confidence": "C", "note": "card 415 table p8 + R4 415#1 (e); summon_movement_speed 20/r per planner"},
         "name": "Going Crazy",
         "description": "Increases the movement speed of the pit fighters",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_movement_speed": 0 },
-          "perRank": { "summon_movement_speed": 20 }
+          "base": {"summon_movement_speed": 0},
+          "perRank": {"summon_movement_speed": 20}
         }
       },
       {
         "id": "slamming_around",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [4, 8, 12, 16, 20], "note": "fighter crit chance % (moshpitCriticalChance = [p9.s9, p9.s10]); crit damage 30 %/r per planner"}], "confidence": "C", "note": "card 415 table p9"},
         "name": "Slamming Around",
         "description": "Increases the critical strike chance and damage of the pit fighters.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 4, "spell_crit_damage": 30 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 4, "spell_crit_damage": 30}
         }
       },
       {
         "id": "brutal_intimacy",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "other", "note": "radius -p10.s9 % (-15 %/r): smaller zone, fighters spawn closer; H(R) 1.23/1.22/1.16/1.01 (r1-r4) (I). Ranks 4-5 not in card"}], "confidence": "C", "note": "card 415 table p10 + R4 (H(R)); planner area -15/r matches"},
         "name": "Brutal Intimacy",
         "description": "Decreases the area of effect radius of the pit.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": -15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": -15}
         }
       },
       {
         "id": "follow_the_lead",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD += p11.s9 %, value per planner"}, {"kind": "other", "note": "moshpitAS += p11.s10 %, moshpitMS += p11.s11 %, moshpitTravel=1; r3 gives period 36 frames and speed x1.225, H = 1.63 (R4); r1/r2 not stated"}], "confidence": "C", "note": "card 415 table p11 + R4 (r3 H 1.63)"},
         "name": "Follow The Lead",
         "description": "The pit provides increased attack speed, movement speed and damage to the pit fighters.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "physical_skill_damage": 0,
-            "summon_attack_speed": 0,
-            "summon_movement_speed": 0
-          },
-          "perRank": {
-            "physical_skill_damage": 15,
-            "summon_attack_speed": 15,
-            "summon_movement_speed": 15
-          }
+          "base": {"summon_attack_speed": 0, "summon_movement_speed": 0, "subtree_damage": 0},
+          "perRank": {"summon_attack_speed": 15, "summon_movement_speed": 15, "subtree_damage": 15}
         }
       },
       {
         "id": "pitfighting_colossus",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [3.6, 4.2, 4.8], "note": "colossus hit = fighter fire hit x N*p12.s9 % with p12.s9 = 100 + 20r (base s6 = 100), N = 3: N*(1 + 0.2r) = 3.6 / 4.2 / 4.8 (was read as 0.6 / 1.2 / 1.8 = N*0.2r)"}, {"kind": "cast_speed_pct", "byRank": [33.3, 33.3, 33.3], "note": "moshpitAS/MS += N*p12.s9 % = 3.6+ saturates the attack period at the 36-frame punch animation (48 -> 36 frames, same cap as p3 r4+)"}, {"kind": "other", "note": "transformation: moshpitColossus = 1, size 1.5; the spawn loop creates ONE colossus per 120 frames instead of 3 fighters. Entity count 3 -> 1 is not hits per action; hits on the dummy per colossus action (bigger hitbox, period 36 frames, walk) are not computed in the card"}], "confidence": "I", "note": "card 415 table p12 + Po R4 (b, rule 39): p12.s9 = 100 + 20r; planner conversion_summon_count 100 + 20/r matches the value"},
         "name": "Pitfighting Colossus",
         "description": "Only spawn one pit fighter with increased stats scaling off of the total amount of pit fighters.",
         "maxRank": 3,
         "effects": {
-          "base": { "conversion_summon_count": 100 },
-          "perRank": { "conversion_summon_count": 20 }
+          "base": {"conversion_summon_count": 100},
+          "perRank": {"conversion_summon_count": 20}
         }
       },
       {
         "id": "beach_balls",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 125, "note": "LSSD += p13.s9 %, value per planner (125 %/r, large)"}, {"kind": "other", "note": "p13.s10 = 4r beach balls (Player_Damage_Parent) bouncing off the zone edge; hits depend on path (I), not counted"}], "confidence": "I", "note": "card 415 table p13", "plannerFix": "planner projectile_count 4/r is not converted into hits by the card (ball path not computed); LSSD 125/r unverified"},
         "name": "Beach Balls",
         "description": "Add multiple flying beach balls into the pit bouncing off of its edges dealing additional damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "physical_skill_damage": 125, "projectile_count": 4 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 4, "subtree_damage": 125}
         }
       },
       {
         "id": "total_anarchy",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "other", "note": "transformation: no zone; N = 3 + p1.s9 permanent fighters following player (no drain, no destroyTimer), moshpitAS/MS x(1+5r) (no *0.01); with AS=0 period 48 -> DPS = N*60/48 = 3.75 D/s for N=3 (per SECOND, not per use); with p3>=1 period 36 -> 5.0 D/s"}], "confidence": "C", "note": "card 415 table p14 (Talents_23_Bard 0x146883424-0x14688350a); value is DPS in D per second", "plannerFix": "planner models N constant fighters x 60/P per second; card requires period max(36,48*(1-0.75*AS_eff)) and the (1+5r) multiplier without *0.01 (x6/x11/x16)"},
         "name": "Total Anarchy",
         "description": "Spawn pit fighters without the pits limitations following you around with a portion of their stats.",
         "maxRank": 3,
         "effects": {
-          "base": { "summon_stats_pct": 0 },
-          "perRank": { "summon_stats_pct": 5 }
+          "base": {"summon_stats_pct": 0},
+          "perRank": {"summon_stats_pct": 5}
         }
       }
     ]

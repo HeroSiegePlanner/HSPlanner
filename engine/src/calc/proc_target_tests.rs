@@ -205,7 +205,12 @@ fn butcher_secondary_coefficients_preserve_primary_packets_and_other_skills() {
             assert_eq!(b.physical_hit_min, a.physical_hit_min, "{node} r{rank}");
             assert_eq!(b.physical_hit_max, a.physical_hit_max, "{node} r{rank}");
             assert_eq!(b.physical_avg_max, a.physical_avg_max, "{node} r{rank}");
-            assert_eq!(changed.avg_hit_dps_max, baseline.avg_hit_dps_max);
+            // Hookstorm's own contacts come from the dps_cards dummy model.
+            if node == "hookstorm" {
+                assert!(changed.avg_hit_dps_max > baseline.avg_hit_dps_max);
+            } else {
+                assert_eq!(changed.avg_hit_dps_max, baseline.avg_hit_dps_max);
+            }
             assert_eq!(
                 changed.stats, baseline.stats,
                 "primary stats changed for {node}"
@@ -364,7 +369,8 @@ fn explicit_attack_proc_level_ignores_rank_bonuses_and_foreign_subtrees() {
         let (boosted, _) = fixture.run();
         assert_eq!(attack(&boosted).effective_rank_min, 8.0);
         assert_eq!(attack(&boosted).effective_rank_max, 8.0);
-        assert_eq!(attack(&boosted).weapon_damage_pct_max, 170.0);
+        // Trigger Finger: W·(1 + V1/100), V1 = 35 + 15·L (game natives) → 135 + 15·8.
+        assert_eq!(attack(&boosted).weapon_damage_pct_max, 255.0);
         assert_eq!(
             attack(&plain).weapon_damage_pct_max,
             attack(&boosted).weapon_damage_pct_max
@@ -390,7 +396,8 @@ fn explicit_hybrid_proc_level_is_shared_by_both_components() {
         .extend([("all_skills", "40"), ("arcane_skills", "20")]);
     let (target, _) = fixture.run();
     assert_eq!(attack(&target).effective_rank_max, 80.0);
-    assert_eq!(attack(&target).weapon_damage_pct_max, 2240.0);
+    // Homing Missile: W·(1 + V2/100), V2 = 28·L (game natives) → 100 + 28·80.
+    assert_eq!(attack(&target).weapon_damage_pct_max, 2340.0);
     let elemental_rank = target
         .calculation()
         .iter()

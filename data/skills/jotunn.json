@@ -1,7 +1,10 @@
 [
   {
     "id": "frozen_boulder",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 2.0, "confidence": "C", "note": "Per cast, dummy at 160 px on the aim line. 1 Jotunn_Frozen_Boulder_obj (loop i < XSP(1); scale 0.8, mask ~66x66 = half-side 26.4 px so it overlaps the dummy while its centre is within 38.4 px; v = 2.5 px/frame, lands at x = 10 + 2.5*(27 + 34(k-1)) = 77.5 / 162.5 px, each landing sets singleHitListClear, bounces = 2): first contact ~frame 47 (hit 1), the 2nd landing at 162.5 px clears the map while the boulder still overlaps the dummy (hit 2) = 2 hits (frame sim: 2 for d = 60-110 and 140-190 px, 1 for d = 120-130 and ~200-225 px). The final Explosion_Item_obj (Destroy_0, r 43.5 px reach) forms at x_end = 270 px, so it misses the dummy at 160 px (it hits for d in [227, 313] px: then 1 more hit, class 'none' = floor(damage[2]) without modifiers, f_wyb < 1); the p8 Ice Nova and p13 shards are subskill effects. perExtraProjectile = 2: extra boulders (XSP) fan out 12 deg apart (dir - n*6 + 12i + 6); +-6 deg is 16.7 px lateral and still inside the 38.4 px reach (also +-12 deg = 33.3 px) so each extra boulder is expected to give its own 2 hits (not tabulated for the base scale, I). Period = 1/castRate (no cooldown without p14)."},
     "classId": "jotunn",
     "name": "Frozen Boulder",
     "kind": "active",
@@ -10,13 +13,13 @@
     "tags": ["Cast", "Active", "Spell", "Projectile"],
     "movementDuringUse": 85,
     "range": 320,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "maxRank": 20,
     "requiresLevel": 1,
     "tree": "Son of Ymir",
     "position": { "row": 0, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 7.5, "perLevel": 9.5 },
+    "damageFormula": { "base": 7.25, "perLevel": 8.75 },
     "manaCostFormula": { "base": 5, "perLevel": 1.125 },
     "bonusSources": [
       { "source": "Breath of Ice", "stat": "cold_skill_damage", "value": 12.5, "per": "skill_level" },
@@ -35,45 +38,49 @@
       {
         "id": "boulder_lob",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.0, 0.5, 0.5, 0.5, 1.0], "note": "hits per use at 160 px = 2,2,1,1,1,2 for r=0..5 (landing distances); planner base 2"}], "confidence": "C", "note": "card p1 row + Runda 3/R1 landings (x_k = 10+v(27+34(k-1)), v=2.5*(1+15r%)); 160 px convention", "plannerFix": "planner models projectile_speed 15/r (matches deltaSpeed) but no hit-count change; hits drop to 1 at r2-r4"},
         "name": "Boulder Lob",
         "description": "Increases the projectile speed of frozen boulder.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "petrifying_frost",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 10, "note": "LSSD +10%/r"}], "confidence": "C", "note": "card p2 row"},
         "name": "Petrifying Frost",
         "description": "Increases the damage dealt by frozen boulder.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "bouncing_slab",
         "positionIndex": 3,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p3: bounces = 2 + r; at 160 px still 2 hits (landing gap 85 px > 2w=77 px); extra landings only at other distances"},
         "name": "Bouncing Slab",
         "description": "Increases the amount of frozen boulder bounces.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_bounces": 0 },
-          "perRank": { "projectile_bounces": 1 }
+          "base": {"projectile_bounces": 0},
+          "perRank": {"projectile_bounces": 1}
         }
       },
       {
         "id": "shattering_frost",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0867, 1.3087, 1.6196, 1.9852, 2.3811], "note": "cold break 35r% (buff 10) applied per cast with chance 4r%, 5 s; mean-field multiplier at castRate 1.75 with the PoR4 period T_c = 43 frames = 0.717 s, i.e. 5/T_c = 6.98 casts per 5 s: 1 + 0.35r*(1-(1-0.04r)^6.98) (engine should recompute uptime=1-(1-0.04r)^(5/T_c))"}], "confidence": "C", "note": "card p4 row (PoR4: uptime 1-(1-p4.s10%)^(5/T_c), was 5*castRate)", "plannerFix": "proc is per cast (one roll per cast), not on_hit; planner has no uptime model"},
         "name": "Shattering Frost",
         "description": "Chance to inflict cold break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_break": 0 },
-          "perRank": { "cold_break": 35 }
+          "base": {"cold_break": 0},
+          "perRank": {"cold_break": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -86,17 +93,19 @@
       {
         "id": "expanding_stonefrost",
         "positionIndex": 5,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p5: boulder scale x(1+15r%); no hit change at 160 px alone (with p14 r5 and odd n: 2 -> 4 hits, not encoded)"},
         "name": "Expanding Stonefrost",
         "description": "Increases the size of frozen boulder.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 15 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 15}
         }
       },
       {
         "id": "subzero_temp",
         "positionIndex": 6,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p6 row: enables frozen state used by p7 (B21)", "plannerFix": "freeze proc (buff 21, 3 s) rolled once per cast with chance 4r%, planner uses on_hit; it only enables p7"},
         "name": "Subzero Temp",
         "description": "Chance to inflict freeze on hit.",
         "maxRank": 5,
@@ -109,39 +118,43 @@
       {
         "id": "frozen_throbbing",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "other", "requires": "subzero_temp", "note": "extra damage +20r% (projEffect[178], additive increased/extra pool) only while target has frozen (B21); on dummy needs p6 (or other freeze); uptime-dependent, no fixed multiplier"}], "confidence": "C", "note": "card p7 row; Runda 3 boulder notes", "plannerFix": "planner adds extra_damage_frozen 20/r unconditionally; game applies it only while the dummy is frozen (needs p6)"},
         "name": "Frozen Throbbing",
         "description": "Increases damage dealt to frozen targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_frozen": 0 },
-          "perRank": { "extra_damage_frozen": 20 }
+          "base": {"extra_damage_frozen": 0},
+          "perRank": {"extra_damage_frozen": 20}
         }
       },
       {
         "id": "pulsing_monolith",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.35, 0.7, 1.05, 1.4, 1.75], "per": "use", "note": "1 nova per cast (at landing 2, 162.5 px, hits dummy); damage floor(dmg*35r%) times f_nova (modifier class 'brak', f_nova ~0.45 example, equipment-dependent, I): multiply by f_nova"}], "confidence": "C", "note": "card p8 row + Runda 3 (R3S) nova class 'brak'", "plannerFix": "nova is a reduced-modifier object (no crit, LDM, [178], pen); multiply by f_nova (equipment dependent, ~0.45 example), planner uses full of_total_damage"},
         "name": "Pulsing Monolith",
         "description": "Frozen boulder unleashes a frozen nova with each bounce dealing a portion of its damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 35 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 35}
         }
       },
       {
         "id": "stonecold_master",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7%/r"}], "confidence": "C", "note": "card p9: mana only"},
         "name": "Stonecold Master",
         "description": "Decreases the mana cost of frozen boulder.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "demolishing_frostone",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [0.9, 3.6, 8.1, 14.4, 22.5], "note": "expected LSSD = chance 4r% x 22.5r% (per cast roll); card dilution 1/(1+LSSD) ignored"}], "confidence": "C", "note": "card p10 row (L57-58)", "plannerFix": "proc is rolled once per cast (not on_hit); planner trigger wrong, expected value is 4r%*22.5r%"},
         "name": "Demolishing Frostone",
         "description": "Chance to knock monsters back on hit dealing increased damage.",
         "maxRank": 5,
@@ -157,45 +170,49 @@
       {
         "id": "rolling_winterstone",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [0.5, 0.5, 0.5], "note": "stone rolls after 1st landing (no bounce, no map clear): 1 hit instead of 2; dummy not attached (enemyModifier[26]=1); 2nd blast 0 because 0 attached"}], "confidence": "C", "note": "card p11 row, reguly 22/24", "plannerFix": "planner adds cold_skill_damage 50/r as LSSD; in game 50r% is the 2nd blast bonus per ATTACHED enemy (0 here) and the hit count drops to 1"},
         "name": "Rolling Winterstone",
         "description": "Frozen boulder rolls on the ground gathering monsters on its path exploding when hitting terrain and dealing increased damage per monster gathered.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 50 }
+          "base": {"cold_skill_damage": 0},
+          "perRank": {"cold_skill_damage": 50}
         }
       },
       {
         "id": "overgrowing_boulder",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.4326, 1.9354, 2.5085], "note": "2 hits: x(1+a) and x(1+a)^2 with a=26.5r% (multiplicative per bounce); value = average multiplier over the 2 base hits; projectile_size +15r% (no effect at 160 px)"}], "confidence": "C", "note": "card p12 row (L60-63)", "plannerFix": "p12 is multiplicative per bounce (x(1+26.5r%) per landing), not LSSD; planner adds 26.5r% to LSSD"},
         "name": "Overgrowing Boulder",
         "description": "Frozen boulder grows in size gaining increased damage with each bounce also bouncing off of terrain.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "projectile_size": 0 },
-          "perRank": { "cold_skill_damage": 26.5, "projectile_size": 15 }
+          "base": {"cold_skill_damage": 0, "projectile_size": 0},
+          "perRank": {"cold_skill_damage": 26.5, "projectile_size": 15}
         }
       },
       {
         "id": "splinter_stones",
         "positionIndex": 13,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p13 row + Runda 4 shrapnel (V cycle, reach 42/67.5/99 px)", "plannerFix": "planner adds cold_skill_damage 75/r as LSSD; game: 8 shrapnel at 75r%*dmg each only when boulder ends 175-282 px away (0 at 160 px)"},
         "name": "Splinter Stones",
         "description": "Frozen boulder explodes into chunks of ice on hit dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 75 }
+          "base": {"cold_skill_damage": 0},
+          "perRank": {"cold_skill_damage": 75}
         }
       },
       {
         "id": "boulder_barrage",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 35, "note": "LSSD +35%/r (p14.s10)"}, {"kind": "projectiles", "byRank": [3, 4, 5], "note": "boulders n = XSP(1 + p14.s9) = 3 + r (PoR4 b: SUB[p14 s9] = r + 2), i.e. 2 + r extra over the base 1 boulder (planner projectile_count 2 + r); hits come from the explicit extra_hits below"}, {"kind": "extra_hits", "byRank": [2, 0, 2], "per": "use", "replacesProjectileHits": true, "note": "H at 160 px = 4 (n even, 2 boulders at +-6 deg x2 hits) / 2 (n odd, centre boulder only) -> extra vs base 2 = 2/0/2 for r=1/2/3; boulder scale 0.36"}, {"kind": "cooldown_s", "byRank": [4, 4, 4], "note": "cooldown 4 s (period = 4 s instead of 1/castRate); absolute value"}], "confidence": "C", "note": "card p14 row (L85, L97, L78; cooldown GetTalentCooldown 326 -> 4 s), reguly 14/26", "plannerFix": "planner gives projectile_count +1/r with no cooldown; game: cooldown 4 s and hits 4/2/4 at 160 px (even/odd n), +35%/r LSSD"},
         "name": "Boulder Barrage",
         "description": "Unleash a barrage of smaller frozen boulders in an arc. Frozen boulder has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 2, "cold_skill_damage": 0, "single_target_hit_cap": 2 },
-          "perRank": { "projectile_count": 1, "cold_skill_damage": 35, "single_target_hit_cap": 0 }
+          "base": {"projectile_count": 2, "single_target_hit_cap": 2, "cooldown_added": 4, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "single_target_hit_cap": 0, "cooldown_added": 0, "subtree_damage": 35}
         }
       }
     ]
@@ -203,6 +220,8 @@
   {
     "id": "breath_of_ice",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 1.5, "confidence": "C", "note": "Per cast, dummy at 160 px. 1 Jotunn_Breath_of_Ice_obj stands 8 px in front of the player and grows (xs 0.75 + 0.035/frame): oriented rectangle x in [8, 157]*xs, y in [-49, 41]*ys, front at 8 + 157*xs px, so it covers the dummy from ~frame 5 (hit 1); Alarm_1 (0.5 s, frame 30) sets singleHitListClear once while the object is still deadly (fading ~7 more frames) = hit 2 -> 2 hits (tick_frequency = 0 in the base, so no tick_hits.py needed; p11 tick, p9 cascade, p7 skating slabs, p12 avalanche are subskill effects). perExtraProjectile = 1.5: H(n) from p14 (fan of 20 deg per breath, lateral reach y in [-49, 41]*ys, rule 26 oriented rectangle): n = 1 -> 2, n = 2 (+-10 deg) -> 4, n = 3 (-20, 0, +20 deg) -> 5, n = 4 (+-10, +-30 deg; +-30 misses) -> 4; slope (5-2)/2 over the first two extras = 1.5 (0.67 by n = 4). Cooldown none: period 1/castRate."},
     "classId": "jotunn",
     "name": "Breath of Ice",
     "kind": "active",
@@ -211,13 +230,13 @@
     "tags": ["Cast", "Active", "Spell", "Area of Effect"],
     "movementDuringUse": 85,
     "range": 320,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "maxRank": 20,
     "requiresLevel": 1,
     "tree": "Son of Ymir",
     "position": { "row": 0, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 6, "perLevel": 7 },
+    "damageFormula": { "base": 5.25, "perLevel": 6.75 },
     "manaCostFormula": { "base": 5, "perLevel": 1.125 },
     "bonusSources": [
       { "source": "Flash Freeze", "stat": "cold_skill_damage", "value": 10, "per": "skill_level" },
@@ -236,23 +255,25 @@
       {
         "id": "fresh_mint",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 8, "note": "LSSD +8%/r"}], "confidence": "C", "note": "card p1 row"},
         "name": "Fresh Mint",
         "description": "Increases the damage dealt by breath of ice.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "crumbling_winds",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.067, 1.2454, 1.5062, 1.8262, 2.1869], "note": "cold break 35r% (buff 10, [973]) per cast, chance 3r%, 5 s; mean-field at castRate 1.75 with the PoR4 period T_c = 43 frames, i.e. 5/T_c = 6.98 casts per 5 s (engine: uptime=1-(1-0.03r)^(5/T_c))"}], "confidence": "C", "note": "card p2 row (L161); PoR4: uptime 1-(1-p2.s10%)^(5/T_c), was 5*castRate", "plannerFix": "proc is rolled once per cast, not on_hit; uptime depends on castRate"},
         "name": "Crumbling Winds",
         "description": "Chance to inflict cold break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_break": 0 },
-          "perRank": { "cold_break": 35 }
+          "base": {"cold_break": 0},
+          "perRank": {"cold_break": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -265,50 +286,55 @@
       {
         "id": "expansive_gasp",
         "positionIndex": 3,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p3: maxScale and xs growth x(1+20r%); no hit change at 160 px (cone already covers dummy)"},
         "name": "Expansive Gasp",
         "description": "Increases the area of effect of breath of ice.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 20 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 20}
         }
       },
       {
         "id": "ironfrost_lungs",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "duration_pct", "base": 0, "perRank": 15, "note": "destroyTimer x(1+15r%); no hit change alone (2nd hit at alarm 1 in both cases); only matters with p11 tick count"}], "confidence": "C", "note": "card p4 row (L273)"},
         "name": "Ironfrost Lungs",
         "description": "Increases the duration of breath of ice.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 15 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 15}
         }
       },
       {
         "id": "frozen_exhale",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 6, "note": "LSSD +6%/r"}], "confidence": "C", "note": "card p5 row (knockback [103] zero)"},
         "name": "Frozen Exhale",
         "description": "Knock monsters back slowly dealing increased damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 6 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 6}
         }
       },
       {
         "id": "freezing_point",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "note": "extra damage to frozen +15r% (projEffect[178]); every breath hit freezes the dummy ([47]=3 s) so applies to all hits incl. first"}], "confidence": "C", "note": "card p6 row, reguly 27"},
         "name": "Freezing Point",
         "description": "Increases damage dealt to frozen targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_frozen": 0 },
-          "perRank": { "extra_damage_frozen": 15 }
+          "base": {"extra_damage_frozen": 0},
+          "perRank": {"extra_damage_frozen": 15}
         }
       },
       {
         "id": "ice_skating",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.624, 2.496, 5.616, 9.984, 15.6], "per": "use", "note": "per cast chance 4r%; each proc = 4 plates at 45..225 px, ~39 plate hits on dummy (36-46) each 40r%*dmg; value = 0.04r*39*0.40r (I: plate count from 160 px geometry)"}], "confidence": "C", "note": "card p7 row (L178-227), reguly 14/15", "plannerFix": "planner gives one extra hit of 40r% per proc (on_cast); game: 5-plate skating chain with ~39 hits per proc"},
         "name": "Ice Skating",
         "description": "Chance on cast to conjure a trail of ice dealing damage over time and slowing monsters on hit.",
         "maxRank": 5,
@@ -325,12 +351,13 @@
       {
         "id": "frostbourne_winds",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "dot", "base": 0, "perRank": 35, "note": "frost bite (buff 4) DoT: damage = floor(dmg*35r%) per application; applied per cast with chance 3r%; tick formula per reports/dot_debuffs.md (5 s)"}], "confidence": "C", "note": "card p8 row (L165)", "plannerFix": "frostbite proc is rolled once per cast (not on_hit)"},
         "name": "Frostbourne Winds",
         "description": "Chance to inflict frostbite on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_frost_bite_damage": 0 },
-          "perRank": { "increased_frost_bite_damage": 35 }
+          "base": {"increased_frost_bite_damage": 0},
+          "perRank": {"increased_frost_bite_damage": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -343,6 +370,7 @@
       {
         "id": "cascading_exhale",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.1701, 0.3629, 0.5826, 0.8345, 1.125], "per": "use", "note": "per breath hit chance 4r% (flag [797]); cascade hits the dummy again (instance_nth_nearest 2 returns it), 2 hits per cascade; value = 2*q2/(1-q2), q2=1-(1-0.04r)^2 (card: r1 0.17, r3 0.58, r5 1.13)"}], "confidence": "C", "note": "card p9 row + reguly 17 (instance_nth_nearest)", "plannerFix": "planner models one extra hit of 100% per proc; game: 2 hits per cascade with per-hit chance and geometric repeats"},
         "name": "Cascading Exhale",
         "description": "Chance to unleash additional breath of ice from target location on hit.",
         "maxRank": 5,
@@ -358,6 +386,7 @@
       {
         "id": "vacuuming_inhale",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "pull [798] only, no damage"}], "confidence": "C", "note": "card p10 row"},
         "name": "Vacuuming Inhale",
         "description": "Chance to pull monsters towards you on hit.",
         "maxRank": 5,
@@ -366,53 +395,49 @@
       {
         "id": "frostbitten_lungs",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.5, 1.5, 2.0], "note": "tick every 30*(1-12.5r%) frames over lifetime 30*(1+p4+17.5r%); hits = 1 + floor(T/tick) + 1 (alarm); r1 -> 3, r2 -> 3, r3 -> 4 hits; relative to base 2. Card also lists r5 -> 6 (planner max rank 3)"}], "confidence": "C", "note": "card p11 row (asm 0x146741c2d-0x146741dd6), p4=0 assumed", "plannerFix": "planner gives faster_cast_rate 12.5r and skill_duration 17.5r; game: damage tick frequency (hits 3/3/4) for the breath"},
         "name": "Frostbitten Lungs",
         "description": "Increases breath of ice duration dealing damage over time.",
         "maxRank": 3,
         "effects": {
-          "base": { "faster_cast_rate": 0, "skill_duration": 0 },
-          "perRank": { "faster_cast_rate": 12.5, "skill_duration": 17.5 }
+          "base": {"faster_cast_rate": 0, "skill_duration": 0},
+          "perRank": {"faster_cast_rate": 12.5, "skill_duration": 17.5}
         }
       },
       {
         "id": "frost_charged_breath",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2, 2, 2], "per": "use", "note": "stacks of buff 77 (+1 per breath hit, value p12.s9 20r%, max N=5r); avalanche with floor(dmg*N) per N stacks = ~1 main-hit per stack, steady state ~ x2 breath damage; value per use = 2 hits x 1 (I: stack rate per hit)"}], "confidence": "C", "note": "card p12 row (L99-124)", "plannerFix": "planner models area_of_effect 20r and max_skill_stacks 5r; game: avalanche on target every N stacks with N*dmg (about +1 hit-equivalent per breath hit)"},
         "name": "Frost Charged Breath",
         "description": "Inflict targets with a stack of frost charged on hit unleashing an avalance at maximum stacks dealing area of effect damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0, "max_skill_stacks": 0 },
-          "perRank": { "area_of_effect": 20, "max_skill_stacks": 5 }
+          "base": {"area_of_effect": 0, "max_skill_stacks": 0},
+          "perRank": {"area_of_effect": 20, "max_skill_stacks": 5}
         }
       },
       {
         "id": "absolute_control",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD +15%/r; cone size +75r% (planner skill_range) with no hit change at 160 px"}], "confidence": "C", "note": "card p13 row"},
         "name": "Absolute Control",
         "description": "Increases the length of breath of ice significantly inflicting strong slow and freeze on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_range": 0, "cold_skill_damage": 0 },
-          "perRank": { "skill_range": 75, "cold_skill_damage": 15 }
+          "base": {"skill_range": 0, "subtree_damage": 0},
+          "perRank": {"skill_range": 75, "subtree_damage": 15}
         }
       },
       {
         "id": "frosted_throat",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3], "note": "breaths n = 1 + r (planner perExtra 1.5 per extra breath; replaced by explicit H)"}, {"kind": "extra_hits", "byRank": [2, 3, 2], "per": "use", "replacesProjectileHits": true, "note": "H(n) at 160 px = 4 (n=2, +-10 deg), 5 (n=3, -20/0/+20), 4 (n=4, +-30 misses) -> extra vs base 2 = 2/3/2 for r=1/2/3 (rectangle oriented, rule 26)"}, {"kind": "crit", "byRank": [10, 20, 30], "note": "spell crit chance +10r% (p14.s10); crit damage +50r% (p14.s11)"}], "confidence": "C", "note": "card p14 row, Runda 4 (R4 rule 26)", "plannerFix": "planner converts extra breaths at 1.5 hits each; game 4/5/4 hits at 160 px (oriented cone, +-30 deg misses)"},
         "name": "Frosted Throat",
         "description": "Unleash multiple breaths of ice with chance to critically hit dealing increased critical strike damage.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "projectile_count": 0,
-            "spell_crit_chance": 0,
-            "spell_crit_damage": 0
-          },
-          "perRank": {
-            "projectile_count": 1,
-            "spell_crit_chance": 10,
-            "spell_crit_damage": 50
-          }
+          "base": {"projectile_count": 0, "spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"projectile_count": 1, "spell_crit_chance": 10, "spell_crit_damage": 50}
         }
       }
     ]
@@ -449,7 +474,7 @@
     "damageType": "cold",
     "tags": ["Cast", "Active", "Buff"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "effectDuration": 130,
     "maxRank": 20,
     "requiresLevel": 8,
@@ -471,7 +496,10 @@
   },
   {
     "id": "orb_of_frost",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 12.3, "baseProjectiles": 1, "perExtraProjectile": 3.0, "confidence": "I", "note": "Per cast, dummy at 160 px on the aim line. 1 Jotunn_Orb_of_Frost_obj (r 42.5 px, 2.4 px/frame for 111 frames, passes over the dummy, map never cleared) = 1 hit, plus icicle salvos every 19 frames (frames 1, 20, 39, 58, 77, 96 = 6 salvos of icicleAmount = 5 icicles, 7 deg/frame spiral of radius 8 + 4/frame for 21 frames, then released with a map clear; mask 38x19 x 0.9 as an ORIENTED rectangle, rule 26): frame simulation (card R4, 36 start phases x 3 orb phases) gives N_sopli = 11.3 icicle hits per cast (range 8-12; 9.3-11.3 for d = 64-240 px), every icicle carrying the orb's damage[2] (R3 329#0, C) -> 1 + 11.3 = 12.3 hits of the main hit. The mechanics and masks are C but the salvo phase relative to the dummy is a frame-sim estimate (I). perExtraProjectile = 3.0 is the only H(n) table of the card (p14 'Orb of Duality': orbs every 16 deg, but there each orb is half size with 0.75*icicles): n = 2 -> 12.6, 3 -> 18.3, 4 -> 18.4 hits, i.e. an average slope of 3.0 over the first two extras, a lower bound for full-size extra orbs (I). Cooldown 1.75 s*(1 - p8) sets the period (haste applies). p13 chains (+23..55 hits), p11 ring of icicles (6 + p2.s9), p2/p4/p5 are subskills."},
     "classId": "jotunn",
     "name": "Orb of Frost",
     "kind": "active",
@@ -488,7 +516,7 @@
     "tree": "Son of Ymir",
     "position": { "row": 2, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 8 }],
-    "damageFormula": { "base": 0.5, "perLevel": 21.5 },
+    "damageFormula": { "base": 0, "perLevel": 18 },
     "manaCostFormula": { "base": 8, "perLevel": 1.125 },
     "bonusSources": [
       { "source": "Icicles", "stat": "cold_skill_damage", "value": 10, "per": "skill_level" },
@@ -507,67 +535,73 @@
       {
         "id": "festering_cold",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 10, "note": "LSSD +10%/r"}], "confidence": "C", "note": "card p1 row"},
         "name": "Festering Cold",
         "description": "Increases the damage dealt by orb of frost.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "frost_icicles",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.2439, 1.4146, 1.5935, 1.8049, 1.8374], "note": "icicleAmount = 5 + r; total hits per use = 1 orb + N_sopli (14.3/16.4/18.6/21.2/21.6, R4 rule 26); value = total/12.3"}], "confidence": "C", "note": "card p2 row (R4 numbers; R2c AABB r5 ~27.7 superseded)", "plannerFix": "planner gives projectile_count +1/r converted at perExtraProjectile 3.0; game: icicle count 5+r per salvo, 14.3-21.6 icicle hits"},
         "name": "Frost Icicles",
         "description": "Increases the amount of orb of frost icicles.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "frozen_mass",
         "positionIndex": 3,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p3: orb and icicle start radius x(1+15r%); card gives no hit change, size only"},
         "name": "Frozen Mass",
         "description": "Increases the size of orb of frost.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 15 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 15}
         }
       },
       {
         "id": "icy_winds",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.2114, 1.1382, 1.0894, 0.9675, 1.1057], "note": "icicle spin/flight speed x(1+10r%); icicle hits 13.9/13.0/12.4/10.9/12.6 (no clear trend, R4); value = (1+N)/12.3"}], "confidence": "C", "note": "card p4 row (R4)", "plannerFix": "planner models icy winds as projectile_speed 10/r; game changes icicle orbit speed and hit count (no trend)"},
         "name": "Icy Winds",
         "description": "Increases the projectile speed of icicles.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 10 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 10}
         }
       },
       {
         "id": "cold_singularity",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.1057, 1.0, 1.0732, 1.0407, 1.3089], "note": "icicle radius growth x(1-20r%); icicle hits 12.6/11.3/12.2/11.8/15.1 (R4); value = (1+N)/12.3"}], "confidence": "C", "note": "card p5 row (R4)", "plannerFix": "planner models skill_duration 20/r; game slows icicle spread radius, more icicles pass the dummy (hits up to x1.3 at r5)"},
         "name": "Cold Singularity",
         "description": "Decreases the orbiting radius of icicles.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 20 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 20}
         }
       },
       {
         "id": "coldsnap",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0385, 1.1484, 1.3213, 1.5493, 1.825], "note": "cold break 35r% (buff 10) per cast with chance 4r%, 5 s; uptime 1-(1-0.04r)^(5/cd), cd 1.75 s; mean-field value"}], "confidence": "C", "note": "card p6 row (L306)", "plannerFix": "proc rolled once per cast (not on_hit); uptime depends on cooldown 1.75 s"},
         "name": "Coldsnap",
         "description": "Chance to inflict cold break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_break": 0 },
-          "perRank": { "cold_break": 35 }
+          "base": {"cold_break": 0},
+          "perRank": {"cold_break": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -580,28 +614,31 @@
       {
         "id": "hypothermia",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.08, 1.16, 1.24, 1.32, 1.4], "note": "extra damage to frozen +8r% (projEffect[178]); orb and every icicle freeze the dummy ([47]=2 s), so applies to all hits"}], "confidence": "C", "note": "card p7 row, reguly 27"},
         "name": "Hypothermia",
         "description": "Increases damage dealt to frozen targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_frozen": 0 },
-          "perRank": { "extra_damage_frozen": 8 }
+          "base": {"extra_damage_frozen": 0},
+          "perRank": {"extra_damage_frozen": 8}
         }
       },
       {
         "id": "timeless_tundra",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-10, -20, -30, -40, -50], "note": "cd = 1.75*(1 - 10r%); period = cd (cd > 1/castRate)"}], "confidence": "C", "note": "card p8 row (GetTalentCooldown 329)"},
         "name": "Timeless Tundra",
         "description": "Decreases the cooldown of orb of frost.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 10 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 10}
         }
       },
       {
         "id": "multicicles",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0904, 0.3616, 0.8136, 1.4464, 2.26], "per": "use", "replacesProjectileHits": true, "note": "per salvo (6 per cast) chance 4r% of +r icicles; expected extra icicle hits = 6*0.04r^2*(11.3/30) = 0.0904 r^2 per use, assuming equal hit rate per icicle (I); marked replacesProjectileHits because these are extra icicles"}], "confidence": "I", "note": "card p9 row marked C/I (relative formula p9.s10*p9.s9/(5+p2)); I", "plannerFix": "planner rolls on_hit with projectile_count +r; game rolls per salvo (6 per cast) and adds ~0.09r^2 hits per cast"},
         "name": "Multicicles",
         "description": "Chance on pulse to unleash additional icicles.",
         "maxRank": 5,
@@ -617,56 +654,61 @@
       {
         "id": "howling_ricochet",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 5, "note": "LSSD +5%/r; [82] pass through walls (utility)"}], "confidence": "C", "note": "card p10 row"},
         "name": "Howling Ricochet",
         "description": "Orb of frost bounces off of terrain dealing increased damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 5 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 5}
         }
       },
       {
         "id": "glacial_shredder",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [6, 6, 6], "note": "transformation: salvos off; orb + ring of icicles at fixed radius, all icicles hit once: 1 + icicleAmount = 6 at p2=0 (+1 per p2 rank, 6..11); engine should add p2 icicles"}, {"kind": "damage_pct", "base": 0, "perRank": 100, "note": "LSSD +100%/r (p11.s9)"}, {"kind": "other", "note": "maxScale x(1+25r%) (orb 42.5*maxScale, icicle image_xscale 2*maxScale, ring radius 28*maxScale); no hit change at 160 px beyond set_hits"}], "confidence": "C", "note": "card p11 row, R4 Alarm_1 (asm 0x1483ecb97-0x1483ecd44)", "plannerFix": "planner adds LSSD 100r% (matches) but no set_hits: game replaces salvos with a ring, 6+p2 hits per cast"},
         "name": "Glacial Shredder",
         "description": "Unleash a glacial shredder with increased size and damage. Icicles are now attached around the orb.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "projectile_size": 0 },
-          "perRank": { "cold_skill_damage": 100, "projectile_size": 25 }
+          "base": {"projectile_size": 0, "subtree_damage": 0},
+          "perRank": {"projectile_size": 25, "subtree_damage": 100}
         }
       },
       {
         "id": "enlargening_frost_orb",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.2544, 1.5376, 1.8496], "note": "every 0.5 s dmg x(1+12r%) and size x(1+15r%); card: later icicles/orb near target x(1+12r%)^2 (3 steps in 1.85 s); value applies to late hits only, average not computed (I)"}], "confidence": "C", "note": "card p12 row (Step_0 L5-13)", "plannerFix": "planner adds cold_skill_damage 12r as LSSD; game multiplies damage per 0.5 s step (x(1+12r%) each)"},
         "name": "Enlargening Frost Orb",
         "description": "Orb of frost increases its size and damage over time while traveling.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "projectile_size": 0 },
-          "perRank": { "cold_skill_damage": 12, "projectile_size": 15 }
+          "base": {"cold_skill_damage": 0, "projectile_size": 0},
+          "perRank": {"cold_skill_damage": 12, "projectile_size": 15}
         }
       },
       {
         "id": "chaining_frost",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD +15%/r"}, {"kind": "hits_mult", "byRank": [3.0081, 3.6585, 3.9837], "note": "PoR4 rule 39: chainBounces = 2r + 3 (base s7 = 3), n = 5/7/9; H(n) per touching icicle = 3.0/3.7/4.0 (I: start distribution 0-36 px; Resztki chain_sim gives 2.7/3.7/4.3/4.7/5.7, differences <= 0.4, left unchanged); N_c 11.7 icicles touch the dummy -> chains 35/43/47, own icicle hits 0.9, plus the orb 1: total per use 37/45/49 hits (r=1..3, planner max 3; r4-5 would be 59+1.9/67+1.9 chains+own); value = total/12.3"}], "confidence": "I", "note": "card p13 row + PoR4 b (n = 2r+3) + Resztki B (stays I: chain H(n) start distribution); rule 26 oriented rectangles", "plannerFix": "planner adds max_targets/chain params but no hit model; game: each icicle touching the dummy dies and chains ~2-3 hits (total 25-37 per cast at r1-3)"},
         "name": "Chaining Frost",
         "description": "Icicles from orb of frost chain from targets unleashing frozen pulses on hit dealing a portion of the damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "max_targets": 0 },
-          "perRank": { "cold_skill_damage": 15, "max_targets": 6 }
+          "base": {"max_targets": 0, "subtree_damage": 0},
+          "perRank": {"max_targets": 6, "subtree_damage": 15}
         }
       },
       {
         "id": "orb_of_duality",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 10, "note": "LSSD +10%/r"}, {"kind": "projectiles", "byRank": [1, 2, 3], "note": "orbs n = 1 + r (planner perExtra orb); replaced by explicit totals below"}, {"kind": "extra_hits", "byRank": [0.3, 6.0, 6.1], "per": "use", "replacesProjectileHits": true, "note": "total orb+icicle hits for n = 2/3/4 orbs (half-size orbs at 16 deg, icicleAmount*0.75): 12.6/18.3/18.4 (R4, rule 26); value = total - 12.3"}], "confidence": "C", "note": "card p14 row (L343, icicleAmount*0.75), R4", "plannerFix": "planner converts extra orbs at perExtraProjectile 3.0 each; game: 12.6/18.3/18.4 total hits for 2/3/4 orbs (small gain at r1)"},
         "name": "Orb of Duality",
         "description": "Unleash multiple smaller orbs of frost in an arc.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "cold_skill_damage": 10, "projectile_count": 1 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "subtree_damage": 10}
         }
       }
     ]
@@ -710,6 +752,8 @@
   {
     "id": "portal_of_ice",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast, in-zone: the teleport lands on the cursor (x, y-24), i.e. 24 px from the dummy, and skillsBlink creates 1 Jotunn_Ice_Nova_obj at the arrival point (maxScale [71] = 1 in the base; circle r ~114*scale, lerp 0.1 -> [71], reaches 79.6*[71] + 12 px >= 24 px inside the 0.25 s deadly window, no map clear) = 1 hit. Blink is instantaneous (no flight), so no period. p3 icicles (4 of 5 hit), p11 Hailstorm orb (~27-33 hits), p12/p14 on-hit procs are subskills."},
     "classId": "jotunn",
     "name": "Portal of Ice",
     "kind": "active",
@@ -717,14 +761,13 @@
     "damageType": "cold",
     "tags": ["Cast", "Active", "Movement", "Blink"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
-    "baseCooldown": 1,
+    "baseCastRate": 1.75,
     "maxRank": 20,
     "requiresLevel": 24,
     "tree": "Son of Ymir",
     "position": { "row": 3, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 8 }],
-    "damageFormula": { "base": 0.5, "perLevel": 10.5 },
+    "damageFormula": { "base": 0, "perLevel": 8.85 },
     "manaCostFormula": { "base": 8, "perLevel": 1.125 },
     "bonusSources": [
       { "source": "Icicles", "stat": "cold_skill_damage", "value": 12.5, "per": "skill_level" },
@@ -743,28 +786,31 @@
       {
         "id": "ice_travel",
         "positionIndex": 1,
+        "dummy": {"effects": [], "confidence": "I", "note": "card p1 row: no read in lift (I)", "plannerFix": "planner models skill_range 15/r; the card finds no lift read of a teleport range (I), so no dummy effect"},
         "name": "Ice Travel",
         "description": "Increases the range of portal of ice.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "cold_enhanced_warp",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 8, "note": "LSSD +8%/r"}], "confidence": "C", "note": "card p2 row"},
         "name": "Cold-enhanced Warp",
         "description": "Increases the damage dealt by portal of ice.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "spiky_approach",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.16, 0.36, 0.64, 1.0], "per": "use", "note": "per cast chance 4r%; 5 icicles (r 24+1/kl. around arrival point), 4 of 5 hit dummy, each floor(dmg*25r%): value = 0.04r*4*0.25r = 0.04r^2 hits per use"}], "confidence": "C", "note": "card p3 row (L415, L161-174)", "plannerFix": "planner proc on_cast adds one 25r% hit; game: 5 icicles, 4 hit, per proc (4x more)"},
         "name": "Spiky Approach",
         "description": "Chance on cast to conjure multiple orbiting icicles dealing a portion of the damage.",
         "maxRank": 5,
@@ -780,34 +826,37 @@
       {
         "id": "engulfing_nova",
         "positionIndex": 4,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p4: nova scale [71] x(1+15r%); dummy at 24 px inside nova anyway, no hit change"},
         "name": "Engulfing Nova",
         "description": "Increases the area of effect radius of portal of ice.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "blink_faster",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [3.4286, 6.8571, 10.2857, 13.7143, 17.1429], "note": "castRate += 0.06r absolute (6r/100), i.e. +3.43% of base 1.75 per rank"}], "confidence": "C", "note": "card p5 row (TalentUseSetSpeed 332)"},
         "name": "Blink Faster",
         "description": "Increases cast rate when using portal of ice.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 6 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 6}
         }
       },
       {
         "id": "corrosive_frostbite",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0351, 1.1254, 1.2528, 1.4039, 1.5691], "note": "cold break 15r% (buff 10) per cast with chance 3r%, 5 s; mean-field at castRate 1.75"}], "confidence": "C", "note": "card p6 row (L419)", "plannerFix": "proc rolled once per cast (not on_hit); uptime depends on castRate"},
         "name": "Corrosive Frostbite",
         "description": "Chance to inflict cold break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_break": 0 },
-          "perRank": { "cold_break": 15 }
+          "base": {"cold_break": 0},
+          "perRank": {"cold_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -820,61 +869,71 @@
       {
         "id": "shredding_chillstep",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.04, 1.16, 1.36, 1.64, 2.0], "note": "buff 150 (stacks up to 2r, +2r% per stack) -> StatColdSkillDamage = 4r^2 %; steady state with continuous casting; multiplies cold damage of all skills (C mult by stacks)"}], "confidence": "C", "note": "card p7 row (R4 StatColdSkillDamage 0x145c381c0)", "plannerFix": "planner gives cold_skill_damage 2r as LSSD; game buff adds 2r%*stacks (max 2r) = 4r^2% to all cold skill damage"},
         "name": "Shredding Chillstep",
         "description": "Gain a stack of shredding chillstep on cast increasing your cold skill damage for a short duration.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0, "max_skill_stacks": 0 },
-          "perRank": { "cold_skill_damage": 2, "max_skill_stacks": 2 }
+          "base": {"cold_skill_damage": 0, "max_skill_stacks": 0},
+          "perRank": {"cold_skill_damage": 2, "max_skill_stacks": 2}
         }
       },
       {
         "id": "efficient_iceblink",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7%/r"}], "confidence": "C", "note": "card p8: mana only"},
         "name": "Efficient Iceblink",
         "description": "Reduces the mana cost of portal of ice.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "cryo_armor",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "buff 151: resistances +3.5r, no damage"}], "confidence": "C", "note": "card p9"},
         "name": "Cryo Armor",
         "description": "Increases your all resistances on cast for a short duration.",
         "maxRank": 5,
         "effects": {
-          "base": { "all_resistances": 0 },
-          "perRank": { "all_resistances": 3.5 }
+          "base": {"all_resistances": 0},
+          "perRank": {"all_resistances": 3.5}
         }
       },
       {
         "id": "icecold_bloodthirst",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [3, 6, 9, 12, 15], "note": "spell crit chance +3r% on nova; crit damage +22.5r%"}], "confidence": "C", "note": "card p10 row ([1004], [1003])"},
         "name": "Icecold Bloodthirst",
         "description": "Chance to critically hit dealing increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_chance": 0, "crit_damage": 0 },
-          "perRank": { "crit_chance": 3, "crit_damage": 22.5 }
+          "base": {"crit_chance": 0, "crit_damage": 0},
+          "perRank": {"crit_chance": 3, "crit_damage": 22.5}
         }
       },
       {
         "id": "hailstorm_orb",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 20, "note": "LSSD +20%/r"}, {"kind": "extra_hits", "byRank": [27, 29, 33], "per": "use", "note": "extra hits per use from stationary orb (1 hit, sits 24 px from dummy) + icicle salvos every 0.3 s for 2*(1+0.15r) s + 5 starting icicles; R4 totals 27/29/33 (r1/r2/r3) for p11 alone, base nova 1 not included"}], "confidence": "C", "note": "card p11 row, R4 (rule 26); faza salw I", "plannerFix": "planner models cold_skill_damage 20r and skill_duration 15r; game adds a stationary orb with salvos (27/29/33 hits at r1/r2/r3)"},
         "name": "Hailstorm Orb",
         "description": "Conjure a static orb of frost at target location for a short duration.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "skill_duration": 0 },
-          "perRank": { "cold_skill_damage": 20, "skill_duration": 15 }
+          "base": {"skill_duration": 0, "subtree_damage": 0},
+          "perRank": {"skill_duration": 15, "subtree_damage": 20}
         }
       },
       {
         "id": "winter_aparition",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD +15%/r"}, {"kind": "extra_hits", "byRank": [0.0817, 0.3269, 0.7355], "per": "use", "note": "per nova hit chance 6r% spawns blizzard controller with 3r flakes, each flake hits dummy with P=0.454 at full dmg: value = 0.06r*3r*0.454 per use (1 nova hit per use)"}], "confidence": "C", "note": "card p12 row (ProjectileCollision18Jotunn L270-286)", "plannerFix": "planner keeps cold 15r and projectile_count 3r inside the on_hit proc; game: LSSD 15r always, flakes spawn with chance 6r% per hit and hit with P=0.454"},
+        "effects": {
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 15}
+        },
         "name": "Winter Aparition",
         "description": "Chance to summon a small blizzard on hit for a short duration.",
         "maxRank": 3,
@@ -890,23 +949,25 @@
       {
         "id": "permafrost_voidpull",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 25, "note": "LSSD +25%/r; nova scale +25r% (no hit change at 24 px); pull [803] zero"}], "confidence": "C", "note": "card p13 row"},
         "name": "Permafrost Voidpull",
         "description": "Increases damage and area of effect radius pulling monsters towards you on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "cold_skill_damage": 25, "area_of_effect": 25 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 25, "subtree_damage": 25}
         }
       },
       {
         "id": "crystallized_pinnacles",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD +15%/r"}, {"kind": "extra_hits", "byRank": [0.06, 0.12, 0.18], "per": "use", "note": "per nova hit chance 6r% a nova (scale 0.5) with dmg: value = 0.06r per use"}, {"kind": "dot", "base": 0, "perRank": 50, "note": "frostbite from nova: floor(dmg*50r%) per application, chance 6r% per hit (tick per reports/dot_debuffs.md)"}], "confidence": "C", "note": "card p14 row (ProjectileCollision18Jotunn L176-192)", "plannerFix": "planner puts cold 15r (should be LSSD) and nova/frostbite on the on_hit proc with chance 6r; game LSSD 15r always plus nova 6r% per hit"},
         "name": "Crystallized Pinnacles",
         "description": "Chance to unleash small frost novas on hit inflicting frostbite.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_frost_bite_damage": 0 },
-          "perRank": { "increased_frost_bite_damage": 50 }
+          "base": {"increased_frost_bite_damage": 0, "subtree_damage": 0},
+          "perRank": {"increased_frost_bite_damage": 50, "subtree_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -924,7 +985,10 @@
   },
   {
     "id": "blizzard",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 7.4, "baseProjectiles": 25, "perExtraProjectile": 0.296, "confidence": "C", "note": "Per cast (cooldown 2 s), cursor on the dummy's body (x, y-24); the controller is created 6 px above the cursor (tupm[6]/[7] point, Resztki E), i.e. 30 px from the dummy centre: Jotunn_Blizzard_Controller_obj drops skillAmount = floor(XSP(25)) = 25 flakes, one per 4.5 frames, at a uniformly random distance (0..R) and direction around the controller (R = skillRadius 128 px). Each flake lands as an Explosion_Item_obj (r 31.5 px, 1 hit after 4 frames), so it hits when its landing point is within a = 31.5 + 12 = 43.5 px of the dummy centre: P(30 px) = 0.296 -> 25*0.296 = 7.4 hits per cast (Resztki E, C; was P(24 px) = 0.314 = 7.9; cursor exactly on the dummy (x, y): delta 6 px, P = 0.3395 = 8.5, unchanged). baseProjectiles = 25 flakes (XSP(25*(1 + p2)); the planner has no flake count); perExtraProjectile = 0.296 = one extra flake if the extra-projectile stat adds flakes through XSP(25) (additive; the card does not state it, I). p3 radius (P down), p8 second controller, p12 nova per flake, p13 travelling controller (starts at the player), p10 (buff 78, kill-only = 0) are subskill effects. Period: cooldown 2 s/(1 + 0.005*h_eff) (p13: cd 0.5, so the animation floor T_c = 0.717 s)."},
     "classId": "jotunn",
     "name": "Blizzard",
     "kind": "active",
@@ -933,14 +997,14 @@
     "tags": ["Cast", "Active", "Spell", "Area of Effect", "Explosion"],
     "movementDuringUse": 85,
     "range": 240,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 2,
     "maxRank": 20,
     "requiresLevel": 30,
     "tree": "Son of Ymir",
     "position": { "row": 4, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 9 }],
-    "damageFormula": { "base": 0, "perLevel": 22 },
+    "damageFormula": { "base": 0, "perLevel": 16.25 },
     "manaCostFormula": { "base": 9, "perLevel": 1.125 },
     "bonusSources": [
       { "source": "Orb of Frost", "stat": "cold_skill_damage", "value": 15, "per": "skill_level" },
@@ -959,39 +1023,43 @@
       {
         "id": "intensified_snowfall",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 8, "note": "LSSD +8%/r"}], "confidence": "C", "note": "card p1 row"},
         "name": "Intensified Snowfall",
         "description": "Increases the damage dealt by blizzard.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "eternal_winter",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.2, 1.4, 1.6, 1.8, 2.0], "note": "flake count x(1+20r%) (XSP(25*(1+p2))); hits x(1+20r%) at 160 px"}], "confidence": "C", "note": "card p2 row", "plannerFix": "planner models skill_duration 20/r; game raises the flake count, i.e. hits x(1+20r%)"},
         "name": "Eternal Winter",
         "description": "Increases the duration of blizzard.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 20 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 20}
         }
       },
       {
         "id": "frost_domain",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [0.8547, 0.7466, 0.6588, 0.5912, 0.5372], "note": "radius x(1+17.5r%): P (controller 30 px from the dummy, Resztki E) 0.296 -> 0.253/0.221/0.195/0.175/0.159; value = P_r/P_0 (loss on a single target)"}], "confidence": "C", "note": "card p3 row (Resztki E: P(30 px) instead of P(24 px))", "plannerFix": "planner area_of_effect 17.5/r is neutral; game: bigger radius lowers the hit probability per flake (P down to 0.168)"},
         "name": "Frost Domain",
         "description": "Increases the area of effect radius of blizzard.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 17.5 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 17.5}
         }
       },
       {
         "id": "crackling_ice",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.016, 1.064, 1.144, 1.256, 1.4], "note": "per flake chance 4r%, damage x(1+40r%) -> expected x(1+0.04r*0.40r) = x(1+0.016r^2); stun [51] zero"}], "confidence": "C", "note": "card p4 row", "plannerFix": "planner keeps a proc on_hit with cold 40r; expected multiplier per flake is 1+0.016r^2 (about x1.02 to x1.40)"},
         "name": "Crackling Ice",
         "description": "Chance to stun targets on hit dealing increased damage.",
         "maxRank": 5,
@@ -1008,23 +1076,25 @@
       {
         "id": "tracking_snowinds",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.152, 1.152, 1.152, 1.152, 1.152], "note": "controller tracks to the nearest enemy within 280 px and moves from 30 px to the dummy centre: P 0.296 -> 0.341 (+15 %; cursor-(x,y) variant is 0.341 either way); rank-independent in the card"}], "confidence": "C", "note": "card p5 row (Resztki E: gain +15 % instead of +9 %)", "plannerFix": "planner models movement_speed 15/r; game moves the controller onto the dummy: P 0.341 instead of 0.314"},
         "name": "Tracking Snowinds",
         "description": "Blizzard slowly moves towards the nearest monster.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 15 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 15}
         }
       },
       {
         "id": "corrosive_ice",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "dot", "base": 0, "perRank": 30, "note": "per flake chance 4r%, frost bite (buff 4) of floor(dmg_flake*30r%); DoT per reports/dot_debuffs.md"}], "confidence": "C", "note": "card p6 row (per flake roll = on_hit of the flake hits)"},
         "name": "Corrosive Ice",
         "description": "Chance to inflict frostbite on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_frost_bite_damage": 0 },
-          "perRank": { "increased_frost_bite_damage": 30 }
+          "base": {"increased_frost_bite_damage": 0},
+          "perRank": {"increased_frost_bite_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1037,12 +1107,13 @@
       {
         "id": "hypothermic_temperature",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1508, 1.4772, 1.8666, 2.2685, 2.6634], "note": "cold break 35r% (buff 10) per flake chance 3r%, 5 s; uptime 1-(1-0.03r)^(5*7.4/2 flake hits per s) with the new base 7.4 hits per cast (mean-field, I)"}], "confidence": "C", "note": "card p7 row; flake hits per 5 s recomputed with Resztki E base 7.4 (was 7.9)", "plannerFix": "planner proc on_hit cold/break amounts; game rolls per flake and the uptime depends on the 2 s cadence"},
         "name": "Hypothermic Temperature",
         "description": "Chance to inflict cold break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_break": 0 },
-          "perRank": { "cold_break": 35 }
+          "base": {"cold_break": 0},
+          "perRank": {"cold_break": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1055,6 +1126,7 @@
       {
         "id": "winter_echoes",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.005, 1.01, 1.0149, 1.0199, 1.0249], "note": "per cast chance 6r% of a second controller at 128*(1+p3) px (P ~0.026 per flake, 25 flakes): x(1+0.083*chance) = x(1+0.00498r)"}], "confidence": "C", "note": "card p8 row", "plannerFix": "planner proc on_cast adds of_total_damage 100 (a full extra hit); game: second controller hits with P~0.026 per flake, x(1+0.083*6r%)"},
         "name": "Winter Echoes",
         "description": "Chance on cast to summon an additional blizzard.",
         "maxRank": 5,
@@ -1070,34 +1142,37 @@
       {
         "id": "cold_necrosis",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "other", "requires": "corrosive_ice", "note": "extra damage to frost bitten +20r% (projEffect[185]) only while target has frost bite (p6 or p11); on dummy needs p6"}], "confidence": "C", "note": "card p9 row", "plannerFix": "planner applies extra_damage_frost_bitten 20/r unconditionally; game only while the dummy is frost bitten (needs p6 or p11)"},
         "name": "Cold Necrosis",
         "description": "Increases damage dealt to frostbitten targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_frost_bitten": 0 },
-          "perRank": { "extra_damage_frost_bitten": 20 }
+          "base": {"extra_damage_frost_bitten": 0},
+          "perRank": {"extra_damage_frost_bitten": 20}
         }
       },
       {
         "id": "chilling_coldsnap",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "buff 78 read only on enemy death (ProjectileKill19Jotunn); dummy not killed, 0"}], "confidence": "C", "note": "card p10 row (R4 buff 78 kill-only)", "plannerFix": "planner models splash_of_total_damage 100r%; game: only on kill, dummy does not die, so 0 on the dummy"},
         "name": "Chilling Coldsnap",
         "description": "Monsters killed by blizzard explode into icicles dealing additional damage to nearby monsters.",
         "maxRank": 5,
         "effects": {
-          "base": { "splash_of_total_damage": 0 },
-          "perRank": { "splash_of_total_damage": 100 }
+          "base": {"splash_of_total_damage": 0},
+          "perRank": {"splash_of_total_damage": 100}
         }
       },
       {
         "id": "snowstorm_maelstrom",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "dot", "base": 0, "perRank": 50, "note": "frost bite on every flake (chance 100%) of 50r% (+ p6 part); radius x(1+35r%) and flake count x(1+p2+35r%) with frequency x0.75 cancel (hits unchanged)"}], "confidence": "C", "note": "card p11 row", "plannerFix": "planner models frostbite as increased_frost_bite_damage 50/r; game applies a frost bite DoT on every flake (100%) and hit count is unchanged"},
         "name": "Snowstorm Maelstrom",
         "description": "Increases the area of effect radius of blizzard inflicting frostbite and a strong slow on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_frost_bite_damage": 0, "area_of_effect": 0 },
-          "perRank": { "increased_frost_bite_damage": 50, "area_of_effect": 35 }
+          "base": {"increased_frost_bite_damage": 0, "area_of_effect": 0},
+          "perRank": {"increased_frost_bite_damage": 50, "area_of_effect": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1110,34 +1185,37 @@
       {
         "id": "frost_flurries",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 40, "note": "LSSD +40%/r"}, {"kind": "hits_mult", "byRank": [2.6419, 2.6419, 2.6419], "note": "each flake also spawns a nova (scale 0.66, R 53.8 px, a = 65.8 px) hitting with P_nova(30 px) = 0.486 (Resztki E; was 0.497 at 24 px): total per flake 0.782 vs 0.296 -> x2.64"}], "confidence": "C", "note": "card p12 row (Resztki E: x2.64, was x2.58) (Jotunn_Blizzard_obj_Step_0 L54-69)", "plannerFix": "planner has cold 40r only; game adds a nova per flake (x2.58 hits) plus LSSD 40r%"},
         "name": "Frost Flurries",
         "description": "Ice chunks explode into frozen novas when hitting the ground dealing area of effect damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 40 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 40}
         }
       },
       {
         "id": "frigid_eruption",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3.9, 3.9, 3.9], "note": "transformation: travelling controller from the player through the dummy (rule 38: aim line through the dummy centre), 3.9 hits per cast (Resztki B: C, blizz13_sim 3.89; 3.87 for a path parallel by 6 px; variant 3.5 with the cursor at (x, y-24), note only); independent of flake count per card"}, {"kind": "cooldown_s", "byRank": [-1.5, -1.5, -1.5], "note": "cooldown 2 s -> 0.5 s, so the period is the cast-path animation floor T_c = (ceil(72/c)+1)/60 s = 0.717 s at c = 1.75 (PoR4 rule 37; was 1/castRate); absolute value"}, {"kind": "damage_pct", "base": 0, "perRank": 30, "note": "LSSD +30%/r"}], "confidence": "C", "note": "card p13 row; PoR4 (a) rule 38 (3.9 main, 3.5 alternative, was reversed), Resztki B (3.9 confirmed C); period PoR4 (e)", "plannerFix": "planner models skill_duration +75/r; game: travelling controller (3.5 hits per cast) and cooldown 0.5 s"},
         "name": "Frigid Eruption",
         "description": "Unleash a shockwave of blizzards towards target location. Blizzard no longer has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "skill_duration": 0 },
-          "perRank": { "cold_skill_damage": 30, "skill_duration": 75 }
+          "base": {"skill_duration": 0, "cooldown_added": -1.5, "subtree_damage": 0},
+          "perRank": {"skill_duration": 75, "cooldown_added": 0, "subtree_damage": 30}
         }
       },
       {
         "id": "snowmageddon",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "other", "note": "last flake (skillAmount==1) spawns a Snowmageddon explosion with growing size (25r%) and frequency x(1+4r%) of flakes; hit probability of that explosion not computed (explosion scale unread, I)"}, {"kind": "cast_speed_pct", "byRank": [4, 8, 12], "note": "faster_cast_rate 4r% in planner (card: flake spacing shortens; I)"}], "confidence": "I", "note": "card p14 row marked C/I; explosion scale not read", "plannerFix": "planner models projectile_size 25/r and faster_cast_rate 4/r; game adds one extra explosion at the last flake (hit chance unknown, I)"},
         "name": "Snowmageddon",
         "description": "Blizzard gains increased size and projectile frequency over time dropping a huge boulder when expiring..",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_size": 0, "faster_cast_rate": 0 },
-          "perRank": { "projectile_size": 25, "faster_cast_rate": 4 }
+          "base": {"projectile_size": 0, "faster_cast_rate": 0},
+          "perRank": {"projectile_size": 25, "faster_cast_rate": 4}
         }
       }
     ]
@@ -1145,6 +1223,8 @@
   {
     "id": "flash_freeze",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 3.69, "baseProjectiles": 3, "perExtraProjectile": 0.897, "confidence": "C", "note": "Per attack, IN-ZONE (melee attack skill: dummy inside the weapon-strike reach, METODA scenario 'in the player's attack range'; the card's baseline 'dummy near the player'): 1 weapon strike (projEffect[1020], physical W*(1 + V2'/100) + cold floor(V1'), rule 6) = 1.0 main hit, plus 3 Jotunn_Orb_Of_Frost_Icicle_obj created at the cast (loop i < 3 + p2.s9 + p14.s11, 10 deg fan, start 8 px, 7.5 px/frame, 0.75 s, oriented rectangle 38x19x0.9, 1 hit each; at 48 px all hit for n <= 5, at 64 px 3/4/3/4 for n = 3/4/5/6). An icicle carries ONLY cold damage[2] = floor(V1'), the strike carries W-dependent physical + cold, so icicles are converted at the planner unarmed reference W = 4: r = V1'/(V1' + W*(1 + V2'/100)) with V1' = 8.75*20 = 175, V2' = 20*20 = 400 (weapon part 5*W = 20): r = 175/195 = 0.897 (W-dependent, falls with a better weapon; LSSD multiplies V1' and V2' alike) -> 1 + 3*0.897 = 3.69; baseProjectiles = 3 icicles; perExtraProjectile = r = 0.897 per extra icicle (p2/p14 +1 icicle per rank; valid while the fan stays in reach). At the strict 160 px (blow out of reach): 1 icicle for odd n, 2 for even n (+-5 deg) = 0.9 / 1.8 main hits, i.e. 0.90 for n = 3. The [234]/[235]/[236] sub-effects (p8, p9, p11, p13) are dead code; p4/p12 give 0 on a single dummy."},
     "weaponRequirement": "melee",
     "classId": "jotunn",
     "name": "Flash Freeze",
@@ -1160,10 +1240,12 @@
     "position": { "row": 0, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 4 }],
     "attackKind": "attack",
-    "damageFormula": { "base": 0, "perLevel": 9.5 },
+    "damageFormula": { "base": 0, "perLevel": 8.75 },
     "manaCostFormula": { "base": 3.5, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackScaling": {
-      "weaponDamagePct": { "base": 0, "perLevel": 20 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 100, "perLevel": 20 },
       "flatPhysicalMin": { "base": 2, "perLevel": 0 },
       "flatPhysicalMax": { "base": 6, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -1185,39 +1267,43 @@
       {
         "id": "hail_force",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 8, "note": "LSSD +8%/r; multiplies V2 of the strike and V1 of icicles"}], "confidence": "C", "note": "card p1 row"},
         "name": "Hail Force",
         "description": "Increases the damage dealt by flash freeze.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "excess_cold",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5], "note": "+1 icicle per rank (loop 3+p2.s9); each extra icicle hits dummy within strike reach (48 px: all for n<=5), converted at perExtraProjectile 0.897"}], "confidence": "C", "note": "card p2 row (R4 reach table)"},
         "name": "Excess Cold",
         "description": "Increases the amount of icicles unleashed by frost orb.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "precise_tundra",
         "positionIndex": 3,
+        "dummy": {"effects": [], "confidence": "I", "note": "card p3: no lift read (I)", "plannerFix": "planner attack_rating_pct 10/r; card finds no read of attack rating in lifts (I), so no verified dummy effect"},
         "name": "Precise Tundra",
         "description": "Increases attack rating when using flash freeze.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "fractured_ice",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "on contact 2 icicles with copied hit map; they cannot re-hit the same lone dummy"}], "confidence": "C", "note": "card p4 row (OrbOfFrostIcicleFracturedIce)"},
         "name": "Fractured Ice",
         "description": "Chance for icicles to fork on hit.",
         "maxRank": 5,
@@ -1226,50 +1312,55 @@
       {
         "id": "nordic_frenzy",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "note": "extra damage to frozen +15r% ([178]); frozen by base [47]=2 s on strike and every icicle, so all hits"}], "confidence": "C", "note": "card p5 row, reguly 27"},
         "name": "Nordic Frenzy",
         "description": "Increases damage dealt to frozen targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_frozen": 0 },
-          "perRank": { "extra_damage_frozen": 15 }
+          "base": {"extra_damage_frozen": 0},
+          "perRank": {"extra_damage_frozen": 15}
         }
       },
       {
         "id": "boreal_reach",
         "positionIndex": 6,
+        "dummy": {"effects": [], "confidence": "I", "note": "card p6: sets player [130] (strike reach/area, read in skillsCharge); no hit number given, 0 assumed in the 160 px/in-zone convention"},
         "name": "Boreal Reach",
         "description": "Increases the area of effect radius of flash freeze.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "freezing_rage",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [15, 30, 45, 60, 75], "note": "attack speed +1.5r% per stack of buff 152 (max 10 stacks, 3 s, refreshed by hits): steady state +15r%; element [1] of [808], not [0]"}], "confidence": "C", "note": "card p7 row (StatAttackSpeed buff 152)", "plannerFix": "planner models cold_skill_damage 1/r and increased_attack_speed 1.5/r without the 10-stack cap; game: attack speed +15r% at 10 stacks"},
         "name": "Freezing Rage",
         "description": "Gain a stack of freezing rage on hit increasing your damage and attack speed.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0, "increased_attack_speed": 0 },
-          "perRank": { "cold_skill_damage": 1, "increased_attack_speed": 1.5 }
+          "base": {"cold_skill_damage": 0, "increased_attack_speed": 0},
+          "perRank": {"cold_skill_damage": 1, "increased_attack_speed": 1.5}
         }
       },
       {
         "id": "gelid_sequence",
         "positionIndex": 8,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p8 row (dead code L677)", "plannerFix": "planner projectile_bounces 1/r; card: [235] is dead code (branch never runs), no effect"},
         "name": "Gelid Sequence",
         "description": "Increases the amount of bounces for flash freeze.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_bounces": 0 },
-          "perRank": { "projectile_bounces": 1 }
+          "base": {"projectile_bounces": 0},
+          "perRank": {"projectile_bounces": 1}
         }
       },
       {
         "id": "eternal_cascade",
         "positionIndex": 9,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p9 row (dead code L678)", "plannerFix": "planner on_hit proc; card: [236] is dead code, no effect"},
         "name": "Eternal Cascade",
         "description": "Chance to unleash another frost orb when it expires.",
         "maxRank": 5,
@@ -1278,66 +1369,61 @@
       {
         "id": "froststep",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "utility", "note": "movement diminish, not read in lifts (I)"}], "confidence": "I", "note": "card p10: no lift read (I)"},
         "name": "Froststep",
         "description": "Decreases movement diminish when using flash freeze.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "icicle_bombardment",
         "positionIndex": 11,
+        "dummy": {"effects": [], "confidence": "I", "note": "card p11 row (probably dead, I)", "plannerFix": "planner of_total_damage 45/r; card: [809] is read only in the unreachable [234] block, likely no effect (I)"},
         "name": "Icicle Bombardment",
         "description": "Frost orb now unleashes icicles with every hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 45 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 45}
         }
       },
       {
         "id": "recurving_stalactites",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "icicle returns along its own path with no map clear: no extra hit on the dummy (damage x(1+32.5r%) on the return not counted)"}], "confidence": "C", "note": "card p12 row (OrbOfFrostIcicleRecurvingStalactites)", "plannerFix": "planner adds cold_skill_damage 32.5/r as LSSD; game: returning icicle on same path, no map clear, 0 extra hits on lone dummy"},
         "name": "Recurving Stalactites",
         "description": "Icicles from frost orb return to target location after a short duration dealing additional damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 32.5 }
+          "base": {"cold_skill_damage": 0},
+          "perRank": {"cold_skill_damage": 32.5}
         }
       },
       {
         "id": "swirling_wintershard",
         "positionIndex": 13,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p13 row (dead branch L2553)", "plannerFix": "planner faster_cast_rate 22.5/r; card: [237] read only in unreachable block, no effect"},
         "name": "Swirling Wintershard",
         "description": "Frost orb now orbits you for a short duration frequently unleashing icicles.",
         "maxRank": 3,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 22.5 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 22.5}
         }
       },
       {
         "id": "coldflash_volley",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 45, "note": "LSSD +45%/r"}, {"kind": "projectiles", "byRank": [1, 2, 3], "note": "+1 icicle per rank (loop +p14.s11), converted at perExtraProjectile 0.897"}, {"kind": "damage_mult", "byRank": [1.25, 1.5, 1.75], "note": "cold break 25r% ([973], 5 s) applied on every hit (no chance): constant x(1+25r%); strike hits before break counted as well (approx.)"}], "confidence": "C", "note": "card p14 row", "plannerFix": "planner single_target_hit_cap 2 has no basis; cold break 25r is a proc (chance 100%) here it is applied on every hit"},
         "name": "Coldflash Volley",
         "description": "Unleash multiple icicles in an arc dealing increased damage and inflicting cold break. Does not require hitting a monster.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "cold_skill_damage": 0,
-            "cold_break": 0,
-            "projectile_count": 0,
-            "single_target_hit_cap": 2
-          },
-          "perRank": {
-            "cold_skill_damage": 45,
-            "cold_break": 25,
-            "projectile_count": 1,
-            "single_target_hit_cap": 0
-          }
+          "base": {"cold_break": 0, "projectile_count": 0, "single_target_hit_cap": 2, "subtree_damage": 0},
+          "perRank": {"cold_break": 25, "projectile_count": 1, "single_target_hit_cap": 0, "subtree_damage": 45}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1374,6 +1460,9 @@
   {
     "id": "freezing_leap",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast, in-zone: the leap lands 6 px above the cursor (Resztki E; cursor (x, y-24), so the landing is 30 px from the dummy; the old model had 24 px) and at landing skillsLeap creates 1 Jotunn_Freezing_Leap_obj (circle r = 124*[71] = 124 px, singleHit, echo = 0, animation 26 frames) = 1 hit (echo p6/p12 +1 each, p10 ice slab 14 hits, p11 shockwave chains, p13 stampede wave are subskills). No in-flight effects (Jotunn is not one of the four rule-28 leaps)."},
+    "usePeriod": {"kind": "leap", "extraFrames": 31, "note": "Leap on EVERY use: v_z = sqrt(2*(0.35 + 0.5)*(64 + 32)) = 12.775 px/frame ([155] = 0.5, [144] = 32), g' = 0.85, skillsLeap runs before playerJumpGravity so the flight is 30 steps + 1 transition frame = 31 frames (0.517 s); casting is blocked in flight (rule 30); period = t_wyw + 31 frames with the trigger frames t_wyw = floor(24/c) + 1 = 14 frames at castRate 1.75 (PoR4: trigger at headpos > 6, X = pSt[23] = 1, C; R4 had floor(28/c)+1 = 17) -> 45 frames = 0.75 s (c = 2: 44, c = 3: 40) instead of 1/castRate = 0.571 s (cast cooldown 60/c = 34.3 frames < 45). Resztki C: the gates are C (skillsLeap zeroes [142] before PlayerMovement in the landing frame, tag 6 lets the same talent reuse during Land_*), remaining I: whether a new cast during the 20-frame Land_* sequence restarts the cast sequence (if it must wait for Land_*, period ~14 + 31 + 20 + 1 = 66 frames = 1.1 s) and +-1 frame to start the next cast. p7 Hare Spirit does not change the period (pSt[38] is the jump-key parameter)."},
     "classId": "jotunn",
     "name": "Freezing Leap",
     "kind": "active",
@@ -1381,13 +1470,13 @@
     "damageType": "cold",
     "tags": ["Cast", "Active", "Spell", "Movement", "Area of Effect", "Leap"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "maxRank": 20,
     "requiresLevel": 8,
     "tree": "Son of Aurgelmir",
     "position": { "row": 1, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0.5, "perLevel": 12.5 },
+    "damageFormula": { "base": 0, "perLevel": 10.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1.125 },
     "bonusSources": [
       { "source": "Breath of Ice", "stat": "cold_skill_damage", "value": 10, "per": "skill_level" },
@@ -1406,28 +1495,31 @@
       {
         "id": "leap_force",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 8, "note": "LSSD +8%/r"}], "confidence": "C", "note": "card p1 row"},
         "name": "Leap Force",
         "description": "Increases the damage dealt by freezing leap.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "extended_field",
         "positionIndex": 2,
+        "dummy": {"effects": [], "confidence": "I", "note": "card p2: no read (I)", "plannerFix": "planner skill_range 8/r; card finds no lift read of leap range (I)"},
         "name": "Extended Field",
         "description": "Increases the maximum range of freezing leap.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 8 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 8}
         }
       },
       {
         "id": "dazing_impact",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "stun [51] 3 s with chance 5r% per leap; no damage, unlocks p9"}], "confidence": "C", "note": "card p3 row (L762)"},
         "name": "Dazing Impact",
         "description": "Chance to stun targets on hit.",
         "maxRank": 5,
@@ -1440,28 +1532,31 @@
       {
         "id": "grand_impact",
         "positionIndex": 4,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p4: area x(1+15r%); dummy at 24 px from landing is inside the circle anyway"},
         "name": "Grand Impact",
         "description": "Increases the area of effect radius of freezing leap.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "concentrated_detonation",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD +15%/r; area x(1-8r%) (no hit change at 24 px)"}], "confidence": "C", "note": "card p5 row"},
         "name": "Concentrated Detonation",
         "description": "Increases the damage dealt of freezing leap decreasing its area of effect radius.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "cold_skill_damage": 15, "area_of_effect": -8 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": -8, "subtree_damage": 15}
         }
       },
       {
         "id": "echoing_frostquake",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.07, 0.14, 0.21, 0.28, 0.35], "per": "use", "note": "extra echo of landing object with chance 7r% per leap; echo is a full-damage hit: value = 0.07r"}], "confidence": "C", "note": "card p6 row (skillsLeap L895-896)"},
         "name": "Echoing Frostquake",
         "description": "Chance to unleash an additional shockwave when landing.",
         "maxRank": 5,
@@ -1477,23 +1572,25 @@
       {
         "id": "hare_spirit",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "sets pSt[38] = jump parameter at landing; flight 31 frames and cast period unchanged"}], "confidence": "C", "note": "card p7 row (R3/R4)"},
         "name": "Hare Spirit",
         "description": "Increases landing recovery when using freezing leap.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 20 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 20}
         }
       },
       {
         "id": "arctic_vulnerability",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0276, 1.1014, 1.21, 1.3441, 1.4962], "note": "cold break 15r% per leap with chance 3r%, 5 s; uptime with 60/45 = 1.33 leaps/s (period 45 frames = 0.75 s, PoR4/Resztki C), 6.67 leaps per 5 s, mean-field"}], "confidence": "C", "note": "card p8 row (L766); period updated to 45 frames (Resztki C)", "plannerFix": "proc on_hit; game rolls once per leap, uptime tied to the 0.80 s period"},
         "name": "Arctic Vulnerability",
         "description": "Chance to inflict cold break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_break": 0 },
-          "perRank": { "cold_break": 15 }
+          "base": {"cold_break": 0},
+          "perRank": {"cold_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1506,77 +1603,73 @@
       {
         "id": "overwhelming_impacts",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "other", "requires": "dazing_impact", "note": "extra damage vs stunned +10r% ([179]); target stunned only by p3 chance 5r% per leap (3 s), so uptime-dependent"}], "confidence": "C", "note": "card p9 row", "plannerFix": "planner applies extra_damage_stunned 10/r unconditionally; game needs stun from p3"},
         "name": "Overwhelming Impacts",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 10 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 10}
         }
       },
       {
         "id": "frosted_territory",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [3.5, 7.0, 10.5, 14.0, 17.5], "per": "use", "note": "ice slab (+-100 x +-76) lands 6 px above the cursor (30 px from the dummy, Resztki E) and hits at every cleared tick (model tick 24 frames -> map clears at frame 26 + 25k) for 3 s and in the fade: 14 hits (16 at cursor (x, y), 15 in the old 24 px model); value = 14 * 0.25r; overlaps of slabs from consecutive leaps ignored"}], "confidence": "I", "note": "card p10 row (skillsLeap L918-928), Resztki B/E (15 -> 14 at cursor (x, y-24); coverage ~348 frames vs the 351 threshold for the 15th hit, I)", "plannerFix": "planner of_total_damage 25/r once; game: ice slab ticks ~15 times, each 25r% of dmg"},
         "name": "Frosted Territory",
         "description": "Ground below landing location is left frosted dealing damage over time and slowing monsters.",
         "maxRank": 5,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 25 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 25}
         }
       },
       {
         "id": "superhero_landing",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.92, 4.48, 7.68], "per": "use", "note": "p11.s10 = 2r chains, the dummy now stands 30 px from the landing (Resztki E): the first wave of a chain directed away from the dummy (+-36 deg from the opposite direction) misses (distance sqrt(30^2+15^2+2*30*15) = 45 > 31*s+12 = 43), so hits ~ 0.8*p11.s10 (I, chain angles unread, <= 20 %), each dmg*(1+20r%): value = 0.8 * 2r*(1+0.2r); later waves ignored (>= 63 px)"}], "confidence": "I", "note": "card p11 row (L933-950) + Resztki E (first wave 0.8*p11.s10 instead of p11.s10)", "plannerFix": "planner projectile_count 3r and cold 20r with no chain model; game: 2r waves each hitting once at dmg*(1+20r%)"},
         "name": "Superhero Landing",
         "description": "Unleash an arc of shockwaves towards target location when landing.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "cold_skill_damage": 0,
-            "trail_count": 0,
-            "projectile_count": 0,
-            "single_target_hit_cap": 2
-          },
-          "perRank": {
-            "cold_skill_damage": 20,
-            "trail_count": 2,
-            "projectile_count": 3,
-            "single_target_hit_cap": 0
-          }
+          "base": {"cold_skill_damage": 0, "trail_count": 0, "projectile_count": 0, "single_target_hit_cap": 2},
+          "perRank": {"cold_skill_damage": 20, "trail_count": 2, "projectile_count": 3, "single_target_hit_cap": 0}
         }
       },
       {
         "id": "seismic_icequake",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 40, "note": "LSSD +40%/r"}, {"kind": "extra_hits", "byRank": [1, 2, 3], "per": "use", "note": "landing object echo +1 per rank (full damage), each echo a hit"}], "confidence": "C", "note": "card p12 row ([814] = p12.s10)", "plannerFix": "planner projectile_count +1/r has perExtraProjectile 0, so no hit is added; game: +r echo hits at full damage"},
         "name": "Seismic Icequake",
         "description": "Leave the ground trembling after landing causing additional echos.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "cold_skill_damage": 40, "projectile_count": 1 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "subtree_damage": 40}
         }
       },
       {
         "id": "tectonic_stampede",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 50, "note": "LSSD +50%/r"}, {"kind": "extra_hits", "byRank": [2, 2, 1], "per": "use", "note": "shockwave cascade along the aim line (rule 38: aim through the dummy centre), s = [71] = 1 + 0.2*r13 without other subskills: waves every floor(48 s) px, r = 31 s + 12: r1 (57, 114, 171) -> 114 and 171 hit; r2 (67, 134, 201) -> 134 and 201; r3 (76, 152, 228) -> only 152; (r4: only 172, r5: both; planner max rank 3). Variant with the cursor at (x, y-24): 1 for r1 (114 px misses by ~1 px), note only. Other subskills (p4/p5/p14) change s and shift the thresholds (I)"}], "confidence": "I", "note": "card p13 row (L837-850) + PoR4 (a) rule 38 + Resztki B (rank-dependent 2/2/1/1/2)", "plannerFix": "planner models area_of_effect 20/r and cold 50/r only; game adds one stampede wave hit"},
         "name": "Tectonic Stampede",
         "description": "Charge towards target location followed by a shockwave of ice.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "cold_skill_damage": 50, "area_of_effect": 20 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 20, "subtree_damage": 50}
         }
       },
       {
         "id": "frostbending_leap",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.2, 1.4, 1.6], "note": "elemental break 20r% (buff 13, 5 s) applied on each leap (chance 100%); constant x(1+20r%); RSS236 part not read; area x(1+40r%) no hit change"}], "confidence": "C", "note": "card p14 row ([986])"},
         "name": "Frostbending Leap",
         "description": "Pull nearby monsters towards you when landing with increased area of effect radius inflicting elemental break.",
         "maxRank": 3,
         "effects": {
-          "base": { "elemental_break": 0, "area_of_effect": 0 },
-          "perRank": { "elemental_break": 20, "area_of_effect": 40 }
+          "base": {"elemental_break": 0, "area_of_effect": 0},
+          "perRank": {"elemental_break": 20, "area_of_effect": 40}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1613,6 +1706,8 @@
   {
     "id": "avalanche",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast: 1 Jotunn_Avalanche_obj at the PLAYER's position (destroyTimer 2 s, echo = 0, singleHit, no map clear) with mask circle r = 124*1.35 = 167 px (x (1 + p2)); the dummy at 160 px (+12 px radius) is inside = 1 hit, in-zone and 160 px alike. Cooldown 3 s*(1 - p8) sets the period (haste applies). p9 echo (+p9.s9 % hits), p11 snowstorm (~6.6 hits), p12 slab (0 at 160 px for p2 <= 3), p13 bait avalanches, p14 Nordic Stigma blast are subskill effects."},
     "classId": "jotunn",
     "name": "Avalanche",
     "kind": "active",
@@ -1620,7 +1715,7 @@
     "damageType": "cold",
     "tags": ["Cast", "Active", "Spell", "Area of Effect"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "usesSkillHaste": true,
     "baseCooldown": 3,
     "maxRank": 20,
@@ -1628,7 +1723,7 @@
     "tree": "Son of Aurgelmir",
     "position": { "row": 2, "col": 1 },
     "ranks": [{ "rank": 1, "manaCost": 13 }],
-    "damageFormula": { "base": 0.5, "perLevel": 21.5 },
+    "damageFormula": { "base": 0, "perLevel": 12.5 },
     "manaCostFormula": { "base": 13, "perLevel": 1.125 },
     "bonusSources": [
       { "source": "Freezing Leap", "stat": "cold_skill_damage", "value": 15, "per": "skill_level" },
@@ -1648,34 +1743,37 @@
       {
         "id": "devastating_snowslide",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 8, "note": "LSSD +8%/r"}], "confidence": "C", "note": "card p1 row"},
         "name": "Devastating Snowslide",
         "description": "Increases the damage dealt by avalanche.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "devouring_snowpour",
         "positionIndex": 2,
+        "dummy": {"effects": [], "confidence": "C", "note": "card p2: avalanche scale 1.35*(1+15r%) (radius 167*(1+p2) px), no hit change at 160 px; also scales p12 slab (matters only with p2>=r4)"},
         "name": "Devouring Snowpour",
         "description": "Increases the area of effect radius of avalanche.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "timeless_cold",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "dot", "base": 0, "perRank": 15, "note": "frost bite floor(dmg*15r%) per application, chance 3r% per cast; DoT per reports/dot_debuffs.md"}], "confidence": "C", "note": "card p3 row (L1038); single-hit skill so on_hit = per cast"},
         "name": "Timeless Cold",
         "description": "Chance to inflict frostbite on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_frost_bite_damage": 0 },
-          "perRank": { "increased_frost_bite_damage": 15 }
+          "base": {"increased_frost_bite_damage": 0},
+          "perRank": {"increased_frost_bite_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1688,23 +1786,25 @@
       {
         "id": "colossus_of_yggdrasil",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "other", "note": "LSSD += Vit/100 * p4.s9% (2r): damage x(1 + Vit*0.02r/100); Vitality-dependent, value needs player Vit"}], "confidence": "C", "note": "card p4 row (LoadSubSkillDamage)"},
         "name": "Colossus of Yggdrasil",
         "description": "Increases the damage dealt by avalanche based on your vitality.",
         "maxRank": 5,
         "effects": {
-          "base": { "conversion_vitality": 0 },
-          "perRank": { "conversion_vitality": 2 }
+          "base": {"conversion_vitality": 0},
+          "perRank": {"conversion_vitality": 2}
         }
       },
       {
         "id": "acute_hoarfrost",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0074, 1.0294, 1.0655, 1.1151, 1.178], "note": "cold break 15r% (buff 10) per cast with chance 3r%, 5 s; uptime with 3 s cooldown, mean-field"}], "confidence": "C", "note": "card p5 row (L1042)", "plannerFix": "planner proc without uptime; game: 3 s cooldown and 5 s break give partial uptime"},
         "name": "Acute Hoarfrost",
         "description": "Chance to inflict cold break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_break": 0 },
-          "perRank": { "cold_break": 15 }
+          "base": {"cold_break": 0},
+          "perRank": {"cold_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1717,39 +1817,43 @@
       {
         "id": "frigid_safeguard",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "buff 153: damage taken reduction and armor"}], "confidence": "C", "note": "card p6 row"},
         "name": "Frigid Safeguard",
         "description": "Increases your damage reduction and armor on cast for a short duration.",
         "maxRank": 5,
         "effects": {
-          "base": { "all_damage_taken_reduced_pct": 0, "increased_armor": 0 },
-          "perRank": { "all_damage_taken_reduced_pct": 4, "increased_armor": 5 }
+          "base": {"all_damage_taken_reduced_pct": 0, "increased_armor": 0},
+          "perRank": {"all_damage_taken_reduced_pct": 4, "increased_armor": 5}
         }
       },
       {
         "id": "snow_cataclysm",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.03, 1.06, 1.09, 1.12, 1.15], "note": "elemental break 3r% per stack (buff 81, 3 s, max 5); with one hit per 3 s usually 1 stack (I); up to 5 stacks with p11/p12 gives x(1+15r%)"}], "confidence": "I", "note": "card p7 row marked C/I (stack count I)", "plannerFix": "planner models cold_skill_damage 3/r as LSSD; game: elemental break stacks (1 stack typical)"},
         "name": "Snow Cataclysm",
         "description": "Inflicts monsters with a stack of cataclysm on hit increasing the damage dealt by avalanche.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 3 }
+          "base": {"cold_skill_damage": 0},
+          "perRank": {"cold_skill_damage": 3}
         }
       },
       {
         "id": "ephemeral_flurry",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-7, -14, -21, -28, -35], "note": "cooldown x(1-7r%)"}], "confidence": "C", "note": "card p8 row"},
         "name": "Ephemeral Flurry",
         "description": "Reduces the cooldown of avalanche.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 7 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 7}
         }
       },
       {
         "id": "further_collapse",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use", "note": "per cast chance 3r% of a full-damage echo (+1 hit with map clear): value = 0.03r"}], "confidence": "C", "note": "card p9 row (L1046-1047, echo L1116)"},
         "name": "Further Collapse",
         "description": "Chance on cast for the avalanche to echo an additional time.",
         "maxRank": 5,
@@ -1765,56 +1869,61 @@
       {
         "id": "mending_winter",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "utility", "note": "[966] scalar not read as array (ProjectileCollision00Skills L1239): no effect in game"}], "confidence": "C", "note": "card p10 row (probably a bug in game)", "plannerFix": "planner life_replenish_pct 1/r; game: no effect (scalar where array expected)"},
         "name": "Mending Winter",
         "description": "Restore a portion of your maximum life on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "life_replenish_pct": 0 },
-          "perRank": { "life_replenish_pct": 1 }
+          "base": {"life_replenish_pct": 0},
+          "perRank": {"life_replenish_pct": 1}
         }
       },
       {
         "id": "neverending_winter",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [6.6, 6.6, 6.6], "note": "transformation: instead of the avalanche, flakes orbit the player (~40*(1+p2+p11.s10) flakes on rings, 4 s); ~6.6 hits per cast (4-9 by angle); rank-independent in card"}, {"kind": "other", "note": "LSSD bug: p11 multiplies the LSSD sum (p1+p4) by p11.s9 (25/r) instead of adding; value needs p1/p4 ranks"}], "confidence": "C", "note": "card p11 row (asm 0x1467733fd/0x146773aac), flake geometry C", "plannerFix": "planner of_total_damage 25/r and area 40/r; game replaces the avalanche with orbiting flakes (~6.6 hits) and multiplies LSSD"},
         "name": "Neverending Winter",
         "description": "Conjure a snow storm dealing damage over time on a large radius around you for a short duration.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "area_of_effect": 0 },
-          "perRank": { "of_total_damage": 25, "area_of_effect": 40 }
+          "base": {"of_total_damage": 0, "area_of_effect": 0},
+          "perRank": {"of_total_damage": 25, "area_of_effect": 40}
         }
       },
       {
         "id": "glacial_radiance",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 30, "note": "LSSD +30%/r"}, {"kind": "other", "requires": "devouring_snowpour", "note": "tectonic slab at player (full dmg, tick 0.4 s, activate 2 s*(1+35r%)): hits dummy only if devouring_snowpour (p2) >= r4 (~8 hits at p12 r1, ~9 at p2 r5); 0 at 160 px for p2<=3; formula 1+floor(L/24)"}], "confidence": "C", "note": "card p12 row (L1082-1094)", "plannerFix": "planner cold 30/r and skill_duration 35/r only; game slab adds 0 hits at 160 px unless p2 >= r4"},
         "name": "Glacial Radiance",
         "description": "Unleash a pattern of tectonic energy on the ground dealing damage over time for an extended duration.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "skill_duration": 0 },
-          "perRank": { "cold_skill_damage": 30, "skill_duration": 35 }
+          "base": {"skill_duration": 0, "subtree_damage": 0},
+          "perRank": {"skill_duration": 35, "subtree_damage": 30}
         }
       },
       {
         "id": "snowshade_bait",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3, 4, 7], "note": "transformation: bait stands at cast point for 2 s*(1+25r%) and drops an avalanche every 1.2 s*(1-20r%) after 0.5 s: hits = 1+floor((T-0.5)/freq) = 3/4/7 for r1/r2/r3 (+-1 by cast animation, I); avalanche scale 1.35*(1+p2) so it covers the dummy"}], "confidence": "I", "note": "card p13 row (scale C, count I)", "plannerFix": "planner faster_cast_rate 20/r and skill_duration 25/r; game: bait drops avalanches at its position (3/4/7 hits)"},
         "name": "Snowshade Bait",
         "description": "Casting Avalanche leaves an ice clone on the target area that taunts enemies and casts shouts for a set duration.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_duration": 0, "faster_cast_rate": 0 },
-          "perRank": { "skill_duration": 25, "faster_cast_rate": 20 }
+          "base": {"skill_duration": 0, "faster_cast_rate": 0},
+          "perRank": {"skill_duration": 25, "faster_cast_rate": 20}
         }
       },
       {
         "id": "nordic_stigma",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.7, 2.4, 3.1], "per": "use", "note": "on avalanche hit a stigma explosion with dmg*(1+0.7r) (explosion created on dummy, C): extra hits per use = 1+0.7r"}], "confidence": "C", "note": "card p14 row (ProjectileCollision18Jotunn L31-40)", "plannerFix": "planner cold 70/r as a bonus; game: an extra explosion of dmg*(1+70r%) per avalanche hit (x(2+0.7r) total)"},
         "name": "Nordic Stigma",
         "description": "Mark monsters with nordic stigma on hit causing them to be hit with lightning after a short delay.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 70 }
+          "base": {"cold_skill_damage": 0},
+          "perRank": {"cold_skill_damage": 70}
         }
       }
     ]
@@ -1840,6 +1949,8 @@
   {
     "id": "frost_sunder",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 5.0, "baseProjectiles": 4, "perExtraProjectile": 1.0, "confidence": "C", "note": "Per attack, IN-ZONE (melee attack skill, dummy inside the weapon-strike reach 40-64 px; reach itself I): 1 weapon strike (player projectile, projEffect[994]/[1020], rule 6; physical floor(W*(1 + V2'/100)) + cold floor(V1')) = 1 hit, plus the icicles Jotunn_Frost_Sunder_Icicle_obj: loop i < 4 + p8.s9 (planner baseProjectiles 4), 8 deg fan, 8 px/frame, 1 hit each, SAME damage recipe as the strike (damage[0] and damage[2] copied), so no conversion: at 40-64 px all 4 hit (oriented-rectangle model, R4) = 1 + 4 = 5.0. perExtraProjectile = 1.0: each extra icicle hits while the fan stays in reach (40 px up to n = 8, 48 px up to n = 7, 64 px up to n = 5; R4 p8 table). At the strict 160 px convention the strike is out of reach and only the +-4 deg pair hits: 2 hits. p11 blast per icicle hit, p12 homing second hit, p13 extra salvos, p14 spiral orbit (2 / 1 / 2 hits at 160 px for n = 7 / 10 / 13) are subskill effects."},
     "weaponRequirement": "melee",
     "classId": "jotunn",
     "name": "Frost Sunder",
@@ -1855,10 +1966,12 @@
     "position": { "row": 3, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "attackKind": "attack",
-    "damageFormula": { "base": 0, "perLevel": 10.5 },
+    "damageFormula": { "base": 0, "perLevel": 8.5 },
     "manaCostFormula": { "base": 4.5, "perLevel": 0.85, "rankIndexing": "fullRank" },
     "attackScaling": {
-      "weaponDamagePct": { "base": 0, "perLevel": 28 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 100, "perLevel": 28 },
       "flatPhysicalMin": { "base": 1, "perLevel": 1 },
       "flatPhysicalMax": { "base": 5, "perLevel": 2 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -1880,28 +1993,31 @@
       {
         "id": "arctic_breeze",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 8, "note": "LSSD +8%/r on V1 and V2"}], "confidence": "C", "note": "card p1 row"},
         "name": "Arctic Breeze",
         "description": "Increases the damage dealt by frost sunder.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "weakening_precision",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [0.25, 0.5, 0.75], "note": "icicles: cold part of a physically crit hit also crits; pe[45] = 0.25r percentage points (not +0.25r% damage); DPS depends on equipment crit chance c_f and damage D_f"}], "confidence": "C", "note": "card p2 row (R4 enemyCollisionDamageParent L266-268)", "plannerFix": "planner crit_damage_portion 25/r treats it as damage; game: cold-part crit from physical crit, +0.25r pp crit term"},
         "name": "Weakening Precision",
         "description": "A portion of the cold damage can critically hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "crit_damage_portion": 0 },
-          "perRank": { "crit_damage_portion": 25 }
+          "base": {"crit_damage_portion": 0},
+          "perRank": {"crit_damage_portion": 25}
         }
       },
       {
         "id": "ice_trolls_lineage",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "buff 307 movement speed per cast with chance 4r%"}], "confidence": "C", "note": "card p3 row (L901)", "plannerFix": "planner proc on_hit; game rolls once per cast and only gives movement speed"},
         "name": "Ice Trolls Lineage",
         "description": "Chance on attack to gain increased movement speed for a short period.",
         "maxRank": 5,
@@ -1917,23 +2033,25 @@
       {
         "id": "ice_trolls_agility",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "base": 0, "perRank": 7, "note": "attack speed x(1+7r%)"}], "confidence": "C", "note": "card p4 row (acc = p4.s9%)"},
         "name": "Ice Trolls Agility",
         "description": "Increases attack speed when using frost sunder.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 7 }
+          "base": {"skill_attack_speed_more": 0},
+          "perRank": {"skill_attack_speed_more": 7}
         }
       },
       {
         "id": "frozen_to_the_core",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "dot", "base": 0, "perRank": 30, "note": "frost bite on icicles: floor((phys+cold)*30r%) per application, chance 4r% per cast; DoT per reports/dot_debuffs.md; unlocks p12"}], "confidence": "C", "note": "card p5 row (L893)", "plannerFix": "planner proc on_hit; game rolls once per cast (rzut), not per icicle hit"},
         "name": "Frozen to the Core",
         "description": "Chance to inflict frostbite on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_frost_bite_damage": 0 },
-          "perRank": { "increased_frost_bite_damage": 30 }
+          "base": {"increased_frost_bite_damage": 0},
+          "perRank": {"increased_frost_bite_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1946,12 +2064,13 @@
       {
         "id": "shattering_coldstrike",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0541, 1.2031, 1.4291, 1.7162, 2.0505], "note": "cold break 35r% (buff 10, [973]) per cast with chance 4r%, 5 s; uptime with the attack-path period T_att = (ceil(72/S)+1)/60 s = 73 frames = 1.217 s at S = APS = 1 (PoR4 rule 37; was 0.75 s), 4.11 uses per 5 s; mean-field (engine should recompute for the real S)"}], "confidence": "C", "note": "card p6 row (L889); period T_att (PoR4 rule 37), APS 1 assumed", "plannerFix": "proc on_hit; game rolls once per cast; uptime depends on the attack period"},
         "name": "Shattering Coldstrike",
         "description": "Chance to inflict cold break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_break": 0 },
-          "perRank": { "cold_break": 35 }
+          "base": {"cold_break": 0},
+          "perRank": {"cold_break": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1964,75 +2083,79 @@
       {
         "id": "lingering_fissure",
         "positionIndex": 7,
+        "dummy": {"effects": [], "confidence": "I", "note": "card p7: no lift read (I)", "plannerFix": "planner reduced_movement_diminish 10/r; card finds no lift read (I)"},
         "name": "Lingering Fissure",
         "description": "Decreases movement diminish when using frost sunder.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "frost_shrapnel",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6], "note": "+2 icicles per rank (n = 4+2r), converted at perExtraProjectile 1.0; each hits the dummy only while the fan is in reach (40 px to n=8, 48 px to n=7, 64 px to n=5); 0 at 160 px; overcounts beyond those limits"}], "confidence": "C", "note": "card p8 row (R4 reach table, rule 26)", "plannerFix": "planner projectile_count 2/r converted without reach limits; game: all extra icicles hit only inside the fan reach (0 at 160 px)"},
         "name": "Frost Shrapnel",
         "description": "Increases the amount of icicles unleashed by frost sunder.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 2 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 2}
         }
       },
       {
         "id": "frozen_death",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [0, 0, 0, 0, 0], "note": "attack crit DAMAGE +20r% (p9.s9 on [1019], attack and icicles); no chance change; DPS needs equipment crit chance"}], "confidence": "C", "note": "card p9 row", "plannerFix": "planner crit_damage 20/r; game applies it as attack crit damage (value 0 chance change)"},
         "name": "Frozen Death",
         "description": "Increases the critical strike damage dealt by frost sunder.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 20 }
+          "base": {"crit_damage": 0},
+          "perRank": {"crit_damage": 20}
         }
       },
       {
         "id": "deaths_touch",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [5, 10, 15, 20, 25], "note": "attack crit chance +5r% (on strike and icicles); crit damage not changed by this subskill"}], "confidence": "C", "note": "card p10 row ([1018])"},
         "name": "Death´s Touch",
         "description": "Increases the critical strike chance of frost sunder.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_chance": 0 },
-          "perRank": { "crit_chance": 5 }
+          "base": {"crit_chance": 0},
+          "perRank": {"crit_chance": 5}
         }
       },
       {
         "id": "frost_sunder_onslaught",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [3.0, 6.0, 9.0], "per": "use", "note": "every icicle hit spawns an explosion with 75r% of dmg (phys and cold); 4 icicle hits in zone -> value = 4*0.75r; at 160 px (2 icicle hits) it would be 1.5r"}], "confidence": "C", "note": "card p11 row (ProjectileCollision18Jotunn L225-245, reguly 15)", "plannerFix": "planner of_total_damage/area_of_effect; game: an explosion on EVERY icicle hit (no chance) at 75r% of both damage types"},
         "name": "Frost Sunder Onslaught",
         "description": "Icicles explode on contact unleashing an explosion dealing damage on a large radius.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "area_of_effect": 0 },
-          "perRank": { "of_total_damage": 75, "area_of_effect": 25 }
+          "base": {"of_total_damage": 0, "area_of_effect": 0},
+          "perRank": {"of_total_damage": 75, "area_of_effect": 25}
         }
       },
       {
         "id": "dissecting_vortex",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD +15%/r"}, {"kind": "other", "requires": "frozen_to_the_core", "note": "extra damage vs frost bitten +50r% ([185]); needs frost bite from p5"}, {"kind": "extra_hits", "byRank": [0.8, 0.8, 0.8], "per": "use", "requires": "frozen_to_the_core", "note": "icicles that hit and were frost bitten (p5) return and hit again ~71 frames later: 4 icicle hits * P5, P5 = 4%*r5 = 20% at p5 rank 5 (value shown for p5 r5; scale by 0.04*r5*4 otherwise); p12 rank does not change it"}], "confidence": "I", "note": "card p12 row; homing mechanism C, return path I (R4)", "plannerFix": "planner keeps cold 15/r only; game adds second hits from homing icicles (needs p5) and +50r% vs frost bitten"},
         "name": "Dissecting Vortex",
         "description": "Icicles seek targets when proccing frost bite dealing increased damage to frostbitten monsters.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "extra_damage_frost_bitten": 0 },
-          "perRank": {
-            "cold_skill_damage": 15,
-            "extra_damage_frost_bitten": 50
-          }
+          "base": {"extra_damage_frost_bitten": 0, "subtree_damage": 0},
+          "perRank": {"extra_damage_frost_bitten": 50, "subtree_damage": 15}
         }
       },
       {
         "id": "gelid_riptide",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.6, 2.4, 5.4], "per": "use", "note": "per cast chance 15r% of 1+r extra volleys (r salvos): value = 0.15r * r * 4 icicle hits in zone (0.3r^2 at 160 px)"}], "confidence": "C", "note": "card p13 row (L914)", "plannerFix": "planner on_hit chance 15r with extra_volleys 100r%; game rolls per cast and each extra volley is ~4 icicle hits (in zone)"},
         "name": "Gelid Riptide",
         "description": "Chance to unleash multiple waves of icicles.",
         "maxRank": 3,
@@ -2048,12 +2171,13 @@
       {
         "id": "unstoppable_assault",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 25, "note": "LSSD +25%/r"}, {"kind": "hits_mult", "byRank": [1.0, 0.5, 1.0], "note": "transformation: icicles orbit the player (spiral), 160 px hits 2/1/2 for n=7/10/13 vs 2 for the fan; scaled on in-zone base 5.0 as ratio (assumption, I); no projectile conversion"}], "confidence": "I", "note": "card p14 row (R4 spiral geometry C; convention scaling I)", "plannerFix": "planner projectile_count +3/r converted at 1.0 hit each; game orbit spiral hits 2/1/2 at 160 px (no gain on one target)"},
         "name": "Unstoppable Assault",
         "description": "Summon a vortex of orbiting icicles piercing monsters on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "cold_skill_damage": 25, "projectile_count": 3 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 3, "subtree_damage": 25}
         }
       }
     ]
@@ -2086,7 +2210,7 @@
     "description": "Summon the power of Aurgelmir and temporarily turn into a war machine of the frozen tundra increasing your attack damage, attack speed and life replenish.",
     "tags": ["Cast", "Active", "Buff", "Shape Shift"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 70,
     "effectDuration": 25,
     "maxRank": 20,

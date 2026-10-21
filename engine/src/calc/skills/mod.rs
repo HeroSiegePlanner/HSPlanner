@@ -107,7 +107,6 @@ pub const EXTRA_DAMAGE_CONDITIONS: &[(&str, &str, bool)] = &[
     ("extra_damage_shadow_burning", "Shadow Burning", true),
     ("extra_damage_frost_bitten", "Frost Bitten", true),
     ("extra_dmg_to_deep_frozen", "Deep Frozen", true),
-    ("extra_damage_low_life", "Low Life", false),
     ("extra_damage_serrated_chains", "Serrated Chains", false),
     ("extra_damage_bosses", "Bosses", false),
 ];
@@ -373,6 +372,52 @@ pub struct WeaponDamageBreakdown {
 }
 
 #[inline]
+/// StatAttackSpeedMainHand: IAS adds to the weapon rate, scaled by at most 0.75 APS.
+/// Uses per second allowed by the use animation. CheckTalentUse refuses a new
+/// skill while playerEffect[204] is set, and playerSequences clears it only when
+/// the 18-frame / 15 fps top sequence ends: ceil(72 / S) + 1 frames at sequence
+/// speed S (castRate or weapon rate). Movement/Blink skills recast themselves
+/// past the gate, so callers skip the lock for them.
+pub fn animation_lock_rate(speed: f64) -> f64 {
+    if speed <= 0.0 {
+        return 0.0;
+    }
+    60.0 / ((72.0 / speed - 1e-9).ceil() + 1.0)
+}
+
+/// Frames from use to the effect: the top sequence (15 fps) passes headpos 6 at
+/// speed S (Player_obj_Step_0 L611; reports/cast_timing.md), floor(24 / S) + 1.
+pub fn trigger_frames(speed: f64) -> f64 {
+    if speed <= 0.0 {
+        return 0.0;
+    }
+    (24.0 / speed + 1e-9).floor() + 1.0
+}
+
+pub fn attack_rate(base_aps: f64, ias_pct: f64) -> f64 {
+    base_aps + base_aps.min(0.75) * ias_pct / 100.0
+}
+
+/// Global "more" attack speed times the skill's own subtree multiplier; the game's
+/// TalentUseSetSpeed multiplies the weapon rate by (1 + Σ subtree bonuses).
+pub fn attack_speed_more(stats: &HashMap<String, Ranged>) -> Ranged {
+    let global = rg(stats, "increased_attack_speed_more");
+    let skill = rg(stats, "skill_attack_speed_more");
+    let combine = |g: f64, s: f64| ((1.0 + g / 100.0) * (1.0 + s / 100.0) - 1.0) * 100.0;
+    (combine(global.0, skill.0), combine(global.1, skill.1))
+}
+
+/// Weapon attacks per second (min, max) with the game's additive IAS.
+pub fn attacks_per_second(stats: &HashMap<String, Ranged>) -> Ranged {
+    let ias = rg(stats, "increased_attack_speed");
+    let more = attack_speed_more(stats);
+    let base = r_max(rg(stats, "attacks_per_second"));
+    (
+        attack_rate(base, r_min(ias)) * (1.0 + r_min(more) / 100.0),
+        attack_rate(base, r_max(ias)) * (1.0 + r_max(more) / 100.0),
+    )
+}
+
 pub fn rg(map: &HashMap<String, Ranged>, k: &str) -> Ranged {
     *map.get(k).unwrap_or(&(0.0, 0.0))
 }
@@ -433,7 +478,18 @@ pub(crate) fn collect_extra_damage(
     }
 
     // S8: the extra-damage modifiers are additive with each other, one shared multiplier.
-    (1.0 + sum_pct / 100.0, sources)
+    let mut factor = 1.0 + sum_pct / 100.0;
+    // CalculateEndDamage applies low life (HP ≤ 30%) as its own multiplier, physical only.
+    if damage_type.is_none_or(|dt| dt == "physical")
+        && is_condition_active("extra_damage_low_life", Some(enemy_conditions))
+    {
+        let mut low = 0.0;
+        push_source(stats, "extra_damage_low_life", "Low Life (physical, separate)", &mut low, &mut sources);
+        if low > 0.0 {
+            factor *= 1.0 + low / 100.0;
+        }
+    }
+    (factor, sources)
 }
 
 pub(crate) fn collect_extra_damage_with_scoped(
@@ -761,6 +817,15 @@ mod tests {
         assert!((deadly_blow_mult(100.0, 100.0) - 2.7).abs() < 1e-9);
         // chance clamps at 100%
         assert!((deadly_blow_mult(160.0, 0.0) - 1.35).abs() < 1e-9);
+    }
+
+    #[test]
+    fn low_life_bonus_is_physical_only_and_separate() {
+        let stats = merge(&[stat("extra_damage_low_life", 50.0), stat("damage", 20.0)]);
+        let (fire, _) = collect_extra_damage(&stats, &cond(&["low_life"]), Some("fire"));
+        assert!((fire - 1.2).abs() < 1e-9);
+        let (phys, _) = collect_extra_damage(&stats, &cond(&["low_life"]), Some("physical"));
+        assert!((phys - 1.2 * 1.5).abs() < 1e-9);
     }
 
     #[test]

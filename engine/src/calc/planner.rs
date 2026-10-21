@@ -60,6 +60,22 @@ pub fn prepare_input(input: &PlannerInput) -> BuildPerformanceInput {
         .inventory
         .retain(|slot, _| !input.disabled_potions.get(slot).copied().unwrap_or(false));
     let _scope = super::season::SeasonScope::enter(build.season.clone());
+    // An enabled potion is drunk: its granted buff is on.
+    for (slot, item) in &build.inventory {
+        if !slot.starts_with("potion_") {
+            continue;
+        }
+        let Some(base) = data::get_item(&item.base_id) else {
+            continue;
+        };
+        for (name, _) in data::skill_bonus_entries(base, item) {
+            if let Some(condition) = data::get_item_granted_skill_by_name(name)
+                .and_then(|skill| skill.condition.clone())
+            {
+                build.player_conditions.insert(condition, true);
+            }
+        }
+    }
     let mut boosts: HashMap<&str, u32> = HashMap::new();
     for item in build.inventory.values() {
         let Some(skill) = item.subskill_boost_skill_id.as_deref() else {
@@ -435,5 +451,33 @@ mod tests {
         assert_eq!(prepared.subskill_ranks["skill:empty"], 0);
         assert_eq!(prepared.subskill_ranks["other:spent"], 1);
         assert!(!prepared.inventory.contains_key("potion_1"));
+    }
+
+    #[test]
+    fn enabled_potions_activate_their_buffs() {
+        let mut input = PlannerInput::default();
+        for (slot, base_id) in [
+            ("potion_1", "potion_satanic_radbull"),
+            ("potion_2", "potion_satanic_witches_potion"),
+        ] {
+            input.build.inventory.insert(
+                slot.into(),
+                super::super::types::EquippedItem {
+                    base_id: base_id.into(),
+                    ..Default::default()
+                },
+            );
+        }
+        input.disabled_potions.insert("potion_2".into(), true);
+        input
+            .build
+            .player_conditions
+            .insert("hyper_activity_buff".into(), false);
+        let prepared = prepare_input(&input);
+        assert_eq!(prepared.player_conditions.get("hyper_activity_buff"), Some(&true));
+        assert_ne!(
+            prepared.player_conditions.get("conjured_replenishment_buff"),
+            Some(&true)
+        );
     }
 }

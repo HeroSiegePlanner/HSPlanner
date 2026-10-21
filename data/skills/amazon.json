@@ -33,6 +33,8 @@
   {
     "id": "noxious_strike",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.89, "baseProjectiles": 3, "perExtraProjectile": 0.3, "confidence": "C", "note": "Per use, expected over the 3-attack cycle (p14=0: 1 third attack in 3). 1 weapon strike (phys W*8.85 + poison V1'=291) = 1.0 main hit, plus on every 3rd attack 3 poison bolts (Amazon_Noxious_Strike_obj, 3+RSS391+p4.s9, fan 10 deg, each hits once after 2-frame activation, rule 15; all 3 hit while the bolt start is <=100 px from the dummy centre, start distance d0 ~ 12 px + half the attack projectile length, I) = 3 bolts/3 = 1.0 bolt hit per use. A bolt carries only damage[5] = poison V1', so it is converted: V1'/(V1'+W*8.85) = 0.892 at the planner unarmed reference W=4 (2-6); W-dependent, falls with a better weapon (base = 1 + r_b, r_b = 291/(291+8.85*W)). baseProjectiles = bolt count; perExtraProjectile = (1/3)*r_b, valid while the widened fan still hits (n<=5 at <=50 px). Poisoned DoT excluded. Dummy in melee range (strike), card R3 164#1 (C), strike hit itself I."},
     "weaponRequirement": "melee",
     "classId": "amazon",
     "name": "Noxious Strike",
@@ -63,20 +65,15 @@
         "manaCost": 4
       }
     ],
-    "damageFormula": {
-      "base": 10.5,
-      "perLevel": 14
-    },
+    "damageFormula": { "base": 10.5, "perLevel": 14 },
     "manaCostFormula": {
       "base": 4,
       "perLevel": 1
     },
     "attackKind": "attack",
     "attackScaling": {
-      "weaponDamagePct": {
-        "base": 185,
-        "perLevel": 35
-      },
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 185, "perLevel": 35 },
       "attackRatingPct": {
         "base": 0,
         "perLevel": 5
@@ -120,23 +117,25 @@
       {
         "id": "corrosive_force",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8 %/r; card: scales only the additive V2 and V1 parts, not the whole weapon damage W"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); strike at melee range, bolts at d0 ~ 100 px from the dummy (rule 14)] card table p1 (R3 section 'Noxious Strike')", "plannerFix": "planner applies subtree_damage to the whole weapon damage (weaponDamagePct); in game LSSD multiplies only the V2 addition and V1 poison part"},
         "name": "Corrosive Force",
         "description": "Increases damage dealt by noxious strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "subtree_damage": 0 },
-          "perRank": { "subtree_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "touch_of_noxus",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [15, 30, 45, 60, 75], "note": "15 %/r of the whole hit (phys + poison) goes into the Poisoned pool [0]; the hit itself is unchanged; DoT modelled separately by engine"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); strike at melee range, bolts at d0 ~ 100 px from the dummy (rule 14)] card table p2, formula [0] = floor((V1' + floor(W*(1+V2'%)))*p2.s9%)", "plannerFix": "planner models increased_poisoned_damage 15/r plus a poisoned proc; card says 15 %/r of the total hit damage is added to the Poisoned pool"},
         "name": "Touch of Noxus",
         "description": "Increases poisoned damage inflicted by noxious strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 15 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -149,81 +148,88 @@
       {
         "id": "empowered_toxins",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "[181]=10 %/r extra damage vs poisoned (MODS 461); applies when the dummy is poisoned, which is almost always true during a continuous attack"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); strike at melee range, bolts at d0 ~ 100 px from the dummy (rule 14)] card table p3"},
         "name": "Empowered Toxins",
         "description": "Increases damage dealt to poisoned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_poisoned": 0 },
-          "perRank": { "extra_damage_poisoned": 10 }
+          "base": {"extra_damage_poisoned": 0},
+          "perRank": {"extra_damage_poisoned": 10}
         }
       },
       {
         "id": "noxious_bolts",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5], "note": "+1 bolt/r in each 3rd attack (count 3+RSS391+p4.s9); each bolt hits the dummy once with damage[5] = poison V1'; engine converts via perExtraProjectile (includes the 1/3 cycle share)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); strike at melee range, bolts at d0 ~ 100 px from the dummy (rule 14)] card table p4, rule 15 (bolt hits once)"},
         "name": "Noxious Bolts",
         "description": "Increases projectile count on your third attack.",
         "maxRank": 5,
         "effects": {
-          "base": { "secondary_projectile_count": 0 },
-          "perRank": { "secondary_projectile_count": 1 }
+          "base": {"secondary_projectile_count": 0},
+          "perRank": {"secondary_projectile_count": 1}
         },
         "calculationNote": "Projectiles occur on every third attack. Their extra target contacts are excluded until overlap is known."
       },
       {
         "id": "noxian_slash",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [1.33, 2.67, 4.0, 5.33, 6.67], "note": "4 %/r LSSD only in 3rd attacks (1/3 of uses) on V2/V1/[0]; value averaged over the 3-attack cycle (4r/3 %); range/area [130] part has no dummy effect"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); strike at melee range, bolts at d0 ~ 100 px from the dummy (rule 14)] card table p5 (3rd attack only)"},
         "name": "Noxian Slash",
         "description": "Increases the damage and area of effect of your third attack.",
         "maxRank": 5,
         "effects": {
-          "base": { "third_attack_subtree_damage": 0, "secondary_area_of_effect": 0 },
-          "perRank": { "third_attack_subtree_damage": 4, "secondary_area_of_effect": 15 }
+          "base": {"third_attack_subtree_damage": 0, "secondary_area_of_effect": 0},
+          "perRank": {"third_attack_subtree_damage": 4, "secondary_area_of_effect": 15}
         },
         "calculationNote": "Damage bonus applies on every third attack; average damage weights it by one third."
       },
       {
         "id": "corrosive_reach",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [4, 8, 12, 16, 20], "note": "4 %/r LSSD on V2 addition, ONLY with weapon type 6 (polearm); zero with other weapon types; range [130] part no dummy effect"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); strike at melee range, bolts at d0 ~ 100 px from the dummy (rule 14)] card table p6", "plannerFix": "planner applies weapon_subtree_damage unconditionally; in game it is active only with weapon type 6 (undefined == 6 gate, L48)"},
         "name": "Corrosive Reach",
         "description": "Increased attack damage and attack range while wielding a polearm.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0, "weapon_subtree_damage": 0 },
-          "perRank": { "skill_range": 10, "weapon_subtree_damage": 4 }
+          "base": {"skill_range": 0, "weapon_subtree_damage": 0, "subtree_damage": 0},
+          "perRank": {"skill_range": 10, "weapon_subtree_damage": 4, "subtree_damage": 4}
         }
       },
       {
         "id": "envenoming_empowerment",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "enemy buff 67 on hit and player move-speed buff only on kill (ProjectileKill10Amazon); dummy never dies"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); strike at melee range, bolts at d0 ~ 100 px from the dummy (rule 14)] card table p7; planner 15/r movement speed is a utility, not hit DPS"},
         "name": "Envenoming Empowerment",
         "description": "Killing a monster with noxious strike grants you a burst of movement speed.",
         "maxRank": 5,
         "effects": {
-          "base": { "secondary_movement_speed": 0 },
-          "perRank": { "secondary_movement_speed": 15 }
+          "base": {"secondary_movement_speed": 0},
+          "perRank": {"secondary_movement_speed": 15}
         },
         "calculationNote": "Movement speed is a temporary on-kill burst; uptime is not modeled."
       },
       {
         "id": "glimmering_venom",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "+10 %/r added to the LSSD of the poison part only ([997] and [0]); the physical part is not affected; effective on dummy only via poison share of the hit"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); strike at melee range, bolts at d0 ~ 100 px from the dummy (rule 14)] card table p8"},
         "name": "Glimmering Venom",
         "description": "Increases poison damage dealt by noxious strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "elemental_subtree_damage": 0 },
-          "perRank": { "elemental_subtree_damage": 10 }
+          "base": {"elemental_subtree_damage": 0, "subtree_damage": 0},
+          "perRank": {"elemental_subtree_damage": 10, "subtree_damage": 10}
         }
       },
       {
         "id": "crushing_corrosion",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.45, 1.8, 4.05, 7.2, 11.25], "note": "expected poison break per hit = chance 3r % x break 15r % (= 0.45 r^2 %); card: [982] = [p9.s9, 5 s] stacking poison break buff; numeric value is a rough expectation, stack model not in card"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); strike at melee range, bolts at d0 ~ 100 px from the dummy (rule 14)] card table p9 (chance p9.s10 3/r, break p9.s9 15/r)"},
         "name": "Crushing Corrosion",
         "description": "Chance to inflict poison break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_break": 0 },
-          "perRank": { "poison_break": 15 }
+          "base": {"poison_break": 0},
+          "perRank": {"poison_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -237,6 +243,7 @@
       {
         "id": "noxious_duality",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.03, 1.06, 1.09, 1.12, 1.15], "note": "FUN_1401ba3c0(0,1) is `+= 1` on a local that L119 copies to projEffect[117] (asm 0x14648c994-0x14648c9ac, 0x1464911b5-0x1464911df): chance 3r % of ONE extra salvo of the whole attack (own hit pack, same direction), so every per-attack hit (strike, 3rd-attack bolts, p11 spears, p12 explosion/pool, Poisoned per hit) is multiplied by (1 + 0.03r) in expectation; r5 = +15 %"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); strike at melee range, bolts at d0 ~ 100 px from the dummy (rule 14)] R4 164#2 + table row p10 (C). Was extra_hits 0.03r of ONE strike (I); now a multiplier on all hits of the use (base 1.89 incl. the 1/3-cycle bolts and every p4/p11/p12/p14 extra)."},
         "name": "Noxious Duality",
         "description": "Chance on attack to perform an additional noxious strike.",
         "maxRank": 5,
@@ -253,24 +260,26 @@
       {
         "id": "spinning_speartips",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6], "note": "[566] = 2 per rank: extra spinning spears spawned from 3rd-attack bolt hits (Amazon_Noxious_Strike_Spinning_obj), each hits the dummy once at full damage (card 1 hit per spear, rule 15); engine converts via perExtraProjectile"}, {"kind": "extra_hits", "byRank": [2, 4, 6], "per": "use", "replacesProjectileHits": true, "note": "explicit hits for the spinning spears: 2 spears per rank per 3rd-attack bolt trigger (3 triggers per 3rd attack at ref) = 2r per use, each spear 1 full-damage hit (card p11 '1 hit per spear'); count per trigger is the [566]=2/r reading (I)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); strike at melee range, bolts at d0 ~ 100 px from the dummy (rule 14)] card table p11; count semantics per [566] reading ; spear count from [566]=2/r"},
         "name": "Spinning Speartips",
         "description": "Throw multiple spears on your third attack in an arc. The spears start spinning when hitting the ground dealing area of effect damage for a short period.",
         "maxRank": 3,
         "effects": {
-          "base": { "secondary_projectile_count": 0 },
-          "perRank": { "secondary_projectile_count": 2 }
+          "base": {"secondary_projectile_count": 0},
+          "perRank": {"secondary_projectile_count": 2}
         },
         "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "explosive_toxins",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [5.35, 5.35, 5.35], "per": "use", "note": "every trigger hit (each strike, and each 3rd-attack bolt) adds explosion (1) + pool (2) poison hits = 3 x V1'/D (~0.89 at planner unarmed ref W=4); per use = 2 triggers x 3 x 0.89 at ref; W-dependent; rank changes only break and area, not count"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); strike at melee range, bolts at d0 ~ 100 px from the dummy (rule 14)] card table p12 (rule 15, pool hits at frames 2 and 35)", "plannerFix": "planner has no extra explosion/pool hits per triggering hit (card: 1 + 2 poison hits on every hit); planner only has poison break and area"},
         "name": "Explosive Toxins",
         "description": "Poison projectiles explode on hit, dissolving into an acidic pool inflicting poison break and dealing additional damage. Acidic pool area of effect radius is increased based on your dexterity.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_break": 0, "area_of_effect": 0 },
-          "perRank": { "poison_break": 20, "area_of_effect": 10 }
+          "base": {"poison_break": 0, "area_of_effect": 0},
+          "perRank": {"poison_break": 20, "area_of_effect": 10}
         },
         "proc": {
           "trigger": "on_hit",
@@ -283,12 +292,13 @@
       {
         "id": "elemental_fragmentation",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [40, 80, 120], "note": "LSSD 40 %/r on V2 and V1 additive parts only (not whole W)"}, {"kind": "other", "byRank": [35, 70, 105], "note": "elemental break 35 %/r on elemental damage ([986]); multiplier K in CalculateEndDamage not read in card; numeric = break %"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); strike at melee range, bolts at d0 ~ 100 px from the dummy (rule 14)] card table p13", "plannerFix": "planner applies subtree_damage (LSSD) to the whole weapon damage; in game only the additive V2 and V1 parts are scaled"},
         "name": "Elemental Fragmentation",
         "description": "Increases damage dealt by noxious strike and inflicts stacking elemental break on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "elemental_break": 0, "subtree_damage": 0 },
-          "perRank": { "elemental_break": 35, "subtree_damage": 40 }
+          "base": {"elemental_break": 0, "subtree_damage": 0},
+          "perRank": {"elemental_break": 35, "subtree_damage": 40}
         },
         "proc": {
           "trigger": "on_hit",
@@ -304,12 +314,13 @@
       {
         "id": "noxious_sequence",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.45, 0.71, 0.89], "per": "use", "note": "cycle length 3+r attacks: share of 3rd attacks (1+r)/(3+r) instead of 1/3; extra bolt hits per use = n_b (3 at ref) x (share - 1/3) x 0.89 (V1'/D); triggers of p11/p12 on bolts not included"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); strike at melee range, bolts at d0 ~ 100 px from the dummy (rule 14)] card table p14, R3 'Noxious Strike' (p14 = (1+r)/(3+r))", "plannerFix": "planner adds +1 bolt per rank (projectile count); in game the rank lengthens the cycle (bolt count unchanged), so bolts per use grow by (1+r)/(3+r) vs 1/3"},
         "name": "Noxious Sequence",
         "description": "Perform additional spin attacks after the third one.",
         "maxRank": 3,
         "effects": {
-          "base": { "secondary_projectile_count": 0 },
-          "perRank": { "secondary_projectile_count": 1 }
+          "base": {"secondary_projectile_count": 0},
+          "perRank": {"secondary_projectile_count": 1}
         },
         "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       }
@@ -319,6 +330,9 @@
   {
     "id": "leaping_ambush",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Landing blast Amazon_Leaping_Ambush_obj (singleHit, disc mask r~100 px * scale) is created at the cursor point (in-zone, rule 24; cursor 24 px above the dummy centre) and covers the dummy: 1 hit per landing. No in-flight effects for 166, no landing hit besides the blast, no extra projectiles. p14 re-hops (1+r landings) are subskill effects, not counted."},
+    "usePeriod": {"kind": "leap", "extraFrames": 28, "note": "flight 27 gravity steps + 1 transition frame = 28 frames (0.467 s), g'=0.35+0.5, v_z=11.66 (R3 166#0, C); casting is blocked in flight (rule 30); period = max(1/castRate, t_wyw + 28 frames) with castRate 1.75+FCR/100, t_wyw (7 or 14 sequence frames, I) excluded here."},
     "classId": "amazon",
     "name": "Leaping Ambush",
     "kind": "active",
@@ -347,11 +361,8 @@
         "manaCost": 5
       }
     ],
-    "baseCastRate": 1,
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 28
-    },
+    "baseCastRate": 1.75,
+    "damageFormula": { "base": 0, "perLevel": 28 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -393,28 +404,31 @@
       {
         "id": "power_quads",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "skill_range +15 %/r; no read of it in TalentsAmazon script (I); landing point is at the cursor on the dummy, so range does not change hits"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); in-zone: landing blast at the cursor 24 px above the dummy centre (rule 24); 1 hit per landing] card table p1"},
         "name": "Power Quads",
         "description": "Increases maximum leap distance.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "heavyweight_slam",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8 %/r on the landing damage[5] = floor(LTD(V1)*(1 + LSSD))"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: landing blast at the cursor 24 px above the dummy centre (rule 24); 1 hit per landing] card table p2 (L350)"},
         "name": "Heavyweight Slam",
         "description": "Increases damage dealt by leaping ambush.",
         "maxRank": 5,
         "effects": {
-          "base": { "subtree_damage": 0 },
-          "perRank": { "subtree_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "tribal_spearnage",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.006, 0.024, 0.054, 0.096, 0.15], "per": "use", "note": "raining spear on hit with chance 3 %/r, damage 20 %/r of the landing poison damage; per use (1 landing) = 0.03r x 0.20r main-hit units (landing damage is poison only, so ratio = 20r %)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: landing blast at the cursor 24 px above the dummy centre (rule 24); 1 hit per landing] card table p3 (ProjectileCollision10Amazon L62-70)"},
         "name": "Tribal Spearnage",
         "description": "Chance to rain down falling spears on hit dealing additional damage.",
         "maxRank": 5,
@@ -431,17 +445,19 @@
       {
         "id": "landing_blast",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "area [71] +20 %/r; the dummy is already inside the blast disc at the cursor point, no extra hit"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: landing blast at the cursor 24 px above the dummy centre (rule 24); 1 hit per landing] card table p4"},
         "name": "Landing Blast",
         "description": "Increases the area of effect radius of leaping ambush.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 20 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 20}
         }
       },
       {
         "id": "stunning_smash",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "stun (CC) for 3 s with chance 3 %/r per landing; no damage itself; enables p6 only"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: landing blast at the cursor 24 px above the dummy centre (rule 24); 1 hit per landing] card table p5"},
         "name": "Stunning Smash",
         "description": "Chance on hit to stun the target.",
         "maxRank": 5,
@@ -454,23 +470,25 @@
       {
         "id": "crippling_the_weak",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "requires": "stunning_smash", "note": "[179] = 10 %/r extra damage vs stunned (MODS 464); applies only while the dummy is stunned (stun from p5 chance 3 %/r, 3 s); value is the multiplier while stunned; uptime not in card"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: landing blast at the cursor 24 px above the dummy centre (rule 24); 1 hit per landing] card table p6 (requires stun uptime from p5)"},
         "name": "Crippling the Weak",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 10 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 10}
         }
       },
       {
         "id": "venomous_blastwave",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.6, 2.4, 5.4, 9.6, 15.0], "note": "chance 3 %/r x Poisoned pool [0] = 20 %/r of the landing damage; expected pool in % of landing damage = 0.6 r^2"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: landing blast at the cursor 24 px above the dummy centre (rule 24); 1 hit per landing] card table p7"},
         "name": "Venomous Blastwave",
         "description": "Chance on hit to inflict poisoned.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 20 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 20}
         },
         "proc": {
           "trigger": "on_hit",
@@ -483,23 +501,25 @@
       {
         "id": "adrenaline_rush",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [5, 10, 15, 20, 25], "note": "FCR 5 %/r from buff 72 (3 s, on hit, uptime ~100 % in a continuous loop); IAS 6 %/r has no effect on a cast skill. Period = max(T_cast, t_wyw + 28 kl.), so FCR only shortens the cast-bound part and t_wyw"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: landing blast at the cursor 24 px above the dummy centre (rule 24); 1 hit per landing] card table p8 (BuffAdd 72)"},
         "name": "Adrenaline Rush",
         "description": "Landing grants you a burst of attack speed and cast rate.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0, "faster_cast_rate": 0 },
-          "perRank": { "increased_attack_speed": 6, "faster_cast_rate": 5 }
+          "base": {"increased_attack_speed": 0, "faster_cast_rate": 0},
+          "perRank": {"increased_attack_speed": 6, "faster_cast_rate": 5}
         }
       },
       {
         "id": "anti_antidote",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "poison break 10 %/r for 5 s, stacking ([982]); multiplier on poison damage per stack (1 stack shown); stack count over the 5 s window not modelled"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: landing blast at the cursor 24 px above the dummy centre (rule 24); 1 hit per landing] card table p9 (rule: break stacks)"},
         "name": "Anti-Antidote",
         "description": "Inflicts poison break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_break": 0 },
-          "perRank": { "poison_break": 10 }
+          "base": {"poison_break": 0},
+          "perRank": {"poison_break": 10}
         },
         "proc": {
           "trigger": "on_hit",
@@ -512,23 +532,25 @@
       {
         "id": "stoneskinned_warrior",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "utility", "note": "buff 70: physical damage taken reduced by 10 %/r for 2 s; defensive, no dummy DPS"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: landing blast at the cursor 24 px above the dummy centre (rule 24); 1 hit per landing] card table p10"},
         "name": "Stoneskinned Warrior",
         "description": "Gain increased damage reduction when leaping.",
         "maxRank": 5,
         "effects": {
-          "base": { "all_damage_taken_reduced_pct": 0 },
-          "perRank": { "all_damage_taken_reduced_pct": 10 }
+          "base": {"all_damage_taken_reduced_pct": 0},
+          "perRank": {"all_damage_taken_reduced_pct": 10}
         }
       },
       {
         "id": "envenomous_groundslam",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.35, 1.7, 2.05], "per": "use", "note": "Envenom object on the target at landing: one extra poison hit with damage = dmg5 x (1 + 35 %/r); per use = 1 landing"}, {"kind": "dot", "byRank": [33.75, 85, 153.75], "note": "Poisoned pool += floor(dmg5 x (1 + 35 %/r) x 25 %/r): value in % of the landing damage (r=1: 1.35 x 25 %)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: landing blast at the cursor 24 px above the dummy centre (rule 24); 1 hit per landing] card table p11 (L448-458)", "plannerFix": "planner has no separate Envenom hit object (card: 'osobny obiekt bez szansy'); the extra hit and pool are missing"},
         "name": "Envenomous Groundslam",
         "description": "Unleash a burst of poison from the ground on hit dealing increased damage and inflicting poisoned.",
         "maxRank": 3,
         "effects": {
-          "base": { "secondary_damage_increased": 0, "secondary_poisoned_damage": 0 },
-          "perRank": { "secondary_damage_increased": 35, "secondary_poisoned_damage": 25 }
+          "base": {"secondary_damage_increased": 0, "secondary_poisoned_damage": 0},
+          "perRank": {"secondary_damage_increased": 35, "secondary_poisoned_damage": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -542,35 +564,38 @@
       {
         "id": "master_of_agility",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [0.3, 0.6, 0.9], "note": "transformation: landing damage[5] = floor(V1 x 30 %/r x (1 + LSSD)); retained 30 %/r of the normal landing damage (value = multiplier, reduces the hit); jump over terrain (playerEffect[148]) no dummy effect"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: landing blast at the cursor 24 px above the dummy centre (rule 24); 1 hit per landing] card table p12"},
         "name": "Master of Agility",
         "description": "Leaping ambush can now be casted through terrain with decreased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "retained_damage_percent": 0 },
-          "perRank": { "retained_damage_percent": 30 }
+          "base": {"retained_damage_percent": 0},
+          "perRank": {"retained_damage_percent": 30}
         }
       },
       {
         "id": "arc_of_spears",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [5, 10, 15], "note": "n = 5r Amazon_Spearnage_obj at the landing point (skillsLeap L765-L772, spawn offset 8 px along the direction (const 0x14f189528 = 8.0f), directions 360*i/n, image_angle = direction -> oriented mask 70x15)"}, {"kind": "extra_hits", "byRank": [2.6, 6.4, 11.4], "per": "use", "replacesProjectileHits": true, "note": "spears hitting the dummy x ratio (1 + 0.30r) of the landing damage: damage[5] = floor(d5 * (1 + 30 % * r)). Resztki E: landing point = cursor - 6 px (pe[150]/[151] = P + lengthdir(tupm[6], tupm[7])), so with the cursor on the visible centre (x, y-24) the dummy is 30 px from the landing point: hits 2/4/6 (r1..3; 10/10 for r4/r5), I (sensitive to +-1 px for r >= 3: 29 px -> 2/4/6/10/12, 31 px -> 2/4/6/8/10; the old 24 px gave 2/4/8/10/14). Cursor exactly on (x, y): all 5r spears hit = 6.5/16/28.5. 1 hit per spear (own hit map)"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); in-zone: landing blast at the cursor 24 px above the dummy centre (rule 24); 1 hit per landing] R4 166#1 + Resztki E (landing point 6 px above the cursor, 30 px from the dummy). Also changed vs old model: per-spear ratio is (1 + 0.3r), not 0.3r (card: damage[5] = floor(d5*(1 + 30 %*r))). PoR4 (a) keeps the (x, y-24) cursor as main result.", "plannerFix": "planner converts 5 spears per rank via perExtraProjectile (perExtraProjectile 0 -> no hits); card: oriented 70x15 rectangles around the landing point, only 2/4/6 of 5/10/15 spears reach the dummy 30 px away, each with damage (1 + 30 %/r) of the landing hit"},
         "name": "Arc of Spears",
         "description": "Throw multiple piercing spears around you upon landing dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "secondary_damage_increased": 0, "secondary_projectile_count": 0 },
-          "perRank": { "secondary_damage_increased": 30, "secondary_projectile_count": 5 }
+          "base": {"secondary_damage_increased": 0, "secondary_projectile_count": 0},
+          "perRank": {"secondary_damage_increased": 30, "secondary_projectile_count": 5}
         },
         "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "ground_stomper",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [40, 80, 120], "note": "LSSD += 40 %/r on the landing damage"}, {"kind": "other", "byRank": [1, 2, 3], "per": "use", "note": "already modelled by planner wave_count; r extra landings per use (1 + r landings), each one hit of the same damage; per use"}, {"kind": "period_frames", "byRank": [29, 58, 87], "note": "use period grows by 29 frames per extra landing: t_wyw + 28 + 29 r kl. instead of t_wyw + 28 kl. (card R3 L791-800, extra jump 28 + 1 kl.)"}, {"kind": "other", "byRank": [33, 66, 99], "note": "area [71] +33 %/r of the blast (no dummy effect in-zone); numeric = area %"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: landing blast at the cursor 24 px above the dummy centre (rule 24); 1 hit per landing] card table p14 (R3 'Leaping Ambush' extra jump [572])", "plannerFix": "planner models 1 + r hits on the same cadence (wave_count); in game each extra landing extends the use period by 29 kl., so hits per second rise only by (1+r)/(period) (about +13 to +24 % for r=1..5 at k=7)"},
         "name": "Ground Stomper",
         "description": "When landing, stomp the ground multiple times with increased area of effect radius and dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0, "subtree_damage": 0, "wave_count": 0 },
-          "perRank": { "area_of_effect": 33, "subtree_damage": 40, "wave_count": 1 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0, "wave_count": 0},
+          "perRank": {"area_of_effect": 33, "subtree_damage": 40, "wave_count": 1}
         },
         "calculationNote": "Wave count is separate from simultaneous projectiles; the contact estimate assumes one target contact per wave."
       }
@@ -580,6 +605,8 @@
   {
     "id": "caustic_spearhead",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 3.0, "baseProjectiles": 3, "perExtraProjectile": 0.0, "confidence": "C", "note": "3 spears per attack (1+[117], [117]=2+RSS391+p1.s9), fan -5/0/+5 deg ([118]=5), each Projectile_Player_obj has its own hit map (no shared pack): at 160 px a spear hits when 160*sin|theta| <= 12+h (h~3.5 px default Marksman_Arrow_spr 29x7, I) i.e. |theta| <= 5.56 deg, so all 3 hit (up to D=178 px). Each spear = full hit (phys + poison) = 1.0 main hit. perExtraProjectile = 0: the extras fan out; at 160 px N odd gives 3 hits, N even gives 2 (N=4: 2, 5: 3, 6: 2, 7: 3), average slope ~0 (even N is 1 lower). Poisoned DoT excluded. Weapon-dependent mask height h is the only I part."},
     "weaponRequirement": "ranged",
     "classId": "amazon",
     "name": "Caustic Spearhead",
@@ -610,10 +637,7 @@
         "manaCost": 4
       }
     ],
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 12.5
-    },
+    "damageFormula": { "base": 0, "perLevel": 12.5 },
     "manaCostFormula": {
       "base": 3.5,
       "perLevel": 0.75,
@@ -621,10 +645,8 @@
     },
     "attackKind": "attack",
     "attackScaling": {
-      "weaponDamagePct": {
-        "base": 186,
-        "perLevel": 30
-      },
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 186, "perLevel": 30 },
       "attackRatingPct": {
         "base": 0,
         "perLevel": 5
@@ -668,23 +690,25 @@
       {
         "id": "stocked_quiver",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5], "note": "+1 spear/r: N = 1 + [117] = 3 + RSS391 + r (card L237)"}, {"kind": "extra_hits", "byRank": [-1, 0, -1, 0, -1], "per": "use", "replacesProjectileHits": true, "note": "at 160 px only spears within +-5.56 deg hit: N odd -> 3 hits, N even -> 2 hits; hits per use relative to base 3 (replaces the projectile conversion)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); dummy at 160 px from the player (planner convention)] card table p1 and 'Trafienia na kukle' (reguła 14)", "plannerFix": "planner adds +1 hit per rank (perExtraProjectile 0, projectile count); in game extra spears in the fan do not add hits on a single dummy at 160 px: 2 hits at even N, 3 at odd N"},
         "name": "Stocked Quiver",
         "description": "Increases projectile amount.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "caustic_liquid",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [15, 30, 45, 60, 75], "note": "15 %/r of the poison part V1' goes into the Poisoned pool [0] (floor(V1'*p2%) + [997]); hit itself unchanged"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); dummy at 160 px from the player (planner convention)] card table p2 (L242)", "plannerFix": "planner models increased_poisoned_damage 15/r and a poisoned proc; card: 15 %/r of V1' is added to the Poisoned pool (DoT)"},
         "name": "Caustic Liquid",
         "description": "Increases poisoned damage inflicted by caustic spearhead.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 15 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -697,29 +721,32 @@
       {
         "id": "fierce_spearheads",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8 %/r on the additive V2 and V1 parts only, not on the whole weapon damage W"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); dummy at 160 px from the player (planner convention)] card table p3", "plannerFix": "planner applies subtree_damage to the whole weapon damage; in game LSSD scales only the V2 addition and V1 poison"},
         "name": "Fierce Spearheads",
         "description": "Increases damage dealt by caustic spearhead.",
         "maxRank": 5,
         "effects": {
-          "base": { "subtree_damage": 0 },
-          "perRank": { "subtree_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "venomous_touch",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [80, 160, 240, 320, 400], "note": "buff 69 on the target: +8 %/r of Poisoned damage per stack, max 10 stacks, 5 s; value = max amplification (10 x 8 %/r) if stacks are kept on the dummy (upper bound, stack uptime not in card)"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); dummy at 160 px from the player (planner convention)] card table p4 (C/I); stacking uptime assumed full"},
         "name": "Venomous Touch",
         "description": "Inflicts the target with stacks of venom on hit increasing damage dealt by poisoned.",
         "maxRank": 5,
         "effects": {
-          "base": { "secondary_damage_increased": 0 },
-          "perRank": { "secondary_damage_increased": 8 }
+          "base": {"secondary_damage_increased": 0},
+          "perRank": {"secondary_damage_increased": 8}
         },
         "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "splintering_arrows",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "split arrows (chance 3 %/r, 15 %/r) hit OTHER enemies ([574]); a lone dummy gets no split hit"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); dummy at 160 px from the player (planner convention)] card table p5", "plannerFix": "planner adds a 15 %/r secondary hit at 3 %/r chance on the dummy; card: splinter goes to other enemies, 0 on a lone dummy"},
         "name": "Splintering Arrows",
         "description": "Spearheads have a chance to fork on hit with increased damage.",
         "maxRank": 5,
@@ -736,34 +763,37 @@
       {
         "id": "tribal_hunters_aim",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "attack rating [1022] = V3*(1 + p6.s9%) only (accuracy); no damage multiplier on the dummy"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); dummy at 160 px from the player (planner convention)] card table p6"},
         "name": "Tribal Hunter's Aim",
         "description": "Increases attack rating when using caustic spearhead.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "rapid_arrows",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "projectile speed [1085] +15 %/r; no change in number or damage of hits on the dummy at 160 px"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); dummy at 160 px from the player (planner convention)] card table p7"},
         "name": "Rapid Arrows",
         "description": "Increases projectile speed.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "additional_venom",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.45, 1.8, 4.05, 7.2, 11.25], "note": "expected poison break per arrow hit = chance 3r % x break 15r % (= 0.45 r^2 %); [982] = [p8.s9, 5 s]; rough expectation, stack model not in card"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); dummy at 160 px from the player (planner convention)] card table p8 (chance p8.s10 3/r, break 15/r)"},
         "name": "Additional Venom",
         "description": "Chance to inflict poison break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "poison_break": 0 },
-          "perRank": { "poison_break": 15 }
+          "base": {"poison_break": 0},
+          "perRank": {"poison_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -777,6 +807,7 @@
       {
         "id": "arrow_wound",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.135, 0.54, 1.215, 2.16, 3.375], "per": "use", "note": "Wound attached to target (chance 3 %/r per arrow): 10 ticks (0.25 s over 2.5 s) of 15 %/r of the arrow damage; per use = 3 arrows x (0.03r x 10 x 0.15r); expected count x ratio"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); dummy at 160 px from the player (planner convention)] card table p9 and L166-187", "plannerFix": "planner gives one secondary hit of 15 %/r per triggering arrow; card: the wound ticks 10 times (tick 0.25 s, 2.5 s) at 15 %/r each"},
         "name": "Arrow Wound",
         "description": "Chance for spearheads to get stuck on enemies dealing damage over time for a short period.",
         "maxRank": 5,
@@ -793,6 +824,7 @@
       {
         "id": "erupting_spearheads",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0135, 0.054, 0.1215, 0.216, 0.3375], "per": "use", "note": "explosion (area 15 r) with damage 15 %/r of the arrow damage, chance 3 %/r per arrow; per use = 3 arrows x 0.03r x 0.15r; expected count x ratio"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); dummy at 160 px from the player (planner convention)] card table p10 (L191-211); selectors I", "plannerFix": "planner models +15 %/r increased secondary damage without the separate explosion hit and per-arrow chance x 3 arrows"},
         "name": "Erupting Spearheads",
         "description": "Chance for spearheads to explode on hit dealing increased damage with increased area of effect radius.",
         "maxRank": 5,
@@ -809,12 +841,13 @@
       {
         "id": "caustic_arc",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD += 15 %/r on V1, V2 and [0] (additive parts only)"}, {"kind": "projectiles", "byRank": [2, 4, 6], "note": "wave of 2 spears per rank ([576][0]) per trigger"}, {"kind": "extra_hits", "byRank": [0.24, 0.48, 0.72], "per": "use", "replacesProjectileHits": true, "note": "per use: chance 8 %/r per arrow hit x 1 hit (one spear per wave lands on the dummy, damage[0] + damage[5] = 1.0 main hit); 3 arrows per use"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); dummy at 160 px from the player (planner convention)] card table p11 (L500-522, rule 15)", "plannerFix": "planner has no wave hit (proc without hit effect) and applies subtree_damage to whole weapon damage; card: wave = 1 hit x chance 8r %"},
         "name": "Caustic Arc",
         "description": "Split spearheads into multiple arrows in a circle around the target on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "secondary_projectile_count": 0, "subtree_damage": 0 },
-          "perRank": { "secondary_projectile_count": 2, "subtree_damage": 15 }
+          "base": {"secondary_projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"secondary_projectile_count": 2, "subtree_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -828,23 +861,25 @@
       {
         "id": "caustic_rampage",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3], "note": "+1 spear/r ([117] += r), spread 4 deg instead of 5"}, {"kind": "extra_hits", "byRank": [-1, 0, -1], "per": "use", "replacesProjectileHits": true, "note": "at 160 px with 4 deg spacing: N = 3 + r; odd N -> 3 hits, even N -> 2 hits (+-6 deg misses at 160 px); relative to base 3"}, {"kind": "crit", "byRank": [10, 20, 30], "note": "attack crit chance +10 %/r; crit damage +35 %/r (note)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); dummy at 160 px from the player (planner convention)] card table p12 (L[118]=4 deg, [1018]/[1019])", "plannerFix": "planner adds +1 hit per rank; in game extra spears do not add hits on one dummy at 160 px (2 hits at even N with 4 deg spread)"},
         "name": "Caustic Rampage",
         "description": "Fire additional smaller spearheads in a tighter spread increasing chance of dealing critical strikes and dealing increased critical strike damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "crit_chance": 0, "crit_damage": 0 },
-          "perRank": { "projectile_count": 1, "crit_chance": 10, "crit_damage": 35 }
+          "base": {"projectile_count": 0, "crit_chance": 0, "crit_damage": 0},
+          "perRank": {"projectile_count": 1, "crit_chance": 10, "crit_damage": 35}
         }
       },
       {
         "id": "toxic_spores",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "projEffect[577] is written only in TalentsAmazon L255 (0x146494aba) and has no reader (ProjectileCollision10Amazon L1-585 fully lifted); Amazon_Caustic_Spearhead_Spore_obj is never created in 355 checked functions: dead code, most probably 0 on the dummy (negative evidence, I). If alive: PDP singleHit 1, target instance_nearest <= 480 px, 4 px/frame, one hit"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); dummy at 160 px from the player (planner convention)] R4 165#1 (zawezone, I): negative evidence only (no positive proof of dead code). Was extra_hits 0.3/0.6/0.9 (3 spores x 0.1r).", "plannerFix": "planner models splash 10 %/r of total damage, +40 %/r increased poisoned damage and a poisoned proc; card R4: projEffect[577] has no reader and the spore object is never created (dead code, I), so no effect in game"},
         "name": "Toxic Spores",
         "description": "Caustic spearhead leaves spores behind seeking nearby monsters and exploding on hit dealing additional damage and inflicting poisoned.",
         "maxRank": 3,
         "effects": {
-          "base": { "splash_of_total_damage": 0, "increased_poisoned_damage": 0 },
-          "perRank": { "splash_of_total_damage": 10, "increased_poisoned_damage": 40 }
+          "base": {"splash_of_total_damage": 0, "increased_poisoned_damage": 0},
+          "perRank": {"splash_of_total_damage": 10, "increased_poisoned_damage": 40}
         },
         "proc": {
           "trigger": "on_hit",
@@ -857,12 +892,13 @@
       {
         "id": "venomous_burst",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.4545, 0.4545, 0.4545], "per": "hit", "requires": "venomous_touch", "note": "burst on every 11th hit that has damage[5] > 0 (needs p4 so that pe[5] > 0): test GetBuffStack(69) >= 10 BEFORE the stack is added (0x1451fc038-0x1451fc04c, edx = 0xa, 0x14018dba0 is >=; EnemyAddBuff(69, pe[5], 5 s, max 10) at L489), then Amazon_Envenom_obj on the dummy with damage[5] = floor((d5 + d0) * (1 + v69 * 10 stacks)), InheritModifiers 0x1451fc969 (full minus trigger), then EnemyRemoveBuff (C). v69 per stack = p4.s9 % = 8 % * r4 (I), so burst ratio to one full hit (phys + poison = 1.0 main hit) = 1 + 0.8 * r4. Value here = (1/11) * (1 + 0.8 * 5) = 0.4545 per hit for p4 rank 5; general: (1/11) * (1 + 0.8 * r4) per hit (x 3 hits per use at base). Pool of Poisoned not counted"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); dummy at 160 px from the player (planner convention)] R4 165#2 (C: threshold 10 stacks, check before add -> every 11th hit; I: buff value per stack = p4.s9 %). Was extra_hits 0.13/0.16/0.19 per use (~1 burst per 10 hits x (1 + 0.3r), no stack multiplier).", "plannerFix": "planner has no periodic burst hit (secondary_damage_increased 30 %/r); card R4: burst after 10 max stacks of buff 69 every 11th hit, damage (d5 + d0)(1 + 10 * p4 value), requires Venomous Touch; the role of p14.s9 = 30 %/r in the burst damage is not visible in the card"},
         "name": "Venomous Burst",
         "description": "Whenever a monster reaches maximum stacks of venom it unleashes a burst of poison dealing the full damage of venom consuming it.",
         "maxRank": 3,
         "effects": {
-          "base": { "secondary_damage_increased": 0 },
-          "perRank": { "secondary_damage_increased": 30 }
+          "base": {"secondary_damage_increased": 0},
+          "perRank": {"secondary_damage_increased": 30}
         },
         "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       }
@@ -901,6 +937,7 @@
       "base": 5,
       "perLevel": 1
     },
+    "buffUptime": { "duration": 25, "cooldown": 70 },
     "passiveStats": {
       "base": {
         "poison_skill_damage": 4,
@@ -1004,6 +1041,8 @@
   {
     "id": "death_from_above",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 4.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "1 Amazon_Death_From_Above_Damage_obj per use, created at the cursor point (in-zone, rule 24; disc mask r=75 px covers the dummy from its first active frame). It is deadly 2 frames after creation (inherited Alarm_11, damageTimer 0.4 s does not block damage), lives 0.4+0.51 s (55-56 active frames), tick 0.25 s = 15 frames: exactly 4 hits (active frames 0, 18, 33, 48; tools/tick_hits.py 55 15 = 4, stable for 49..66 active frames) (R3 167#0, C). 4 hits of damage[5] = V1' = 22*L each = 4.0 main hits. Extra projectiles do not add objects in the base skill (only p11 Spear Delivery / p12 Ancient Device / p14 waves)."},
     "weaponRequirement": "ranged",
     "classId": "amazon",
     "name": "Death from Above",
@@ -1029,10 +1068,7 @@
       }
     ],
     "baseCastRate": 1,
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 22
-    },
+    "damageFormula": { "base": 0, "perLevel": 22 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -1074,108 +1110,118 @@
       {
         "id": "rapid_spearhandling",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [6, 12, 18, 24, 30], "note": "attack/use speed +6 %/r (TalentUseSetSpeed case 167, L513)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: 1 object at the cursor point 24 px above the dummy centre (rule 24), 4 hits per object] card table p1"},
         "name": "Rapid Spearhandling",
         "description": "Increases cast rate when using death from above.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 6 }
+          "base": {"skill_attack_speed_more": 0},
+          "perRank": {"skill_attack_speed_more": 6}
         }
       },
       {
         "id": "heavy_spears",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD += 10 %/r on damage[5]; fall speed +20 %/r changes only the fall time, not the number of hits in the fixed 0.4 + 0.51 s life"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: 1 object at the cursor point 24 px above the dummy centre (rule 24), 4 hits per object] card table p2"},
         "name": "Heavy Spears",
         "description": "Increases falling speed and damage dealt by death from above.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0, "subtree_damage": 0 },
-          "perRank": { "projectile_speed": 20, "subtree_damage": 10 }
+          "base": {"projectile_speed": 0, "subtree_damage": 0},
+          "perRank": {"projectile_speed": 20, "subtree_damage": 10}
         }
       },
       {
         "id": "icebreaking_spearshower",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Universal_Damage_Return (75 %/r of damage[5]) only when the target is at FULL life (first hit of a full-HP dummy); a steady-state dummy is already damaged, so 0 per use"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); in-zone: 1 object at the cursor point 24 px above the dummy centre (rule 24), 4 hits per object] card table p3 (C/I: full-life condition)"},
         "name": "Icebreaking Spearshower",
         "description": "Increases damage dealt by death from above to monsters at maximum life.",
         "maxRank": 5,
         "effects": {
-          "base": { "conditional_full_life_damage": 0 },
-          "perRank": { "conditional_full_life_damage": 75 }
+          "base": {"conditional_full_life_damage": 0},
+          "perRank": {"conditional_full_life_damage": 75}
         },
         "calculationNote": "Bonus applies only to enemies at maximum life. Excluded from sustained DPS."
       },
       {
         "id": "spearhandlers_intellect",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7 %/r only"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: 1 object at the cursor point 24 px above the dummy centre (rule 24), 4 hits per object] card table p4"},
         "name": "Spearhandler's Intellect",
         "description": "Decreases mana cost when using death from above.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "need_for_speed",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "other", "byRank": [10, 20, 30, 40, 50], "note": "LSSD += 10 %/r x player movement-speed bonus % (stat RSS64, not read in card); value = LSSD % per 1 % of movement speed bonus; numeric value at the dummy needs RSS64"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: 1 object at the cursor point 24 px above the dummy centre (rule 24), 4 hits per object] card table p5 (LoadSubSkillDamage L1182-1190)"},
         "name": "Need for Speed",
         "description": "Death from above deals additional damage based on your bonus movement speed.",
         "maxRank": 5,
         "effects": {
-          "base": { "subtree_damage_per_movement_speed": 0 },
-          "perRank": { "subtree_damage_per_movement_speed": 10 }
+          "base": {"subtree_damage_per_movement_speed": 0},
+          "perRank": {"subtree_damage_per_movement_speed": 10}
         }
       },
       {
         "id": "beast_slayer",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "[121] +10 %/r vs bosses only; the training dummy is not a boss"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: 1 object at the cursor point 24 px above the dummy centre (rule 24), 4 hits per object] card table p6"},
         "name": "Beast Slayer",
         "description": "Increases damage dealt to bosses.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bosses": 0 },
-          "perRank": { "extra_damage_bosses": 10 }
+          "base": {"extra_damage_bosses": 0},
+          "perRank": {"extra_damage_bosses": 10}
         }
       },
       {
         "id": "safeheaven",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "isolated bonus (LSSD +15 %/r and scale +15 %/r) only when NO enemy within 260 px of the player; the dummy is 160 px away, so 0"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: 1 object at the cursor point 24 px above the dummy centre (rule 24), 4 hits per object] card table p7 (collision_circle 260 px, L408)"},
         "name": "Safeheaven",
         "description": "If there are no nearby enemies, death from above covers a larger area with increased damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0, "conditional_isolated_damage": 0 },
-          "perRank": { "area_of_effect": 15, "conditional_isolated_damage": 15 }
+          "base": {"area_of_effect": 0, "conditional_isolated_damage": 0},
+          "perRank": {"area_of_effect": 15, "conditional_isolated_damage": 15}
         },
         "calculationNote": "Damage bonus requires no enemies within 260 game units. Excluded without a distance model; area bonus is retained."
       },
       {
         "id": "critical_arrowfall",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [5, 10, 15, 20, 25], "note": "spell crit chance +5 %/r ([1004]); crit damage = player crit damage RSS31 (not read in card)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: 1 object at the cursor point 24 px above the dummy centre (rule 24), 4 hits per object] card table p8"},
         "name": "Critical Arrowfall",
         "description": "Now has a chance to critically strike dealing increased damage based on your critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0 },
-          "perRank": { "spell_crit_chance": 5 }
+          "base": {"spell_crit_chance": 0},
+          "perRank": {"spell_crit_chance": 5}
         }
       },
       {
         "id": "stacking_life",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "buff 73 (10 s, stacking): life and mana per stack; no dummy damage"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: 1 object at the cursor point 24 px above the dummy centre (rule 24), 4 hits per object] card table p9"},
         "name": "Stacking Life",
         "description": "Increase your maximum life and mana on hit for a short period.",
         "maxRank": 5,
         "effects": {
-          "base": { "secondary_life_per_stack": 0, "secondary_mana_per_stack": 0 },
-          "perRank": { "secondary_life_per_stack": 0.5, "secondary_mana_per_stack": 0.5 }
+          "base": {"secondary_life_per_stack": 0, "secondary_mana_per_stack": 0},
+          "perRank": {"secondary_life_per_stack": 0.5, "secondary_mana_per_stack": 0.5}
         },
         "calculationNote": "Temporary on-hit life/mana stacks are not permanent base stats; stack uptime is not modeled."
       },
       {
         "id": "dual_spearshower",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.12, 0.24, 0.36, 0.48, 0.6], "per": "use", "note": "chance 3 %/r for an extra DfA controller (4 hits per object); per use = 4 x 0.03 r"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: 1 object at the cursor point 24 px above the dummy centre (rule 24), 4 hits per object] card table p10 (FUN_1401ba3c0(1,1), L415)", "plannerFix": "planner models one secondary hit at 100 % per trigger; card: the extra controller is a full Death from Above object with 4 hits"},
         "name": "Dual Spearshower",
         "description": "Chance to fire an additional death from above.",
         "maxRank": 5,
@@ -1192,28 +1238,31 @@
       {
         "id": "spear_delivery",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3], "note": "transformation: 1 + r Delivery arrows per use instead of the controller count; each landed arrow triggers a Death from Above object with 4 hits"}, {"kind": "extra_hits", "byRank": [4, 8, 12], "per": "use", "replacesProjectileHits": true, "note": "explicit per use: 4 hits per extra object (4 r), assuming the arrow reaches the dummy (I)"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); in-zone: 1 object at the cursor point 24 px above the dummy centre (rule 24), 4 hits per object] card table p11 (Delivery_obj)", "plannerFix": "planner has projectile count +1/r with 0 hit conversion (perExtraProjectile 0); card: each extra delivery triggers a full object with 4 hits"},
         "name": "Spear Delivery",
         "description": "Throw multiple spears in an arc unleashing death from above on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "ancient_device",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [20, 20, 20], "note": "transformation: one use creates the Ancient Device tower (child of Shaman_Totem_Parent_obj, destroyTimer 300*(1 + RSS367 %) frames); shootFrequency 1 s (Create_0 L20), attackTimer starts at 15, then every 60*1 + 1 = 61 frames (Step_0 0x149e27690): shots at frames ~17, 78, 139, 200, 261 = 5 shots per tower at 0 sentry attack speed; each shot = 1 + extraProjectiles rains (extraProjectiles = RSS(311) from Player_Sentry_Parent_Alarm_8 = 0 without gear, NOT the subskill rank) on instance_nth_nearest(i + 1) = the dummy (rule 17), 4 hits per rain: 5 x 1 x 4 = 20 hits per cast (C). Each +1 RSS311 adds 20 hits; the tower is in range (bbox gap ~140 px < attackRange 320, Resztki A)"}, {"kind": "damage_pct", "byRank": [40, 80, 120], "note": "LSSD += 40 %/r for the sentry rain"}, {"kind": "cooldown_s", "byRank": [5, 5, 5], "note": "+5 s cooldown (flat when Ancient Device is taken); cd/(1 + 0.005*h_eff) (rule 35) dominates over the animation"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: 1 object at the cursor point 24 px above the dummy centre (rule 24), 4 hits per object] R4 167#1 (shots) + 167#3 (extraProjectiles = RSS311 = 0). Replaces the old reading (shots per use unknown, extraProjectiles assumed = rank: projectiles 1/2/3 + extra_hits 4/8/12). Tower is one entity per cast, so the 20 hits are per cast (use), not per entity action.", "plannerFix": "planner has subtree_damage 40/r and cooldown_added 5 but no tower hit model; card R4: 5 shots per tower x (1 + RSS311) rains x 4 hits = 20 hits per cast (extraProjectiles is a gear stat, not the rank)"},
         "name": "Ancient Device",
         "description": "Summon an ancient device periodically firing death from above on nearby targets based on your cooldown recovery.",
         "maxRank": 3,
         "effects": {
-          "base": { "subtree_damage": 0 },
-          "perRank": { "subtree_damage": 40 }
+          "base": {"subtree_damage": 0, "cooldown_added": 5},
+          "perRank": {"subtree_damage": 40, "cooldown_added": 0}
         }
       },
       {
         "id": "detonation_shower",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.04, 1.16, 1.36], "note": "NOT an extra hit: Amazon_Death_From_Above_obj_Alarm_0 (0x146ee9300) L24-28: m = projEffect[581][0] (50 %/r) with chance projEffect[581][1] (8 %/r, random(99) < c), then Damage_obj.damage[5] = floor(damage[5] * (1 + m)) = all 4 hits of that rain x (1 + 0.5r) with probability 0.08r, expected multiplier E = 1 + 0.04 r^2. The ring Raining_Spear_Dummy_obj is cosmetic. Ancient Device rains have pe[581] = 0 (no effect with p12). Applies per rain object (also p14 waves, p10 second controller)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: 1 object at the cursor point 24 px above the dummy centre (rule 24), 4 hits per object] R4 167#2 (C). Was extra_hits 0.12/0.32/0.6 per use (one extra hit of ratio 1 + 0.5r with chance 0.08r).", "plannerFix": "planner reads the proc (8 %/r, secondary_damage_increased 50 %/r) as a secondary hit; card R4: it multiplies the damage[5] of the whole rain (all 4 hits) by (1 + 50 %/r) with chance 8 %/r"},
         "name": "Detonation Shower",
         "description": "Chance on landing for spears to explode dealing increased damage.",
         "maxRank": 3,
@@ -1230,12 +1279,13 @@
       {
         "id": "storm_of_spears",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "other", "byRank": [16, 32, 48], "per": "use", "replacesProjectileHits": true, "note": "already modelled by planner wave_count; waves = 4 per rank every 0.2 s: 1 + 4r objects x 4 hits instead of 1 x 4; extra per use = 16 r; area +35 %/r (no dummy effect beyond)"}, {"kind": "cooldown_s", "byRank": [4, 4, 4], "note": "+4 s cooldown: use period becomes 4 s (cooldown-bound) instead of the attack animation"}, {"kind": "other", "byRank": [35, 70, 105], "note": "area of the waves +35 %/r (in-zone, no extra hits); numeric = area %"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); in-zone: 1 object at the cursor point 24 px above the dummy centre (rule 24), 4 hits per object] card table p14", "plannerFix": "planner has wave_count (1+4r) but no +4 s cooldown; card: period = 4 s with (1+4r) x 4 hits per use"},
         "name": "Storm of Spears",
         "description": "Multiple waves of spears rain down over time in a larger area that slowly follows the closest enemy. Death from above now has a small cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0, "wave_count": 0 },
-          "perRank": { "area_of_effect": 35, "wave_count": 4 }
+          "base": {"area_of_effect": 0, "wave_count": 0, "cooldown_added": 4},
+          "perRank": {"area_of_effect": 35, "wave_count": 4, "cooldown_added": 0}
         },
         "calculationNote": "Wave count is separate from simultaneous projectiles; the contact estimate assumes one target contact per wave."
       }
@@ -1320,8 +1370,8 @@
         "description": "Increases poisoned damage inflicted by envenom.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 22.5 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 22.5}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1346,8 +1396,8 @@
         "description": "Increases damage dealt by envenom.",
         "maxRank": 5,
         "effects": {
-          "base": { "subtree_damage": 0 },
-          "perRank": { "subtree_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
@@ -1373,8 +1423,8 @@
         "description": "Increases the area of effect radius of envenom.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
@@ -1392,8 +1442,8 @@
         "description": "Inflicts slow on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "slow_target": 0 },
-          "perRank": { "slow_target": 15 }
+          "base": {"slow_target": 0},
+          "perRank": {"slow_target": 15}
         }
       },
       {
@@ -1403,8 +1453,8 @@
         "description": "Increases damage to poisoned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_poisoned": 0 },
-          "perRank": { "extra_damage_poisoned": 15 }
+          "base": {"extra_damage_poisoned": 0},
+          "perRank": {"extra_damage_poisoned": 15}
         }
       },
       {
@@ -1414,8 +1464,8 @@
         "description": "Chance to increase poisoned damage on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 25 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1432,8 +1482,8 @@
         "description": "Inflict stacking poison break on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "poison_break": 0 },
-          "perRank": { "poison_break": 2 }
+          "base": {"poison_break": 0},
+          "perRank": {"poison_break": 2}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1450,8 +1500,8 @@
         "description": "Increases poisoned damage and the tick frequency of poisoned.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_poisoned_damage": 0, "increased_poisoned_frequency": 0 },
-          "perRank": { "increased_poisoned_damage": 25, "increased_poisoned_frequency": 15 }
+          "base": {"increased_poisoned_damage": 0, "increased_poisoned_frequency": 0},
+          "perRank": {"increased_poisoned_damage": 25, "increased_poisoned_frequency": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1468,8 +1518,8 @@
         "description": "Unleash a poisonous nova instead with increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "retained_damage_percent": 0 },
-          "perRank": { "projectile_count": 5, "retained_damage_percent": 35 }
+          "base": {"projectile_count": 0, "retained_damage_percent": 0},
+          "perRank": {"projectile_count": 5, "retained_damage_percent": 35}
         }
       },
       {
@@ -1479,8 +1529,8 @@
         "description": "Unleash waves of fissures from targets dealing additional damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "wave_count": 0 },
-          "perRank": { "wave_count": 2 }
+          "base": {"wave_count": 0},
+          "perRank": {"wave_count": 2}
         },
         "calculationNote": "Wave count is separate from simultaneous projectiles; the contact estimate assumes one target contact per wave."
       }
@@ -1490,6 +1540,8 @@
   {
     "id": "astropes_gift",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "1 attack hit (phys W*(1+V2'/100) + lightning [995]) = 1.0 main hit, plus a thunderbolt on every hit: hitboxCollisionAstropesGift creates Amazon_Astropes_Gift_obj (PDP, no notDeadly, no pack, active after 2 frames) on the target with damage[4] = floor(damage[0]+damage[4]) of the hit = the whole hit as lightning = 1.0 main hit; [251] is not copied, no recursion. Total 2 hits, base independent of W (card 173 R2 'Zmiany po ponownym sprawdzeniu', C). Single projectile ([117]=0). perExtraProjectile = 0: extra projectiles only come from p1 (throwing weapons, type 16) with an 8 deg fan: r odd gives 2 hitting projectiles (each with its bolt), r even gives 1 at 160 px (rule 14), so no linear gain."},
     "classId": "amazon",
     "name": "Astrope's Gift",
     "kind": "active",
@@ -1519,20 +1571,15 @@
         "manaCost": 5
       }
     ],
-    "damageFormula": {
-      "base": 10,
-      "perLevel": 8
-    },
+    "damageFormula": { "base": 10, "perLevel": 8 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
     },
     "attackKind": "attack",
     "attackScaling": {
-      "weaponDamagePct": {
-        "base": 100,
-        "perLevel": 28
-      },
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 100, "perLevel": 28 },
       "attackRatingPct": {
         "base": 0,
         "perLevel": 5
@@ -1576,34 +1623,37 @@
       {
         "id": "master_of_javelin",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3], "note": "only with javelin (weapon type 16): [117] = r extra projectiles, spread 8 deg"}, {"kind": "extra_hits", "byRank": [2, 0, 2], "per": "use", "replacesProjectileHits": true, "note": "at 160 px (spread 8 deg, hit window +-5.56 deg): odd r -> 2 projectile hits (+-4 deg), each with its own lightning = +2 hits per use; even r -> 1 projectile hit = 0 extra; relative to base 2.0"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use (1 attack = 1 phys hit + 1 lightning hit = 2.0 main-hit units; 160 px for the projectile in p1)] card table p1 (weapon type 16 gate L698)", "plannerFix": "planner adds +1 projectile/r with 0 hit conversion; card: at 160 px only odd r adds a projectile hit (2 hits per use for odd r, none for even r), each hit with its own lightning"},
         "name": "Master of Javelin",
         "description": "Fire additional projectiles when using a throwing weapon.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "power_current",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD += 10 %/r on V2 (phys) and V1 (lightning) additive parts; not the whole weapon damage"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use (1 attack = 1 phys hit + 1 lightning hit = 2.0 main-hit units; 160 px for the projectile in p1)] card table p2"},
         "name": "Power Current",
         "description": "Increases damage dealt by astrope’s gift.",
         "maxRank": 5,
         "effects": {
-          "base": { "subtree_damage": 0 },
-          "perRank": { "subtree_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "astropes_curse",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.01, 1.04, 1.09, 1.16, 1.25], "note": "chance 4 %/r x lightning break 25 %/r for 5 s: expected multiplier on lightning damage = 1 + 0.01 r^2 (rough, stack model not in card)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use (1 attack = 1 phys hit + 1 lightning hit = 2.0 main-hit units; 160 px for the projectile in p1)] card table p3 (chance p3.s10 4/r, [976] break 25/r)"},
         "name": "Astrope's Curse",
         "description": "Chance to inflict lightning break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_break": 0 },
-          "perRank": { "lightning_break": 25 }
+          "base": {"lightning_break": 0},
+          "perRank": {"lightning_break": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1619,6 +1669,7 @@
       {
         "id": "astropes_revenge",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "use", "note": "chance 4 %/r per attack hit: an extra lightning hit (pulses = 1) with damage[0] + damage[4] = 1.0 main hit; per use = 0.04 r"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use (1 attack = 1 phys hit + 1 lightning hit = 2.0 main-hit units; 160 px for the projectile in p1)] card table p4 (hitboxCollisionAstropesGift L69-71)"},
         "name": "Astrope's Revenge",
         "description": "Chance to unleash an additional lightning bolt on hit.",
         "maxRank": 5,
@@ -1635,18 +1686,20 @@
       {
         "id": "rapid_momentum",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [30, 60, 90, 120, 150], "note": "buff 74: +1.5 %/r attack speed per stack, max 20 stacks, 4 s; at max stacks = 30 %/r speed (uptime assumed full in a continuous loop)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use (1 attack = 1 phys hit + 1 lightning hit = 2.0 main-hit units; 160 px for the projectile in p1)] card table p5 (BuffAdd 74)"},
         "name": "Rapid Momentum",
         "description": "Grants you a stacking attack speed buff on hit. All stacks are lost if you miss.",
         "maxRank": 5,
         "effects": {
-          "base": { "secondary_attack_speed_per_stack": 0 },
-          "perRank": { "secondary_attack_speed_per_stack": 1.5 }
+          "base": {"secondary_attack_speed_per_stack": 0},
+          "perRank": {"secondary_attack_speed_per_stack": 1.5}
         },
         "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "powerstasis",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.05, 1.1, 1.15, 1.2, 1.25], "note": "TalentsAmazon L685 mult = 1, L708-709 `if random(99) < p6.s9 { mult++ }` (0x1464aafe6-0x1464ab14b), L739 [18f0] = (V1 + V1*LSSD) * mult, L756 pe[995] = floor([18f0]) (and the stasis [26], L766): with chance 5r % the lightning part V1' of the attack is x2, and the thunderbolt floor(d0 + d4) inherits it, so the lightning part of BOTH hits is doubled. Expected multiplier on the lightning part = 1 + 0.05r (total gain 0.05r * V1'/(W' + V1') of the whole use, W-dependent)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use (1 attack = 1 phys hit + 1 lightning hit = 2.0 main-hit units; 160 px for the projectile in p1)] R4 173#1 (C). Same numbers as before; counter L709 resolved as a multiplier and the thunderbolt inheriting it (was I: \"counter not read\")."},
         "name": "Powerstasis",
         "description": "Lightning bolts have a chance to deal double damage.",
         "maxRank": 5,
@@ -1659,45 +1712,49 @@
       {
         "id": "ending_fate",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "+12.5 %/r damage vs bosses ([121]); the training dummy is not a boss; 0 on a normal dummy"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use (1 attack = 1 phys hit + 1 lightning hit = 2.0 main-hit units; 160 px for the projectile in p1)] card table p7 (weapon type 6/16 gate)"},
         "name": "Ending Fate",
         "description": "Increases damage to bosses when using polearms or throwing weapons.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bosses": 0 },
-          "perRank": { "extra_damage_bosses": 12.5 }
+          "base": {"extra_damage_bosses": 0},
+          "perRank": {"extra_damage_bosses": 12.5}
         }
       },
       {
         "id": "astropes_agility",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "utility", "note": "reduced movement diminish (slow resistance); no dummy DPS"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); per use (1 attack = 1 phys hit + 1 lightning hit = 2.0 main-hit units; 160 px for the projectile in p1)] card table p8 (read missing)"},
         "name": "Astrope's Agility",
         "description": "Decreases movement diminish when using astrope’s gift.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "astropes_dexterity",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "attack rating [1022] = V3 x (1 + 10 %/r): accuracy only"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use (1 attack = 1 phys hit + 1 lightning hit = 2.0 main-hit units; 160 px for the projectile in p1)] card table p9"},
         "name": "Astrope's Dexterity",
         "description": "Increases attack rating when using astrope’s gift.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "zapping_voltage",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [1.2, 4.8, 10.8, 19.2, 30.0], "note": "chance 4 %/r x [26] = 30 %/r of V1' applied as stasis; expected in % of the lightning V1' per hit = 1.2 r^2"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use (1 attack = 1 phys hit + 1 lightning hit = 2.0 main-hit units; 160 px for the projectile in p1)] card table p10 (ProjectileCollision00Skills L150-176, buff 61)", "plannerFix": "planner models increased stasis damage 30/r with a stasis proc; card: chance 4 %/r of a separate stasis value floor(V1' x 30 %/r)"},
         "name": "Zapping Voltage",
         "description": "Chance to inflict stasis on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_stasis_damage": 0 },
-          "perRank": { "increased_stasis_damage": 30 }
+          "base": {"increased_stasis_damage": 0},
+          "perRank": {"increased_stasis_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1710,48 +1767,52 @@
       {
         "id": "surging_stormbolt",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.75, 1.5, 2.25], "per": "use", "note": "each attack hit adds a pulse with damage = 75 %/r of the lightning part; upper bound with lightning share 1 (true share V1'/(phys+V1') not fixed by card), per use = 0.75 r"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use (1 attack = 1 phys hit + 1 lightning hit = 2.0 main-hit units; 160 px for the projectile in p1)] card table p11 (hitboxCollisionAstropesGift L54-64)"},
         "name": "Surging Stormbolt",
         "description": "Lightning strikes now unleash an AoE pulse with increased area of effect radius and damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "secondary_damage_percent": 0, "secondary_area_of_effect": 0 },
-          "perRank": { "secondary_damage_percent": 75, "secondary_area_of_effect": 25 }
+          "base": {"secondary_damage_percent": 0, "secondary_area_of_effect": 0},
+          "perRank": {"secondary_damage_percent": 75, "secondary_area_of_effect": 25}
         },
         "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "thundering_storm",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [4.8, 6.6, 8.4], "per": "use", "note": "the storm REPLACES the base thunderbolt (branch [586] > 0, no Amazon_Astropes_Gift_obj): Amazon_Astropes_Gift_Storm_obj (Create_0 0x146ed7ac0) tick 0.5 s = 30 frames, destroyTimer 2 s = 120 frames, 64 px circle at the hit enemy, singleHit 0 -> tick_hits(118, 30) = 4 hits of floor(floor(d4 + d0) * (1 + p12.s9 %)) per attack hit = 4 * (1 + 0.45r) main-hit units instead of the 1.0 bolt: extra vs base = 4(1 + 0.45r) - 1 = 3 + 1.8r. Storms of consecutive attacks overlap (120-frame life vs ~37-frame period) and each has its own hit map, so their hits add"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use (1 attack = 1 phys hit + 1 lightning hit = 2.0 main-hit units; 160 px for the projectile in p1)] R4 173#0 (p12 Storm solved, \"zawezone\" header but the storm part is C). Was extra_hits 0.45/0.9/1.35 (first hit only, lifetime not fixed, I).", "plannerFix": "planner only adds secondary_damage_increased 45 %/r to the bolt; card R4: the storm replaces the bolt with 4 hits (tick 30 frames, life 120 frames) of damage (1 + 45 %/r)"},
         "name": "Thundering Storm",
         "description": "Summons a thundering storm dealing area of effect damage for a short period instead of a lightning bolt.",
         "maxRank": 3,
         "effects": {
-          "base": { "secondary_damage_increased": 0 },
-          "perRank": { "secondary_damage_increased": 45 }
+          "base": {"secondary_damage_increased": 0},
+          "perRank": {"secondary_damage_increased": 45}
         },
         "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "critical_thunderbolt",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [10, 20, 30], "note": "crit chance +10 %/r on the lightning hit; crit damage +100 %/r (note)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use (1 attack = 1 phys hit + 1 lightning hit = 2.0 main-hit units; 160 px for the projectile in p1)] card table p13 ([587])"},
         "name": "Critical Thunderbolt",
         "description": "Lightning bolts can critically hit dealing increased critical strike damage when using polearms or throwing weapons.",
         "maxRank": 3,
         "effects": {
-          "base": { "secondary_crit_chance": 0, "secondary_crit_damage": 0 },
-          "perRank": { "secondary_crit_chance": 10, "secondary_crit_damage": 100 }
+          "base": {"secondary_crit_chance": 0, "secondary_crit_damage": 0},
+          "perRank": {"secondary_crit_chance": 10, "secondary_crit_damage": 100}
         },
         "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "eye_of_storm",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.425, 0.35, 0.275], "note": "value = tick interval in s (0.5 s * (1 - 0.15r)). The eye REPLACES the base thunderbolt but sits at the PLAYER (Step_0 0x146ecc820 keeps it at host.x, host.y + 6), aura radius 64 * scale, scale = 1 + 0.025 per hit up to 4 (0x14f187828 / 0x14f187e60), no destroyTimer: the dummy at 160 px needs scale >= 2.31 (>= 53 hits), so for the first ~50 attacks the eye gives 0 hits to the dummy and the skill LOSES the 1.0 bolt (-1 hit per use, warm-up); afterwards 1 hit per tick = 2.35/2.86/3.64 hits/s (r1..3) instead of the bolt. Hits per use depend on the attack period and the warm-up, so no constant per-use value. Open: the scale-shrink block at Step_0 L5-9 and Alarm_10 (destroyTimer = -1)"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); per use (1 attack = 1 phys hit + 1 lightning hit = 2.0 main-hit units; 160 px for the projectile in p1)] R4 173#0 (p14 Eye, \"zawezone\"; I: shrink condition unknown). Was \"other: hits per use depend on the eye lifetime, not in card\".", "plannerFix": "planner adds secondary frequency 15/r as extra lightning hits; card R4: the eye replaces the bolt, sits at the player and reaches a dummy 160 px away only after ~53 hits (scale 2.31), then ticks every 0.5 s * (1 - 0.15r)"},
         "name": "Eye of Storm",
         "description": "Summon a storm following you and rapidly shrinking. Hitting a monster causes the storm to grow in size.",
         "maxRank": 3,
         "effects": {
-          "base": { "secondary_frequency": 0 },
-          "perRank": { "secondary_frequency": 15 }
+          "base": {"secondary_frequency": 0},
+          "perRank": {"secondary_frequency": 15}
         },
         "calculationNote": "Reduces the separate Eye of Storm pulse interval from 0.5s by 15% per rank; does not increase player cast speed. Pulse overlap is not modeled."
       }
@@ -1825,6 +1886,8 @@
   {
     "id": "rebound",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.89, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Attack hit is purely physical W*(1+V2'/100) (V2=17*L=340); the lightning part [212]=V1'=149 never rides on the attack hit, it is dealt by the chain Amazon_Rebound_obj (chainType 175, projTravel 1, T0 per rule 23) created on the dummy, max_bounces n=2+p1.s9=2, which clears its hit map at every jump: H = 1+floor((n+1)/3) = 2 lightning hits (frames 2, 5, 8 after creation; R2 card 'Druga runda', C). Planner main hit = phys + V1' (one lump), so in main-hit equivalents: (W*4.4 + 2*V1')/(W*4.4 + V1') = 1.894 at planner unarmed W=4 (2-6); W-dependent (tends to 2 for small W, 1 for big W). 1 projectile; no extra-projectile mechanism in the card, so perExtraProjectile = 0 (chain count unchanged). DoT none."},
     "weaponRequirement": "ranged",
     "classId": "amazon",
     "name": "Rebound",
@@ -1856,10 +1919,7 @@
         "manaCost": 4
       }
     ],
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 7.45
-    },
+    "damageFormula": { "base": 0, "perLevel": 7.45 },
     "manaCostFormula": {
       "base": 3.5,
       "perLevel": 0.75,
@@ -1867,10 +1927,8 @@
     },
     "attackKind": "attack",
     "attackScaling": {
-      "weaponDamagePct": {
-        "base": 100,
-        "perLevel": 17
-      },
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 100, "perLevel": 17 },
       "attackRatingPct": {
         "base": 0,
         "perLevel": 2.5
@@ -1914,39 +1972,43 @@
       {
         "id": "jumping_spear",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, 0, 0.445, 0.445, 0.445], "per": "use", "note": "chain bounces n = 2 + r; lightning hits H(n) = 2 + floor(r/3): +1 lightning hit only at r = 3..5 (value = 1 hit x lam)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; main-hit units with phys hit = 1.0 and lightning hit = lam = 0.445 (planner ref, base 1.89 = 1 + 2 lam); chain of n = 2 + p1 bounces] card Rebound 'Druga runda' p1 (reguła 23)", "plannerFix": "planner adds projectile_bounces with no hit conversion; card: H(n) = 2 + floor(r/3) lightning hits, +1 only from r = 3"},
         "name": "Jumping Spear",
         "description": "Increases the amount of rebounds.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_bounces": 0 },
-          "perRank": { "projectile_bounces": 1 }
+          "base": {"projectile_bounces": 0},
+          "perRank": {"projectile_bounces": 1}
         }
       },
       {
         "id": "damascus_speartip",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8 %/r on V2 (phys addition) and V1 (lightning [212])"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; main-hit units with phys hit = 1.0 and lightning hit = lam = 0.445 (planner ref, base 1.89 = 1 + 2 lam); chain of n = 2 + p1 bounces] card table p2"},
         "name": "Damascus Speartip",
         "description": "Increases the damage dealt by rebound.",
         "maxRank": 5,
         "effects": {
-          "base": { "subtree_damage": 0 },
-          "perRank": { "subtree_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "reaching_ricochet",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "bounce range [211] = 160 x (1 + 15 %/r); chain starts on the dummy, so range adds no hit"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; main-hit units with phys hit = 1.0 and lightning hit = lam = 0.445 (planner ref, base 1.89 = 1 + 2 lam); chain of n = 2 + p1 bounces] card table p3"},
         "name": "Reaching Ricochet",
         "description": "Increases the maximum range of rebound.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "splitting_speartip",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.116, 0.231, 0.347, 0.462, 0.578], "per": "use", "note": "chance c = 4 %/r per trigger (attack hit and each chain hit) spawns a second chain on the same dummy: card total per use = c x H(n) phys + c x H(n) lightning with n = 2: 0.04 r x (2 x 1.0 + 2 x lam)"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); per use; main-hit units with phys hit = 1.0 and lightning hit = lam = 0.445 (planner ref, base 1.89 = 1 + 2 lam); chain of n = 2 + p1 bounces] card Rebound 'Druga runda' p4 (C/I)", "plannerFix": "planner adds one 100 % secondary hit per trigger; card: each triggered second chain repeats H(n) hits (phys and lightning), and chain triggers also fire"},
         "name": "Splitting Speartip",
         "description": "Chance on hit for the rebound projectile to split into an additional rebound.",
         "maxRank": 5,
@@ -1963,6 +2025,7 @@
       {
         "id": "multi_rebound",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.025, 0.092, 0.19, 0.308, 0.434], "per": "use", "note": "per chain hit (H = 2) chance 3 %/r x p5.s9 = r spears x lightning damage lam x (1 - 0.07 r); per use = 2 x 0.03 r x r x lam x (1 - 0.07 r); spears from 12 px and 11 deg fan, damage modifier -7 %/r as card table; R4: all p5.s9 spears hit once: Rebound_Multi_obj starts 12 px from the chain (on the dummy centre), fan 11 deg, deltaSpeed = min(max(spd, deltaSpeed), 12*roomSpd), rect x-28..41, y+-7 overlaps the r12 circle at the first deadly check (moved <= 24 px < 28) for a fan up to +-22 deg (margin 4 px at 12 px/frame, frame phase I)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; main-hit units with phys hit = 1.0 and lightning hit = lam = 0.445 (planner ref, base 1.89 = 1 + 2 lam); chain of n = 2 + p1 bounces] R4 175#1 (C: all outer spears hit once; margin 4 px, frame phase I). Numbers unchanged; the old model marked I because of the outer spears.", "plannerFix": "planner counts one spear per trigger without the H chain triggers; card: spears per chain hit (H = 2 at ref) with chance 3 %/r and -7 %/r damage"},
         "name": "Multi Rebound",
         "description": "Chance on chain hit to unleash projectiles in an arc dealing decreased damage.",
         "maxRank": 5,
@@ -1979,35 +2042,38 @@
       {
         "id": "accurate_spearshot",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "attack rating [1022] = V3 x (1 + 10 %/r): accuracy only"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; main-hit units with phys hit = 1.0 and lightning hit = lam = 0.445 (planner ref, base 1.89 = 1 + 2 lam); chain of n = 2 + p1 bounces] card table p6"},
         "name": "Accurate Spearshot",
         "description": "Increases attack rating when using rebound.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "increasing_odds",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [5, 10, 15, 20, 25], "note": "spell crit chance +5 %/r on chain lightning hits; crit damage +25 %/r per bounce done (k-th chain hit has +25 r % x b_k, b_k = min(n, 3k+1))"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); per use; main-hit units with phys hit = 1.0 and lightning hit = lam = 0.445 (planner ref, base 1.89 = 1 + 2 lam); chain of n = 2 + p1 bounces] card Rebound 'Druga runda' p7 (C/I: phase +-1 frame)"},
         "name": "Increasing Odds",
         "description": "Rebound gains additional crit damage on each bounce.",
         "maxRank": 5,
         "effects": {
-          "base": { "secondary_crit_damage_per_bounce": 0, "secondary_crit_chance_per_bounce": 0 },
-          "perRank": { "secondary_crit_damage_per_bounce": 25, "secondary_crit_chance_per_bounce": 5 }
+          "base": {"secondary_crit_damage_per_bounce": 0, "secondary_crit_chance_per_bounce": 0},
+          "perRank": {"secondary_crit_damage_per_bounce": 25, "secondary_crit_chance_per_bounce": 5}
         },
         "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "penetrating_rebound",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0075, 1.03, 1.0675, 1.12, 1.1875], "note": "chance 3 %/r x lightning break 25 %/r for 5 s on chain lightning: expected multiplier on lightning = 1 + 0.0075 r^2 x (r-dependent) as 1 + 0.03r x 0.25r; rough, stack model not in card"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; main-hit units with phys hit = 1.0 and lightning hit = lam = 0.445 (planner ref, base 1.89 = 1 + 2 lam); chain of n = 2 + p1 bounces] card table p8 (chain copies [976])"},
         "name": "Penetrating Rebound",
         "description": "Chance to lightning break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_break": 0 },
-          "perRank": { "lightning_break": 25 }
+          "base": {"lightning_break": 0},
+          "perRank": {"lightning_break": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2023,28 +2089,31 @@
       {
         "id": "marksmanship",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [6, 12, 18, 24, 30], "note": "attack speed +6 %/r, bow only (weapon type 13)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; main-hit units with phys hit = 1.0 and lightning hit = lam = 0.445 (planner ref, base 1.89 = 1 + 2 lam); chain of n = 2 + p1 bounces] card table p9"},
         "name": "Marksmanship",
         "description": "Increases attack speed when using a bow with rebound.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 6 }
+          "base": {"skill_attack_speed_more": 0},
+          "perRank": {"skill_attack_speed_more": 6}
         }
       },
       {
         "id": "rapidfly",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "projectile speed +15 %/r; the attack hit is on the dummy either way, no change in hits"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; main-hit units with phys hit = 1.0 and lightning hit = lam = 0.445 (planner ref, base 1.89 = 1 + 2 lam); chain of n = 2 + p1 bounces] card table p10"},
         "name": "Rapidfly",
         "description": "Increases the projectile speed of rebound.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "electrocharged_rebound",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.147, 0.409, 0.788], "per": "use", "note": "each of the H = 2 chain hits triggers with chance 10 %/r an extra lightning hit with damage lam x (1 + 65 %/r); per use = 2 x 0.10 r x lam x (1 + 0.65 r)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; main-hit units with phys hit = 1.0 and lightning hit = lam = 0.445 (planner ref, base 1.89 = 1 + 2 lam); chain of n = 2 + p1 bounces] card table p11 (L530-538)", "plannerFix": "planner counts one proc per attack; card: a trigger on every chain hit (H = 2 at ref), so the proc count per use is H times larger"},
         "name": "Electrocharged Rebound",
         "description": "Chance to strike targets with bolts of lightning on hit.",
         "maxRank": 3,
@@ -2061,36 +2130,39 @@
       {
         "id": "rebomb",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.63, 0.82, 1.03], "per": "use", "note": "explosion +1 hit at chain end with damage = final chain lightning lam x (1 + 8 %/r)^2; chain hits also scale by (1 + 8 %/r)^b_k: per use extra = lam x (a + 2 a^2 - 2) with a = 1 + 0.08 r"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); per use; main-hit units with phys hit = 1.0 and lightning hit = lam = 0.445 (planner ref, base 1.89 = 1 + 2 lam); chain of n = 2 + p1 bounces] card Rebound 'Druga runda' p12 (TravelingNew L254-260)", "plannerFix": "planner has no per-jump damage growth on chain hits and no end explosion; card: +1 explosion hit and chain hits growing with each bounce"},
         "name": "Rebomb",
         "description": "Rebound now increases its damage and size with every bounce and explodes at the end dealing damage on a large radius.",
         "maxRank": 3,
         "effects": {
-          "base": { "secondary_damage_increase_per_bounce": 0, "secondary_area_of_effect_per_bounce": 0 },
-          "perRank": { "secondary_damage_increase_per_bounce": 8, "secondary_area_of_effect_per_bounce": 8 }
+          "base": {"secondary_damage_increase_per_bounce": 0, "secondary_area_of_effect_per_bounce": 0},
+          "perRank": {"secondary_damage_increase_per_bounce": 8, "secondary_area_of_effect_per_bounce": 8}
         },
         "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "orbital_rebound",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1.0, 1.0, 1.0], "note": "transformation: the orbital (Amazon_Rebound_Orbital_obj, Create_0 0x146f271f0: isAttack 1, singleHit 1, destroyTimer 5 s, orbitRadius 64 px around the player, Orbit_Parent_obj_Step_0 0x148e0e0d0, precise mask 39x39, map cleared every 360 deg) never reaches a dummy >= 84 px from the player and p13 REPLACES the base chain, so the use keeps only the physical attack hit (1.0 main hit, phys part = 1.0 in these units) and loses the H(n) = 2 lightning chain hits (2 x lam = 0.89). A dummy ON the orbit (64 px) would get 1 orbital hit per revolution (angular speed unknown, I), each spawning a T0 chain of H(n) lightning hits. \"+100 %/r\" has no reader (I)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; main-hit units with phys hit = 1.0 and lightning hit = lam = 0.445 (planner ref, base 1.89 = 1 + 2 lam); chain of n = 2 + p1 bounces] R4 175#0 (C). Was \"other 0.89 = 2 x lam per orbital hit, number of orbital hits unknown\". Base 1.89 = 1 phys hit + 2 lightning chain hits (lam 0.445).", "plannerFix": "planner has secondary_damage_increased 100 %/r only; card R4: orbital replaces the chain, at 160 px the dummy gets 0 orbital hits and 0 chain hits, so p13 removes the lightning chain hits"},
         "name": "Orbital Rebound",
         "description": "When hitting an enemy spawn the rebound projectile orbiting you until it hits a monster.",
         "maxRank": 3,
         "effects": {
-          "base": { "secondary_damage_increased": 0 },
-          "perRank": { "secondary_damage_increased": 100 }
+          "base": {"secondary_damage_increased": 0},
+          "perRank": {"secondary_damage_increased": 100}
         },
         "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "kickback_projectile",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.62, 0.8, 0.98], "per": "use", "note": "Spearnage object from the chain end toward the player: +1 hit with lightning damage lam x (1 + 40 %/r); per use"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); per use; main-hit units with phys hit = 1.0 and lightning hit = lam = 0.445 (planner ref, base 1.89 = 1 + 2 lam); chain of n = 2 + p1 bounces] card Rebound table p14 (C/I)"},
         "name": "Kickback Projectile",
         "description": "Rebound projectiles now return to you instead of expiring dealing increased damage to monsters on its path.",
         "maxRank": 3,
         "effects": {
-          "base": { "secondary_damage_increased": 0 },
-          "perRank": { "secondary_damage_increased": 40 }
+          "base": {"secondary_damage_increased": 0},
+          "perRank": {"secondary_damage_increased": 40}
         },
         "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       }
@@ -2100,6 +2172,8 @@
   {
     "id": "spearnage",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 6.0, "baseProjectiles": 6, "perExtraProjectile": 0.33, "confidence": "C", "note": "Controller throws skillAmount = 6+RSS391+extra spears (every 0.05 s from the player, direction skillDirection+2*skillAmount-7 deg: +5,+3,+1,-1,-3,-5 deg then +7,+9,...); each Amazon_Spearnage_obj has its own hit map, mask 70x15 (h=7.5): hit when 160*sin|theta| <= 19.5 px, |theta| <= 7.0 deg. Base 6 spears all hit = 6.0 hits of one spear (damage[4] lightning V1'=15*L + damage[0] phys floor((W+V2/100)*(1+LSSD)), see damageNote). min(N,7) hit at 160 px: perExtraProjectile = average slope over the first 3 extras (7th spear on the boundary +1 [I], 8th and 9th +0). Spears land after ~46 frames, hits happen in flight (rule 29). Serie lasts 0.3 s. Pierce/no stop on the dummy (projType 0)."},
     "classId": "amazon",
     "name": "Spearnage",
     "kind": "active",
@@ -2130,10 +2204,7 @@
         "manaCost": 5
       }
     ],
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 15
-    },
+    "damageFormula": { "base": 0, "perLevel": 15 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -2186,68 +2257,74 @@
       {
         "id": "lethal_spearstorm",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD += 10 %/r on BOTH the physical part and the lightning part"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 6.0 = 6 spears (one spear hit = 1.0 main hit = phys + lightning) at 160 px, extra spears counted only up to 7 hits (rule 14)] card table p1 (R3 section Spearnage)", "plannerFix": "planner applies LSSD to the physical part only; card: LSSD (p1) acts on both parts"},
         "name": "Lethal Spearstorm",
         "description": "Increases the physical damage dealt by spearnage.",
         "maxRank": 5,
         "effects": {
-          "base": { "subtree_damage": 0 },
-          "perRank": { "subtree_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "spear_storm",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5], "note": "skillAmount += r; the new spears fly at +7, +9 deg..."}, {"kind": "extra_hits", "byRank": [1, 1, 1, 1, 1], "per": "use", "replacesProjectileHits": true, "note": "at 160 px only the 7th spear reaches (boundary +7 deg); hits per use = min(N, 7): +1 total for any r >= 1, 0 more beyond 7"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 6.0 = 6 spears (one spear hit = 1.0 main hit = phys + lightning) at 160 px, extra spears counted only up to 7 hits (rule 14)] card table p2 and rule 14", "plannerFix": "planner converts extra spears with perExtraProjectile 0.33 each; card: at 160 px only one extra spear (the 7th, on the boundary) hits, the rest miss"},
         "name": "Spear Storm",
         "description": "Increases the amount of spears thrown.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "accurate_spearing",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "attack rating [1022] x (1 + 10 %/r): accuracy only"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 6.0 = 6 spears (one spear hit = 1.0 main hit = phys + lightning) at 160 px, extra spears counted only up to 7 hits (rule 14)] card table p3"},
         "name": "Accurate Spearing",
         "description": "Increases attack rating when using spearnage.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "thundertips",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [12, 24, 36, 48, 60], "note": "+12 %/r on the lightning part damage[4] only"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 6.0 = 6 spears (one spear hit = 1.0 main hit = phys + lightning) at 160 px, extra spears counted only up to 7 hits (rule 14)] card table p4"},
         "name": "Thundertips",
         "description": "Increases lightning damage dealt by spearnage.",
         "maxRank": 5,
         "effects": {
-          "base": { "elemental_subtree_damage": 0 },
-          "perRank": { "elemental_subtree_damage": 12 }
+          "base": {"elemental_subtree_damage": 0, "subtree_damage": 0},
+          "perRank": {"elemental_subtree_damage": 12, "subtree_damage": 12}
         }
       },
       {
         "id": "timefunneling_spears",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.04, 1.08, 1.12], "note": "in flight every 0.25 s damage x (1 + 4 %/r); at 160 px flight time ~0.35 s gives k = 1 step, so x (1 + 0.04 r); k depends on distance (I)"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); per use; base 6.0 = 6 spears (one spear hit = 1.0 main hit = phys + lightning) at 160 px, extra spears counted only up to 7 hits (rule 14)] card table p5 (C/I: distance dependent)"},
         "name": "Timefunneling Spears",
         "description": "Spears grow in size and gain increased damage while traveling.",
         "maxRank": 3,
         "effects": {
-          "base": { "secondary_travel_damage_increase": 0, "secondary_travel_projectile_size": 0 },
-          "perRank": { "secondary_travel_damage_increase": 4, "secondary_travel_projectile_size": 8 }
+          "base": {"secondary_travel_damage_increase": 0, "secondary_travel_projectile_size": 0},
+          "perRank": {"secondary_travel_damage_increase": 4, "secondary_travel_projectile_size": 8}
         },
         "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "pointy_ends",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.015, 1.06, 1.135], "note": "lightning break chance 5 %/r x break 30 %/r per spear: expected multiplier 1 + 0.015 r^2 on the lightning part (rough, stacks not in card)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 6.0 = 6 spears (one spear hit = 1.0 main hit = phys + lightning) at 160 px, extra spears counted only up to 7 hits (rule 14)] card table p6 ([976] per spear)"},
         "name": "Pointy Ends",
         "description": "Chance to inflict lightning break on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "lightning_break": 0 },
-          "perRank": { "lightning_break": 30 }
+          "base": {"lightning_break": 0},
+          "perRank": {"lightning_break": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2263,39 +2340,43 @@
       {
         "id": "swift_glaives",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "spear speed +15 %/r: reach and timing only, no change of hits at 160 px"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 6.0 = 6 spears (one spear hit = 1.0 main hit = phys + lightning) at 160 px, extra spears counted only up to 7 hits (rule 14)] card table p7"},
         "name": "Swift Glaives",
         "description": "Increases spearnage projectile speed.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "swiftstepping",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "utility", "note": "reduced movement diminish (slow resistance); no dummy DPS"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); per use; base 6.0 = 6 spears (one spear hit = 1.0 main hit = phys + lightning) at 160 px, extra spears counted only up to 7 hits (rule 14)] card table p8 (read missing)"},
         "name": "Swiftstepping",
         "description": "Decreases movement diminish when using spearnage.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "conqueror_of_light",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "+20 %/r damage vs bosses ([121]); the training dummy is not a boss"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 6.0 = 6 spears (one spear hit = 1.0 main hit = phys + lightning) at 160 px, extra spears counted only up to 7 hits (rule 14)] card table p9"},
         "name": "Conqueror of Light",
         "description": "Increases damage dealt to bosses.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bosses": 0 },
-          "perRank": { "extra_damage_bosses": 20 }
+          "base": {"extra_damage_bosses": 0},
+          "perRank": {"extra_damage_bosses": 20}
         }
       },
       {
         "id": "sudden_flank",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "redirects a spear to the 2nd nearest enemy (<480 px); the dummy is already in the spear's hit map, so 0"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 6.0 = 6 spears (one spear hit = 1.0 main hit = phys + lightning) at 160 px, extra spears counted only up to 7 hits (rule 14)] card table p10 (rule 17)"},
         "name": "Sudden Flank",
         "description": "Spears have a chance to ricochet towards another target on hit.",
         "maxRank": 3,
@@ -2304,17 +2385,19 @@
       {
         "id": "spinning_to_win",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [35, 70, 105], "note": "LSSD += 35 %/r on both parts"}, {"kind": "set_hits", "byRank": [2, 2, 2], "note": "transformation spinToWin: TalentsAmazon L925 `N += 20` (0x1401ba3c0) -> skillAmount = N0 + 20 (26..31); Controller Step_0 (0x146f2cfb0) per tick (0.05 s = 3 frames) throws TWO spears at D + 2a - 7 and the same -180 deg, then skillDirection += 30 (0x146f30265) and skillAmount -= 2 (L73 + L76): the angle advances 26 deg per tick over 13-16 ticks = 26-32 spears; at the dummy 160 px away (|theta| <= 7.0 deg) exactly 2 spears hit for N0 = 6..11 (simulation, aim through the dummy centre) instead of min(N0, 7) = 6 without p11 (C). p11 costs hits (+35 %/r damage)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 6.0 = 6 spears (one spear hit = 1.0 main hit = phys + lightning) at 160 px, extra spears counted only up to 7 hits (rule 14)] R4 176#1 (C). Was damage_pct + other fraction 0.0556 of the spears (I). Hits are not linear in N0: 2 for every N0 = 6..11.", "plannerFix": "planner has no circular throw; card R4: transformation, 26-32 spears in a spin, only 2 reach a dummy 160 px away (6 hits without p11); LSSD scope is both parts"},
         "name": "Spinning to Win",
         "description": "Rapidly throw spears around you for a short duration dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "subtree_damage": 0 },
-          "perRank": { "subtree_damage": 35 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 35}
         }
       },
       {
         "id": "lightning_ball",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0378, 0.1068, 0.2072], "per": "hit", "note": "chance 5 %/r per spear hit creates a homing ball on the nearest enemy (the dummy) with lightning damage lam x (1 + 70 %/r); per hit = 0.05 r x 0.445 x (1 + 0.7 r)"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); per use; base 6.0 = 6 spears (one spear hit = 1.0 main hit = phys + lightning) at 160 px, extra spears counted only up to 7 hits (rule 14)] card table p12 (C/I: homing and hit count)"},
         "name": "Lightning Ball",
         "description": "Chance on hit to spawn a ball of lightning traveling forward dealing increased lightning damage.",
         "maxRank": 3,
@@ -2331,17 +2414,19 @@
       {
         "id": "boomerang_spears",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [40, 80, 120], "note": "LSSD += 40 %/r on both parts"}, {"kind": "hits_mult", "byRank": [2, 2, 2], "note": "pe[261] = 100 is read by Player_Damage_Parent_obj_Destroy_0 (0x14910ab40, branch projEffect[261] > 0 from 0x14910bf5b): when a spear is destroyed it creates a copy of the same object_index at its position flying back along the same line to the player (point_direction(host.x, host.y + 6); damage[], deltaSpeed, projEffect copied, InheritModifiers filter excludes 261, no recursion); the copy has its own hit map and hits the dummy a second time: hits x2 for every spear that hit (12 for 6 spears). C for the copy creation; the copy reaching the dummy (range 345 px > 185 px) is I. Return hits probably also carry the per-hit procs of p12/p14 (copied projEffect), not counted separately"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 6.0 = 6 spears (one spear hit = 1.0 main hit = phys + lightning) at 160 px, extra spears counted only up to 7 hits (rule 14)] R4 176#2 (C creation of the copy; copy reaching the dummy I). Was \"second hit probable, consumer not found, not counted\" (I)."},
         "name": "Boomerang Spears",
         "description": "Spears now return to you dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "subtree_damage": 0 },
-          "perRank": { "subtree_damage": 40 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 40}
         }
       },
       {
         "id": "explosive_speartips",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.1068, 0.2937, 0.5607], "per": "hit", "note": "per spear hit: chance 15 %/r x explosion with damage lam x (1 + 60 %/r) (explosion uses damage[4]); per hit = 0.15 r x 0.445 x (1 + 0.6 r)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 6.0 = 6 spears (one spear hit = 1.0 main hit = phys + lightning) at 160 px, extra spears counted only up to 7 hits (rule 14)] card table p14 (L566-585)"},
         "name": "Explosive Speartips",
         "description": "Spears have a chance to explode on hit dealing area of effect damage on an increased radius.",
         "maxRank": 3,
@@ -2361,6 +2446,9 @@
   {
     "id": "storm_dash",
     "activationKind": "cast",
+    "speedPath": "attack",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Dash of 19 gravity steps + 1 frame (20 frames); a lightning chain Amazon_Storm_Dash_obj (N0, 1 hit each, max_range 260 covers the dummy at ~85/~25 px from the discharge points) is created every [162]=72 px of path: with the dummy 160 px away (cursor on dummy, rule 24; landing at the cursor) v=8.46 px/frame, discharges at calls 10 and 19 = 2 per dash (3 for p1 r>=5). Each = damage[4] V1'=12.5*L; chain hit carries NO player modifiers (see damageNote), main-hit equivalent counted as 1.0 each (exact only without gear). No landing hit / pillars / trail in the base skill. Note: if the cursor is on the player (d~0) there are no discharges; scenario convention gives 2."},
+    "usePeriod": {"kind": "dash", "extraFrames": 20, "note": "dash = 19 gravity steps + 1 transition frame (g'=0.35, [144]=-48, v_z=3.35) (R3 177#0, C); period = max(0.75/(APS*(1+acc)), t_wyw + 20 frames) (abilityAttackSpeed = true, attack path); t_wyw excluded."},
     "classId": "amazon",
     "name": "Storm Dash",
     "kind": "active",
@@ -2391,10 +2479,7 @@
       }
     ],
     "baseCastRate": 1,
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 12.5
-    },
+    "damageFormula": { "base": 0, "perLevel": 12.5 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -2436,40 +2521,44 @@
       {
         "id": "agile_zapper",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, 0, 0, 0, 1, 1, 1, 1], "per": "use", "note": "discharge spacing [162] = floor(72 x (1 - 6.25 r %)) px: 2 discharges for r = 0..4, 3 for r = 5..8 at d ~ 162 px (N = floor(19 / ceil([162]/8.46)))"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 2.0 = 2 discharges (1 chain hit = 1.0 main-hit unit each) at 160 px, 19-step flight of 20 frames (rule 14/18 convention)] card table p1 (R3 consumer skillsLeap L323)", "plannerFix": "planner models secondary_frequency 6.25/r as a rate; card: spacing in pixels gives +1 discharge only from r = 5 (N = 3)"},
         "name": "Agile Zapper",
         "description": "Increases the frequency of chain lightnings.",
         "maxRank": 8,
         "effects": {
-          "base": { "secondary_frequency": 0 },
-          "perRank": { "secondary_frequency": 6.25 }
+          "base": {"secondary_frequency": 0},
+          "perRank": {"secondary_frequency": 6.25}
         },
         "calculationNote": "This changes effect frequency, not player cast speed. Effect contact timing is not yet modeled."
       },
       {
         "id": "zapping_force",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8 %/r on the lightning part damage[4] (= the discharge)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 2.0 = 2 discharges (1 chain hit = 1.0 main-hit unit each) at 160 px, 19-step flight of 20 frames (rule 14/18 convention)] card table p2"},
         "name": "Zapping Force",
         "description": "Increases damage dealt by storm dash.",
         "maxRank": 5,
         "effects": {
-          "base": { "subtree_damage": 0 },
-          "perRank": { "subtree_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "bouncing_current",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "chain bounces [597] = 3 + r need other targets; on a lone dummy the chain returns to none, so 0"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 2.0 = 2 discharges (1 chain hit = 1.0 main-hit unit each) at 160 px, 19-step flight of 20 frames (rule 14/18 convention)] card table p3"},
         "name": "Bouncing Current",
         "description": "Increases the amount of chain lightning bounces.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_bounces": 0 },
-          "perRank": { "projectile_bounces": 1 }
+          "base": {"projectile_bounces": 0},
+          "perRank": {"projectile_bounces": 1}
         }
       },
       {
         "id": "thunderfall",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "piercing lightning on hit with chance 3 %/r (planner 50 %): R3 finds the dash chain has no collision-effect registration, so probably 0 on the dummy (card gave +1 hit before R3)"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); per use; base 2.0 = 2 discharges (1 chain hit = 1.0 main-hit unit each) at 160 px, 19-step flight of 20 frames (rule 14/18 convention)] card table p4 with R3 note (I)", "plannerFix": "planner adds a 50 % secondary lightning hit at 3 %/r; R3 card: the dash chain does not inherit collision effects, so 0 on the dummy (probable)"},
         "name": "Thunderfall",
         "description": "Chain lightning has a chance to call down a thunderbolt on the target dealing additional damage.",
         "maxRank": 5,
@@ -2486,39 +2575,43 @@
       {
         "id": "hopping_surge",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "dash range [599] = 260 x (1 + 15 %/r): no added hits"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 2.0 = 2 discharges (1 chain hit = 1.0 main-hit unit each) at 160 px, 19-step flight of 20 frames (rule 14/18 convention)] card table p5"},
         "name": "Hopping Surge",
         "description": "Increases the maximum range of storm dash.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "landing_surge",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 1, 1, 1, 1], "per": "use", "note": "skillsLeap L586-L597: [600] > 0 is only a gate (the 15 %/r value is not used as damage); the nova (Create_0 0x146f38c80, singleHit 1, growth 0.075/frame, mask Amazon_Nova_Dissolve_Effect_spr 230x230 precise, maxScale = 1 + [601] from p7) at the landing point gets damage[4] of the controller (no InheritModifiers: modifier class \"none\"), [51] = 3 s stun, [598], [179]: 1 hit of V1' on the dummy 30 px from the landing point (cursor - 6 px, Resztki E; margin >> 12 px) (1 hit of V1' counted as 1.0 like the discharges, which carry no player modifiers). The 3 s stun also enables p9 (+x %/r vs stunned) without p8"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 2.0 = 2 discharges (1 chain hit = 1.0 main-hit unit each) at 160 px, 19-step flight of 20 frames (rule 14/18 convention)] R4 177#1 (C). Was extra_hits 0.15r (explosion with 15 %/r of the discharge damage, ratio assumed, C/I).", "plannerFix": "planner has area_of_effect 15/r only; card R4: the 15 %/r is a gate not a damage ratio, the nova is 1 full-V1' hit without player modifiers at the landing point and stuns the dummy for 3 s"},
         "name": "Landing Surge",
         "description": "When landing unleash a lightning explosion for additional area of effect damage and stunning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "lightning_strikes",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 1, 1, 1, 1], "per": "use", "note": "skillsLeap L602-L612: ONE Amazon_Storm_Dash_Lightning_Strikes_obj at the landing point (not one per nearby enemy), scale 2 * (1 + p7.s9 %) (aura r >= 128), damage[4] full V1', InheritModifiers (full player modifiers, unlike the discharges), destroyTimer 0.1 s = 6 frames, singleHit -> 1 hit on the dummy 30 px away. Counted 1.0; with full modifiers the ratio to a no-modifier discharge is build-dependent (>= 1). p7 also scales the p6 nova (maxScale = 1 + [601])"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 2.0 = 2 discharges (1 chain hit = 1.0 main-hit unit each) at 160 px, 19-step flight of 20 frames (rule 14/18 convention)] R4 177#1 (C). Was extra_hits 0.15r (ratio assumed, I).", "plannerFix": "planner has skill_range 15/r only; card R4: one strike object at the landing point, 1 full-modifier V1' hit; also scales the p6 nova"},
         "name": "Lightning Strikes",
         "description": "Unleash lightning strikes on nearby monsters when landing.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "voltage_struck",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "stun 3 s with chance 3 %/r per discharge (CC, no damage); enables p9"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 2.0 = 2 discharges (1 chain hit = 1.0 main-hit unit each) at 160 px, 19-step flight of 20 frames (rule 14/18 convention)] card table p8"},
         "name": "Voltage Struck",
         "description": "Chance to stun on hit.",
         "maxRank": 5,
@@ -2531,34 +2624,37 @@
       {
         "id": "electric_current",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "requires": "voltage_struck", "note": "+10 %/r damage vs stunned ([179]); applies only while the dummy is stunned by p8 (uptime not in card)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 2.0 = 2 discharges (1 chain hit = 1.0 main-hit unit each) at 160 px, 19-step flight of 20 frames (rule 14/18 convention)] card table p9"},
         "name": "Electric Current",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 10 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 10}
         }
       },
       {
         "id": "agility_over_power",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [0.15, 0.3, 0.45, 0.6, 0.75], "note": "transformation: every discharge damage[4] = floor(V1 x 15 %/r x (1 + LSSD)); retained 15 %/r of normal damage (value = multiplier)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 2.0 = 2 discharges (1 chain hit = 1.0 main-hit unit each) at 160 px, 19-step flight of 20 frames (rule 14/18 convention)] card table p10"},
         "name": "Agility Over Power",
         "description": "You can now travel through terrain but the damage of storm dash is reduced.",
         "maxRank": 5,
         "effects": {
-          "base": { "retained_damage_percent": 0 },
-          "perRank": { "retained_damage_percent": 15 }
+          "base": {"retained_damage_percent": 0},
+          "perRank": {"retained_damage_percent": 15}
         }
       },
       {
         "id": "lightning_trail",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [9, 9, 9], "per": "use", "note": "trail object ticks every 0.25 s for 2 s after the dash: up to 1 + floor(2/0.25) = 9 ticks, each damage[4] = 1.0 main-hit unit, if the trail passes the dummy (landing point on it: assumed yes, C/I); per use"}, {"kind": "dot", "note": "stasis buff 68 (15 %/r) and lightning break 20 %/r for 5 s on the dummy: not valued in card"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 2.0 = 2 discharges (1 chain hit = 1.0 main-hit unit each) at 160 px, 19-step flight of 20 frames (rule 14/18 convention)] card table p11 (Trail_obj L1012)", "plannerFix": "planner has no trail object; card: tick 0.25 s over 2 s gives up to 9 hits per dash"},
         "name": "Lightning Trail",
         "description": "Leave behind a trail of lightning inflicting electrified and lightning break.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_stasis_damage": 0, "lightning_break": 0 },
-          "perRank": { "increased_stasis_damage": 15, "lightning_break": 20 }
+          "base": {"increased_stasis_damage": 0, "lightning_break": 0},
+          "perRank": {"increased_stasis_damage": 15, "lightning_break": 20}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2575,35 +2671,38 @@
       {
         "id": "storm_orbs",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "cooldown_s", "byRank": [2, 2, 2], "note": "+2 s cooldown (flat)"}, {"kind": "other", "byRank": [2, 4, 6], "note": "2 orbs per rank circling the player with a chain; orb hits per use not in card (see reports/summons.md); numeric = orb count"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 2.0 = 2 discharges (1 chain hit = 1.0 main-hit unit each) at 160 px, 19-step flight of 20 frames (rule 14/18 convention)] card table p12 (cooldown_added 2 s)"},
         "name": "Storm Orbs",
         "description": "Landing on monsters summons lightning bolts orbiting around you continuously zapping nearby monsters with chain lightning. Storm dash now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "secondary_projectile_count": 0, "cooldown_added": 2 },
-          "perRank": { "secondary_projectile_count": 2, "cooldown_added": 0 }
+          "base": {"secondary_projectile_count": 0, "cooldown_added": 2},
+          "perRank": {"secondary_projectile_count": 2, "cooldown_added": 0}
         },
         "calculationNote": "Adds 2 seconds to cooldown. Orb contacts are not included in primary DPS; their orbit coverage is not yet verified."
       },
       {
         "id": "storm_gates",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [8, 9, 11], "note": "transformation (skillsBlink 0x14606a980 teleport instead of the skillsLeap dash: playerEffect[128] = 1, [129] = floor(0.7 * cursor distance) = 112-113 px): Amazon_Storm_Dash_Storm_obj (0x146071169) at the player position with destroyTimer 3 s * (1 + p13.s9 %) (180 frames at r0; [606] = 25 %/r is the DURATION, not damage), damage[4] of the controller (V1'), InheritModifiers; Create_0 0x146f4a7b0: tick 30 frames, 64 px aura; arrival point 53 px from the dummy centre (inside): tick_hits = 8 / 9 / 11 / 12 / 13 hits per storm for r = 1..5 (6 at 180 frames), no chain on the storm hit. Hits are per use (a storm of every use; storms overlap with their own maps). Assumes the storm spawns at the ARRIVAL point (I); at the departure point the dummy would get 0 hits at 160 px. A blink has no flight, so the base dash discharges (2) and the p6/p7 landing objects are assumed replaced (set_hits) - not stated by the card"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); per use; base 2.0 = 2 discharges (1 chain hit = 1.0 main-hit unit each) at 160 px, 19-step flight of 20 frames (rule 14/18 convention)] R4 177#2 (zawezone: spawn point arrival vs departure I). Card tabulates r = 1..5 (8/9/11/12/13); planner maxRank is 3. Was \"other 25/50/75 = storm damage %, hit pattern unknown\".", "plannerFix": "planner has skill_duration 25/r but no storm/teleport model; card R4: Storm_obj lasts 3 s * (1 + 25 %/r), tick 30 frames, 64 px aura, 8/9/11 hits per use at r1..3 if it spawns at the arrival point"},
         "name": "Storm Gates",
         "description": "Blink to target location summoning a lightning storm unleashing chain lightning on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 25 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 25}
         }
       },
       {
         "id": "pillar_of_storm",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [25, 50, 75], "note": "pillar (totem) life 5 s x (1 + 25 %/r) with attacks every 0.25 s (about 20 x (1 + 0.25 r) attacks per pillar; counted per entity action, not multiplied here); stasis 40 %/r not valued"}, {"kind": "other", "byRank": [40, 80, 120], "note": "stasis value [26] = 40 %/r of the discharge damage per pillar attack (numeric = %)"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); per use; base 2.0 = 2 discharges (1 chain hit = 1.0 main-hit unit each) at 160 px, 19-step flight of 20 frames (rule 14/18 convention)] card table p14 (Pillar_obj, see reports/summons.md)", "plannerFix": "planner has no pillar object; card: totem with 0.25 s attacks for 5 s x (1 + duration), plus a link object"},
         "name": "Pillar of Storm",
         "description": "Leave behind a pillar of storm. Pillars of storm are linked with a chain of lightning dealing damage and inflicting stasis on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_stasis_damage": 0, "skill_duration": 0 },
-          "perRank": { "increased_stasis_damage": 40, "skill_duration": 25 }
+          "base": {"increased_stasis_damage": 0, "skill_duration": 0},
+          "perRank": {"increased_stasis_damage": 40, "skill_duration": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2619,7 +2718,10 @@
   },
   {
     "id": "thunder_fury",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Two objects per attack: the weapon strike (W, 100% weapon, no [1020], no lightning part) and 1 lightning bolt Amazon_Thunder_Fury_obj created on the target at hit time (count = min(enemies in the circle, [208]) = 1 for a lone dummy; starts at the dummy centre, fresh pack, active after 2 frames, mask 79x15*0.75 still overlaps) with damage[4] = [205] = V1' = 12.5*L. Planner main hit = W + V1' (one lump), so strike (W) + bolt (V1') = 1.0 main hit in total (W/(W+V1') + V1'/(W+V1')). extra spell projectiles ([76]) are not read, bolt count stays 1 on one dummy: perExtraProjectile = 0. Bolts do not stop on the dummy (3*10 px < 24+59, no skipping)."},
     "classId": "amazon",
     "name": "Thunder Fury",
     "kind": "active",
@@ -2649,10 +2751,7 @@
         "manaCost": 4
       }
     ],
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 12.5
-    },
+    "damageFormula": { "base": 0, "perLevel": 12.5 },
     "manaCostFormula": {
       "base": 3.5,
       "perLevel": 0.75,
@@ -2702,23 +2801,25 @@
       {
         "id": "roaring_thunder",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8 %/r on the lightning part [205] only"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 1.0 = one main hit (weapon W + lightning V1' lumped, as in planner); a lightning bolt is a hit of ratio lam = V1'/(W + V1'), placeholder lam = 0.5 (W not in card; I)] card table p1"},
         "name": "Roaring Thunder",
         "description": "Increases lightning damage dealt by thunder fury.",
         "maxRank": 5,
         "effects": {
-          "base": { "elemental_subtree_damage": 0 },
-          "perRank": { "elemental_subtree_damage": 8 }
+          "base": {"elemental_subtree_damage": 0, "subtree_damage": 0},
+          "perRank": {"elemental_subtree_damage": 8, "subtree_damage": 8}
         }
       },
       {
         "id": "breaking_thunder",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.009, 1.036, 1.081, 1.144, 1.225], "note": "chance 3 %/r x lightning break 30 %/r for 5 s: expected multiplier on lightning = 1 + 0.009 r^2 (rough; stacks not in card)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 1.0 = one main hit (weapon W + lightning V1' lumped, as in planner); a lightning bolt is a hit of ratio lam = V1'/(W + V1'), placeholder lam = 0.5 (W not in card; I)] card table p2 ([976])"},
         "name": "Breaking Thunder",
         "description": "Chance to inflict lightning break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "lightning_break": 0 },
-          "perRank": { "lightning_break": 30 }
+          "base": {"lightning_break": 0},
+          "perRank": {"lightning_break": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2734,39 +2835,43 @@
       {
         "id": "photonic_transfer",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "life replenish 1 %/r on hit; no dummy DPS"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 1.0 = one main hit (weapon W + lightning V1' lumped, as in planner); a lightning bolt is a hit of ratio lam = V1'/(W + V1'), placeholder lam = 0.5 (W not in card; I)] card table p3"},
         "name": "Photonic Transfer",
         "description": "Recover a portion of your life on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "life_replenish_pct": 0 },
-          "perRank": { "life_replenish_pct": 1 }
+          "base": {"life_replenish_pct": 0},
+          "perRank": {"life_replenish_pct": 1}
         }
       },
       {
         "id": "thunderstep",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "movement diminish 10 %/r (read missing in card; treated as utility)"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); per use; base 1.0 = one main hit (weapon W + lightning V1' lumped, as in planner); a lightning bolt is a hit of ratio lam = V1'/(W + V1'), placeholder lam = 0.5 (W not in card; I)] card table p4"},
         "name": "Thunderstep",
         "description": "Decreases movement speed diminish when using thunder fury.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "storms_wisdom",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [5, 10], "note": "spell crit chance +5 %/r on the lightning bolt; crit damage from intelligence (RSS19 x 25 %/r) not valued"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 1.0 = one main hit (weapon W + lightning V1' lumped, as in planner); a lightning bolt is a hit of ratio lam = V1'/(W + V1'), placeholder lam = 0.5 (W not in card; I)] card table p5 (max 2)"},
         "name": "Storm´s Wisdom",
         "description": "Chance to critically hit dealing increased damage based on your intelligence.",
         "maxRank": 2,
         "effects": {
-          "base": { "crit_chance": 0, "conversion_intelligence": 0 },
-          "perRank": { "crit_chance": 5, "conversion_intelligence": 25 }
+          "base": {"crit_chance": 0, "conversion_intelligence": 0},
+          "perRank": {"crit_chance": 5, "conversion_intelligence": 25}
         }
       },
       {
         "id": "tectonic_hit",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "stun 3 s with chance 4 %/r (CC, no damage); enables p7 and p9 when stunned"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 1.0 = one main hit (weapon W + lightning V1' lumped, as in planner); a lightning bolt is a hit of ratio lam = V1'/(W + V1'), placeholder lam = 0.5 (W not in card; I)] card table p6"},
         "name": "Tectonic Hit",
         "description": "Chance to stun monsters on hit.",
         "maxRank": 5,
@@ -2779,92 +2884,100 @@
       {
         "id": "tectonic_tremors",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "requires": "tectonic_hit", "note": "+10 %/r damage vs stunned ([179]); applies only while the dummy is stunned by p6 (uptime not in card)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 1.0 = one main hit (weapon W + lightning V1' lumped, as in planner); a lightning bolt is a hit of ratio lam = V1'/(W + V1'), placeholder lam = 0.5 (W not in card; I)] card table p7"},
         "name": "Tectonic Tremors",
         "description": "Increases damage to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 10 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 10}
         }
       },
       {
         "id": "executioneers_fury",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "execute below 1.5 %/r HP ([140]); the dummy never dies, so 0"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); per use; base 1.0 = one main hit (weapon W + lightning V1' lumped, as in planner); a lightning bolt is a hit of ratio lam = V1'/(W + V1'), placeholder lam = 0.5 (W not in card; I)] card table p8"},
         "name": "Executioneer´s Fury",
         "description": "Execute low life monsters.",
         "maxRank": 5,
         "effects": {
-          "base": { "execute_below": 0 },
-          "perRank": { "execute_below": 1.5 }
+          "base": {"execute_below": 0},
+          "perRank": {"execute_below": 1.5}
         }
       },
       {
         "id": "tectonic_impact",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.3, 0.6, 0.9, 1.2, 1.5], "note": "pulse with damage = 30 %/r of the bolt damage, only on a STUNNED target, from bolts of arc lightning (p11) and the attack projectile; numeric = pulse ratio per bolt of p11 (before (1 + r11) and stun uptime); base bolt does not copy [602] so 0 without p11 (R3 C)"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 1.0 = one main hit (weapon W + lightning V1' lumped, as in planner); a lightning bolt is a hit of ratio lam = V1'/(W + V1'), placeholder lam = 0.5 (W not in card; I)] card table p9 (L345-352, L431)", "plannerFix": "planner gives the 30 %/r pulse without the p11 dependence and stun gate; card: 0 from the attack hit, only from arc bolts (p11) against stunned targets"},
         "name": "Tectonic Impact",
         "description": "Stunned targets unleash an exploding lightning pulse on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "secondary_damage_percent": 0 },
-          "perRank": { "secondary_damage_percent": 30 }
+          "base": {"secondary_damage_percent": 0},
+          "perRank": {"secondary_damage_percent": 30}
         },
         "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "thunders_reach",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "lightning bolt range/speed [209] x (1 + 15 %/r): no added hits on a lone dummy"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 1.0 = one main hit (weapon W + lightning V1' lumped, as in planner); a lightning bolt is a hit of ratio lam = V1'/(W + V1'), placeholder lam = 0.5 (W not in card; I)] card table p10"},
         "name": "Thunder´s Reach",
         "description": "Increases the range of thunder fury.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "arc_lightning",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.5, 3.5, 4.5], "per": "use", "note": "1 + [603] extra Amazon_Thunder_Fury_obj per bolt hit with [603] = 2r + 2 (SUB base field s6 = 2, coordinator lead), i.e. 2r + 3 extra bolts (spread 10 deg, start on the target, active after 2 frames, mask reaches 37 px past the point: each hits once, rule 15); per use = (2r + 3) * lam with the same placeholder lam = 0.5 (W not in card; I). Arc bolts do not carry [603]/[207]"}, {"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD += 25 %/r on the bolt part"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 1.0 = one main hit (weapon W + lightning V1' lumped, as in planner); a lightning bolt is a hit of ratio lam = V1'/(W + V1'), placeholder lam = 0.5 (W not in card; I)] R4 coordinator lead (fields with a base value) + body table p11 (+(2r+3) hits [205]). Was (1 + r) bolts.", "plannerFix": "planner has secondary_projectile_count 2 + 2r (= [603]) and LSSD; card R4: 1 + [603] = 2r + 3 extra bolts per bolt hit, each an extra hit of the bolt damage, value depends on lam = V1'/(W + V1')"},
         "name": "Arc Lightning",
         "description": "Thunder bolts unleash an arc of additional bolts behind the target on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "elemental_subtree_damage": 0, "secondary_projectile_count": 2 },
-          "perRank": { "elemental_subtree_damage": 25, "secondary_projectile_count": 2 }
+          "base": {"elemental_subtree_damage": 0, "secondary_projectile_count": 2, "subtree_damage": 0},
+          "perRank": {"elemental_subtree_damage": 25, "secondary_projectile_count": 2, "subtree_damage": 25}
         },
         "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "leaping_thunder",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.5, 0.5, 0.5], "per": "use", "note": "chain from each bolt hits the dummy once: +1 bolt-damage hit per use (lam = 0.5 placeholder, I); from the attack hit the bolt-part damage is 0 so only bolts count"}, {"kind": "damage_pct", "byRank": [30, 60, 90], "note": "LSSD += 30 %/r on the bolt part"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 1.0 = one main hit (weapon W + lightning V1' lumped, as in planner); a lightning bolt is a hit of ratio lam = V1'/(W + V1'), placeholder lam = 0.5 (W not in card; I)] card table p12 (Chain_Lightning_Parent_obj, chainType -1)"},
         "name": "Leaping Thunder",
         "description": "Release chain lightning on hit with an increased number of bounces.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_bounces": 2, "elemental_subtree_damage": 0 },
-          "perRank": { "projectile_bounces": 1, "elemental_subtree_damage": 30 }
+          "base": {"projectile_bounces": 2, "elemental_subtree_damage": 0, "subtree_damage": 0},
+          "perRank": {"projectile_bounces": 1, "elemental_subtree_damage": 30, "subtree_damage": 30}
         }
       },
       {
         "id": "vacuuming_thunder",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "vacuum pulls the attack projectile to the dummy and damage[4] = bolt part x (1 + 45 %/r) of the attack projectile; the attack has no lightning part (no [995]), so about 0 without equipment lightning"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 1.0 = one main hit (weapon W + lightning V1' lumped, as in planner); a lightning bolt is a hit of ratio lam = V1'/(W + V1'), placeholder lam = 0.5 (W not in card; I)] card table p13 (Vacuum_obj)", "plannerFix": "planner has secondary_damage_increased 45/r on the lumped hit; card: the increase multiplies only the equipment lightning part, about 0 here"},
         "name": "Vacuuming Thunder",
         "description": "Thunder bolts pull targets to the initial point of impact followed by a surge of lightning dealing area of effect damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "secondary_damage_increased": 0, "secondary_vacuum_range": 0 },
-          "perRank": { "secondary_damage_increased": 45, "secondary_vacuum_range": 35 }
+          "base": {"secondary_damage_increased": 0, "secondary_vacuum_range": 0},
+          "perRank": {"secondary_damage_increased": 45, "secondary_vacuum_range": 35}
         },
         "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },
       {
         "id": "electric_essence",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.2, 1.4, 1.6], "note": "lightning break +20 %/r always on (chain [976] = p2 + 20 %/r); multiplier on the bolt part"}, {"kind": "dot", "byRank": [75, 150, 225], "note": "stasis: [26] = floor(V1' x 75 %/r) per bolt, expected pool in % of bolt damage per hit"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 1.0 = one main hit (weapon W + lightning V1' lumped, as in planner); a lightning bolt is a hit of ratio lam = V1'/(W + V1'), placeholder lam = 0.5 (W not in card; I)] card table p14 ([26], [976])", "plannerFix": "planner has increased stasis damage 75/r with a stasis proc; card: stasis value is 75 %/r of V1' per bolt plus always-on lightning break 20 %/r"},
         "name": "Electric Essence",
         "description": "Inflict lightning break and stasis to targets on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_stasis_damage": 0, "lightning_break": 0 },
-          "perRank": { "increased_stasis_damage": 75, "lightning_break": 20 }
+          "base": {"increased_stasis_damage": 0, "lightning_break": 0},
+          "perRank": {"increased_stasis_damage": 75, "lightning_break": 20}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2940,7 +3053,7 @@
         "manaCost": 10
       }
     ],
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 70,
     "effectDuration": 25,
     "movementDuringUse": 85,
@@ -2948,6 +3061,7 @@
       "base": 10,
       "perLevel": 1
     },
+    "buffUptime": { "duration": 25, "cooldown": 70 },
     "passiveStats": {
       "base": {
         "lightning_skill_damage": 3.5,

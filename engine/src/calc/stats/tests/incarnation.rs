@@ -221,10 +221,12 @@ fn powerfunneled_lifespan_reads_weapon_damage_after_enhanced_damage() {
             &enemy_conditions,
         );
         let result = compute_build_stats(&input);
-        let ed = result.stats["enhanced_damage"].0;
+        let ed = result.stats.get("enhanced_damage").map_or(0.0, |v| v.0);
+        // Strength now feeds the Attack Damage stage that Powerfunnel also reads.
+        let atk = result.stats.get("attack_damage").map_or(0.0, |v| v.0);
         let expected = (
-            weapon_min * (1.0 + ed / 100.0) * 0.075,
-            weapon_max * (1.0 + ed / 100.0) * 0.075,
+            weapon_min * (1.0 + ed / 100.0) * (1.0 + atk / 100.0) * 0.075,
+            weapon_max * (1.0 + ed / 100.0) * (1.0 + atk / 100.0) * 0.075,
         );
         let actual = result
             .stats
@@ -649,26 +651,11 @@ fn unarmed_wargod_adds_strength_to_weapon_and_disables_strength_damage_only_unar
         unarmed.stats["str_to_unarmed_damage"].0,
         unarmed.attributes["strength"].0 * 0.2
     );
-    assert_eq!(
-        unarmed
-            .stats
-            .get("enhanced_damage")
-            .copied()
-            .unwrap_or_default(),
-        (0.0, 0.0)
-    );
+    // Strength feeds Attack Damage (StatAttackDamage); unarmed Wargod drops it.
     assert_eq!(unarmed.stats["attack_damage"].0, 10.0);
     let armed = audit_build(&[391], &[("weapon", "base_melee_giant_axe")], &custom);
     assert!(!armed.stats.contains_key("str_to_unarmed_damage"));
-    assert!(armed.stats["enhanced_damage"].0 > 0.0);
-    assert_eq!(
-        armed
-            .stats
-            .get("attack_damage")
-            .copied()
-            .unwrap_or_default(),
-        (0.0, 0.0)
-    );
+    assert!(armed.stats["attack_damage"].0 > unarmed.stats["attack_damage"].0);
 }
 
 #[test]
@@ -793,18 +780,31 @@ fn mind_over_matter_adds_only_the_mana_available_for_damage_diversion() {
 
 #[test]
 fn tree_defense_scales_equipped_armor_and_feeds_hulking_colossus() {
-    let armor = data::data()
+    // Deterministic armor without its own % life, so the conversion is not scaled.
+    let mut armors: Vec<_> = data::data()
         .items
         .values()
-        .find(|item| item.defense_min.is_some_and(|value| value > 0.0) && item.slot != "weapon")
+        .filter(|item| item.defense_min.is_some_and(|value| value > 0.0) && item.slot != "weapon")
+        .collect();
+    armors.sort_by(|a, b| a.id.cmp(&b.id));
+    let (armor, base) = armors
+        .into_iter()
+        .find_map(|armor| {
+            let inventory = [(armor.slot.as_str(), armor.id.as_str())];
+            let base = audit_build(&[], &inventory, &[("defense", 1000.0)]);
+            (!base.stats.contains_key("increased_life")).then_some((armor, base))
+        })
         .unwrap();
     let inventory = [(armor.slot.as_str(), armor.id.as_str())];
-    let base = audit_build(&[], &inventory, &[("defense", 1000.0)]);
     let result = audit_build(&[56, 58], &inventory, &[("defense", 1000.0)]);
     let defense = (base.stats["defense"].0 * 1.13).floor();
     assert_eq!(result.stats["defense"].0, defense);
     assert_eq!(result.stats["defense_pct"], (13.0, 13.0));
-    assert!((result.stats["life"].0 - (base.stats["life"].0 + defense * 0.025)).abs() < 1e-8);
+    // Totals floor like ReturnSpecificStat; the unfloored base life may carry a
+    // half point (6.5 per Vitality), so the converted total can land one higher.
+    let floored = (base.stats["life"].0 + defense * 0.025).floor();
+    let life = result.stats["life"].0;
+    assert!(life == floored || life == floored + 1.0, "{life} vs {floored}");
     let breakdown = compute_stat_breakdown(&result.stat_sources, "defense", None);
     assert!((breakdown.combined.0 - base.stats["defense"].0 * 1.13).abs() < 1e-8);
 }

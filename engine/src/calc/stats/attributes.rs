@@ -432,12 +432,7 @@ pub fn apply_subskill_aggregation(
         if class_id == "amazon" {
             owner
                 .subskills
-                .retain(|node| match (skill.id.as_str(), node.id.as_str()) {
-                    ("noxious_strike", "corrosive_reach") => weapon_kind == "Polearm",
-                    ("rebound", "marksmanship") => weapon_kind == "Bow",
-                    ("astropes_gift", "master_of_javelin") => weapon_kind == "Throwing",
-                    _ => true,
-                });
+                .retain(|node| node_weapon_ok(&skill.id, &node.id, weapon_kind));
         }
         let agg = crate::calc::subskill::aggregate_subskill_stats(
             &owner,
@@ -600,6 +595,31 @@ pub fn apply_strength_to_life(attributes: &HashMap<String, Ranged>, stat_sources
 
 // Pushes passive stats, returns the ranks map. `extra_ranks` carries externally
 // granted skills; same-skill ranks do not stack — the higher level wins.
+// Relic procs cast buffs at the item's level. These ranks stay out of the
+// returned skill bonuses so they never raise a class skill of the same name.
+fn proc_buff_ranks(inventory: &Inventory) -> HashMap<String, Ranged> {
+    let mut out: HashMap<String, Ranged> = HashMap::new();
+    for (_, item, _) in data::inventory_entries(inventory) {
+        let Some(base) = data::get_item(&item.base_id) else {
+            continue;
+        };
+        for grant in data::proc_skill_grants(base) {
+            let rank = crate::calc::rank::item_skill_rank_range(
+                &grant.name,
+                grant.rank.as_ranged(),
+                None,
+                crate::calc::rank::item_skill_bonus_override(item, &grant.name),
+            );
+            let entry = out
+                .entry(normalize_skill_name(&grant.name))
+                .or_insert((0.0, 0.0));
+            entry.0 = entry.0.max(rank.0);
+            entry.1 = entry.1.max(rank.1);
+        }
+    }
+    out
+}
+
 pub fn apply_item_granted_passive_stats(
     inventory: &Inventory,
     extra_ranks: Option<&HashMap<String, Ranged>>,
@@ -616,9 +636,14 @@ pub fn apply_item_granted_passive_stats(
             entry.1 = entry.1.max(max);
         }
     }
+    let proc_ranks = proc_buff_ranks(inventory);
     for granted in data::item_granted_skills().iter() {
         let key = normalize_skill_name(&granted.name);
-        let (rank_min, rank_max) = ranks.get(&key).copied().unwrap_or((0.0, 0.0));
+        let own = ranks.get(&key).copied().unwrap_or((0.0, 0.0));
+        let (rank_min, rank_max) = match proc_ranks.get(&key) {
+            Some(proc) if granted.condition.is_some() => (own.0.max(proc.0), own.1.max(proc.1)),
+            _ => own,
+        };
         if rank_max <= 0.0 {
             continue;
         }
@@ -895,5 +920,15 @@ pub fn apply_charge_attribute_damage(
                 forge: None,
             },
         );
+    }
+}
+
+/// Amazon nodes that explicitly require the equipped weapon class.
+pub(crate) fn node_weapon_ok(skill_id: &str, node_id: &str, weapon_kind: &str) -> bool {
+    match (skill_id, node_id) {
+        ("noxious_strike", "corrosive_reach") => weapon_kind == "Polearm",
+        ("rebound", "marksmanship") => weapon_kind == "Bow",
+        ("astropes_gift", "master_of_javelin") => weapon_kind == "Throwing",
+        _ => true,
     }
 }

@@ -88,7 +88,8 @@ pub fn compute_weapon_damage(
         (weapon_max * (1.0 + skill_max / 100.0) + add_phys_max) * bound_multiplier.1;
 
     // Crit: averaged via (1 + crit% * chance% / 10000)
-    let crit_chance = r_max(rg(stats, "crit_chance"));
+    // StatCritRate caps the chance at 95%.
+    let crit_chance = r_max(rg(stats, "crit_chance")).min(95.0);
     let crit_damage_pct = r_max(rg(stats, "crit_damage"));
     let crit_mult = 1.0 + crit_damage_pct * crit_chance / 10_000.0;
     let crit_mult_on_proc = 1.0 + crit_damage_pct / 100.0;
@@ -138,11 +139,7 @@ pub fn compute_weapon_damage(
     let ow_min = open_wounds_damage(base_phys_min, crush_armor_mult, status_mult, projectiles);
     let ow_max = open_wounds_damage(base_phys_max, crush_armor_mult, status_mult, projectiles);
 
-    let ias = rg(stats, "increased_attack_speed");
-    let ias_more = rg(stats, "increased_attack_speed_more");
-    let base_aps = r_max(rg(stats, "attacks_per_second"));
-    let aps_min = base_aps * (1.0 + r_min(ias) / 100.0) * (1.0 + r_min(ias_more) / 100.0);
-    let aps_max = base_aps * (1.0 + r_max(ias) / 100.0) * (1.0 + r_max(ias_more) / 100.0);
+    let (aps_min, aps_max) = super::attacks_per_second(stats);
 
     let enemy_phys_res_pct = enemy_resistances.get("physical").copied().unwrap_or(0.0);
     let phys_resistance_ignored_pct = r_max(rg(stats, "ignore_physical_res")).clamp(0.0, 100.0);
@@ -446,7 +443,7 @@ mod tests {
     fn full_stack_compound_parity() {
         // Compound smoke test of every multiplicative stage interacting.
         //   weapon = 100, attack_damage = 50%, additive_phys = 10, fire = 20
-        //   crit% = 100, crit_chance = 100 → crit_mult = 2.0 (averaged = proc)
+        //   crit% = 100, crit_chance = 100 capped to 95 → crit_mult = 1.95
         //   deadly = 100 → deadly_mult = 1.35 (S8)
         //   crushing default 1.5, armor_break = 0
         //   bleeding = 30% (active), burning = 20% (active) → status = 1 + 0.5 = 1.5
@@ -470,14 +467,14 @@ mod tests {
         let mut res = HashMap::new();
         res.insert("physical".into(), 40.0);
         // base_phys = 100 * 1.5 + 10 = 160
-        // phys_crit = 160 * 2 = 320
-        // phys_eff  = 320 * 1.5 * 1.35 = 648
-        // hit_raw   = (648 + 20) * 1.5 * 1 * 2 = 2004
+        // phys_crit = 160 * 1.95 = 312
+        // phys_eff  = 312 * 1.5 * 1.35 = 631.8
+        // hit_raw   = (631.8 + 20) * 1.5 * 1 * 2 = 1955.4
         // ow (no crit/deadly) = 160 * 1.5 * 1.5 * 1.5 * 2 * 0.2 = 216
-        // dps       = (2004 + 216) * 0.8 = 1776
+        // dps       = (1955.4 + 216) * 0.8 = 1737.12
         let r = compute_weapon_damage(Some(&w), &s, &c, &res, Some(2));
-        assert_eq!(r.hit_min, 2004);
+        assert_eq!(r.hit_min, 1955);
         assert_eq!(r.open_wounds_min, 216);
-        assert_eq!(r.dps_min, 1776);
+        assert_eq!(r.dps_min, 1737);
     }
 }

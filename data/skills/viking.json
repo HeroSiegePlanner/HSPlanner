@@ -35,6 +35,9 @@
   {
     "id": "charge",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast, base (no p11/p13), steady state (Resztki C: Charge has tag 6 Movement, so a repeated cast bypasses the [204] lock, skillsCharge does not write [142] for viking 11 (only pyromancer @0x1460a7df1 and shield_lancer @0x1460ccc8f), and the cast cooldown is 60/c: period = max(60/c, run time) = 35 frames = 0.571 s at c = 1.75 (R4 had 43 frames = ceil(72/c)+1; DPS x1.23); for talent 11 the pass-through flag [380] stays false, so the charge ends at the first contact with the dummy; a repeated use next to the dummy has run ~0 (I), the first use from 160 px needs ~130 px / 9 px per frame = ~15 frames (I)): the charge ends with one Viking_Charge_obj ring (skillsCharge L762-L771, singleHit, mask 80x80 = r 40 px * [71]) on top of the dummy with damage[1] = floor(d1*(1 + [193]*[29] + [31])) = d1 in the base = the main hit; it also stuns 2 s, so p3 Bodyslam applies from the first hit = 1.0 hit, the same at 160 px (the charge closes the distance; a 23.7 px lateral offset at cursor (x, y-24) still gives contact, I). baseProjectiles = 1; perExtraProjectile = 0 (no projectile count for the base ring; p12 Crashquake 3r waves of 0.45r d1 and p14 Mountain Fall r boulders of 0.35r d1 have their own damage). The passive Devastating Charge (talent 15: an extra Viking_Devastating_Charge_obj at the charge end with damage[1] = floor(d1*(2 + [193]*[29] + [31] + c15)), c15 = LTD(15,V1)*0.01, ~1.25 at 20 points in the passive (I), i.e. ~3.25 d1 on a disc r ~106 px = +1 hit per use) is NOT included here: it belongs to the passive. With p11/p13 the charge passes through the dummy and the objects spawn only at the end of the free run (the 'contact -> ring' model does not hold)."},
+    "usePeriod": {"kind": "charge", "extraFrames": 15, "trigger": false, "note": "No playerEffect[142] for viking 11 (Resztki C), so no trigger frames: period = max(cooldown 60/c = 35 frames at c = 1.75 (tag Movement bypasses the [204] lock), charge time). Charge time at 160 px, rank 20, no subskills: ~130 px (160 minus the 24-36 px contact distance) / 9 px per frame = ~15 frames (card Resztki C, 'pierwsza szarza z 160 px dluzsza o bieg ~15 kl.', I); a repeated use next to the dummy has run ~0. Result max(35, 15) = 35 frames = 0.571 s. With p11/p13 the charge passes through the dummy and the period is the free-run time (5 s*(1 + 10 %/r p2), wall or key release, I). p8 Berserking Ram shortens the 15-frame run only."},
     "classId": "viking",
     "name": "Charge",
     "kind": "active",
@@ -48,7 +51,8 @@
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Movement"
     ],
     "tree": "Shield Bearer",
     "position": {
@@ -56,17 +60,13 @@
       "col": 2
     },
     "damageType": "arcane",
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 21.75
-    },
+    "damageFormula": { "base": 0, "perLevel": 20 },
     "manaCostFormula": {
       "base": 3.5,
       "perLevel": 0.75,
       "rankIndexing": "fullRank"
     },
-    "baseCastRate": 1,
-    "baseCooldown": 5,
+    "baseCastRate": 1.75,
     "movementDuringUse": 85,
     "bonusSources": [
       {
@@ -105,67 +105,73 @@
       {
         "id": "power_charge",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40]}], "confidence": "C", "note": "card p1 Power Charge: LSSD += 8 %/r on damage[1] = LTD(V1)*(1+LSSD) (C). Planner arcane 8/r matches. Base 1.0 = one ring hit on contact (no p11/p13)."},
         "name": "Power Charge",
         "description": "Increases the damage dealt by charge.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "hyperfocus",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [10, 20, 30, 40, 50]}], "confidence": "C", "note": "card p2 Hyperfocus: charge time [11] x(1+10 %/r). Base charge ends at contact, so 0 dummy DPS in the base; matters only for the free run with p11/p13. Planner skill_duration 10/r matches."},
         "name": "Hyperfocus",
         "description": "Increases the duration of charge.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 10 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 10}
         }
       },
       {
         "id": "bodyslam",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.2, 1.4, 1.6, 1.8, 2.0]}], "confidence": "C", "note": "card p3 Bodyslam: [179] = 20 %/r vs stunned, increased pool x(1+0.2r) from the first hit (ring stun lands on the dummy, rule 27; InheritModifiers copies it to the ring). Planner extra_damage_stunned 20/r matches."},
         "name": "Bodyslam",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 20 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 20}
         }
       },
       {
         "id": "resilience",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility"}], "confidence": "C", "note": "card p4 Resilience: DR buff 10 %/r for 5 s, no dummy damage. Planner all_damage_taken_reduced_pct 10/r matches."},
         "name": "Resilience",
         "description": "Take reduced damage while charging and shortly after.",
         "maxRank": 5,
         "effects": {
-          "base": { "all_damage_taken_reduced_pct": 0 },
-          "perRank": { "all_damage_taken_reduced_pct": 10 }
+          "base": {"all_damage_taken_reduced_pct": 0},
+          "perRank": {"all_damage_taken_reduced_pct": 10}
         }
       },
       {
         "id": "overconfidence",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p5 Overconfidence: ring scale [71] = 1+17.5 %/r; dummy already inside the ring, so 0 extra hits. Planner area_of_effect 17.5/r matches."},
         "name": "Overconfidence",
         "description": "Increases the area of effect radius of charge.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 17.5 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 17.5}
         }
       },
       {
         "id": "spirit_breaker",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.09, 1.311, 1.606, 1.939, 2.287]}], "confidence": "C", "note": "card p6 Spirit Breaker: [979] = [30/r, 5 s] -> arcane break from the ring. byRank = expected arcane multiplier 1+0.3r*uptime, uptime = 1-(1-0.04r)^(5/T) with T = T_cast = 0.571 s (8.75 uses in 5 s). Cadence is an assumption (I).", "plannerFix": "card: arcane break is rolled per USE (chance 4r %, L333) and lasts 5 s; the arcane multiplier x(1+0.3r) applies only during the uptime 1-(1-0.04r)^(5/T). Planner uses on_hit chance 4r with flat arcane_break 30/r."},
         "name": "Spirit Breaker",
         "description": "Inflicts arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 30 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -178,89 +184,97 @@
       {
         "id": "violent_momentum",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p7 Violent Momentum: [193] = 5 %/r, stacks [29] = 0 on a dummy.", "plannerFix": "card: [193] = 5 %/r multiplies only the ring by (1+[193]*[29]) where [29] counts stacks over the charge time; on a dummy the charge ends at contact, stacks = 0. Planner adds a static arcane 5/r to every hit."},
         "name": "Violent Momentum",
         "description": "Increases the impact damage dealt by charge for each second spent charging.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 5 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 5}
         }
       },
       {
         "id": "berserking_ram",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "period_frames", "byRank": [-2.5, -4.286, -5.625, -6.667, -7.5], "note": "relative to extraFrames 15; no effect while run < the 35-frame cooldown floor"}], "confidence": "I", "note": "card p8 Berserking Ram: charge speed x(1+0.2r) shortens only the run. Resztki C: period = max(60/c = 35 frames, run), so with the 15-frame run at 160 px (and ~0 next to the dummy) the speed does not change the period; byRank = -15*(1-1/(1+0.2r)) frames on the dummy-model charge extraFrames 15. It matters only with p11/p13 (free run). Run length is I."},
         "name": "Berserking Ram",
         "description": "Increases the speed of your charge.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 20 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 20}
         }
       },
       {
         "id": "crushing_impact",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [4, 8, 12, 16, 20]}], "confidence": "C", "note": "card p9 Crushing Impact: crit chance [1004] = 4 %/r (byRank = chance %), crit damage [1003] = +35 %/r on the ring, Devastating Charge, Crash Quake and Mountain Fall (InheritModifiers). Planner crit_chance 4/r and crit_damage 35/r match."},
         "name": "Crushing Impact",
         "description": "Chance to critically hit with increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_chance": 0, "crit_damage": 0 },
-          "perRank": { "crit_chance": 4, "crit_damage": 35 }
+          "base": {"crit_chance": 0, "crit_damage": 0},
+          "perRank": {"crit_chance": 4, "crit_damage": 35}
         }
       },
       {
         "id": "frenzied_mind",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "other", "byRank": [10, 20, 30, 40, 50], "note": "% arcane skill damage at the steady-state 5 stacks (2r % per stack); apply as arcane_skill_damage, not LSSD"}], "confidence": "I", "note": "card p10 (R4 11#1): BuffAdd(gracz, 3, 2r, 5 s, stack) once per ring hit, stack limit 5 (BuffAdd arg6 = 5.0 @0x15067b250, call @0x145161caf); refresh 5 s >> period 0.571 s, so steady state 5 stacks after 5 uses: +2r % x 5 = +10r % arcane skill damage (stack multiplication I: the reader of buff 3 in StatArcaneSkillDamage 0x145c220b0 was not fully decoded). The n-th use has min(n-1, 5) stacks. Planner has a static arcane_skill_damage 2/r.", "plannerFix": "Frenzied Mind is a stacking buff (+2 %/r arcane per stack, stacks from each ring hit, cap I); planner has a static arcane_skill_damage 2/r."},
         "name": "Frenzied Mind",
         "description": "Stack a buff increasing your arcane skill damage when hitting monsters with charge.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 2 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 2}
         }
       },
       {
         "id": "forceful_grab",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0, 0, 0]}, {"kind": "damage_mult", "byRank": [1.3, 1.6, 1.9]}], "confidence": "I", "note": "card p11 (R3): playerEffect[30] makes the charge pass through (0x14608dda2); the ring hits only if the free run ends within the ring radius (wall/release dependent, I), so set_hits 0 is the expected value. Ring x(1+0.3r) (playerEffect[31]) applies to any ring hit.", "plannerFix": "Forceful Grab does not stop the charge: with p11 the charge passes through the dummy and the ring fires only at the end of the free run, so ~0 ring hits on the dummy. Planner adds static arcane 30/r and area 25/r to a contact hit."},
         "name": "Forceful Grab",
         "description": "Grab monsters on your path dealing damage and stunning them when you crash into terrain.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0, "arcane_skill_damage": 0 },
-          "perRank": { "area_of_effect": 25, "arcane_skill_damage": 30 }
+          "base": {"area_of_effect": 0, "arcane_skill_damage": 0},
+          "perRank": {"area_of_effect": 25, "arcane_skill_damage": 30}
         }
       },
       {
         "id": "crashquake",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.9, 3.6, 7.83], "per": "use", "replacesProjectileHits": true}], "confidence": "I", "note": "card p12 (R4 11#3): 3r Crash Quake waves every 360/(3r) deg from the run direction pe[154], first segment 32 px from the player, then every 60 px (circle mask r ~40, singleHit, no pack); the player stops 18-41 px from the dummy. Segments hitting the dummy per use (segment 0 and 1 of each wave, threshold 52 px): mean ~0.65*n, n = 3r: 2.0 (1-3), 4.0 (3-6), 5.8 (4-9) for r = 1..3 (r = 4, 5 would be 8.0 and 9.8; planner maxRank 3). Each hit floor(0.45r*d1): extra = hits*0.45r = 0.9, 3.6, 7.83. Replaces the old '1-2 segments x 1 aimed wave'. C for directions/32 px/60 px, I for pe[154], the circular mask and the start phase.", "plannerFix": "Crashquake waves are 3r projectiles but only those aimed at the dummy hit; planner projectile_count 3/r with perExtraProjectile 0 gives 0 extra hits, and arcane 45/r is applied to every hit."},
         "name": "Crashquake",
         "description": "Unleash powerful shockwaves when crashing into monsters or terrain.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
-          "perRank": { "projectile_count": 3, "arcane_skill_damage": 45 }
+          "base": {"projectile_count": 0, "arcane_skill_damage": 0},
+          "perRank": {"projectile_count": 3, "arcane_skill_damage": 45}
         }
       },
       {
         "id": "whirling_charge",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3.3, 5.1, 6.9]}], "confidence": "I", "note": "card p13 (R3, playerEffect[42]): whirlwinds damage d1*(1+1.2r) each; 1-2 hit the dummy per pass (I, midpoint 1.5), so set_hits = 1.5*(1+1.2r) = 3.3, 5.1, 6.9 per use.", "plannerFix": "Whirling Charge is a transformation: the charge passes through the dummy and leaves whirlwinds (every ~12 frames) instead of one ring; planner applies arcane 120/r and area 50/r to the ring only."},
         "name": "Whirling Charge",
         "description": "Charge forward in a straight line unleashing a massive whirlwind around you.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0, "arcane_skill_damage": 0 },
-          "perRank": { "area_of_effect": 50, "arcane_skill_damage": 120 }
+          "base": {"area_of_effect": 0, "arcane_skill_damage": 0},
+          "perRank": {"area_of_effect": 50, "arcane_skill_damage": 120}
         }
       },
       {
         "id": "mountain_fall",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.35, 1.4, 3.15], "per": "use"}], "confidence": "C", "note": "card p14: [196] = [1/r, 35 %/r]: r boulders at each enemy within 80*[71] px, damage floor(d1*0.35r); the dummy at the ring centre gets all of them. Extra = r*0.35r = 0.35, 1.4, 3.15.", "plannerFix": "Mountain Fall adds r boulders per use, each 0.35r*d1 (extra hits = 0.35 r^2); planner gives projectile_count +1/r with perExtraProjectile 0 (0 hits) and arcane 35/r on the whole hit."},
         "name": "Mountain Fall",
         "description": "The mountain breaks and huge boulders fall down on monsters around you when crashing into monsters or terrain.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0, "arcane_skill_damage": 0 },
-          "perRank": { "projectile_count": 1, "arcane_skill_damage": 35 }
+          "base": {"projectile_count": 0, "arcane_skill_damage": 0},
+          "perRank": {"projectile_count": 1, "arcane_skill_damage": 35}
         }
       }
     ]
@@ -384,7 +398,7 @@
       "row": 2,
       "col": 1
     },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "effectDuration": 100,
     "movementDuringUse": 85,
     "manaCostFormula": {
@@ -403,6 +417,8 @@
   {
     "id": "odins_fury",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast, IN-ZONE (an area object created at the player: Viking_Odins_Fury_obj, singleHit, no tick, deadly for 13 frames after the 2-frame activation; mask Viking_Odins_Fury_spr 213x213 with image_xscale 1.5 = an ellipse with semi-axes ~160 x 106 px around the player; the dummy is taken inside the area): 1 hit of damage[1] = D = the main hit = 1.0. At the strict 160 px the reach is direction dependent: along the horizontal axis the ellipse plus the dummy radius reaches 172 px (hit), along the vertical axis only ~118 px (miss); averaging the overlap test of the dummy circle (r 12) against the card's semi-axes over all azimuths gives ~0.25 hits (my estimate from the card's axes, I). baseProjectiles = 1; perExtraProjectile = 0 (no gear projectiles; p12 Pulsing Echo adds r pulses every 0.15 s with damage d1*(1 + 0.2r)^k - growing, each its own map; p8 double cast x(1 + 0.15r); p4/p7 DoTs; p14 landing hit floor(0.75r * sum d) once per ~46-frame lift are subskill effects)."},
     "classId": "viking",
     "name": "Odin's Fury",
     "kind": "active",
@@ -424,15 +440,12 @@
       "col": 1
     },
     "damageType": "arcane",
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 18.5
-    },
+    "damageFormula": { "base": 0, "perLevel": 15 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
     },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "effectDuration": 2,
     "range": 320,
     "movementDuringUse": 85,
@@ -473,45 +486,49 @@
       {
         "id": "crippling_shout",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40]}], "confidence": "C", "note": "card Odin's Fury p1 table: LSSD += 8 %/r, x(1+LSSD); planner arcane_skill_damage 8/r equivalent. Base dummyHits 1.0 is IN-ZONE (per rule 24, dummy inside the ellipse)."},
         "name": "Crippling Shout",
         "description": "Increases the damage dealt by odin´s fury.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "howling_cry",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "I", "note": "card p2 Howling Cry: stun only (C/I); no dummy damage. Card flags its own formula [105]=X+X(1+50%/r) as probably a typo for X(1+p2%); stun_duration 50/r in planner matches the card's percent."},
         "name": "Howling Cry",
         "description": "Increases the stun duration of odin's fury.",
         "maxRank": 5,
         "effects": {
-          "base": { "stun_duration_pct": 0 },
-          "perRank": { "stun_duration_pct": 50 }
+          "base": {"stun_duration_pct": 0},
+          "perRank": {"stun_duration_pct": 50}
         }
       },
       {
         "id": "mind_tactics",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility"}], "confidence": "C", "note": "card p3 Mind Tactics: mana cost -7.5 %/r only; planner mana_cost_reduction 7.5/r matches."},
         "name": "Mind Tactics",
         "description": "Decreases the mana cost of odin´s fury.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7.5 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7.5}
         }
       },
       {
         "id": "flaming_fury",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [35, 70, 105, 140, 175]}], "confidence": "C", "note": "card p4 [18]=floor(dmg*35 %/r) (L109); value = DoT base in % of one hit per rank. DoT is modelled separately by the engine (reports/dot_debuffs.md).", "plannerFix": "p4 is a burning DoT of base floor(hit dmg*35 %/r) (tick ceil([18]*(1+pe8+pe13))/s, 5 s, refreshed per hit), not an increased burning damage pool; planner uses increased_burning_damage 35/r plus burning state 35/r."},
         "name": "Flaming Fury",
         "description": "Inflicts burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 35 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -524,34 +541,37 @@
       {
         "id": "echoing_roar",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "I", "note": "card p5 Echoing Roar: area +25 %/r (v scale, L51, I); the dummy is already inside the area, so 0 extra hits. Area scale in planner 25/r matches."},
         "name": "Echoing Roar",
         "description": "Increases the area of effect radius of odin´s fury.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 25 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 25}
         }
       },
       {
         "id": "tormenting_shout",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.425, 0.85, 1.275, 1.7, 2.125]}], "confidence": "C", "note": "card p6 Tormenting Shout: LSSD += MaxLife*0.01*0.425 %/r, i.e. life-dependent LSSD. Value = % of max life per rank entering LSSD (x(1+LSSD)); no fixed damage number without the player's max life. Planner conversion_max_life 0.425/r matches the card numbers."},
         "name": "Tormenting Shout",
         "description": "Increases the damage of odin's fury based on your maximum life.",
         "maxRank": 5,
         "effects": {
-          "base": { "conversion_max_life": 0 },
-          "perRank": { "conversion_max_life": 0.425 }
+          "base": {"conversion_max_life": 0},
+          "perRank": {"conversion_max_life": 0.425}
         }
       },
       {
         "id": "emotional_damage",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [35, 70, 105, 140, 175]}], "confidence": "C", "note": "card p7 [22]=floor(dmg*35 %/r) (L108) -> bleeding DoT.", "plannerFix": "p7 is a bleeding DoT of base floor(hit dmg*35 %/r) (buff 3, 5 s, physical, refreshed per hit), not increased_bleeding_damage; planner also adds a bleeding proc 100 %."},
         "name": "Emotional Damage",
         "description": "Inflicts bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 35 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -564,34 +584,37 @@
       {
         "id": "echo_of_duality",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "other", "byRank": [1.15, 1.3], "note": "already modelled by planner multicast_chance; "}], "confidence": "C", "note": "card p8 Echo of Duality: chance 15 %/r per use to repeat the cast after 0.25 s (Universal_Double_Cast_obj); expected multiplier x(1+0.15r). Planner multicast_chance 15/r matches."},
         "name": "Echo of Duality",
         "description": "Chance on cast to unleash an additional shout.",
         "maxRank": 2,
         "effects": {
-          "base": { "multicast_chance": 0 },
-          "perRank": { "multicast_chance": 15 }
+          "base": {"multicast_chance": 0},
+          "perRank": {"multicast_chance": 15}
         }
       },
       {
         "id": "shout_of_the_hunt",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility"}], "confidence": "C", "note": "card p9 Shout of the Hunt: BuffAdd move speed 25/r for 3 s; no dummy DPS. Planner movement_speed 25/r matches."},
         "name": "Shout of the Hunt",
         "description": "Increases your movement speed for a short period of time after using odin's fury.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 25 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 25}
         }
       },
       {
         "id": "dominating_howl",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.08, 1.16, 1.24, 1.32, 1.4]}], "confidence": "C", "note": "card p10 Dominating Howl: arcane break 8 %/r on hit (5 s, buff 8) multiplies arcane damage x(1+break); stays active for casts < 5 s apart, so counted as always on. Planner arcane_break 8/r matches."},
         "name": "Dominating Howl",
         "description": "Inflicts arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 8 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 8}
         },
         "proc": {
           "trigger": "on_hit",
@@ -604,45 +627,49 @@
       {
         "id": "warcry",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "I", "note": "card p11 Warcry: [279] = floor(LTD(V1)*(LSSD+35 %/r)) is never read; slow only (C/I).", "plannerFix": "Warcry arcane_skill_damage 35/r has no damage effect in game: the card's [279] value has no reader, the skill only slows (0 dummy damage)."},
         "name": "Warcry",
         "description": "Odin’s fury now knocks back monsters and if they hit a wall or an object they take extra damage, get stunned and are pulled back to the player.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 35 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 35}
         }
       },
       {
         "id": "pulsing_echo",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.2, 3.36, 8.256], "per": "use", "replacesProjectileHits": true}], "confidence": "C", "note": "card p12: pulseAmount=r, pulse k=1..r has d1*(1+0.2r)^k; extra hits per use = sum_{k=1..r}(1+0.2r)^k = 1.2 / 3.36 / 8.256 (r=1/2/3). Base hit 1.0 counts the main hit. Children inherit effects (C). Pulses use the same centre (in-zone).", "plannerFix": "Pulsing Echo is r extra pulses with damage d1*(1+0.2r)^k (growing per pulse, its own hit map); planner gives projectile_count +1/r with perExtraProjectile 0.0, so no extra hits; the 20/r arcane is a per-pulse growth, not LSSD."},
         "name": "Pulsing Echo",
         "description": "Now performs an echoing shout pulsating multiple times dealing increased damage with each pulse.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "arcane_skill_damage": 20, "projectile_count": 1 }
+          "base": {"arcane_skill_damage": 0, "projectile_count": 0},
+          "perRank": {"arcane_skill_damage": 20, "projectile_count": 1}
         }
       },
       {
         "id": "trembling_roar",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.3, 1.6, 1.9]}], "confidence": "C", "note": "card p13 Trembling Roar: x(1+0.3r) on hits vs burning/bleeding dummy (needs p4 or p7 to keep the dummy burning/bleeding; OR-condition not encoded as requires); buff uptime ~100 % (3 s > T_cast). Planner extra_damage_burning/bleeding 30/r is the same number in additive form."},
         "name": "Trembling Roar",
         "description": "Gain a buff dealing extra damage to burning and bleeding monsters.",
         "maxRank": 3,
         "effects": {
-          "base": { "extra_damage_burning": 0, "extra_damage_bleeding": 0 },
-          "perRank": { "extra_damage_burning": 30, "extra_damage_bleeding": 30 }
+          "base": {"extra_damage_burning": 0, "extra_damage_bleeding": 0},
+          "perRank": {"extra_damage_burning": 30, "extra_damage_bleeding": 30}
         }
       },
       {
         "id": "roaring_carnage",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.701, 1.402, 2.103], "per": "use"}], "confidence": "I", "note": "card p14 [139]=75/r lifts the dummy; landing hit floor(0.75r*sum d_t) once per lift (~46 frames, class 'brak': no crit/mults). Per use = 0.75r*min(1, period/46 frames) with the R4 cast period 43 frames (ceil(72/c)+1 at c = 1.75; was T_cast 34 frames): 0.75r*43/46 = 0.701r. The card tells to recompute period-derived formulas with the new period (R4 'Wzory pochodne'). Lift cadence and landing timing are I.", "plannerFix": "Roaring Carnage gives a landing hit of 0.75r*sum(d) per lift (not arcane +75/r damage); one landing per lift (~46 frames) and the lift is triggered by the dummy hit (buff 47), so per use it is ~0.75r*(34/46)."},
         "name": "Roaring Carnage",
         "description": "Knock up monsters causing them to take damage when they land.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 75 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 75}
         }
       }
     ]
@@ -701,7 +728,7 @@
       "row": 4,
       "col": 1
     },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "effectDuration": 100,
     "movementDuringUse": 85,
     "manaCostFormula": {
@@ -722,6 +749,9 @@
   {
     "id": "seismic_slam",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "I", "note": "Per attack, base (p13 off: the base is a jump), IN-ZONE per rule 24 and the same at 160 px: the player leaps a FIXED 180 px along the aim direction (lengthdir(180, tupm[7]); tupm[6], the cursor distance, does not change it) and on landing Viking_Seismic_Slam_obj (mask 69x69 precise, scale 2, singleHit, alarm[1] = 3 destroys it before any pulse) hits once with damage[0] = floor(floor(W*(1 + V1/100))*(1 + LSSD)) = the main hit; the zone for the dummy centre is ~158-310 px from the jump start with the aim line through the dummy centre (main result, rule 38; 155 px for cursor (x, y-24); pixel-by-pixel against the r 12 dummy, image_angle = 0); the player lands 179.8 px from the start, the blow axis is 0.7 px from the dummy, so 160 px is inside with a ~1.8-2 px margin (PoR4 a, Resztki D: margin I, sensitive to +-1 px of the discrete jump) = 1.0 hit. baseProjectiles = 1; perExtraProjectile = 0 (the planner's p12 Echoing Slam projectile_count only works with p13: 0 in the base). PERIOD: the jump happens on EVERY use of the base skill ([142] = 1, [143] = 10, g' = 0.35 + 0.75 = 1.10, v_z = 13.27 px/frame, T = 2*v_z/g' = 24.1 frames = lands in the 24th frame; plus 1 transition frame; casting is blocked in flight, rule 30; no in-flight effects since 10 is not one of the four rule-28 leaps): extraFrames = 25; R4 rules 31(k)/37: period = t_wyw + 25 frames with t_wyw = floor(24/S) + 1 (S = animation speed): S = 2: 38 frames = 0.633 s, S = 3: 34, S = 4: 32, S = 1.2: 46; the attack-animation lock ceil(72/S)+1 does NOT apply (the sequence switches to Jump_*, [204] is zeroed by the jump, I), so IAS helps only through t_wyw. p14 cooldown: period = max(1.5 s/(1 + 0.005*h_eff), the jump period). p13 Seismic Crack (no jump, 483 px crack, 2 hits in its zone, 1 at 160 px), p14 Younger Dryas (comet lands 283.5 px from the jump start: +1 hit there, 0 at 160 px; +1.5 s cooldown), p10, p5, p7 are subskill effects."},
+    "usePeriod": {"kind": "leap", "extraFrames": 25, "note": "Leap on EVERY use of the base skill (slamJump = p13 not learned): flight 24 frames (g' = pSt[42] 0.35 + [155] 0.75 = 1.10, [144] = 16, v_z = sqrt(2*1.10*(64+16)) = 13.27, T = 2*v_z/g' = 24.1; landing in the 24th frame, R3 10#0 C) + 1 transition frame ([142] 1 -> 2) = ~25 frames; casting is blocked in flight (rule 30). R4: period = t_wyw + 25 frames, t_wyw = floor(24/S) + 1 (the engine trigger frames), WITHOUT the max with the attack lock ceil(72/S)+1 / T_att of the old note: S = 2: 38 frames, S = 3: 34, S = 4: 32, S = 1.2: 46 ([204] zeroed by the jump, I). No in-flight effects ([143] = 10 is not one of {39, 428, 177, 152}). With p13 learned there is no jump."},
     "weaponRequirement": "melee",
     "classId": "viking",
     "name": "Seismic Slam",
@@ -753,10 +783,9 @@
       "rankIndexing": "fullRank"
     },
     "attackScaling": {
-      "weaponDamagePct": {
-        "base": 126,
-        "perLevel": 24
-      },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": true,
+      "weaponDamagePct": { "base": 226, "perLevel": 24 },
       "flatPhysicalMin": {
         "base": 5,
         "perLevel": 0
@@ -801,50 +830,55 @@
       {
         "id": "colossal_smash",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p1 Colossal Smash: hitbox scale 2+20 %/r (L180, L273-274), dummy already inside the zone -> 0. Planner area_of_effect 20/r matches the scale."},
         "name": "Colossal Smash",
         "description": "Increases the area of effect radius of seismic slam.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 20 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 20}
         }
       },
       {
         "id": "seismic_energy",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50]}], "confidence": "C", "note": "card p2 Seismic Energy: LSSD += 10 %/r multiplies the whole hit (x(1+LSSD)). Planner physical_skill_damage 10/r matches. Base 1.0 = in-zone jump hit."},
         "name": "Seismic Energy",
         "description": "Increases the damage dealt by seismic slam.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "lethal_crush",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [0, 0, 0, 0, 0]}], "confidence": "C", "note": "card p3 Lethal Crush: [1019] = 20/r, crit DAMAGE +20 %/r; crit chance unchanged (value 0). Planner crit_damage 20/r matches."},
         "name": "Lethal Crush",
         "description": "Increases critical strike damage dealt by seismic slam.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 20 }
+          "base": {"crit_damage": 0},
+          "perRank": {"crit_damage": 20}
         }
       },
       {
         "id": "cheap_slam",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75]}], "confidence": "C", "note": "card p4 Cheap Slam: [179] = 15 %/r vs stunned, increased pool x(1+0.15r) from the first hit (the slam's own stun [51] = 2 s lands on the dummy, rule 27; RSS(208)=0 assumed I). Planner extra_damage_stunned 15/r matches."},
         "name": "Cheap Slam",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 15 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 15}
         }
       },
       {
         "id": "seismic_aftershock",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p5 Seismic Aftershock: 0 on a living dummy; buff 83 only.", "plannerFix": "card: the aftershock is rolled per USE (L210, chance < 4r %) and deals its damage only when the target dies (ProjectileKill01Viking); planner uses trigger on_kill with chance 4r."},
         "name": "Seismic Aftershock",
         "description": "Targets have a chance to slam the ground on death dealing area of effect damage.",
         "maxRank": 5,
@@ -853,17 +887,19 @@
       {
         "id": "power_slam",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40]}], "confidence": "C", "note": "card p6 Power Slam: LSSD += 8 %/r (x(1+LSSD)); its branch L190-193 only changes slow/knockback (no dummy effect). Planner physical 8/r matches."},
         "name": "Power Slam",
         "description": "Knocks targets back dealing increased damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "earth_root",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [2, 8, 18, 32, 50]}], "confidence": "C", "note": "card p7 (L196): [60] = floor(dmg*40 %/r), [61] = 4 s. byRank = expected DoT per use in % of one hit = chance*value: 0.05r*40r = 2, 8, 18, 32, 50 %. Per proc value would be 40/80/120/160/200 %.", "plannerFix": "card: per-use roll (chance 5r %) that applies a poison DoT of 40r % of the hit for 4 s (Earth Bind, buff 0); planner applies root state with on_hit chance 5r and +40 %/r physical damage."},
         "name": "Earth Root",
         "description": "Chance to root targets in place on hit dealing additional damage over time.",
         "maxRank": 5,
@@ -880,6 +916,7 @@
       {
         "id": "slamming_flurry",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [6, 12, 18, 24, 30]}], "confidence": "C", "note": "card p8 Slamming Flurry: BuffAdd(gracz, 5, 6/r, 2 s); value shown is the buff when active; expected effect x(1+0.06r*U), U = 1-(1-0.03r)^(2/T). Period is set by the jump, so the gain is ~0 for s >= ~1.3.", "plannerFix": "card: the attack-speed buff is rolled per USE (L201, chance 3r %), not on hit; planner uses on_hit proc. Dummy DPS effect is ~0 here because the jump (24 frames) sets the period."},
         "name": "Slamming Flurry",
         "description": "Chance on hit to increase your attack speed for a short duration.",
         "maxRank": 5,
@@ -895,17 +932,19 @@
       {
         "id": "defiling_carcass",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p9 Defiling Carcass: [281] creates a corpse explosion only; 0 on the dummy.", "plannerFix": "planner adds physical +3 %/r and area +10 %/r to the slam itself; the card's damage source is a corpse explosion (Collision_Corpse_obj) that does not exist on a dummy, so the slam hit is unchanged."},
         "name": "Defiling Carcass",
         "description": "Hitting a corpse with seismic slam causes it to explode dealing increased area of effect damage to nearby targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "physical_skill_damage": 3, "area_of_effect": 10 }
+          "base": {"physical_skill_damage": 0, "area_of_effect": 0},
+          "perRank": {"physical_skill_damage": 3, "area_of_effect": 10}
         }
       },
       {
         "id": "shattered_earth",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.052, 0.128, 0.228, 0.352, 0.5], "per": "use"}], "confidence": "C", "note": "card p10 Shattered Earth (L206, Viking_Shattered_Earth_obj at target, singleHit, copies crit/stun): expected extra hits per use = 0.04r*(1+0.3r) = 0.052, 0.128, 0.228, 0.352, 0.5.", "plannerFix": "card: separate object d0*(1+0.3r) rolled per USE (chance 4r %), not on hit; planner on_hit proc with 30 %/r physical."},
         "name": "Shattered Earth",
         "description": "Chance to strike target with an earth pillar on hit knocking them airborne dealing additional damage.",
         "maxRank": 5,
@@ -921,45 +960,49 @@
       {
         "id": "polar_shift",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [150, 300, 450]}], "confidence": "C", "note": "card p11 Polar Shift: LSSD += 150 %/r; its scale +25 %/r (L220) does not change dummy hits (inside zone). Planner physical 150/r matches."},
         "name": "Polar Shift",
         "description": "Leap a short distance to smash the ground with massive force dealing increased damage with huge aoe.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "physical_skill_damage": 150, "area_of_effect": 25 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 25, "subtree_damage": 150}
         }
       },
       {
         "id": "echoing_slam",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.35, 1.7, 2.05], "per": "use", "replacesProjectileHits": true, "requires": "seismic_crack"}], "confidence": "I", "note": "card p12 Echoing Slam: pulse k of the crack has d0 + k*floor(0.35r*d0) (Alarm_0 L34). Only pulse k=1 covers the dummy at the first-crack centre (264 px), so extra hits = 1 + 0.35r = 1.35, 1.70, 2.05 (requires p13). Geometry of the pulse positions is I.", "plannerFix": "Echoing Slam adds pulses only together with Seismic Crack (p13); without p13 it adds 0. Planner gives physical +35 %/r and projectile_count +1/r with no requirement."},
         "name": "Echoing Slam",
         "description": "Slam multiple waves on a short distance increasing damage with each wave.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "physical_skill_damage": 35, "projectile_count": 1 }
+          "base": {"physical_skill_damage": 0, "projectile_count": 0},
+          "perRank": {"physical_skill_damage": 35, "projectile_count": 1}
         }
       },
       {
         "id": "seismic_crack",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [2, 2, 2]}, {"kind": "extra_hits", "byRank": [0.402, 0.804, 1.207], "per": "use"}], "confidence": "I", "note": "card p13 (main result, in-zone, aim line through the dummy centre: gap offset 0 px, PoR4 a): dummy at the first-crack centre (~264 px) gets 2 hits; at 160 px it gets 1 (set_hits 2 in-zone convention; base is in-zone 1). Landing hit floor(sum d*0.5r) once per lift (~46 frames, class 'brak', I): per use = 0.5r*min(1, period/46) with the R4 attack period (no jump) ceil(72/S)+1 = 37 frames at S = 2 (was T_att ~34 frames): 0.5r*37/46 = 0.402r (S = 1.2: period 61 -> 0.5r; S = 3: 25 frames -> 0.27r).", "plannerFix": "Seismic Crack is a transformation: no jump (period = T_att), a 483 px crack 64 px in front of the player, a lift and a landing hit floor(0.5r*sum d). Planner only applies physical +50 %/r to the jump hit."},
         "name": "Seismic Crack",
         "description": "Now smash in front of you in a long narrow line knocking monsters in air causing them to unleash an aoe pulse upon landing.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 50 }
+          "base": {"physical_skill_damage": 0},
+          "perRank": {"physical_skill_damage": 50}
         }
       },
       {
         "id": "younger_dryas",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.75, 2.5, 3.25], "per": "use"}, {"kind": "cooldown_s", "byRank": [1.5, 1.5, 1.5]}], "confidence": "C", "note": "card p14 (Alarm_0 L38-48): comet lands 283.5 px from jump start (inside the 168-304 px zone) -> +1 hit d0*(1+0.75r) per use; at 160 px 0 hits. Cooldown +1.5 s (period max(T_att, 1.5 s)). Comet blast radius is I.", "plannerFix": "card: Younger Dryas is a separate cold comet hit d0*(1+0.75r) landing 283.5 px from the jump start plus +1.5 s cooldown; planner applies physical +75 %/r to the whole hit."},
         "name": "Younger Dryas",
         "description": "Smashing the ground now drops a massive asteroid from the sky sending a huge tsunami dealing increased damage. Seismic Slam now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 75 }
+          "base": {"physical_skill_damage": 0, "cooldown_added": 1.5},
+          "perRank": {"physical_skill_damage": 75, "cooldown_added": 0}
         }
       }
     ]
@@ -1000,6 +1043,8 @@
   {
     "id": "throw",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 1.0, "confidence": "I", "note": "Per cast, IN-ZONE per rule 24 (the skill needs an enemy within 128 px: instance_nearest, visible, point_distance < 128 - the dummy is taken at <= 128 px; AT 160 PX THE SCRIPT ENDS WITH NO EFFECT = 0 hits): TalentsViking creates Viking_Monster_Throw_obj carrying the dummy (zSpeed 6, g 0.35, no [26]/netId 318 check in the script, Step_0 or Alarm_1, so the dummy is carried), it lands at gracz + lengthdir(min(64*(1 + p1), tupm[6]), tupm[7]) and at the last landing the dummy is moved onto it and an Explosion_Item_obj (r 32 px * size, active after 4 frames, damage[1] = D = the main hit) hits it = 1 hit (R3, C for the script and Step_0; the dummy's position relative to the landing point I). PERIOD (left null: the flight is the thrown dummy's, not a leap/charge/dash of the player; base = the plain cast period): R4/PoR4: the script runs t_wyw = 14 frames after the use and needs a visible dummy; the carried dummy is hidden for T_fl = 35.9 frames (rule 40, discrete Alarm_1 in frame 3, movement from frame 4; + T_b per bounce of p8: 19.8, 25.1, 30.6, 36.2, 41.8) so effective throws come every U*ceil(T_fl/U) frames with U = ceil(72/c)+1 = 43 at c = 1.75: base 43 frames = 0.717 s (the cast period, nothing to add; the old max(T_cast, t_wyw + 34) was wrong), p8 r = 1..5: 86, 86, 129, 172, 215 frames (failed casts skip the effect but use the animation, I) - encoded as p8 period_frames. PoR4 rule 40: the first landing is at 0.916*d1 = 58.7 px (not 64); after the throw the dummy stands at the last landing (58.7 / 94.6 / 141.9 / 198.7 / 266.8 / 344.4 px for r8 = 0..5), > 128 px from r8 >= 2, which a stationary-dummy scenario does not reproduce (I). Resztki E: the cursor on the dummy changes only p8 for D < 64 (d1 = tupm[6]); the base hit is unchanged. baseProjectiles = 1; perExtraProjectile = 1.0 (I): p13 Dimensional Pitch makes 1 + r throw objects with the same myEnemy and each has its own explosion (the card: '+r explosions; whether all carry the dummy I'). p8 Bouncing Around (1 + r explosions with growing damage 1.05^r), p9 (+0.25r d1 object), p6 shards (usually 0), p14 echo explosions are subskill effects."},
     "classId": "viking",
     "name": "Throw!",
     "kind": "active",
@@ -1026,7 +1071,7 @@
       "base": 5,
       "perLevel": 1
     },
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "effectDuration": 3,
     "movementDuringUse": 85,
     "bonusSources": [
@@ -1066,78 +1111,85 @@
       {
         "id": "home_run",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p1 Home Run: throw distance 64*(1+0.2r) (L614, L672); no extra damage (single explosion, carried dummy). Moves the landing point only. Planner skill_range 20/r matches."},
         "name": "Home Run",
         "description": "Increases the range of throw.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 20 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 20}
         }
       },
       {
         "id": "raging_power",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40]}], "confidence": "C", "note": "card p2 Raging Power: LSSD += 8 %/r on damage[1] = LTD(V1)*(1+LSSD). Planner arcane 8/r matches. Dummy base in-zone (<=128 px)."},
         "name": "Raging Power",
         "description": "Increases the damage dealt by throw.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "power_throw",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.909, 0.833, 0.769, 0.714, 0.667]}], "confidence": "I", "note": "card p3: gravity x(1+0.1r) shortens the flight. byRank = flight-time factor 1/(1+0.1r) (assumed inverse to gravity, I). Only matters when the flight is longer than T_cast (period = max(T_cast, t_lot)); the flight time itself is not given numerically in the card.", "plannerFix": "Power Throw raises gravity by 10 %/r (shorter flight), not projectile speed; planner projectile_speed 10/r is the wrong stat."},
         "name": "Power Throw",
         "description": "Increases the projectile speed of throw.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 10 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 10}
         }
       },
       {
         "id": "colossal_liftoff",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "other", "byRank": [2, 4, 6, 8, 10]}], "confidence": "C", "note": "card p4 Colossal Liftoff: LSSD += MaxLife*0.01*2 %/r (life-dependent). byRank = % of max life entering LSSD; no fixed number without the player's life. Planner conversion_max_life 2/r matches."},
         "name": "Colossal Liftoff",
         "description": "Increases throw's damage by a portion of your maximum life.",
         "maxRank": 5,
         "effects": {
-          "base": { "conversion_max_life": 0 },
-          "perRank": { "conversion_max_life": 2 }
+          "base": {"conversion_max_life": 0},
+          "perRank": {"conversion_max_life": 2}
         }
       },
       {
         "id": "flipper",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "I", "note": "card p5 Flipper: [287]/[288] copied only; no reader found, so 0 (I).", "plannerFix": "Flipper has no consumer in the code (sets [287] = 1 and [288] = 10 %/r copied to the explosion); planner adds arcane 10/r to the hit."},
         "name": "Flipper",
         "description": "Thrown monsters bounce off of walls increasing damage dealt with every bounce.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 10 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 10}
         }
       },
       {
         "id": "power_fall",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, 0, 0, 0, 0], "per": "use"}], "confidence": "I", "note": "card p6 (L57-69): 8 shrapnel of floor(d1*0.25r), 16x16 mask, dummy r 12 -> typically 0 extra hits (range 0-8 by start offset). Best reading 0 (I); the per-shrapnel damage would be 0.25r each.", "plannerFix": "Power Fall is 8 shrapnel objects of 0.25r*d1 starting at the landing point; they mostly miss the dummy. Planner adds arcane +25 %/r to the whole hit."},
         "name": "Power Fall",
         "description": "Thrown monsters smash into the ground with force causing ground fragments to fly around dealing damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 25 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 25}
         }
       },
       {
         "id": "breaking_fall",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75]}], "confidence": "C", "note": "card p7 Breaking Fall: [979] = [15 %/r, 5 s] arcane break from the explosion, stays up (5 s > T_cast): x(1+0.15r) arcane. Planner arcane_break 15/r matches."},
         "name": "Breaking Fall",
         "description": "Thrown monsters inflict arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 15 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1150,78 +1202,85 @@
       {
         "id": "bouncing_around",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.1, 2.52, 3.093, 3.858, 5.06], "per": "use"}, {"kind": "period_frames", "byRank": [43, 43, 86, 129, 172], "note": "delta of the effective-throw period vs the base 43 frames at c = 1.75: period = U*ceil(T_fl/U), U = ceil(72/c)+1, T_fl = 35.9 + sum T_b = 55.7, 80.8, 111.4, 147.6, 189.4 frames (r = 1..5); p3 Power Throw (gravity x(1+0.1r)) shortens T_fl"}], "confidence": "I", "note": "card p8 (R4 13#3 + PoR4 rule 40): the explosion mask is Odins_Fury x size (r ~80 px, 92 px reach to the dummy centre); landings (r8 = 1..5, d1 = 64): 58.7|94.6; 58.7|106.0|141.9; 58.7|115.4|162.7|198.7; 58.7|126.8|183.5|230.8|266.8; 58.7|136.2|204.4|261.1|308.4|344.4 px; the last landing always hits (carried dummy), landings k = 1..r hit when |D - L_k| <= 92. Hit counts for D = 16, 40, 64, 100, 128 (aim line far, d1 = 64): r8=1: 2,2,2,2,2; 2: 3,3,3,3,3; 3: 2,3,3,4,4; 4: 2,3,3,4,4; 5: 2,2,3,3,4. Damage: landing k is m^k and the last m^r with m = 1+0.05r (old card formula, assumed unchanged). extra = total - 1 main hit; byRank = midpoint of the D range (rank 1, 2 constant 1.1, 2.52 = the old values; r8 = 3: 1.671..4.514, grid mean 3.337; 4: 2.274..5.442, mean 4.117; 5: 3.302..6.817, mean 4.63). Cursor on the dummy and D < 64 (d1 = tupm[6] < 64) gives r8=3: 4,4,3,4,4; 4: 5,4,3,4,4; 5: 6,4,3,3,4 hits (Resztki E; note only). Dummy beyond 128 px: 0 (base). Damage weighting by landing is my derivation (I).", "plannerFix": "Bouncing Around is a growth per bounce x(1+0.05r) with 1+r explosions at the landing point (dummy there); planner adds arcane +5 %/r to every hit and projectile_bounces 1/r."},
         "name": "Bouncing Around",
         "description": "Thrown monster bounce off the ground dealing increased damage with every bounce.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "projectile_bounces": 0 },
-          "perRank": { "arcane_skill_damage": 5, "projectile_bounces": 1 }
+          "base": {"arcane_skill_damage": 0, "projectile_bounces": 0},
+          "perRank": {"arcane_skill_damage": 5, "projectile_bounces": 1}
         }
       },
       {
         "id": "bulls_eye",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.25, 0.5, 0.75, 1.0, 1.25], "per": "use"}], "confidence": "C", "note": "card p9 (handler L40): Universal_Damage_Return_obj with floor(d1*0.25r) on each explosion hit; 1 explosion hit per use -> 0.25r extra hits.", "plannerFix": "Bulls Eye adds a separate damage return hit of 0.25r*d1 (Universal_Damage_Return_obj); planner adds arcane +25 %/r to the hit instead."},
         "name": "Bulls Eye",
         "description": "When directly hitting another monster, cause the monster to be knocked up dealing area of effect damage when landing.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 25 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 25}
         }
       },
       {
         "id": "dive_bomb",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p10 Dive Bomb: explosion size x(1+0.2r) (area only); dummy already in the area -> 0. Planner area_of_effect 20/r matches."},
         "name": "Dive Bomb",
         "description": "Increases landing area of effect radius of throw.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 20 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 20}
         }
       },
       {
         "id": "ragesling",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [50, 100, 150]}], "confidence": "I", "note": "card p11: LSSD += 50 %/r; gravity x2 (L655); buff 48 on the enemy only at the last landing, reward only on kill (ProjectileKill01Viking) -> 0 on the living dummy. C/I in card.", "plannerFix": "Ragesling: planner projectile_count 4/r would add hits via perExtraProjectile 1.0, but the card's 4 is a buff on the kill (buff 48), 0 dummy hits. Keep arcane +50 %/r (LSSD) only."},
         "name": "Ragesling",
         "description": "Throws the monster faster, dealing massively increased damage to it and causing it to explode into meat chunks that deal damage to nearby monsters if it dies from the throw.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "arcane_skill_damage": 50, "projectile_count": 4 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 4, "subtree_damage": 50}
         }
       },
       {
         "id": "vacuum_pitch",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [25, 50, 75]}], "confidence": "C", "note": "card p12 Vacuum Pitch: LSSD += 25 %/r; pull radius 230*(1+[291])/2 (no dummy hit). Planner arcane 25/r and skill_range 25/r match."},
         "name": "Vacuum Pitch",
         "description": "When thrown monster lands it pulls nearby monsters towards it.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_range": 0, "arcane_skill_damage": 0 },
-          "perRank": { "skill_range": 25, "arcane_skill_damage": 25 }
+          "base": {"skill_range": 0, "subtree_damage": 0},
+          "perRank": {"skill_range": 25, "subtree_damage": 25}
         }
       },
       {
         "id": "dimensional_pitch",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 2, 3], "per": "use", "replacesProjectileHits": true}], "confidence": "I", "note": "card p13 (L708): loop of 1+1/r objects with the same myEnemy; each explosion is a separate hit. Assumed each object carries the dummy -> +r hits (I whether all carry it).", "plannerFix": "Dimensional Pitch gives +r throw objects, each with its own explosion (+r hits, base damage); planner adds arcane +40 %/r which the card does not contain, plus projectile_count 1/r converted by perExtraProjectile."},
         "name": "Dimensional Pitch",
         "description": "Additionally throw shadow copies of the monster with increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "arcane_skill_damage": 40, "projectile_count": 1 }
+          "base": {"arcane_skill_damage": 0, "projectile_count": 0},
+          "perRank": {"arcane_skill_damage": 40, "projectile_count": 1}
         }
       },
       {
         "id": "echoing_throw",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.25, 3.75, 10.172], "per": "use", "replacesProjectileHits": true}], "confidence": "I", "note": "card p14: [292] = 1/r impulses, [293] = 25 %/r growth per impulse (Explosion_Item_obj_Step_0 pulseDamage). Extra hits = sum_{k=1..r} (1+0.25r)^k = 1.25, 3.75, 10.172 (type of damage I).", "plannerFix": "Echoing Throw: r impulses, each x(1+0.25r) of the previous explosion (sum m^k); planner adds arcane +25 %/r to the hit and projectile_count 1/r (converted by perExtraProjectile 1.0)."},
         "name": "Echoing Throw",
         "description": "When thrown monster lands it shocks the ground multiple times with increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "arcane_skill_damage": 25, "projectile_count": 1 }
+          "base": {"arcane_skill_damage": 0, "projectile_count": 0},
+          "perRank": {"arcane_skill_damage": 25, "projectile_count": 1}
         }
       }
     ]
@@ -1229,6 +1288,8 @@
   {
     "id": "zeal",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per attack (melee strike, dummy inside weapon reach; no 160 px value in the card), one strike of the series: attackClasses fires 1 + [117] = 1 weapon hit W*(1 + V1*(1 + LSSD)/100) per use ([117] = 0, [294] = [295] = 0) = the main hit -> 1.0. SERIES MODEL for the engine (not a hit count), R4 rules 31(k)/37: Zeal has attack-speed base 10, NOT the player APS (TalentUseSetSpeed case 12, 0x146a57db8): S = 10*(1 + acc) = 10, t_wyw = 3 frames, strike period max(45/S, ceil(72/S)+1) = 9 frames (0.15 s) regardless of IAS; n = 2 + p1.s9 strikes, then the skill script's SetCooldown 1 s (from the frame of the last strike script, shortened by haste, rule 35; it overwrites the strike cooldown), so the series period is 9*(n - 1) + 3 + 60/(1 + 0.005*h_eff) frames: n = 2: 72 frames = 1.2 s for 2 hits (R3: (n - 1)*T_att + t_wyw + 1 s = ~1.52 s at APS 2; DPS of the series x1.27 at APS 2, x1.05 at APS 4, x1.54 at APS 1.2); base DPS n*dmg/1.2 s = 1.67*dmg/s does not depend on IAS (T_att in the p1/p13 formulas = 9 frames). baseProjectiles = 1; perExtraProjectile = 0: the planner's p1 projectile_count lengthens the series (+1 strike per series, not per use) and p11 Throwing Fury (+r attack projectiles in the same volley, thrown weapon only: they share the volley's singleHitPackId, so 0 extra hits, R4 12#2 C) do not add hits per use. p14 (+100 %/r on one strike of the series), p5 axes, p12 explosion (0.15r d0*(1 + 0.5r)), p7 bleed, p13 break stacks are subskill effects."},
     "weaponRequirement": "melee",
     "classId": "viking",
     "name": "Zeal",
@@ -1259,7 +1320,9 @@
       "rankIndexing": "fullRank"
     },
     "attackScaling": {
-      "weaponDamagePct": { "base": 75, "perLevel": 30 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 220, "perLevel": 30 },
       "flatPhysicalMin": { "base": 4, "perLevel": 0 },
       "flatPhysicalMax": { "base": 11, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -1295,50 +1358,55 @@
       {
         "id": "rapid_striking",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.5, 2.0, 2.5, 3.0, 3.5]}], "confidence": "C", "note": "card p1: series n = 2 + r strikes, then a 1 s pause. hits_mult = n/2 relative to the base series of 2 strikes. R4: the series period grows by 9 frames per extra strike (Zeal attack-speed base 10, strike period 9 frames, not T_att) plus the unchanged 3 + 60/(1 + 0.005h) tail; DPS effect = hits_mult divided by the period ratio (72 + 9r)/72 at h = 0 (engine series model).", "plannerFix": "Rapid Striking adds one strike per series (n = 2 + r), not a projectile; planner projectile_count 1/r is not a hit, and the planner has no series period 9*(n-1) + 3 + 60/(1 + 0.005h) frames (R4: strike period 9 frames, IAS-independent)."},
         "name": "Rapid Striking",
         "description": "Increases the amount of attacks done by zeal.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "fatal_blows",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40]}], "confidence": "C", "note": "card p2 Fatal Blows: LSSD += 8 %/r, but LSSD multiplies only the V1 part (120+30L) of the hit: D = W*(1+V1*(1+LSSD)/100). Engine must apply the V1 share; planner note (1) already models V1-only."},
         "name": "Fatal Blows",
         "description": "Increases the damage dealt by zeal.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "weapon_marksman",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50]}], "confidence": "C", "note": "card p3 Weapon Marksman (R4 12#2): weaponThrowing[pn][0] only gates adding the LSSD (+10 %/r of the V1 share) and sets [1085]; without a throwing weapon both are 0 (C). Melee base -> 0 unless the build uses a throwing weapon. [1085] = 5 %/r range/projectile speed has no dummy effect."},
         "name": "Weapon Marksman",
         "description": "Zeal now works with throwing weapons gaining increased attack range and damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0, "skill_range": 0 },
-          "perRank": { "physical_skill_damage": 10, "skill_range": 5 }
+          "base": {"skill_range": 0, "subtree_damage": 0},
+          "perRank": {"skill_range": 5, "subtree_damage": 10}
         }
       },
       {
         "id": "brutal_slashes",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [0, 0, 0, 0, 0]}], "confidence": "C", "note": "card p4 Brutal Slashes: [1019] = 10 %/r crit DAMAGE; chance unchanged (value 0). Planner crit_damage 10/r matches."},
         "name": "Brutal Slashes",
         "description": "Increases critical strike damage dealt by zeal.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 10 }
+          "base": {"crit_damage": 0},
+          "perRank": {"crit_damage": 10}
         }
       },
       {
         "id": "axes_more_axes",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p5 Axes, More Axes! (R4 12#1): Viking_Zeal_Axe_obj is created at the position of the hit enemy (the dummy; xxx = self.x @0x14b26af71, ProjectileCollision01Viking L83 with self = the hit enemy, asm 0x1451634a0-0x1451634e1) and Step_0 orbits it at orbitRadius 48; mask Paladin_Magic_Hammer_Hitbox_spr 54x54 x0.75 reaches at most ~28.7 px from the object centre, 48 - 28.7 = 19.3 > 12 px dummy radius -> 0 hits (not 0-3). C.", "plannerFix": "card: the axe is rolled per USE (chance 8r %) and is created at the target point and orbits it (radius 48, mask ~20 px), so the dummy sits at the orbit centre and gets 0 hits. Planner uses on_hit chance 8r with +15 %/r physical."},
         "name": "Axes, More Axes!",
         "description": "Chance to summon an orbiting axe around the target on hit.",
         "maxRank": 5,
@@ -1354,23 +1422,25 @@
       {
         "id": "slicing_perfection",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility"}], "confidence": "C", "note": "card p6 Slicing Perfection: attack rating x(1+10 %/r) (accuracy); no separate dummy damage (dummy taken as hit). Planner attack_rating_pct 10/r matches."},
         "name": "Slicing Perfection",
         "description": "Increases attack rating when using zeal.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "hemorrhaging_blows",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [5, 20, 45, 80, 125]}], "confidence": "C", "note": "card p7 (L475, L538): byRank = expected bleeding DoT per use in % of one hit = (0.10r)*(0.50r): 5, 20, 45, 80, 125 %.", "plannerFix": "card: bleeding DoT rolled per USE with chance 10 %*r of floor(hit*50 %*r) (buff 3, 5 s); planner uses on_hit chance 10r with increased_bleeding_damage 50/r."},
         "name": "Hemorrhaging Blows",
         "description": "Chance to inflict bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 50 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 50}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1383,50 +1453,55 @@
       {
         "id": "bleeding_out",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "requires": "hemorrhaging_blows"}], "confidence": "C", "note": "card p8 Bleeding Out: [177] = 10 %/r vs bleeding targets -> x(1+0.1r) only when the dummy bleeds (needs p7 Hemorrhaging Blows)."},
         "name": "Bleeding Out",
         "description": "Increases damage dealt to bleeding targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bleeding": 0 },
-          "perRank": { "extra_damage_bleeding": 10 }
+          "base": {"extra_damage_bleeding": 0},
+          "perRank": {"extra_damage_bleeding": 10}
         }
       },
       {
         "id": "finish_them",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "I", "note": "card p9 Finish Them!: [140] = 1.5 %/r execute below a life threshold; the dummy does not die, 0 extra damage. Planner execute_below 1.5/r matches the card number."},
         "name": "Finish Them!",
         "description": "Zeal now executes targets below a certain percentage of life.",
         "maxRank": 5,
         "effects": {
-          "base": { "execute_below": 0 },
-          "perRank": { "execute_below": 1.5 }
+          "base": {"execute_below": 0},
+          "perRank": {"execute_below": 1.5}
         }
       },
       {
         "id": "cleaving_zeal",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p10 Cleaving Zeal: [130] = 8 %/r AoE area only; a single dummy gets no extra hits. Planner area_of_effect 8/r matches."},
         "name": "Cleaving Zeal",
         "description": "Zeal now always hits multiple targets with increased attack area of effect.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 8 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 8}
         }
       },
       {
         "id": "throwing_fury",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [25, 50, 75]}, {"kind": "projectiles", "byRank": [1, 2, 3]}], "confidence": "C", "note": "card p11 Throwing Fury (throwing weapon only; R4 12#2): LSSD += 25 %/r (V1 share) and [76] = 1 + 1/r extra projectiles per volley. attackClasses copies the same singleHitPackId to every projectile of a volley when pe[78] = 0 (0x1402b4075-0x1402b4099, 0x1402c2e2f-0x1402c2e84; the pack id grows only after the volley, 0x1402c4f39), so the extra projectiles hit the dummy 0 times (not just 'the side ones miss'). Effect: LSSD only. C."},
         "name": "Throwing Fury",
         "description": "Zeal now throws multiple projectiles with increased damage when using throwing weapons.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "projectile_count": 0 },
-          "perRank": { "physical_skill_damage": 25, "projectile_count": 1 }
+          "base": {"projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "subtree_damage": 25}
         }
       },
       {
         "id": "blood_ripple",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.225, 0.6, 1.125], "per": "hit"}], "confidence": "C", "note": "card p12 (handler L103): chance 0.15r per hit of an Explosion_Item_obj with damage d0*(1+0.5r); per hit = c*m = 0.15r*(1+0.5r) = 0.225, 0.6, 1.125 (main-hit units).", "plannerFix": "Blood Ripple spawns an explosion on the hit with chance 15r % of floor(d0*(1+0.5r)); planner applies physical +50 %/r and area 20/r to the hit itself, not a separate hit."},
         "name": "Blood Ripple",
         "description": "Each strike has a chance to unleash a ripple of blood dealing area of effect damage.",
         "maxRank": 3,
@@ -1442,12 +1517,13 @@
       {
         "id": "sundering_strikes",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.4, 1.8, 2.2]}], "confidence": "I", "note": "card p13 (handler L14): buff 49 = 4r on the enemy, maxStack 10; steady state after ~10 hits x(1+0.4r) for physical damage. byRank = steady-state multiplier (the first ~10 hits ramp up, I).", "plannerFix": "Sundering Strikes stacks a physical break (+4 %*r per stack, up to 10 stacks, 3 s) on the target; planner gives armor_break 4/r with no stacks."},
         "name": "Sundering Strikes",
         "description": "Zeal inflicts stacking armor break on the target increasing with each strike.",
         "maxRank": 3,
         "effects": {
-          "base": { "armor_break": 0 },
-          "perRank": { "armor_break": 4 }
+          "base": {"armor_break": 0},
+          "perRank": {"armor_break": 4}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1460,20 +1536,13 @@
       {
         "id": "zealing_blow",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "other", "byRank": [8.2, 15.4, 22.6]}], "confidence": "C", "note": "card p14: blow multiplier vs the normal blow = (1 + V1*(LSSD+r)/100)/(1 + V1*LSSD/100); with LSSD = 0 and L = 20 (V1 = 720) = 1 + 7.2r = 8.2, 15.4, 22.6. Per series average = that value on one of n = 2+r strikes (divide by n in the DPS, I). Stun 1.5 s/r on the last blow adds 0 on a dummy.", "plannerFix": "Zealing Blow adds LSSD +100 %*r only to ONE blow per series (the one before the last, first in base); planner applies physical +100 %/r to every hit plus skill_range and stun."},
         "name": "Zealing Blow",
         "description": "Your last zeal strike deals increased damage stunning the target taunting nearby monsters.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "physical_skill_damage": 0,
-            "skill_range": 0,
-            "stun_duration_pct": 0
-          },
-          "perRank": {
-            "physical_skill_damage": 100,
-            "skill_range": 25,
-            "stun_duration_pct": 1.5
-          }
+          "base": {"physical_skill_damage": 0, "skill_range": 0, "stun_duration_pct": 0},
+          "perRank": {"physical_skill_damage": 100, "skill_range": 25, "stun_duration_pct": 1.5}
         }
       }
     ]
@@ -1481,6 +1550,8 @@
   {
     "id": "ymirs_champion",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 5.54, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "I", "note": "Per attack, IN-ZONE per rule 24 (melee blow plus an axe ring 14-65 px around the player, independent of the cursor; the dummy is taken in the ring at D ~ 32-64 px, inside weapon reach): (a) the blow = the main hit M = W*(1 + V2*(1 + LSSD)/100) + floor(V1*(1 + LSSD)) cold (V2 = 23.5L, V1 = 16.5L) = 1.0; (b) 1 Viking_Ymirs_Champion_obj axe (loop i < 1 + p10.s9; Orbit_Parent, 7 deg/frame, radius oscillating 16-64 px, 60 frames, map cleared once per 360 deg, precise 34x32 mask rotating -16 deg/frame) hits the dummy 2 times (frame-by-frame simulation of the orbit with the exact mask; main result with the aim line through the dummy centre, rule 38 / PoR4 a: 2 hits for D <= 64 px, 1 for D = 66-78, 0 from 80; variant cursor (x, y-24), R3 table: 2 hits for D = 32-68, 1-2 for 14-30, 1 at 70, 0 from ~84; R3 14#0 C model, I for the +-1 frame phase). An axe hit is NOT the main hit: damage[0] = floor(V2*(1 + LSSD)/(1 + p10)) is the percent value V2 used as FLAT physical damage (no W) and damage[2] = floor(V1*(1 + LSSD)/(1 + p10)) cold: at rank 20, no subskills: A = 470 + 330 = 800, while M = 4*(1 + 4.7) + 330 = 352.8 with the unarmed reference weapon W = 4, so A/M = 2.27 and base = 1 + 2*A/M = 5.54. Formula: base = 1 + h*(V1 + V2)/(W*(1 + V2/100) + V1), h = 2, V1 = 16.5L, V2 = 23.5L (for a real weapon W the ratio shrinks, e.g. W = 100: M = 900, the two axe hits add only 1.78 -> base 2.78 at L20 - recompute with the player's W). At the strict 160 px: 1.0 (blow only, the axe ring reaches ~90 px; p14 shards do reach it, 0.46 per axe, PoR4 - subskill effect, not in the base). baseProjectiles = 1; perExtraProjectile = 0.0: p10 Power of Multitude adds axes but divides each axe's damage by (1 + r), so the sum of the axes stays ~2.0-2.2 undivided-axe hits for D <= 48 px, falling to 1.0-1.5 at D = 64-72 px (card R3). p12 chain (1 + r hits per chain on each axe hit, T0), p11 flying axes, p8 nova, p4 chill bonus are subskill effects."},
     "weaponRequirement": "melee",
     "classId": "viking",
     "name": "Ymir's Champion",
@@ -1506,17 +1577,16 @@
     "attackKind": "attack",
     "effectDuration": 2,
     "movementDuringUse": 65,
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 18
-    },
+    "damageFormula": { "base": 0, "perLevel": 16.5 },
     "manaCostFormula": {
       "base": 3.5,
       "perLevel": 0.75,
       "rankIndexing": "fullRank"
     },
     "attackScaling": {
-      "weaponDamagePct": { "base": 8, "perLevel": 23.5 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": false,
+      "weaponDamagePct": { "base": 100, "perLevel": 23.5 },
       "flatPhysicalMin": { "base": 2, "perLevel": 0 },
       "flatPhysicalMax": { "base": 6, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -1558,83 +1628,91 @@
       {
         "id": "vikings_carnage",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40]}], "confidence": "C", "note": "card p1: LSSD += 8 %/r on blow V2 (physical), cold and axes (x(1+LSSD)). Ymir axes are the main source of the dummy hits (base 5.54 = 1 + 2A/M at L20, W=4).", "plannerFix": "Viking's Carnage LSSD applies to the blow's V2 part, the cold part and the axes; planner applies cold_skill_damage 8/r only."},
         "name": "Viking´s Carnage",
         "description": "Increases the damage dealt by ymir's champion.",
         "maxRank": 5,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "raging_sustain",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [12, 24, 36]}], "confidence": "I", "note": "card p2 Raging Sustain: axe duration x(1+12 %/r); extra rotations = floor(420*(1+0.12r)*(1+p7)/360) (card formula). R3: 2 hits per axe unless the extra turn fits (I). Planner skill_duration 12/r matches."},
         "name": "Raging Sustain",
         "description": "Increases the duration of axes.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 12 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 12}
         }
       },
       {
         "id": "slashing_cleavers",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "I", "note": "card p3 Slashing Cleavers: orbit area v = 8 %/r, no found consumer -> 0 on the dummy (I). Planner area_of_effect 8/r matches the number."},
         "name": "Slashing Cleavers",
         "description": "Increases the size of axes.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 8 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 8}
         }
       },
       {
         "id": "rimeforged_hatchet",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.08, 1.16, 1.24, 1.32, 1.4]}], "confidence": "C", "note": "card p4 Rimeforged Hatchet: [178] = 8 %/r read by LoadMonsterExtraDamageAilments (buff 21 = frozen) -> x(1+0.08r) on hits vs the frozen dummy (chill from the blow [47] = 2 s lands on the dummy first, rule 27). Planner extra_damage_frozen 8/r matches."},
         "name": "Rimeforged Hatchet",
         "description": "Increases damage dealt to frozen targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_frozen": 0 },
-          "perRank": { "extra_damage_frozen": 8 }
+          "base": {"extra_damage_frozen": 0},
+          "perRank": {"extra_damage_frozen": 8}
         }
       },
       {
         "id": "ymirs_focus",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "utility"}], "confidence": "C", "note": "card p5 Ymir's Focus: attack rating x(1+10 %/r) only. Planner attack_rating_pct 10/r matches (maxRank 6)."},
         "name": "Ymir´s Focus",
         "description": "Increases attack rating when using ymir's champion.",
         "maxRank": 6,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "expanding_territory",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "other", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75, 1.9, 2.05, 2.2]}], "confidence": "C", "note": "card p6 Expanding Territory: orbit radius 32 and max 64 x(1+0.15r). byRank = radius factor; the dummy hit count changes only through the geometry (not recomputed here). Planner skill_range 15/r matches (maxRank 8)."},
         "name": "Expanding Territory",
         "description": "Increases the orbit radius of axes.",
         "maxRank": 8,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "rapid_spinning",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "I", "note": "card p7 Rapid Spinning: orbit speed 7*(1+8.5 %/r). Card R3 sim: hit count stays 2 for D 48-68 px; D <= 40 px can drop to 1 for r = 1-2 (I). Planner projectile_speed 8.5/r matches the number."},
         "name": "Rapid Spinning",
         "description": "Increases the projectile speed of axes.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 8.5 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 8.5}
         }
       },
       {
         "id": "frosted_blow",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.045, 0.182, 0.409, 0.727, 1.136], "per": "use"}], "confidence": "C", "note": "card p8 (L791, handler L132): expected extra hits per use = (0.04r) * 2 axe hits * (0.25r * A/M) = 0.0454 r^2 in main-hit units (A/M = 2.27 at the planner reference L20, W=4; W-dependent).", "plannerFix": "Frosted Blow is rolled per USE (chance 4r %) and makes one nova per axe hit with damage 0.25r*(d0+d2); planner uses on_hit proc and +25 %/r damage."},
         "name": "Frosted Blow",
         "description": "Chance to unleash an ice nova on hit.",
         "maxRank": 5,
@@ -1650,67 +1728,73 @@
       {
         "id": "rending_hatchet",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [0, 0, 0, 0, 0]}], "confidence": "C", "note": "card p9 Rending Hatchet: [1019] = 25 %/r crit damage on axes only; chance unchanged (value 0). Planner crit_damage 25/r matches."},
         "name": "Rending Hatchet",
         "description": "Increases critical strike damage dealt by ymir's champion.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 25 }
+          "base": {"crit_damage": 0},
+          "perRank": {"crit_damage": 25}
         }
       },
       {
         "id": "power_of_multitude",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [-1.135, -1.513, -1.703, -1.816], "per": "use"}], "confidence": "I", "note": "card p10: axes = 1+r, damage d/(1+r) each; the axe aimed at the dummy hits it 2x, others 1x -> axe total (2+r)/(1+r)*A vs base 2A. Delta = -r/(1+r)*A in main-hit units (A/M = 2.27): -1.135, -1.513, -1.703, -1.816. R3 sims are noisy (D-dependent, 1.4-1.9 d); analytic value used.", "plannerFix": "Power of Multitude splits axe damage by (1+r) across 1+r axes; the total axe damage falls to (2+r)/(1+r) of the base 2 hits. Planner only adds projectile_count 1/r without the division."},
         "name": "Power of Multitude",
         "description": "Increases axes amount but damage dealt is split between axes summoned.",
         "maxRank": 4,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "collateral_damage",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.72, 5.45, 8.17], "per": "use"}], "confidence": "I", "note": "card p11 (handler L295): <= 1 flying axe per axe hit, damage 0.6r*A; 2 axe hits on the dummy per use -> 2*0.6r*A/M = 2.72r (flight direction and dummy hit by flying axe assumed, I).", "plannerFix": "Collateral Damage launches a flying axe on each axe hit (cooldown 0.5 s, 0.6r*(d0+d2) per flying axe); planner gives cold +60 %/r on the hit itself."},
         "name": "Collateral Damage",
         "description": "Whenever the axes hit a target they send another piercing axe outwards in a straight line towards the target.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 60 }
+          "base": {"cold_skill_damage": 0},
+          "perRank": {"cold_skill_damage": 60}
         }
       },
       {
         "id": "chainslicing_tomahawk",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [9.08, 13.62, 18.16], "per": "use"}], "confidence": "C", "note": "card p12 (reg. 23, PC01Viking L276-L286): chain per axe hit, 1+r hits on the dummy, each axe damage A; per use 2 axe hits -> 2(1+r)*A/M = 4.54(1+r): 9.08, 13.62, 18.16.", "plannerFix": "Chainslicing Tomahawk chains from each axe hit onto the dummy (1+r chain hits of axe damage, the chain does not exclude the target); planner adds cold +35 %/r only and bounces 3/r."},
         "name": "Chainslicing Tomahawk",
         "description": "Axes now chain through monsters and then return back to you dealing damage to monsters in its path.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0, "projectile_bounces": 0 },
-          "perRank": { "cold_skill_damage": 35, "projectile_bounces": 3 }
+          "base": {"cold_skill_damage": 0, "projectile_bounces": 0},
+          "perRank": {"cold_skill_damage": 35, "projectile_bounces": 3}
         }
       },
       {
         "id": "scattering_battlegear",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [6.67, 6.67, 6.67]}, {"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD is ASSIGNED, not added: with rank in p13 LSSD = 0.5*r13 and the p1 (8 %/r) and p12 (35 %/r) contributions are dropped"}], "confidence": "I", "note": "card p13: axe lands on the dummy and spins 18 deg/frame, ~2-3 axe hits (1 + floor((60-t_lot)/20)); set_hits = blow 1 + 2.5 hits * A/M(2.27) = 6.67 (midpoint, I). Transformation replaces the orbit hits. R4 14#2 (C): LoadSubSkillDamage case viking 14 (0x144b1400b-0x144b14f3e) ends p13 with RV_assign @0x144b14f1b = LoadSubTalentDamage(p13, s9)*0.01 into the accumulator, while p1 and p12 use RV_add (@0x144b1433f, @0x144b14925): with rank in p13 LSSD = 0.5*r13 (blow, cold and axes x(1 + 0.5r13)); without p13 LSSD = 0.08*r1 + 0.35*r12. The damage_pct effect is therefore a replacement of the p1/p12 LSSD.", "plannerFix": "Scattering Battlegear is a transformation: axes land at points and spin in place (no orbit); LSSD becomes 50 %/r by assignment (p1 and p12 LSSD overwritten, R4 14#2); planner keeps the orbit model with cold 50/r added on top of p1/p12."},
         "name": "Scattering Battlegear",
         "description": "Axes now fly into a random spot in a cone in front of you and start spinning on the ground dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 50 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 50}
         }
       },
       {
         "id": "shattering_axes",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [4.413, 4.74, 5.067], "per": "use"}], "confidence": "I", "note": "card p14 (R4 14#5 + PoR4 e + Resztki B): Destroy_0 0x14b253ef0: 10 shards at absolute angles 36*i, start lengthdir(8, 36*i) from the axe (0x14f189528 = 8.0f), deltaSpeed 3, ~60 frames, Mask_Arrow_spr 16x16 unrotated, singleHit; each shard floor(d*(1 + 0.08r)) with d = the axe hit damage (physical V2 flat + cold V1, A). Shards hitting the dummy per axe, cursor through the dummy centre: D = 16/24/32/40/48/56/64/72 px = 4.1/3.6/2.85/2.25/1.8/1.5/1.3/1.1 (cursor (x, y-24): 2.6/2.2/1.9/1.6/1.4/1.3/1.1/1.0); at 160 px 0.46 per axe (0-1; D = 80..176: 0.99/0.80/0.68/0.59/0.52/0.46/0.41; independent of the p14 rank). Used here: D = 48 px (middle of the dummy-model ring 32-64) = 1.8 shards per axe, 1 axe, shard = A/M*(1 + 0.08r) main hits with A/M = 2.27 (planner reference L20, W = 4): 1.8*(1 + 0.08r)*2.27 = [4.413, 4.74, 5.067]. At the strict 160 px the extra would be 0.46*(1 + 0.08r)*2.27 = 1.13, 1.21, 1.29. With p10 the shards of each of the 1 + r10 axes are divided by (1 + r10) like the axe damage. C for angles/length/speed/mask, I for the axe position +-1 frame, the check phase and that a shard carries d0 and d2 like the axe.", "plannerFix": "Shattering Axes: 10 shards every 36 deg from the axe position when it dies (60 frames, radius 14-65 px, start 8 px from the axe along the shard angle), 3 px/frame for ~60 frames (reach ~204 px with the 16 px mask); they hit the dummy both in the ring (1.0-4.1 per axe) and at 160 px (0.46 per axe); planner adds cold +8 %/r to the hit."},
         "name": "Shattering Axes",
         "description": "At the end of their duration the axes shatter into weapon shards dealing additional damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "cold_skill_damage": 0 },
-          "perRank": { "cold_skill_damage": 8 }
+          "base": {"cold_skill_damage": 0},
+          "perRank": {"cold_skill_damage": 8}
         }
       }
     ]
@@ -1718,6 +1802,8 @@
   {
     "id": "whirlwind",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per attack, dummy inside the blade's reach (area around the player: Viking_Whirlwind_obj, singleHit, mask Viking_Whirlwind_spr 73x72 precise with the origin in the corner, scale 2, rotating -22 deg/frame through 17 frames at absolute angles 338, 316, ... 8 deg, 16 collision samples): 1 hit of damage[0] = floor(floor(W*(1 + V1/100))*(1 + LSSD)) = the main hit for D <= 155 px (card R3 17#0: pixel-by-pixel against the r 12 dummy over all directions). At the strict 160 px: 0.70 hits (0.82 at 158, 0.59 at 162, 0.26 at 170, 0 from 174 px). The passive Demolishing Winds (talent 19: 3 tornadoes per swing with a shared hit pack, +1 hit of dmg*LTD(19,V1)% arriving after ~1.0-1.6 s, also at 160 px) is not included. baseProjectiles = 1; perExtraProjectile = 0 (no projectile count; p11 Sharpened Blades adds a second blade of damage x(1 + 0.5r), p7 tornado at 5r %, p9 trail fire, p12 detonation, p14 lift + landing hit 0.4r d0 are subskill effects)."},
     "weaponRequirement": "melee",
     "classId": "viking",
     "name": "Whirlwind",
@@ -1748,7 +1834,9 @@
       "rankIndexing": "fullRank"
     },
     "attackScaling": {
-      "weaponDamagePct": { "base": 50, "perLevel": 40 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": true,
+      "weaponDamagePct": { "base": 160, "perLevel": 40 },
       "flatPhysicalMin": { "base": 2, "perLevel": 1 },
       "flatPhysicalMax": { "base": 8, "perLevel": 3 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -1784,72 +1872,79 @@
       {
         "id": "sharp_winds",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "utility"}], "confidence": "C", "note": "card p1 Sharp Winds: attack rating x(1+8 %/r) (accuracy/stat only). Planner attack_rating_pct 8/r matches."},
         "name": "Sharp Winds",
         "description": "Increases attack rating when using whirlwind.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 8 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 8}
         }
       },
       {
         "id": "wounding_spin",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50]}], "confidence": "C", "note": "card p2 Wounding Spin: LSSD += 10 %/r multiplies the whole swing. Planner physical 10/r matches. Base 1.0 = one blade hit (in-zone, D <= 155 px)."},
         "name": "Wounding Spin",
         "description": "Increases the damage dealt by whirlwind.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "deadly_blow",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [0, 0, 0, 0, 0, 0]}], "confidence": "C", "note": "card p3 Deadly Blow: [1019] = 25 %/r crit DAMAGE; chance unchanged (value 0). Planner crit_damage 25/r matches (maxRank 6)."},
         "name": "Deadly Blow",
         "description": "Increases critical strike damage when using whirlwind.",
         "maxRank": 6,
         "effects": {
-          "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 25 }
+          "base": {"crit_damage": 0},
+          "perRank": {"crit_damage": 25}
         }
       },
       {
         "id": "typhoon",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p4 Typhoon: blade scale 2*(1+12.5 %/r), reach ~77.6*scale px. In-zone convention (base 1.0 at D <= 155 px) -> 0. At a 160 px dummy it would raise the base from 0.70 to 1.0 (scale 2.25 reach ~174 px); this is a 160 px-only gain, not in the in-zone number. Planner area 12.5/r matches."},
         "name": "Typhoon",
         "description": "Increases the area of effect radius of whirlwind.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 12.5 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 12.5}
         }
       },
       {
         "id": "airborne_debris",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [15, 30]}], "confidence": "C", "note": "card p5 Airborne Debris: [1018] = 15 %/r crit chance (crit damage unchanged). Planner crit_chance 15/r matches (maxRank 2)."},
         "name": "Airborne Debris",
         "description": "Increases the critical strike chance when using whirlwind.",
         "maxRank": 2,
         "effects": {
-          "base": { "crit_chance": 0 },
-          "perRank": { "crit_chance": 15 }
+          "base": {"crit_chance": 0},
+          "perRank": {"crit_chance": 15}
         }
       },
       {
         "id": "cycloning_step",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility"}], "confidence": "C", "note": "card p6 Cycloning Step: BuffAdd move speed 10 %/r for 2 s; no dummy damage. Planner movement_speed 10/r matches."},
         "name": "Cycloning Step",
         "description": "Increases your movement speed while using whirlwind.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 10 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 10}
         }
       },
       {
         "id": "second_wind",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.011, 0.044, 0.099, 0.176, 0.275], "per": "hit"}], "confidence": "C", "note": "card p7 (handler L151): per hit: chance 0.05r * tornado 0.22r*d0 = c*m = 0.011 r^2 = 0.011, 0.044, 0.099, 0.176, 0.275 (main-hit units).", "plannerFix": "Second Wind is a separate tornado (chance 5r % per hit, damage 0.22r*d0), not a physical damage increase; planner gives physical +22/r to the hit."},
         "name": "Second Wind",
         "description": "Chance on hit to unleash a twister.",
         "maxRank": 5,
@@ -1865,6 +1960,7 @@
       {
         "id": "burning_air",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [1, 4, 9, 16, 25]}], "confidence": "C", "note": "card p8 (L1089): [18] = floor(dmg*RSS72*0.25 %/r) with RSS72 = attack speed %; byRank = expected DoT per use in % of one hit at 100 % attack speed = 0.04r*0.25r*100 = 1, 4, 9, 16, 25 (scale by AS/100).", "plannerFix": "Burning Air rolls per USE (chance 4r %) for a fire DoT of floor(hit * attack speed * 0.25r %); planner uses an on_hit proc with a fixed attack-speed conversion."},
         "name": "Burning Air",
         "description": "Chance on hit to inflict burning dealing damage based on your total attack speed.",
         "maxRank": 5,
@@ -1881,12 +1977,13 @@
       {
         "id": "trail_of_fire",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "I", "note": "card p9 (L1134-L1144): trail placed under the player; tick 0.5 s, max 6 ticks at contact (dummy in trail radius only). In-zone (D <= 155 px, outside the trail) -> 0.", "plannerFix": "Trail of Fire is a fire trail under the player (radius ~20*(1+0.3r) px); the dummy at range is 0 and the planner adds burning 30/r to every hit."},
         "name": "Trail of Fire",
         "description": "Leave a trail of fire behind you inflicting monsters with burning.",
         "maxRank": 6,
         "effects": {
-          "base": { "increased_burning_damage": 0, "area_of_effect": 0 },
-          "perRank": { "increased_burning_damage": 30, "area_of_effect": 30 }
+          "base": {"increased_burning_damage": 0, "area_of_effect": 0},
+          "perRank": {"increased_burning_damage": 30, "area_of_effect": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1899,45 +1996,49 @@
       {
         "id": "scorching_heat",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.12, 1.24, 1.36], "requires": "burning_air"}], "confidence": "I", "note": "card p10 (LoadMonsterExtraDamageAilments L362, buff 1 burning): x(1+0.12r*U), U = 1-(1-0.04*r8)^(5/T_att). byRank assumes U = 1 (dummy burning all the time, upper bound); scale by U for the real p8 rank. Without p8: 0.", "plannerFix": "Scorching Heat's +12 %/r applies only while the dummy burns (needs a burn source, p8); planner applies it without the uptime factor U = 1-(1-0.04*r8)^(5/T_att)."},
         "name": "Scorching Heat",
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 3,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 12 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 12}
         }
       },
       {
         "id": "sharpened_blades",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.5, 2.0, 2.5], "per": "use"}], "confidence": "C", "note": "card p11 (L1173-L1190; R4 17#2 C): the base blade L1152 is created unconditionally (the p6 branch L1148 skips only BuffAdd, 0x1462278f8) and p11 adds a SECOND Viking_Whirlwind_obj (sharpenedEdge = 1, damage[0] = floor(dmg*(1+0.5r))) in the same rotation, both singleHit without a shared pack: 2 hits per swing (dmg + dmg*(1+0.5r)). Extra = 1*(1+0.5r) = 1.5, 2.0, 2.5 per use. Scale of both blades +15 %/r, so reach R_full ~77.6*2*(1+0.15r) px: at 160 px the base hit is 1.0 instead of 0.70 from r11 = 1 (160-px-only gain, not in the in-zone number).", "plannerFix": "Sharpened Blades adds a second blade (sharpenedEdge) with damage d*(1+0.5r) on every swing; planner adds physical +50 %/r to the single blade and area 15/r."},
         "name": "Sharpened Blades",
         "description": "Greatly increases area of effect radius dealing increased damage at the outer edge.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "physical_skill_damage": 50, "area_of_effect": 15 }
+          "base": {"physical_skill_damage": 0, "area_of_effect": 0},
+          "perRank": {"physical_skill_damage": 50, "area_of_effect": 15}
         }
       },
       {
         "id": "detonation",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.15, 0.3, 0.45], "per": "hit", "note": "damage class 'brak' (no crit, no multipliers, no penetration): convert with d0/D_modified; only hits of the base blade and the tornadoes add to pe[49], not the p11 second blade"}], "confidence": "I", "note": "card p12 (R4 17#1): [302] = 15 %/r -> handler L203 pe[49] += floor(d0*0.15r) per blade/tornado hit; Whirlwind_Effect_obj (Step_0 0x14b2b08a0, detonationTimer 6 s) creates an Explosion_Item_obj (0x5d4 @0x14b2b15b6) with damage[0] = pe[49], scale pe[50]/64 = 4.625 (mask Mask_Explosion_spr reaches 138.8 px +x/down, 148 px -x/up from the effect centre host.y-8, I) -> dummy must be within ~150 px (160 px: 0); Destroy_0 detonates the rest when the effect ends. Steady state: one detonation every 6 s, on average 0.15r*d0 per blade hit (about x(1+0.15r) hits), but class 'brak': multiply 0.15r by d0/D_modified (<= 1). The 2nd p11 blade has no [302] (L1163-L1165).", "plannerFix": "Detonation is a separate explosion every 6 s (and when the effect disappears) of the sum of floor(d0*0.15r) over the blade/tornado hits, with NO InheritModifiers/SetAllModifiersNew (class 'brak': no crit, no multipliers, no penetration), radius <= ~150 px (0 at 160 px); planner of_total_damage 15/r multiplies the modified hit."},
         "name": "Detonation",
         "description": "Store damage dealt to monsters unleashing it when whirlwind ends dealing damage on a large radius around you.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 15 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 15}
         }
       },
       {
         "id": "negative_pressure",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.35, 1.7, 2.05]}], "confidence": "C", "note": "card p13 Negative Pressure: physical break [969] = 35 %*r + RSS234 for 5 s (stale; 5 s > T_att), x(1+0.35r) on the dummy. Planner armor_break 35/r matches. Area +20 %/r and suction (no dummy effect)."},
         "name": "Negative Pressure",
         "description": "monsters at the edge of the whirlwind radius are sucked within the whirlwind.",
         "maxRank": 3,
         "effects": {
-          "base": { "armor_break": 0, "area_of_effect": 0 },
-          "perRank": { "armor_break": 35, "area_of_effect": 20 }
+          "base": {"armor_break": 0, "area_of_effect": 0},
+          "perRank": {"armor_break": 35, "area_of_effect": 20}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1950,12 +2051,13 @@
       {
         "id": "airborne",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.335, 0.67, 1.005], "per": "use"}], "confidence": "I", "note": "card p14: [139] = 40 %*r lifts the dummy (+60 px); landing hit floor(sum d*0.4r) once per flight (~37 frames for [110]=60). Per use = 0.4r * min(1, period/37 fr) with the R4 Whirlwind period ceil(60/S)+1 = 31 frames at S = 2 (was T_att ~34 fr): 0.4r*31/37 = 0.335r (S = 1.2: 51 frames -> 0.4r; S = 3: 21 -> 0.23r; S = 4: 16 -> 0.17r). Class 'brak'; lift length I.", "plannerFix": "Airborne lifts the dummy with buff 47; the landing explosion (0.4r*d0 per flight, class 'brak') is the damage, not a physical +40 %/r on the swing; planner adds physical 40/r to every hit."},
         "name": "Airborne",
         "description": "Knock monsters high into air causing them to take increased damage upon landing.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 40 }
+          "base": {"physical_skill_damage": 0},
+          "perRank": {"physical_skill_damage": 40}
         }
       }
     ]
@@ -1963,6 +2065,8 @@
   {
     "id": "shockwave",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "I", "note": "Per attack, IN-ZONE per rule 24 and the same at 160 px: Viking_Shockwave_obj is a line of 6 + p1 segments (numb = 5 + p1, each creates the next one 60 px further after 3 animation frames), the first 52 px from the player along the aim (float 52.0 at 0x14f1898f0), then 112, 172, 232, 292, 352 px; segments do not share a pack, each is a singleHit object with its own map (mask Viking_Shockwave_Mask_spr r 40 px at scale 1.25) and a segment hits when its centre is within 40 + 12 = 52 px of the dummy centre, damage[0] = W*(1 + V1/100)*(1 + LSSD) = the main hit. The dummy in the middle of the line (~200 px; segments 172 and 232 at 28 / 32 px with the aim line through the dummy centre, rule 38 / PoR4 a) and at 160 px (the track starts at (x, y) + 52 px at the angle from (x, y+6): segments 112 and 172 at 48.3 and 13.5 px, Resztki D) gets 2 hits = 2.0 (threshold 52 px; circular mask r 40 is I). Variant cursor at (x, y-24): at 160 px segment 112 lies 54.0 px away = miss, so 1 hit (Resztki D, C; was 'marginal 51.9'); the 200 px zone keeps 2 (35.7 / 41.0 px). Period: standard attack (ceil(72/S)+1 frames); p12 cooldown 2.5 s/(1 + 0.005*h_eff). baseProjectiles = 1; perExtraProjectile = 0 (the planner's p14 Earthen Maelstrom projectile_count +6/r are spiral segments with unknown hits on the dummy; p1 adds segments beyond the dummy). p11 Trembling Trail (+2 hits from the backward wave), p5 Multi Trail (1 + r traces at 0.25r damage), p12 (1 + 4r waves, +2.5 s cooldown), p13 forks, p7 meteors are subskill effects."},
     "weaponRequirement": "melee",
     "classId": "viking",
     "name": "Shockwave",
@@ -1993,7 +2097,9 @@
       "perLevel": 1
     },
     "attackScaling": {
-      "weaponDamagePct": { "base": 91, "perLevel": 20 },
+      "weaponBonusScaling": true,
+      "weaponSubtreeScalesFullHit": true,
+      "weaponDamagePct": { "base": 220, "perLevel": 20 },
       "flatPhysicalMin": { "base": 4, "perLevel": 0 },
       "flatPhysicalMax": { "base": 11, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -2029,28 +2135,31 @@
       {
         "id": "richter_scale",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p1 Richter Scale: numb = 5 + r (6 + r segments, +60 px each); the dummy at 160 px is already covered by the first two segments (52, 112 px) -> 0. Planner skill_range 1/r = +1 segment (unit assumed)."},
         "name": "Richter Scale",
         "description": "Increases shockwave travel distance.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 1 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 1}
         }
       },
       {
         "id": "earth_shaker",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [6, 12, 18, 24, 30]}], "confidence": "C", "note": "card p2 Earth Shaker: LSSD += 6 %/r on the whole hit (x(1+LSSD)). Planner physical_skill_damage 6/r matches. Base = 2 segments on the dummy (in-zone = at 160 px)."},
         "name": "Earth Shaker",
         "description": "Increases the damage dealt by shockwave.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 6 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 6}
         }
       },
       {
         "id": "ground_fissure",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.009, 1.036, 1.081, 1.144, 1.225]}], "confidence": "C", "note": "card p3 (L942): expected multiplier 1 + 0.03r*0.3r/(1+LSSD), with LSSD = 0 assumed for the table: 1.009, 1.036, 1.081, 1.144, 1.225.", "plannerFix": "Ground Fissure is rolled per USE (chance 3r %) for +30 %*r LSSD on that cast; planner uses on_hit proc with a flat physical 30/r."},
         "name": "Ground Fissure",
         "description": "Chance on hit to knockup monsters dealing additional damage.",
         "maxRank": 5,
@@ -2066,34 +2175,37 @@
       {
         "id": "shocking_crust",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [0, 0, 0, 0, 0]}], "confidence": "C", "note": "card p4 Shocking Crust: AR x(1+20 %/r) and [1019] = 20 %/r crit damage; chance unchanged (value 0). Planner crit_damage 20/r matches."},
         "name": "Shocking Crust",
         "description": "Increases critical strike damage dealt by shockwave.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 20 }
+          "base": {"crit_damage": 0},
+          "perRank": {"crit_damage": 20}
         }
       },
       {
         "id": "multi_trail",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [-1.0, 1.0], "per": "use"}], "confidence": "I", "note": "card p5 (L949): (1+r) trails along the segment, each dealing x(0.25r) (s10 value uncertain, I); dummy hits = (1+r)*h*0.25r; extra = that minus base h = 2 -> -1.0, +1.0 for r = 1, 2 (maxRank 2).", "plannerFix": "Multi Trail adds 1+r trails whose damage is scaled by the card's per-rank value (of_total_damage); planner uses trail_count 1/r with of_total_damage -25 per rank, a different split."},
         "name": "Multi Trail",
         "description": "Adds an additional trail but decreases damage dealt by each shockwave.",
         "maxRank": 2,
         "effects": {
-          "base": { "trail_count": 0, "of_total_damage": 0 },
-          "perRank": { "trail_count": 1, "of_total_damage": -25 }
+          "base": {"trail_count": 0, "of_total_damage": 0},
+          "perRank": {"trail_count": 1, "of_total_damage": -25}
         }
       },
       {
         "id": "cracked_earth",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.055, 1.197, 1.401, 1.645, 1.915]}], "confidence": "C", "note": "card p6 (L956): [969] = [25r + RSS234, 5 s]; expected multiplier 1 + 0.25r*uptime, uptime = 1-(1-0.03r)^(5/T). T = the R4 attack period ceil(72/S)+1 = 37 frames = 0.617 s at S = 2 (8.1 uses in 5 s; was T_cast = 0.571 s): 1.055, 1.197, 1.401, 1.645, 1.915. Period-dependent; the engine should evaluate U with the real period.", "plannerFix": "Cracked Earth is rolled per USE (chance 3r %) for a physical break 25 %*r lasting 5 s; planner uses on_hit proc (chance 3r) with a flat armor_break 25/r."},
         "name": "Cracked Earth",
         "description": "Chance to inflict armor break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "armor_break": 0 },
-          "perRank": { "armor_break": 25 }
+          "base": {"armor_break": 0},
+          "perRank": {"armor_break": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2106,6 +2218,7 @@
       {
         "id": "meteorology",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.032, 0.128, 0.288, 0.512, 0.8], "per": "use"}], "confidence": "C", "note": "card p7 (L952, handler L263): expected extra hits per use = 0.04r * h(2) * 0.4r = 0.032, 0.128, 0.288, 0.512, 0.8 (meteor lands on the dummy with its segment).", "plannerFix": "Meteorology is rolled per USE (chance 4r %); when it procs every segment that hits the dummy drops a fire meteor of 0.4r*d0. Planner uses on_hit proc with +40 %/r physical."},
         "name": "Meteorology",
         "description": "Chance on hit to drop a meteor on the target dealing additional damage.",
         "maxRank": 5,
@@ -2121,17 +2234,19 @@
       {
         "id": "duck_and_cover",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.125, 1.25, 1.375, 1.5, 1.625]}], "confidence": "C", "note": "card p8 Duck and Cover: [179] = 12.5 %*r vs stunned; the first segment stuns the dummy for 2 s, so later uses and later segments are x(1+0.125r) (steady state with uses < 2 s apart; C/I on the first hit). Planner extra_damage_stunned 12.5/r matches."},
         "name": "Duck and Cover",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 12.5 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 12.5}
         }
       },
       {
         "id": "afterquake",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.03, 1.06, 1.09, 1.12, 1.15]}], "confidence": "C", "note": "card p9 Afterquake (L961): double cast chance 3 %*r per use (Universal_Double_Cast_obj) -> x(1+0.03r). Planner on_cast 3/r matches."},
         "name": "Afterquake",
         "description": "Chance on cast to unleash an additional shockwave.",
         "maxRank": 5,
@@ -2147,39 +2262,47 @@
       {
         "id": "land_mass",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.062, 1.123, 1.185, 1.246, 1.308]}], "confidence": "I", "note": "card p10 Land Mass: segment scale x(1+0.08r) -> coverage of the dummy (80*(1+0.08r)+24)/60 segment vs base (80+24)/60 (ratio applied as hits_mult, I)."},
         "name": "Land Mass",
         "description": "Increases the area of effect radius of shockwave.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 8 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 8}
         }
       },
       {
         "id": "trembling_trail",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [30, 60, 90]}, {"kind": "extra_hits", "byRank": [2, 2, 2], "per": "use"}], "confidence": "C", "note": "card p11 (R4 16#1 C): Viking_Shockwave_obj_Step_0 asm 0x14b23ccef-0x14b23d157: the last segment (numb == 0, 352 px) with [308] > 0 spawns a ring of 8 waves, direction = the last segment's direction + 45*i (i = 0..7, 45.0 @0x14f1882c8), first segment 60 px further, numb = [308]. The wave with i = 4 (+180 deg) returns along the same line (292, 232, 172, 112, 52 px) and hits the dummy at 160 px with segments 172 and 112 (13.5 / 48.3 px, +2 hits per use), at ~200 px with 232 and 172; the other 7 waves are >= 135 px away. +2 hits per use unchanged.", "plannerFix": "Trembling Trail adds a return ring of 8 waves; the backward wave hits the dummy twice per use. Planner only has physical +30 %/r and no ring hits."},
         "name": "Trembling Trail",
         "description": "Smash the ground in front of you creating a shockwave that travels a short distance and then splits into all directions.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 30 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 30}
         }
       },
       {
         "id": "cataclysmic_smash",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [125, 250, 375]}, {"kind": "extra_hits", "byRank": [1, 1, 1], "per": "use"}, {"kind": "cooldown_s", "byRank": [2.5, 2.5, 2.5]}], "confidence": "C", "note": "card p12: LSSD += 125 %/r; 1 + 4r waves in a ring, only the one aimed at the dummy hits -> +1 hit per use; cooldown +2.5 s (card: period max(T_att, 2.5 s)).", "plannerFix": "Cataclysmic Smash adds +2.5 s cooldown (period max(T_att, 2.5 s)) and a 1+4r wave ring where only the wave aimed at the dummy hits; planner has no cooldown and trail_count 4/r only."},
         "name": "Cataclysmic Smash",
         "description": "Smashing the ground now creates shockwaves in every direction. Shockwave now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "trail_count": 0 },
-          "perRank": { "physical_skill_damage": 125, "trail_count": 4 }
+          "base": {"trail_count": 0, "cooldown_added": 2.5, "subtree_damage": 0},
+          "perRank": {"trail_count": 4, "cooldown_added": 0, "subtree_damage": 125}
         }
       },
       {
         "id": "forking_crust",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [45, 90, 135]}, {"kind": "extra_hits", "byRank": [0.268, 0.536, 0.804], "per": "use"}], "confidence": "I", "note": "card p13 (R4 16#2, Step_0 L74-L115): per segment with numb > 0, chance forkingCrustChance = 8r % (random(99) <), two forks with numb = 5 at lengthdir(30, direction -/+ A), A = choose(30, 50, 70), segments every 60 px, no recursion. forks.py (straight line, dummy at 80..240 px, circle mask r 40 = I): +0.2-0.3 hits per use at r13 = 1 ... +1.1-1.6 at r13 = 5 (on top of the base 2). Used: 0.08r * 3.35 (midpoint of the 2.7-4.0 hits per full fork) = [0.268, 0.536, 0.804] for r = 1..3 (planner maxRank 3). The card's own formula '5*0.08r*(2.7..4.0)' does not give its headline numbers (it would be 5x larger) - see cardIssues. LSSD +45 %/r is the main effect.", "plannerFix": "Forking Crust forks two branches of 5 segments (angles +-(30/50/70) deg) with chance 8r % per segment; the forks add ~0.27r hits per use on the dummy (R4 simulation) on top of the base 2; planner proc on_hit adds physical 45/r per fork to the hit."},
+        "effects": {
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 45}
+        },
         "name": "Forking Crust",
         "description": "Each wave has a chance to fork into a smaller trail.",
         "maxRank": 3,
@@ -2195,20 +2318,13 @@
       {
         "id": "earthen_maelstrom",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [35, 70, 105]}, {"kind": "set_hits", "byRank": [0, 1.5, 8.5]}], "confidence": "I", "note": "card p14 (R4 16#2 + Resztki D): LSSD += 35 %/r; Step_0 L11-L14 pe[309] turn, numb = 5 + p1 + 6r14, v = 1 + r14 traces every (1 + r14)*8 deg. Total segment hits on the dummy (all traces, circle mask r 40 = I, sims spiral.py/sp2.py +-1) at D = 160 px, track from (x, y) + 52 px from (x, y+6), aim through the dummy centre: r14 = 1..5 = 0 / 1.5 / 8.5 / 8.5 / 15 (before the 6 px shift 0/2/9/8/15); cursor (x, y-24), R4 table: 0 / 1.5 / 8 / 9.7 / 13.4. Other D (centre | (x, y-24)): r14=1: D=100 3 | 2.9, 140 1 | 0.6, 200 0; r14=2: 100 4 | 5.2, 140 3 | 3.4, 200 0; r14=3: 140 10 | 9.6, 200 4 | 2.8. The spiral REPLACES the line pattern, hence set_hits (total hits per use at 160 px, assumes full damage per trace segment, I); the base 2.0 at 160 px does not apply.", "plannerFix": "Earthen Maelstrom turns every segment (max(20, 45-4k) deg, 41, 37, 33, ...) into a spiral with 6r more segments and 1+r traces at (1+r)*8 deg; the spiral wraps around the player, so the dummy at 160 px gets 0/1.5/8.5 hits for r14 = 1..3 (very D-dependent); planner projectile_count 6/r does not convert (perExtraProjectile 0)."},
         "name": "Earthen Maelstrom",
         "description": "Shockwaves twirl outwards around you dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "physical_skill_damage": 0,
-            "projectile_count": 0,
-            "trail_count": 0
-          },
-          "perRank": {
-            "physical_skill_damage": 35,
-            "projectile_count": 6,
-            "trail_count": 1
-          }
+          "base": {"projectile_count": 0, "trail_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_count": 6, "trail_count": 1, "subtree_damage": 35}
         }
       }
     ]
@@ -2216,6 +2332,8 @@
   {
     "id": "berserk",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per attack (melee strike, dummy inside weapon reach; no 160 px value in the card): attackClasses fires 1 weapon hit ([117] = 0) with W*(1 + [1020]/100), [1020] = S*(1 + LSSD)*(1 + p11 %) where S = stacks * V1(1 + [311]) of buff 1 read at script time (before the hit adds a stack); in the steady state S = M = 8 stacks (+3 per rank of p11) of V1 = 3.5L each, so the main hit is W*(1 + 8*3.5L/100) - the stack count is a damage factor (the planner's weaponDamagePct 2+3.5L assumes 1 stack), not a hit count = 1.0 hit. baseProjectiles = 1; perExtraProjectile = 0 (no projectile count). The buff also gives +0.15*V2 points of IAS per stack (13.8 % at 8 stacks at L20). p3 Dual Swing (6r % of 2 attack projectiles, I), p6 Axe Throw (3r % of a full-hit axe), p13 (zeroes the stacks: lowers DPS), p5 (0 or +5 hits, I), p7 are subskill effects."},
     "weaponRequirement": "melee",
     "classId": "viking",
     "name": "Berserk",
@@ -2292,28 +2410,31 @@
       {
         "id": "insanity",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40]}], "confidence": "C", "note": "card p1 Insanity: LSSD += 8 %/r, applies only to the stack share M*V1 of the swing (not the weapon part W). Planner physical 8/r matches the number; scope is the stack share."},
         "name": "Insanity",
         "description": "Increases the damage dealt by berserk.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "restless_feet",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "utility"}], "confidence": "C", "note": "card p2 Restless Feet: V3 move speed x(1+8 %/r); no dummy damage. Planner movement_speed 8/r matches."},
         "name": "Restless Feet",
         "description": "Increases the movement speed bonus from berserk.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 8 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 8}
         }
       },
       {
         "id": "dual_swing",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.06, 1.12, 1.18, 1.24, 1.3]}], "confidence": "C", "note": "card p3 (L1251; R4 18#1 C): roll per use chance 6r % sets pe[117] = 1 (TalentsViking @0x14622f78e inc [rbp+0x2ee8], store @0x146230bfe); attackClasses runs 1 + pe[117] volleys and singleHitPackId++ at the end of EVERY volley (0x1402c4f39-0x1402c4f4e), so the second volley has another pack id and hits the dummy separately: expected hits 1 + 0.06r (and a second Berserk stack when the 2nd projectile keeps its own [1052] copy - not modelled). Not 0.", "plannerFix": "Dual Swing is rolled per USE (chance 6r %) for an extra swing; planner uses on_hit proc with of_total_damage 100."},
         "name": "Dual Swing",
         "description": "Chance on attack to perform an additional attack.",
         "maxRank": 5,
@@ -2329,17 +2450,19 @@
       {
         "id": "fearless_focus",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "I", "note": "card p4 Fearless Focus: attack-rating read is multiplied by 0 (no reader) -> 0 on the dummy (I). Planner attack_rating_pct 10/r has no dummy-hit effect in the planner either."},
         "name": "Fearless Focus",
         "description": "Increases attack rating when using berserk.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "brutalize",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p5 (L1261, handler L177; R4 18#2 C): the attack projectile carries the player's singleHitPackId (attackClasses copies it when pe[78] = 0, 0x1402b4075, 0x1402c2e2f-0x1402c2e84; Berserk does not set pe[78]) and ProjectileCollision01Viking L187 gives the 5 Viking_Ragesling_obj the SAME id (0x1451666c2-0x145166717), the dummy's pack list already contains it from the attack hit (rule 36) -> 0 Ragesling hits (without the pack it would be +5 hits).", "plannerFix": "Brutalize spawns 5 Ragesling objects with the attacking swing's singleHitPackId; that pack was already used on the dummy, so 0 extra hits. Planner adds on_hit proc physical 15/r."},
         "name": "Brutalize",
         "description": "Chance to strike the monster with force causing pieces of it to scatter around and damage nearby targets.",
         "maxRank": 5,
@@ -2355,12 +2478,13 @@
       {
         "id": "axe_throw",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use"}], "confidence": "C", "note": "card p6 (L1255): roll per use chance 3r % -> Viking_Ymirs_Champion_Flying_Axe_obj with damage = full swing (1 main-hit unit). Expected extra = 0.03r. Break [969] = 5 %*r for 5 s is not encoded here (no damage number for it).", "plannerFix": "Axe Throw is a flying axe with a full swing (chance 3r % per use) plus armor break 5 %*r; planner has armor_break 5/r on hit with chance 3r and no extra swing."},
         "name": "Axe Throw",
         "description": "Chance on hit to throw a piercing axe towards your target inflicting armor break to all monsters hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "armor_break": 0 },
-          "perRank": { "armor_break": 5 }
+          "base": {"armor_break": 0},
+          "perRank": {"armor_break": 5}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2373,17 +2497,19 @@
       {
         "id": "bursting_madness",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "I", "note": "card p7 (L211): Explosion_Item_obj with damage 0 and BuffAdd(gracz, 6, floor(d0*0.03r), 5 s); buff 6 has no stat map -> 0 dummy damage.", "plannerFix": "Bursting Madness deals 0 damage (explosion damage 0, buff 6 without a stat map); planner gives of_total_damage +3 %/r."},
         "name": "Bursting Madness",
         "description": "Every strike now stacks to an additional buff unleashing a powerful area of effect pulse when reaching max stacks.",
         "maxRank": 5,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 3 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 3}
         }
       },
       {
         "id": "berserkers_reach",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p8 (L1247): roll per use chance 3r % -> [130] = 10 %*r (area) only -> 0 on the dummy.", "plannerFix": "Berserker's Reach is an area +10 %/r roll per use (chance 3r %), not on hit; planner uses on_hit proc with area 10/r."},
         "name": "Berserker´s Reach",
         "description": "Chance on berserk attack to increase its area of effect.",
         "maxRank": 5,
@@ -2399,67 +2525,73 @@
       {
         "id": "heavy_hitter",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [0, 0, 0, 0, 0]}], "confidence": "C", "note": "card p9 Heavy Hitter: [1019] = 10 %/r crit damage; chance unchanged (value 0). Planner crit_damage 10/r matches."},
         "name": "Heavy Hitter",
         "description": "Increases critical strike damage dealt when using berserk.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_damage": 0 },
-          "perRank": { "crit_damage": 10 }
+          "base": {"crit_damage": 0},
+          "perRank": {"crit_damage": 10}
         }
       },
       {
         "id": "bring_me_another_one",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p10 Bring Me Another One!: [306] = 15 %/r leap range after a kill (buff 50 on the enemy); no dummy hit. Planner skill_range 15/r matches."},
         "name": "Bring Me Another One!",
         "description": "Pull nearby monsters to the targets corpse on kill.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "berserkers_insanity",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.5125, 2.1, 2.7625]}, {"kind": "damage_pct", "byRank": [10, 20, 30], "requires": "deadly_advantage"}], "confidence": "C", "note": "card p11: damage factor at full stacks = (1+0.1r)*(8+3r)/8 = 1.51, 2.10, 2.76 (r = 1..3), without p12. LSSD +10 %/r (damage_pct) only when rank(p12) > 0 (requires deadly_advantage).", "plannerFix": "Berserker's Insanity raises the max stacks to 8+3r and scales the stack value x(1+0.1r); its +10 %/r LSSD is gated by p12 Deadly Advantage. Planner lists increased_all_attributes 10/r and max_skill_stacks 3/r without the damage factor."},
         "name": "Berserker´s Insanity",
         "description": "Increases berserk stat bonuses and max stacks.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_all_attributes": 0, "max_skill_stacks": 0 },
-          "perRank": { "increased_all_attributes": 10, "max_skill_stacks": 3 }
+          "base": {"increased_all_attributes": 0, "max_skill_stacks": 0, "subtree_damage": 0},
+          "perRank": {"increased_all_attributes": 10, "max_skill_stacks": 3, "subtree_damage": 10}
         }
       },
       {
         "id": "deadly_advantage",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p12: s9 = 45 unused; RANK(p12) > 0 is the condition that adds p11.s9 to LSSD (asm LSSD L109-110). 0 on its own.", "plannerFix": "Deadly Advantage has no own damage; it is only the gate for p11's LSSD. Planner gives physical +45 %/r to the hit, which the card says is unused."},
         "name": "Deadly Advantage",
         "description": "Berserk no longer requires a melee weapon dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 45 }
+          "base": {"physical_skill_damage": 0},
+          "perRank": {"physical_skill_damage": 45}
         }
       },
       {
         "id": "graaaaagh",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.5625, 0.5625, 0.5625]}, {"kind": "extra_hits", "byRank": [0.008, 0.016, 0.024], "per": "use"}], "confidence": "I", "note": "card p13 ([310] = 0.1 %*r): at full stacks an explosion floor(d0*S*M*0.001r) (~0.064r*d0 at M=8) and stacks reset to 0. byRank[0] = average stack ratio (M+1)/(2M) = 0.5625 at M = 8 (applies to the stack share only); extra_hits = 0.064r/M per use (one blast per M hits). Assumptions I.", "plannerFix": "GRAAAAAGH! resets stacks at full stacks (average stacks drop to ~(M+1)/2) and adds a small blast; planner records it as a gain."},
         "name": "GRAAAAAGH!",
         "description": "Every time you reach full stacks unleash a trembling pulse dealing increased damage scaling with full stat scaling consuming all stacks.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 0.1 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 0.1}
         }
       },
       {
         "id": "giants_grasp",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [2.5, 4.0, 5.5]}], "confidence": "C", "note": "card p14 ([311] = 150 %*r): stack part x(1+1.5r) -> 2.5, 4.0, 5.5 on the stack share only (the weapon part is unchanged).", "plannerFix": "Giant's Grasp multiplies only the stack value V1 (x(1+1.5r)), not the whole swing; planner applies physical +150 %/r to the whole hit."},
         "name": "Giant´s Grasp",
         "description": "Increases the power of attack damage from berserk stacks lowering attack speed scaling.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 150 }
+          "base": {"physical_skill_damage": 0},
+          "perRank": {"physical_skill_damage": 150}
         }
       }
     ]

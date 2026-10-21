@@ -5,9 +5,8 @@ Every single mod exist in [game-config.json](../game-config.json) so if you are 
 2026-09-12 (155 relics). Ranges retain the source's tier 1 and tier 10 endpoints,
 including descending negative values. Stable item IDs are preserved for saves.
 
-Refresh with `python3 tools/update_relics.py` (or pass a saved HTML page for an
-offline import). The importer validates all existing names and every stat line
-before writing. The page lists Bomb twice; both effects belong to one item.
+The importer that produced it (`tools/update_relics.py`) was removed and remains
+in the git history. The page lists Bomb twice; both effects belong to one item.
 
 Relic skill links and formulas were checked against
 [HS Helper abilities](https://hero-siege-helper.vercel.app/abilities) on 2026-09-14

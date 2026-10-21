@@ -12,6 +12,7 @@ use gpui_kit::{
     *,
 };
 use hsplanner_build::session::Session;
+use hsplanner_ui::components::PlannerDialogExt;
 use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::{
     components::{modal_eyebrow, modal_footer, modal_header, modal_label, modal_status},
@@ -52,7 +53,7 @@ pub(super) fn open(session: Entity<Session>, window: &mut Window, cx: &mut App) 
                 (label, code)
             });
     let editor = cx.new(|cx| ReportEditor::new(build, window, cx));
-    window.open_dialog(cx, move |dialog, window, cx| {
+    window.open_planner_dialog(cx, move |dialog, window, cx| {
         let palette = cx.global::<TooltipTheme>();
         dialog
             .p_0()

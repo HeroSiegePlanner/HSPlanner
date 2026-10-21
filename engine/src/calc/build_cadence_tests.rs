@@ -655,7 +655,12 @@ fn blade_critical_subtree_scales_local_damage_without_global_or_flat_leaks() {
                 * (1. + edge as f64 * 5. / 100. + vitality * giant as f64 * 3. / 10000.);
             close(actual, global + intrinsic / 100.);
         }
-        assert!(attack.physical_avg_max > plain.physical_avg_max);
+        // Giant Slayer alone moves the 5% crit average by less than one integer step.
+        if edge > 0 {
+            assert!(attack.physical_avg_max > plain.physical_avg_max);
+        } else {
+            assert!(attack.physical_avg_max >= plain.physical_avg_max);
+        }
 
         build.main = Some("flying_scimitar");
         build.ranks.insert("flying_scimitar".into(), 10);
@@ -833,7 +838,9 @@ fn circle_of_slugs_separates_waves_from_angular_projectiles() {
             .subs
             .insert(subskill_key("buckshot", "circle_of_slugs"), rank);
         let result = build.run();
-        let waves = 1.0 + 2.0 * rank as f64;
+        // dps_cards Buckshot p13: of the (1 + 2r) rings of pellets the dummy
+        // takes 0.59 / 1.8 / 3.67 pellets per use (waves included).
+        let waves = [0.59, 1.8, 3.67][rank as usize - 1];
         let damage = result.attack_damage.as_ref().unwrap();
         close(damage.attacks_per_second_max, 1.0 / 5.25);
         close(
@@ -925,7 +932,7 @@ fn cooldown_attack_uses_metadata_and_haste_instead_of_weapon_speed() {
         .insert(subskill_key("omnislash", "no_hesitation"), 5);
     close(
         build.run().attack_damage.unwrap().attacks_per_second_max,
-        1.175 / cooldown,
+        1.0 / (cooldown * 0.65), // No Hesitation rank 5: 35% cooldown reduction.
     );
 }
 
@@ -935,9 +942,11 @@ fn on_cast_subproc_tracks_cast_speed_but_not_lifetime_ticks() {
     build.enable_subproc("lightning_surge", "lightning_strikes_twice", 5);
     let base = build.run();
     let target = base.damage.as_ref().unwrap().avg_max as f64;
-    close(base.proc_dps_max, target * 0.20);
+    // Lightning Surge casts at sequence speed 1.75; the use animation allows
+    // 60/43 casts/s (METODA 37). +100% FCR: speed 2.75, 60/28 casts/s.
+    close(base.proc_dps_max, target * 0.20 * 60.0 / 43.0);
     build.stat("faster_cast_rate", "100");
-    close(build.run().proc_dps_max, base.proc_dps_max * 2.0);
+    close(build.run().proc_dps_max, base.proc_dps_max * 43.0 / 28.0);
 }
 
 #[test]
@@ -951,11 +960,15 @@ fn on_hit_subproc_counts_projectiles_and_repeated_contacts() {
         .iter()
         .find(|s| s.label() == "Proc trigger contacts per second")
         .unwrap();
-    close(trace.value().1, 6.0);
+    // The base ray hits the dummy once per cast (dps_cards; the planner's tick
+    // hit model belongs to the p13 Tether) at 60/43 casts/s (METODA 37).
+    close(trace.value().1, 1.0 * 60.0 / 43.0);
+    // Three rays fan 12° apart; at 160 px two reach the dummy (dps_cards
+    // Resztki D: H(3) = 2, perExtraProjectile 0.5), so contacts double.
     build.projectiles.insert("lightning_surge".into(), 3);
-    close(build.run().proc_dps_max, base.proc_dps_max * 3.0);
+    close(build.run().proc_dps_max, base.proc_dps_max * 2.0);
     build.stat("faster_cast_rate", "100");
-    close(build.run().proc_dps_max, base.proc_dps_max * 6.0);
+    close(build.run().proc_dps_max, base.proc_dps_max * 2.0 * 43.0 / 28.0);
 }
 
 #[test]
@@ -1049,9 +1062,11 @@ fn haste_cannot_exceed_the_configured_attack_action_speed() {
     ]
     .into_iter()
     .collect();
+    // Neither haste nor the cooldown lets the swing outrun the use animation:
+    // 60 / (ceil(72 / S) + 1) at S = 2 and 3 (METODA 37).
     assert_eq!(
         attack_action_rate_override(&spec, &[], &stats, &HashMap::new(), &HashMap::new()),
-        Some((2.0, 3.0))
+        Some((60.0 / 37.0, 60.0 / 25.0))
     );
 }
 
@@ -1082,21 +1097,24 @@ fn attack_speed_spells_preserve_both_weapon_rate_endpoints_for_damage_and_cost()
             .find(|step| step.label() == "Actions per second")
             .unwrap()
             .value();
-        assert_eq!(actions, weapon_rate, "{skill}");
+        let locked = (crate::calc::skills::animation_lock_rate(weapon_rate.0), crate::calc::skills::animation_lock_rate(weapon_rate.1));
+        assert_eq!(actions, locked, "{skill}");
         let cost = &result.skill_costs[skill];
         assert_eq!(
             (cost.cast_rate_min.unwrap(), cost.cast_rate_max.unwrap()),
             actions,
             "{skill}"
         );
+        // Hits per use come from the dummy hit model (1 when the skill has none).
+        let hits = result.hits_per_cast.unwrap_or((1.0, 1.0));
         let damage = result.damage.unwrap();
         close(
             result.avg_hit_dps_min.unwrap(),
-            damage.avg_min as f64 * actions.0,
+            damage.avg_min as f64 * actions.0 * hits.0,
         );
         close(
             result.avg_hit_dps_max.unwrap(),
-            damage.avg_max as f64 * actions.1,
+            damage.avg_max as f64 * actions.1 * hits.1,
         );
     }
 }

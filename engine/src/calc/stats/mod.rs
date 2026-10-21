@@ -142,7 +142,7 @@ pub struct SubtreeAgg {
     pub scoped: HashMap<String, Ranged>,
 }
 
-mod attributes;
+pub(crate) mod attributes;
 mod breakdown;
 mod finalize;
 mod helpers;
@@ -190,8 +190,17 @@ pub struct BuildStatsInput<'a> {
     pub entity_rates: &'a HashMap<String, f64>,
 }
 
+/// Weapon kind of the equipped weapon ("" when unarmed).
+pub(crate) fn equipped_weapon_kind(inventory: &crate::calc::types::Inventory) -> String {
+    inventory
+        .get("weapon")
+        .and_then(|item| data::get_item(&item.base_id))
+        .map(weapon_kind_of)
+        .unwrap_or_default()
+}
+
 // A few bases carry their own long type names; tree gates say "Throwing"/"Gun".
-fn weapon_kind_of(base: &crate::calc::types::ItemBase) -> String {
+pub fn weapon_kind_of(base: &crate::calc::types::ItemBase) -> String {
     match base.base_type.as_str() {
         "1-Handed Throwing Weapon" => "Throwing".to_string(),
         "Rifle Gun" => "Gun".to_string(),

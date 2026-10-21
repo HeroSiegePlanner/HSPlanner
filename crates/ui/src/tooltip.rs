@@ -2,7 +2,7 @@
 //! through clicks and hidden the moment the trigger stops being hovered.
 //! Own element instead of gpui's tooltip machinery, which either closes on
 //! mouse down or keeps a leaving tooltip alive for 500ms.
-use std::{panic::Location, rc::Rc, sync::Arc};
+use std::{panic::Location, rc::Rc, sync::Arc, time::Duration};
 
 use gpui_kit::component::tooltip::Tooltip;
 use gpui_kit::{
@@ -80,10 +80,13 @@ impl Element for CursorTooltipAnchor {
             let state = state.unwrap_or_default();
             // Hover comes from last frame's hitbox: this frame's hit test runs
             // after prepaint, and the listener below refreshes on every mouse move.
+            // Requiring the current bounds too drops a tooltip whose trigger just
+            // scrolled away from under a still pointer.
             let hovered = state
                 .hitbox
                 .as_ref()
-                .is_some_and(|previous| previous.is_hovered(window));
+                .is_some_and(|previous| previous.is_hovered(window))
+                && bounds.contains(&window.mouse_position());
             let view = hovered.then(|| state.view.unwrap_or_else(|| (self.build)(window, cx)));
             if let Some(view) = &view {
                 let rem = window.rem_size();
@@ -132,6 +135,15 @@ impl Element for CursorTooltipAnchor {
             }
         });
     }
+}
+
+/// Component tooltips (`.tooltip()`) appear about as quickly as the cursor tooltips.
+const COMPONENT_TOOLTIP_DELAY: Duration = Duration::from_millis(200);
+
+pub fn init(cx: &mut App) {
+    gpui_kit::base::TooltipDefaults::new()
+        .with_show_delay(COMPONENT_TOOLTIP_DELAY)
+        .install(cx);
 }
 
 /// Shared policy for buttons and custom tooltip triggers.

@@ -3,6 +3,7 @@ use super::*;
 use gpui_kit::component::button::ButtonVariants;
 use gpui_kit::component::input::{Textarea, TextareaState};
 use hsplanner_build::item_text::{self, ParseResult};
+use hsplanner_ui::components::PlannerDialogExt;
 use hsplanner_ui::theme;
 
 impl GearView {
@@ -15,7 +16,7 @@ impl GearView {
         let owner = cx.entity().downgrade();
         let document = DocumentKey::from_session(self.session.read(cx));
         let editor = cx.new(|cx| ItemTextEditor::new(original, owner, document, window, cx));
-        window.open_dialog(cx, move |dialog, window, cx| {
+        window.open_planner_dialog(cx, move |dialog, window, cx| {
             let p = cx.global::<TooltipTheme>();
             dialog
                 .width((window.rem_size() * (1100. / 13.)).min(window.viewport_size().width * 0.96))

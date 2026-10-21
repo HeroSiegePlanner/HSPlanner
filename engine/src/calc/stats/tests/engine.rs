@@ -1058,18 +1058,15 @@ fn apply_increased_per_attribute_compounds_add_and_more() {
 }
 
 #[test]
-fn apply_attribute_divided_stats_floors_per_divisor() {
-    let mut attributes: HashMap<String, Ranged> = HashMap::new();
-    // game-config divides vitality by 8 → life_replenish.
-    attributes.insert("vitality".to_string(), (50.0, 50.0));
-    let mut stats: SourceMap = HashMap::new();
-    apply_attribute_divided_stats(&attributes, &mut stats);
-    // 50 / 8 = 6.25 → floor 6.
-    let life_replenish = stats
-        .get("life_replenish")
-        .map(|list| list.iter().any(|c| c.value == (6.0, 6.0)))
-        .unwrap_or(false);
-    assert!(life_replenish, "expected life_replenish from vitality÷8");
+fn vitality_and_energy_regen_are_fractional_per_point() {
+    // StatLifeReplenish/StatManaReplenish: 0.125·Vit and 0.175·Energy, no floor.
+    let cfg = crate::calc::data::game_config();
+    let per = cfg.default_stats_per_attribute.as_ref().unwrap();
+    assert_eq!(per["vitality"]["life_replenish"], 0.125);
+    assert_eq!(per["energy"]["mana_replenish"], 0.175);
+    assert_eq!(per["vitality"]["life"], 6.5);
+    assert_eq!(per["energy"]["mana"], 4.5);
+    assert_eq!(per["dexterity"]["crit_damage"], 0.1);
 }
 
 #[test]

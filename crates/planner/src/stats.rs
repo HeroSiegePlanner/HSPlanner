@@ -52,7 +52,6 @@ enum Cell {
 }
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 enum Row {
-    Header,
     Calculating,
     Top,
     StatsStart,
@@ -64,7 +63,7 @@ enum Row {
     StatsEnd,
 }
 const LIST_OVERDRAW: Pixels = px(400.);
-const TOP_ROW: usize = 2;
+const TOP_ROW: usize = 0;
 
 fn pair_columns([left, right]: [Vec<Cell>; 2]) -> Vec<Row> {
     if left.is_empty() && right.is_empty() {
@@ -261,7 +260,7 @@ fn calculation_overview(step: &CalculationStep) -> Option<(&'static str, &'stati
         "Crushing blow + armor break" => (tr("planner.calculation.crushing_armor"), "×"),
         "Deadly blow multiplier" => (tr("planner.calculation.deadly"), "×"),
         "Extra damage multiplier" => (tr("planner.calculation.extra_damage"), "×"),
-        "Enemy damage taken multiplier" => (tr("planner.calculation.vulnerability"), "×"),
+        "Enemy damage taken (break total)" => (tr("planner.calculation.vulnerability"), "×"),
         "Elemental break multiplier" => (tr("planner.calculation.elemental_break"), "×"),
         "Element resistance break multiplier" => (tr("planner.calculation.resistance_break"), "×"),
         "Resistance multiplier" => (tr("planner.calculation.enemy_resistance"), "×"),
@@ -532,12 +531,101 @@ impl StatsView {
                             .child(shown),
                     ),
             );
-        div().child(crate::source_breakdown::trigger(
-            SharedString::from(format!("stat-sources-{key}-{}", self.calculation_revision)),
-            button,
-            breakdown,
-            self.session.clone(),
+        let pinned = self
+            .session
+            .read(cx)
+            .state()
+            .settings
+            .pinned_stats
+            .iter()
+            .any(|pin| pin == key);
+        let owned_key = key.to_owned();
+        let pin = hsplanner_ui::controls::icon_button(
+            SharedString::from(format!("stat-pin-{key}")),
+            "★",
+            false,
+            cx,
+        )
+        .selected(pinned)
+        .accessibility_label(trf(
+            if pinned {
+                "planner.stats.unpin"
+            } else {
+                "planner.stats.pin"
+            },
+            &[("label", label.to_string())],
         ))
+        .on_click(cx.listener(move |this, _, _, cx| this.toggle_pin(&owned_key, cx)));
+        div()
+            .flex()
+            .items_center()
+            .gap_1()
+            .child(
+                div()
+                    .flex_1()
+                    .min_w_0()
+                    .child(crate::source_breakdown::trigger(
+                        SharedString::from(format!(
+                            "stat-sources-{key}-{}",
+                            self.calculation_revision
+                        )),
+                        button,
+                        breakdown,
+                        self.session.clone(),
+                    )),
+            )
+            .child(pin)
+    }
+    fn toggle_pin(&mut self, key: &str, cx: &mut Context<Self>) {
+        self.session.update(cx, |session, cx| {
+            let mut settings = session.state().settings.clone();
+            let pins = &mut settings.pinned_stats;
+            match pins.iter().position(|pin| pin == key) {
+                Some(at) => {
+                    pins.remove(at);
+                }
+                None => pins.push(key.to_owned()),
+            }
+            session.set_settings(settings);
+            cx.notify();
+        });
+    }
+    fn pinned(&self, result: &PlannerPerformance, query: &str, cx: &Context<Self>) -> Option<Div> {
+        let session = self.session.read(cx);
+        let stats = &data::game_config().stats;
+        let pinned: Vec<_> = session
+            .state()
+            .settings
+            .pinned_stats
+            .iter()
+            .filter_map(|key| stats.iter().find(|def| &def.key == key))
+            .filter(|def| {
+                query.is_empty()
+                    || def.name.to_lowercase().contains(query)
+                    || crate::stat_labels::stat_name(&def.key, &def.name)
+                        .to_lowercase()
+                        .contains(query)
+            })
+            .collect();
+        if pinned.is_empty() {
+            return None;
+        }
+        // The same stats also render in All Stats; the id'd wrapper keeps element ids unique.
+        let rows = div()
+            .id("stats-pinned")
+            .grid()
+            .grid_cols(2)
+            .gap_x_8()
+            .children(pinned.into_iter().map(|def| {
+                self.stat(
+                    &def.key,
+                    &def.name,
+                    def.format.as_deref() == Some("percent"),
+                    &result.computed,
+                    cx,
+                )
+            }));
+        Some(panel("pinned-stats-title", tr("planner.stats.pinned"), cx).child(rows))
     }
     fn attributes(
         &self,
@@ -1719,7 +1807,6 @@ impl StatsView {
         };
         // List items are laid out as roots, so they must claim the full width themselves.
         let content: AnyElement = match (row, result) {
-            (Row::Header, _) => self.header(window, cx).into_any_element(),
             (Row::Calculating, _) | (Row::Top, None) => div()
                 .px_6()
                 .py_5()
@@ -1742,6 +1829,7 @@ impl StatsView {
                     .flex()
                     .flex_col()
                     .gap_3p5()
+                    .children(self.pinned(&result, &query, cx))
                     .children(self.attributes(&result, &query, attribute_columns, cx))
                     .children(self.skills(&result, &query, cx))
                     .children(self.ehp(&result, &query, cx))
@@ -1860,13 +1948,12 @@ impl StatsView {
 }
 impl Render for StatsView {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
-        let p = cx.global::<TooltipTheme>();
         let query = self.query.read(cx).value().trim().to_lowercase();
         let ready = self.tree.read(cx).performance().is_some();
         let row_filter = (query, self.filter, ready);
         let rem = window.rem_size();
         if self.row_filter.as_ref() != Some(&row_filter) {
-            let mut rows = vec![Row::Header];
+            let mut rows = Vec::new();
             if ready {
                 rows.push(Row::Top);
                 rows.extend(self.stat_rows(&row_filter.0));
@@ -1886,15 +1973,27 @@ impl Render for StatsView {
         let rows = list(self.list.clone(), cx.processor(Self::render_row))
             .size_full()
             .min_h_0();
+        let header = self.header(window, cx);
+        let p = cx.global::<TooltipTheme>();
+        // The title, filters and search stay put while the stats scroll beneath them.
         div()
-            .id("stats-scroll")
-            .page_scroll_list(&self.list)
             .size_full()
             .min_h_0()
             .min_w_0()
+            .flex()
+            .flex_col()
             .bg(p.background)
             .text_color(p.text)
-            .child(rows)
+            .child(header.flex_none().border_b_1().border_color(p.border))
+            .child(
+                div()
+                    .id("stats-scroll")
+                    .page_scroll_list(&self.list)
+                    .flex_1()
+                    .min_h_0()
+                    .min_w_0()
+                    .child(rows),
+            )
     }
 }
 

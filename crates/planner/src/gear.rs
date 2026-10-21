@@ -59,6 +59,7 @@ struct Row {
     kind: &'static str,
     tier: Option<u32>,
     group: &'static str,
+    rank: u32,
 }
 
 impl Row {
@@ -72,7 +73,14 @@ impl Row {
             kind: "",
             tier: None,
             group: "",
+            rank: 0,
         }
+    }
+
+    fn grouped(mut self, group: &'static str, rank: u32) -> Self {
+        self.group = group;
+        self.rank = rank;
+        self
     }
 
     fn modifier(mut self, kind: &'static str, tier: Option<u32>, group: &'static str) -> Self {
@@ -93,14 +101,15 @@ impl Row {
     }
 }
 
-fn gem_detail(description: Option<&str>) -> String {
-    description
-        .unwrap_or_default()
-        .split('·')
-        .map(str::trim)
-        .filter(|part| !part.starts_with("Tier "))
-        .collect::<Vec<_>>()
-        .join(" · ")
+/// Picker group for a socketable; runes are grouped by the caller.
+fn gem_group(name: &str) -> &'static str {
+    if name.contains("Soul") {
+        "Soulgems"
+    } else if name.ends_with("Jewel") {
+        "Jewels"
+    } else {
+        "Gems"
+    }
 }
 
 pub(crate) fn element_label(element: &str) -> String {
@@ -114,19 +123,6 @@ pub(crate) fn element_label(element: &str) -> String {
     }
 }
 
-fn tier_detail(tier: u32, description: Option<&str>) -> String {
-    match description.filter(|d| !d.is_empty()) {
-        Some(description) => trf(
-            "gear.tier_description",
-            &[
-                ("tier", (tier).to_string()),
-                ("description", (description).to_string()),
-            ],
-        ),
-        None => trf("gear.tier", &[("tier", (tier).to_string())]),
-    }
-}
-
 /// Short stat summary for list rows: "+12 Strength · +5% Attack Speed".
 fn stat_summary(stats: &hsplanner_engine::calc::types::StatMap) -> String {
     let mut entries: Vec<_> = stats.iter().collect();
@@ -134,7 +130,13 @@ fn stat_summary(stats: &hsplanner_engine::calc::types::StatMap) -> String {
     entries
         .iter()
         .take(3)
-        .map(|(key, value)| format!("{value:+} {}", crate::skill_details::stat_name(key)))
+        .map(|(key, value)| {
+            format!(
+                "{} {}",
+                crate::item_tooltip::format_ranged((**value, **value), key),
+                crate::skill_details::stat_name(key)
+            )
+        })
         .collect::<Vec<_>>()
         .join(" · ")
 }
@@ -453,18 +455,14 @@ impl GearView {
                 .gems
                 .values()
                 .map(|g| {
-                    Row::new(&g.id, &g.name, gem_detail(g.description.as_deref()))
+                    Row::new(&g.id, &g.name, stat_summary(&g.stats))
                         .icon(presentation::socketable_icon(&g.name))
-                        .tone(theme::rarity_color("uncommon", cx))
+                        .grouped(gem_group(&g.name), g.tier)
                 })
                 .chain(data::data().runes.values().map(|r| {
-                    Row::new(
-                        &r.id,
-                        &r.name,
-                        tier_detail(r.tier, r.description.as_deref()),
-                    )
-                    .icon(presentation::socketable_icon(&r.name))
-                    .tone(theme::rarity_color("rare", cx))
+                    Row::new(&r.id, &r.name, stat_summary(&r.stats))
+                        .icon(presentation::socketable_icon(&r.name))
+                        .grouped("Runes", r.tier)
                 }))
                 .collect(),
             Picker::Runeword => data::data()
@@ -498,7 +496,7 @@ impl GearView {
                     };
                     Row::new(&a.id, &a.name, &a.description)
                         .modifier(kind, Some(a.tier), group)
-                        .tone(if a.group_id == "random_unholy" {
+                        .tone(if gear::is_unholy_group(&a.group_id) {
                             theme::rarity_color("unholy", cx)
                         } else {
                             cx.global::<TooltipTheme>().text
@@ -640,6 +638,7 @@ impl GearView {
             rows.sort_by(|a, b| {
                 a.group
                     .cmp(b.group)
+                    .then(a.rank.cmp(&b.rank))
                     .then(a.label.cmp(&b.label))
                     .then(a.id.cmp(&b.id))
             });
@@ -1071,13 +1070,17 @@ mod control_tests {
     use super::*;
 
     #[::core::prelude::v1::test]
-    fn gems_have_no_tier_labels_but_keep_descriptive_text() {
+    fn gems_have_no_tier_labels_and_group_by_kind() {
         for gem in data::data().gems.values() {
-            assert!(!gem_detail(gem.description.as_deref()).contains("Tier "));
+            assert!(!stat_summary(&gem.stats).contains("Tier "));
             assert_eq!(editor::socketable_tier(&gem.id), None);
         }
-        assert_eq!(gem_detail(Some("Tier S · Soulgem")), "Soulgem");
-        assert_eq!(gem_detail(None), "");
+        assert_eq!(gem_group("Chipped Ruby"), "Gems");
+        assert_eq!(gem_group("Aether Jewel"), "Jewels");
+        assert_eq!(gem_group("Anubis' Soulgem"), "Soulgems");
+        assert_eq!(gem_group("Cthulhu's Soul Gem"), "Soulgems");
+        let stats = HashMap::from([("attack_speed".to_string(), 7.)]);
+        assert!(stat_summary(&stats).starts_with("+7"));
         let rune = data::data().runes.values().next().unwrap();
         assert_eq!(editor::socketable_tier(&rune.id), Some(rune.tier));
     }

@@ -286,7 +286,7 @@ fn proc_target_keeps_damage_taken_effect_in_its_own_scope() {
     assert_eq!(
         proc.calculation()
             .iter()
-            .find(|s| s.label() == "Enemy damage taken multiplier")
+            .find(|s| s.label() == "Enemy damage taken (break total)")
             .unwrap()
             .value(),
         (1.4, 1.4)

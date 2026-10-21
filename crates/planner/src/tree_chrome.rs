@@ -122,50 +122,60 @@ impl TreeView {
                         }),
                 ),
             )
-            .when(self.scene.graph.kind == TreeKind::Ether, |toolbar| {
-                toolbar.child(
-                    hsplanner_ui::controls::planner_button(
-                        "ether-summary",
-                        hsplanner_ui::controls::ButtonTone::Neutral,
-                        cx,
-                    )
-                    .label(tr("tree.summary"))
-                    .small()
-                    .selected(self.summary_open)
-                    .text_color(if self.summary_open {
-                        tree.accent()
-                    } else {
-                        palette.muted
+            .child(
+                gpui_kit::component::toolbar::Toolbar::new("tree-actions")
+                    .p_0()
+                    .h_auto()
+                    .gap_1p5()
+                    .when(self.scene.graph.kind == TreeKind::Ether, |toolbar| {
+                        toolbar.content(
+                            hsplanner_ui::controls::planner_button(
+                                "ether-summary",
+                                hsplanner_ui::controls::ButtonTone::Neutral,
+                                cx,
+                            )
+                            .label(tr("tree.summary"))
+                            .small()
+                            .selected(self.summary_open)
+                            .text_color(if self.summary_open {
+                                tree.accent()
+                            } else {
+                                palette.muted
+                            })
+                            .bg(linear_gradient(
+                                180.,
+                                linear_color_stop(tree.control(), 0.),
+                                linear_color_stop(tree.control_end(), 1.),
+                            ))
+                            .on_click(cx.listener(
+                                |this, _, window, cx| {
+                                    this.summary_open = !this.summary_open;
+                                    this.hovered = None;
+                                    window.focus(&this.focus, cx);
+                                    cx.notify();
+                                },
+                            )),
+                        )
                     })
-                    .bg(linear_gradient(
-                        180.,
-                        linear_color_stop(tree.control(), 0.),
-                        linear_color_stop(tree.control_end(), 1.),
-                    ))
-                    .on_click(cx.listener(|this, _, window, cx| {
-                        this.summary_open = !this.summary_open;
-                        this.hovered = None;
-                        window.focus(&this.focus, cx);
-                        cx.notify();
-                    })),
-                )
-            })
-            .when(self.scene.graph.kind == TreeKind::Incarnation, |toolbar| {
-                toolbar.child(
-                    hsplanner_ui::controls::planner_button(
-                        "tree-suggest-toggle",
-                        hsplanner_ui::controls::ButtonTone::Neutral,
-                        cx,
-                    )
-                    .label(tr("tree.suggest"))
-                    .small()
-                    .selected(self.suggest_open)
-                    .cursor_tooltip(tr("tree.suggest_hint"))
-                    .on_click(cx.listener(|this, _, window, cx| this.toggle_suggest(window, cx))),
-                )
-            })
-            .child(self.button(tr("tree.fit"), Command::Fit, cx))
-            .child(self.button(tr("tree.reset"), Command::Reset, cx))
+                    .when(self.scene.graph.kind == TreeKind::Incarnation, |toolbar| {
+                        toolbar.content(
+                            hsplanner_ui::controls::planner_button(
+                                "tree-suggest-toggle",
+                                hsplanner_ui::controls::ButtonTone::Neutral,
+                                cx,
+                            )
+                            .label(tr("tree.suggest"))
+                            .small()
+                            .selected(self.suggest_open)
+                            .cursor_tooltip(tr("tree.suggest_hint"))
+                            .on_click(
+                                cx.listener(|this, _, window, cx| this.toggle_suggest(window, cx)),
+                            ),
+                        )
+                    })
+                    .content(self.button(tr("tree.fit"), Command::Fit, cx))
+                    .content(self.button(tr("tree.reset"), Command::Reset, cx)),
+            )
     }
 
     pub(super) fn status_bar(&self, cx: &Context<Self>) -> impl IntoElement {

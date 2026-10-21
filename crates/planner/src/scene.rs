@@ -65,6 +65,7 @@ pub struct Selection<'a> {
     pub matches: &'a HashSet<usize>,
     pub searching: bool,
     pub socketed: &'a HashSet<usize>,
+    pub excluded: &'a HashSet<usize>,
     pub progression_marker: Option<usize>,
 }
 
@@ -345,6 +346,15 @@ impl Scene {
                             .corner_radii(px(r + camera.scale))
                             .border_widths(px(2. * camera.scale))
                             .border_color(theme.socket()),
+                    );
+                }
+                if selection.excluded.contains(&node.id) {
+                    let r = (node.r + 4.) * camera.scale;
+                    window.paint_quad(
+                        fill(circle(r + camera.scale), theme.excluded().opacity(0.))
+                            .corner_radii(px(r + camera.scale))
+                            .border_widths(px(2. * camera.scale))
+                            .border_color(theme.excluded()),
                     );
                 }
                 if selection.progression_marker == Some(i) {

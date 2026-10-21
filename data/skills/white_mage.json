@@ -36,7 +36,10 @@
   },
   {
     "id": "shadow_bolt",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 3.0, "baseProjectiles": 1, "perExtraProjectile": 3.0, "confidence": "C", "note": "Per cast, aimed THROUGH the dummy centre (rule 38, directional skill; Po R4 (a), Resztki B): player to the side of the dummy, cursor on (x, y), so the aim line passes the centre. FIRST bolt (i = 0): White_Mage_Shadow_Bolt_obj starts 20 px from the player (x + lengthdir(20, dir), y WITHOUT +6; asm 0x1465c71c2 / 0x1465c721e), 4 px/frame, mask 59x35 x 0.75 rotated with the aim (oriented rectangle vs the precise r 12 dummy, rule 26a), tick_frequency 15 frames (clears at a + 15, +16, ...; rule 20), 2 s life; on first contact it brakes 0.1 px/frame^2 to 2 px/frame. Hits at frames 31, 34, 49 (Resztki B sb2.py; Po R4 card 31, 34, 52 - same count) = 3 hits of damage[1] = D = the main hit = 3.0 (Resztki B: confirmed C from Create_0 0x14b341f50, Alarm_0 0x14b3431d0, Step_0 0x14b3441d0, Step_1 0x14b344aa0; a sideways shift of 0-8 px changes none of the p6/p10 numbers; +-1 frame I). Variant cursor (x, y-24) (aim 8.53 deg, line passes 23.7 px from the centre): 2 hits per bolt (frames 32, 35 / 41, 44) - the old value, note only. baseProjectiles = 1 (n = ExtraSpellProj(ceil(1 + RSS394 %))); perExtraProjectile = 3.0: extra bolts (i >= 1, alarm[0] = 1 + 9 i) fly the same line and also hit 3 times (frames 40, 43, 58 for i = 1; was the midpoint 2.5). p6 (scale: 3, 3, 3, 3, 4, 4 hits for r = 0..5; Resztki B r4 = 4, not 3|4), p10 (speed: 3, 2, 2, 2, 1, 1), p11 (nova: 2 hits of D per bolt), p12 beams (+0.5r D on every hit), p13 wave (~1.6 hits), p14 cascade (3.00 / 3.20 / 3.53 / 4.01 / 4.76 / 6.17 hits per cast bolt, I), p1 shadow burn are subskill effects."},
     "classId": "white_mage",
     "name": "Shadow Bolt",
     "kind": "active",
@@ -58,11 +61,8 @@
     "damageType": "arcane",
     "movementDuringUse": 85,
     "range": 320,
-    "baseCastRate": 1,
-    "damageFormula": {
-      "base": 6,
-      "perLevel": 14
-    },
+    "baseCastRate": 1.875,
+    "damageFormula": { "base": 5, "perLevel": 13 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -109,12 +109,13 @@
       {
         "id": "consuming_flames",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [35, 70, 105, 140, 175], "note": "shadow burn DoT, value = % of D per application (35 %/r); one roll per CAST with chance 4r % (card 'raz na rzut'); no direct hit on dummy"}], "confidence": "C", "note": "card table p1 (R3 239 not changed)", "plannerFix": "planner puts the 4r % roll on_hit; card rolls once per cast"},
         "name": "Consuming Flames",
         "description": "Chance to inflict shadow burn on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_shadow_burning_damage": 0 },
-          "perRank": { "increased_shadow_burning_damage": 35 }
+          "base": {"increased_shadow_burning_damage": 0},
+          "perRank": {"increased_shadow_burning_damage": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -127,28 +128,31 @@
       {
         "id": "arcane_surge",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [12.5, 25, 37.5, 50, 62.5], "note": "LSSD += 12.5 %/r"}], "confidence": "C", "note": "card table p2"},
         "name": "Arcane Surge",
         "description": "Increases damage dealt by shadow bolt.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 12.5 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 12.5}
         }
       },
       {
         "id": "power_of_the_dark_side",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7 %/r"}], "confidence": "C", "note": "card table p3"},
         "name": "Power of the Dark Side",
         "description": "Decreases mana cost of shadow bolt.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "dark_conjurer",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "note": "expected extra bolts per cast: one extra bolt with chance 4r % per cast (avg ~2.5 hits, engine converts via perExtraProjectile)"}], "confidence": "I", "note": "card table p4 (gaaz, chance 4r % per cast); planner on_cast +100 % of total ~ one extra bolt"},
         "name": "Dark Conjurer",
         "description": "Chance on cast to unleash an additional shadow bolt.",
         "maxRank": 5,
@@ -164,6 +168,7 @@
       {
         "id": "taunting_shadows",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "utility", "note": "taunt buff on hit, chance 3r %; no DPS"}], "confidence": "C", "note": "card table p5"},
         "name": "Taunting Shadows",
         "description": "Chance to taunt monsters on hit.",
         "maxRank": 5,
@@ -176,23 +181,25 @@
       {
         "id": "inner_corruption",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, 0, 0, 1, 1], "per": "use", "note": "hits per bolt r0..5 = 3, 3, 3, 3, 4, 4 vs base 3 (Resztki B sb2.py; card Po R4 said 3|4 at r4, now 4); delta per bolt, extra bolts (i >= 1) get the same delta (Resztki B i = 0 and i = 1 equal); cursor (x, y-24) variant: 2, 3, 3, 3, 3, 4"}], "confidence": "C", "note": "Resztki B (Szkic sb2.py, aim through the centre, rule 38) + Po R4 (a); hits relative to base 3.0 per bolt (cursor on the dummy centre); delta is per bolt - the engine should scale it with the bolt count", "plannerFix": "planner projectile_size 18 %/r but no hit change; card: bigger bolt keeps the bolt in contact longer (3 -> 4 hits at r4-5)"},
         "name": "Inner Corruption",
         "description": "Increases the size of shadow bolts.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 18 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 18}
         }
       },
       {
         "id": "shadows_dispair",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "other", "byRank": [30, 60, 90, 120, 150], "note": "arcane break %, applied with chance 4r % per CAST (not per hit); value = break % when applied"}], "confidence": "C", "note": "card table p7", "plannerFix": "planner rolls the 4r % on_hit; card rolls once per cast"},
         "name": "Shadows Dispair",
         "description": "Chance to inflict arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 30 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -205,67 +212,73 @@
       {
         "id": "flames_of_corruption",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [20, 40, 60, 80, 100], "note": "+% damage to shadow burn DoT (only with p1 applied); no direct bolt hit change"}], "confidence": "C", "note": "card table p8 ([183] +20 %/r vs shadow burn)"},
         "name": "Flames of Corruption",
         "description": "Increases damage dealt to shadow burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_shadow_burning": 0 },
-          "perRank": { "extra_damage_shadow_burning": 20 }
+          "base": {"extra_damage_shadow_burning": 0},
+          "perRank": {"extra_damage_shadow_burning": 20}
         }
       },
       {
         "id": "warlock_from_the_shadows",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [3, 6, 9, 12, 15], "note": "spell crit chance %; crit damage +30 %/r (planner spell_crit_damage 30r)"}], "confidence": "C", "note": "card table p9 ([1004] +3 %/r, [1003] +30 %/r)"},
         "name": "Warlock from the Shadows",
         "description": "Chance on hit to critically hit with increased critical damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 3, "spell_crit_damage": 30 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 3, "spell_crit_damage": 30}
         }
       },
       {
         "id": "warlocks_might",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [-1, -1, -1, -2, -2], "per": "use", "note": "hits per bolt r0..5 = 3, 2, 2, 2, 1, 1 vs base 3 (Po R4 (a), confirmed Resztki B; faster bolt = shorter contact); delta per bolt, extra bolts get the same delta; cursor (x, y-24) variant: 2, 2, 2, 1, 1, 1"}], "confidence": "C", "note": "Po R4 (a) + Resztki B (sb2.py), rule 38; hits relative to base 3.0 per bolt; delta is per bolt - the engine should scale it with the bolt count", "plannerFix": "planner projectile_speed 15 %/r without hit change; card: faster bolt gives fewer dummy hits (3 -> 2 -> 1)"},
         "name": "Warlocks Might",
         "description": "Increases the projectile speed of shadow bolt.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "shadow_flame",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [75, 150, 225], "note": "LSSD += 75 %/r (nova damage)"}, {"kind": "set_hits", "byRank": [2, 2, 2], "per": "use", "note": "transformation: each bolt gives 2 hits (bolt hit, then the nova from the first hit destroys the bolt); per use with one bolt = 2"}], "confidence": "C", "note": "card table p11 ([703]; handler exits after nova)", "plannerFix": "planner has arcane 75r and area 20r but no nova hit; card: bolt replaced by bolt+nova = 2 hits per bolt"},
         "name": "Shadow Flame",
         "description": "Shadow bolt bursts into a shadow nova on hit with increased damage and area of effect radius.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "arcane_skill_damage": 75, "area_of_effect": 20 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 20, "subtree_damage": 75}
         }
       },
       {
         "id": "shadow_beams",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.5, 1, 1.5], "per": "hit", "note": "beam on every bolt hit: floor(D*0.5r) per hit; value = 0.5r hits per base hit"}], "confidence": "I", "note": "card table p12 ([704] 50 %/r per hit; beam ends on dummy; not with p11)"},
         "name": "Shadow Beams",
         "description": "Unleash beams of shadows towards monsters on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 50 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 50}
         }
       },
       {
         "id": "shadows_grasp",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1.6, 1.6, 1.6], "per": "use", "note": "transformation: segment wave of 10 segments (80 px, every 64 px) replaces the bolt; ~1.6 segments hit the dummy per cast (1-2)"}, {"kind": "other", "byRank": [50, 100, 150], "note": "arcane break % always applied ([979] = [p7 + 50 %/r, 5 s]); value = break %"}], "confidence": "I", "note": "card table p13 (geometry I)", "plannerFix": "planner keeps 2 bolt hits; card: fan of segments gives ~1.6 hits per cast"},
         "name": "Shadows Grasp",
         "description": "Unleash a grasping shadow hand pulling monsters towards you inflicting arcane break on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 50 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 50}
         },
         "proc": {
           "trigger": "on_hit",
@@ -278,6 +291,7 @@
       {
         "id": "shadow_cascade",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.2, 0.53, 1.01], "per": "use", "note": "mean hits per cast bolt incl. the cascade r0..3 = 3.00 / 3.20 / 3.53 / 4.01 (card R4 239#2 + PoR4, aim through the centre, rule 38) vs base 3.0 -> +0.20 / +0.53 / +1.01 (r1..3); chance 5r % per hit, 3 children at -12 / 0 / +12 deg, unbounded cascade; r4/r5 would be 4.76 / 6.17 (planner maxRank 3). Resztki B own simulation gives 3.34 / 3.79 / 4.40 (within 10 %, kept the card values); delta per bolt; (x, y-24) variant 2.00 / 2.25 / 2.54 / 2.97; not additive with p6/p10 and absent with p11"}], "confidence": "I", "note": "card R4 239#2 (MC 2 x 2500, asm 0x14522bed0 block 706) + PoR4 + Resztki B (independent simulation, stays I); replaces the old closed-form F estimate", "plannerFix": "planner has on_hit chance 5r with no effect; cascade is a branching process (3 children from the parent position + 12 px), not modelled"},
         "name": "Shadow Cascade",
         "description": "Shadow bolt has a chance to burst into smaller shadow bolts on hit. This effect can occur infinitely.",
         "maxRank": 3,
@@ -321,13 +335,15 @@
   {
     "id": "soul_spurn",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast, placed at the cursor point (x, y-24), 24 px from the dummy (rule 24; the same at 160 px): White_Mage_Soul_Spurn_AOE_obj (Player_Damage_Parent, mask 64 px x scale 3 = r 96 px, destroyTimer 1 s, tick_frequency 0 and no map clear without p12) covers the dummy and hits it once with damage[1] = D = the main hit = 1.0 (card; the planner hitModel without a tick agrees). baseProjectiles = 1; perExtraProjectile = 0 (no projectile count; p4 Consume is a 3r % chance of a second AoE 0.15 s later). p1 Last Mortal Act (a soul of 0.1r D flying from the dummy to the player, 0-1 hits), p12 Purgatory (AoE glued to the player, tick 1.25 s, needs the dummy within 96*(1 + 0.15 r10 + 0.35 r12)*(1 - 0.1 r11) px of the player: >= 2 ranks for 160 px), p3 and p9 once-per-cast rolls are subskill effects. The passive Benediction (1 hit of LTD(248,V1) per Soul Spurn cast without p12) is not included."},
     "classId": "white_mage",
     "name": "Soul Spurn",
     "kind": "active",
     "description": "Rip the souls from nearest monsters dealing arcane damage and restoring your life and mana.",
     "maxRank": 20,
     "requiresLevel": 8,
-    "hitModel": { "object": "White_Mage_Soul_Spurn_AOE_Create", "tickFrequency": 0.1, "lifetime": 1 },
+    "hitModel": { "object": "White_Mage_Soul_Spurn_AOE_Create" },
     "ranks": [
       {
         "rank": 1,
@@ -342,11 +358,8 @@
     "damageType": "arcane",
     "movementDuringUse": 85,
     "range": 420,
-    "baseCastRate": 1,
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 13.5
-    },
+    "baseCastRate": 1.75,
+    "damageFormula": { "base": 0, "perLevel": 12.5 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -403,28 +416,31 @@
       {
         "id": "last_mortal_act",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.1, 0.2, 0.3], "per": "use", "note": "the soul (Soul_Spurn_Damaging_obj, floor(D*0.1r), full modifiers via InheritModifiers) is created at the hit enemy (x, y), stands ~20 frames growing and hits the dummy exactly once before flying to the player: +0.1r D per AoE hit (r3: +30 %); with p12 one soul per 1.25 s tick"}], "confidence": "C", "note": "R4 240#0 (asm 0x14511e8f2/0x14511e941, 0x14b3536dd; mechanism C, frame order +-1 I); was a 0-1 hit midpoint 0.5"},
         "name": "Last Mortal Act",
         "description": "Ripped souls deal a portion of the damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 10 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 10}
         }
       },
       {
         "id": "solidify",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD += 15 %/r"}], "confidence": "C", "note": "card table p2"},
         "name": "Solidify",
         "description": "Increases the damage dealt by soul spurn.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 15 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 15}
         }
       },
       {
         "id": "repeating_reaping",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [0.9, 3.6, 8.1, 14.4, 22.5], "note": "expected LSSD: chance 3r % per cast x +30r % LSSD for that cast = 0.9 r^2 %"}], "confidence": "C", "note": "card table p3 (chance 3r %, +30 %/r LSSD for the cast)"},
         "name": "Repeating Reaping",
         "description": "Chance on cast to deal increased damage.",
         "maxRank": 5,
@@ -440,6 +456,7 @@
       {
         "id": "consume",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use", "note": "second AoE with chance 3r % per cast, one hit of D each"}], "confidence": "I", "note": "card table p4 (+1 loop pass, alarm 0.15 s)"},
         "name": "Consume",
         "description": "Chance on cast to unleash an additional soul spurn.",
         "maxRank": 5,
@@ -455,56 +472,61 @@
       {
         "id": "highway_to_purgatory",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "utility", "note": "soul projectile speed +30 %/r"}], "confidence": "C", "note": "card table p5"},
         "name": "Highway to Purgatory",
         "description": "Increases the speed of ripped souls.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 30 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 30}
         }
       },
       {
         "id": "restore",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana replenish 1 %/r on hit"}], "confidence": "C", "note": "card table p6"},
         "name": "Restore",
         "description": "Soul spurn recovers a portion of your maximum mana on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_replenish_pct": 0 },
-          "perRank": { "mana_replenish_pct": 1 }
+          "base": {"mana_replenish_pct": 0},
+          "perRank": {"mana_replenish_pct": 1}
         }
       },
       {
         "id": "revitalise",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "life replenish 0.4 %/r on hit"}], "confidence": "C", "note": "card table p7"},
         "name": "Revitalise",
         "description": "Soul spurn recovers a portion of your maximum life on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "life_replenish_pct": 0 },
-          "perRank": { "life_replenish_pct": 0.4 }
+          "base": {"life_replenish_pct": 0},
+          "perRank": {"life_replenish_pct": 0.4}
         }
       },
       {
         "id": "floating_cultist",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "utility", "note": "movement diminish (ruch)"}], "confidence": "I", "note": "card table p8"},
         "name": "Floating Cultist",
         "description": "Reduces movement diminish when using soul spurn.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "shattering_destruction",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "other", "byRank": [35, 70, 105, 140, 175], "note": "arcane break % applied with chance 4r % per CAST (value = break %)"}], "confidence": "C", "note": "card table p9", "plannerFix": "planner rolls 4r % on_hit; card rolls once per cast"},
         "name": "Shattering Destruction",
         "description": "Chance to inflict arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 35 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -517,79 +539,71 @@
       {
         "id": "corrupted_rapture",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "utility", "note": "AoE size +15 %/r (area, no extra hit on a single dummy)"}], "confidence": "C", "note": "card table p10"},
         "name": "Corrupted Rapture",
         "description": "Increases the area of effect radius of soul spurn.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "soulfilled_tradeoff",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [80, 160, 240], "note": "LSSD += 80 %/r (AoE scale x(1-10 %/r) has no hit effect)"}], "confidence": "C", "note": "card table p11"},
         "name": "Soulfilled Tradeoff",
         "description": "Increases the damage dealt by soul spurn but decreases the area of effect radius.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "arcane_skill_damage": 80, "area_of_effect": -10 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": -10, "subtree_damage": 80}
         }
       },
       {
         "id": "purgatory",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [40, 80, 120], "note": "LSSD += 40 %/r"}, {"kind": "other", "note": "transformation: AoE glued to player, steady tick 1.25 s, no per-cast count; ~0.8 D/s while the dummy is inside radius 96*(1+0.15 r10+0.35 r12)*(1-0.1 r11) px (needs r12>=2 at 160 px)"}], "confidence": "I", "note": "card table p12 (geometry I)", "plannerFix": "planner has area 35r, life drain and LSSD but no steady 1.25 s tick on the dummy"},
         "name": "Purgatory",
         "description": "Soul spurn becomes a toggle skill ripping souls from monsters around you draining a portion of your maximum life frequently.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "area_of_effect": 0,
-            "life_drain_pct": 0,
-            "arcane_skill_damage": 0
-          },
-          "perRank": {
-            "area_of_effect": 35,
-            "life_drain_pct": 3,
-            "arcane_skill_damage": 40
-          }
+          "base": {"area_of_effect": 0, "life_drain_pct": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 35, "life_drain_pct": 3, "subtree_damage": 40}
         }
       },
       {
         "id": "lifeline_tether",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "utility", "note": "life/mana replenish +1 %/r for allies/self; no dummy DPS"}], "confidence": "C", "note": "card table p13"},
         "name": "Lifeline Tether",
         "description": "Rip souls for all nearby allies restoring their mana and life.",
         "maxRank": 3,
         "effects": {
-          "base": { "life_replenish_pct": 0, "mana_replenish_pct": 0 },
-          "perRank": { "life_replenish_pct": 1, "mana_replenish_pct": 1 }
+          "base": {"life_replenish_pct": 0, "mana_replenish_pct": 0},
+          "perRank": {"life_replenish_pct": 1, "mana_replenish_pct": 1}
         }
       },
       {
         "id": "harvest_the_damned",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "enemy buff 71 for 2 s and kill-trigger buff 89 only; no hit change on a non-dying dummy"}], "confidence": "I", "note": "card table p14", "plannerFix": "planner gives +3 %/r arcane damage and life/mana replenish; card gives only buffs 71/89 (zero on dummy)"},
         "name": "Harvest the Damned",
         "description": "Monsters killed by soul spurn inflicts you with a buff increasing your arcane damage, life replenish and mana replenish for a short duration.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "arcane_skill_damage": 0,
-            "life_replenish_pct": 0,
-            "mana_replenish_pct": 0
-          },
-          "perRank": {
-            "arcane_skill_damage": 3,
-            "life_replenish_pct": 3,
-            "mana_replenish_pct": 3
-          }
+          "base": {"arcane_skill_damage": 0, "life_replenish_pct": 0, "mana_replenish_pct": 0},
+          "perRank": {"arcane_skill_damage": 3, "life_replenish_pct": 3, "mana_replenish_pct": 3}
         }
       }
     ]
   },
   {
     "id": "restless_spirits",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 3.0, "baseProjectiles": 3, "perExtraProjectile": 1.0, "confidence": "C", "note": "Per cast, dummy at 160 px: n = ExtraSpellProj(3 + p4.s9) = 3 White_Mage_Restless_Spirit_obj (Player_Damage_Parent, singleHit, no tick, no map clear, no pack; mask 32 px x 1.5) start at the player with deltaSpeed 4 + 2/n px/frame, home on the nearest enemy within 500 px (reach 160 px in ~0.6 s of the 2.5 s life) and each hits the dummy exactly once with damage[1] = D = the main hit = 3.0 (homing path I). baseProjectiles = 3; perExtraProjectile = 1.0 (every extra spirit - p4 Wraiths Call +2/r, gear extras - homes in and hits once). p8 Wraith's Fury (damage x(1 + 0.03r) every 0.5 s of flight, ~1 step at 160 px), p13 Soul Termination (+1 explosion of 0.75r D per spirit), p7 Hexbound (0 or 4 hits of 0.4r D), p11 Spirit Circle (spirits orbit the player: 0 hits at 160 px), p12 Master of Spirits (transformation: Shadow Bolts, +8 s cooldown), p2/p9 once-per-cast rolls are subskill effects."},
     "classId": "white_mage",
     "name": "Restless Spirits",
     "kind": "active",
@@ -610,11 +624,8 @@
     "damageType": "arcane",
     "movementDuringUse": 85,
     "range": 320,
-    "baseCastRate": 1,
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 13
-    },
+    "baseCastRate": 1.75,
+    "damageFormula": { "base": 0, "perLevel": 11 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -661,23 +672,25 @@
       {
         "id": "arcane_echoes",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8 %/r"}], "confidence": "C", "note": "card table p1"},
         "name": "Arcane Echoes",
         "description": "Increases damage dealt by restless spirits.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "shadowflame_affliction",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [35, 70, 105, 140, 175], "note": "shadow burn DoT, value = % of D per application; one roll per CAST with chance 3r % (applies to all spirits of that cast)"}], "confidence": "C", "note": "card table p2 ([31])", "plannerFix": "planner rolls 3r % on_hit; card rolls once per cast"},
         "name": "Shadowflame Affliction",
         "description": "Chance to inflict shadow burn on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_shadow_burning_damage": 0 },
-          "perRank": { "increased_shadow_burning_damage": 35 }
+          "base": {"increased_shadow_burning_damage": 0},
+          "perRank": {"increased_shadow_burning_damage": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -690,50 +703,55 @@
       {
         "id": "spiritual_expansion",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "spirit size +15 %/r; no hit change on a 160 px dummy"}], "confidence": "C", "note": "card table p3"},
         "name": "Spiritual Expansion",
         "description": "Increases the size of restless spirits.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 15 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 15}
         }
       },
       {
         "id": "wraiths_call",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6, 8, 10], "note": "n = ExtraSpellProj(3 + 2r): two extra spirits per rank, each one hit (perExtraProjectile 1)"}], "confidence": "C", "note": "card table p4"},
         "name": "Wraiths Call",
         "description": "Increases the amount of restless spirits.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 2 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 2}
         }
       },
       {
         "id": "spectral_efficiency",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -15 %/r"}], "confidence": "C", "note": "card table p5"},
         "name": "Spectral Efficiency",
         "description": "Decreases the mana cost of restless spirits.",
         "maxRank": 2,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 15 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 15}
         }
       },
       {
         "id": "phantom_step",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "movement during cast (no dummy DPS)"}], "confidence": "I", "note": "card table p6"},
         "name": "Phantom Step",
         "description": "Decreases movement diminish when using restless spirits.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "hexbound_spirits",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, 0, 0, 0, 0], "per": "hit", "note": "Hexbound: chance 3r % per hit, r orbs of D*0.4r orbit the hit ENEMY (centre of the dummy) at 24 + 16 i px; mask = circle r 16*0.5 = 8 px vs dummy r 12: contact needs < 20 px, the nearest orb is 24 px away -> 0 hits (C)"}], "confidence": "C", "note": "R4 237#0 (self = hit enemy, asm 0x14523bd03; Hexbound Create_0 0x14b329ec0, Step_0 0x14b32b9e0, Mask_Circle_32x_spr precise circle); was I (geometry), now C; value unchanged", "plannerFix": "planner adds +40 %/r of total per proc (chance 3r %) and +r projectiles; card: orbit around the hit enemy at 24 px, circle mask r 8 px, no contact with the dummy r 12"},
         "name": "Hexbound Spirits",
         "description": "Chance to summon orbiting souls at target location on hit dealing damage for a short duration.",
         "maxRank": 5,
@@ -749,23 +767,25 @@
       {
         "id": "wraiths_fury",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.03, 1.06, 1.09, 1.12, 1.15], "note": "Wraith's Fury: x(1+0.03r) on the spirit damage (separate multiplier, not LSSD); ~1 step at 160 px"}], "confidence": "I", "note": "card table p8", "plannerFix": "planner adds 3 %/r to arcane_skill_damage (LSSD); card has a separate x(1+0.03r) multiplier"},
         "name": "Wraiths Fury",
         "description": "Increases the damage dealt by restless spirits over time.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 3 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 3}
         }
       },
       {
         "id": "shattering_spirits",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "other", "byRank": [30, 60, 90, 120, 150], "note": "arcane break % applied with chance 3r % per CAST (value = break %)"}], "confidence": "C", "note": "card table p9 ([979])", "plannerFix": "planner rolls 3r % on_hit; card rolls once per cast"},
         "name": "Shattering Spirits",
         "description": "Chance to inflict arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 30 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -778,62 +798,61 @@
       {
         "id": "spectral_velocity",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "utility", "note": "spirit speed +30 %/r; spirits reach 160 px dummy before lifetime anyway"}], "confidence": "C", "note": "card table p10"},
         "name": "Spectral Velocity",
         "description": "Increases the projectile speed of restless spirits.",
         "maxRank": 2,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 30 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 30}
         }
       },
       {
         "id": "spirit_circle",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0, 0, 0], "per": "use", "note": "Spirit Circle: spirits orbit the player (r 64 px) and never go to a dummy at 160 px -> 0 hits per use"}], "confidence": "I", "note": "card table p11 (C/I)", "plannerFix": "planner adds +3 projectiles per rank (1 hit each); card: spirits orbit player, 0 hits at 160 px"},
         "name": "Spirit Circle",
         "description": "Restless spirits now orbit you for a short duration.",
         "maxRank": 3,
         "effects": {
-          "base": { "skill_duration": 0, "projectile_count": 0 },
-          "perRank": { "skill_duration": 33, "projectile_count": 3 }
+          "base": {"skill_duration": 0, "projectile_count": 0},
+          "perRank": {"skill_duration": 33, "projectile_count": 3}
         }
       },
       {
         "id": "master_of_spirits",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [23.4, 62.4, 117.0], "per": "use", "note": "transformation: spirits skipped; masters (3r) shoot Shadow Bolts every 1.35 s during lifetime 2.5 s (1+50 %/r): per use m*N_b*2.6, m=3r, N_b=1+floor((T-0.1)/1.35), T=2.5(1+0.5r) -> N_b 3/4/5"}, {"kind": "cooldown_s", "byRank": [8, 8, 8], "note": "cooldown +8 s (GetTalentCooldown#237 A=8)"}], "confidence": "I", "note": "card table p12 (C/I; h_SB = 2.6 per bolt)", "plannerFix": "planner models masters as summon count only; card: shadow bolts from masters, cooldown +8 s"},
         "name": "Master of Spirits",
         "description": "Summon multiple spirit servants following you and unleashing shadow bolts towards nearby monsters. Restless Spirits now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "summon_max_amount": 0,
-            "skill_duration": 0
-          },
-          "perRank": {
-            "summon_max_amount": 3,
-            "skill_duration": 50
-          }
+          "base": {"summon_max_amount": 0, "skill_duration": 0, "cooldown_added": 8},
+          "perRank": {"summon_max_amount": 3, "skill_duration": 50, "cooldown_added": 0}
         }
       },
       {
         "id": "soul_termination",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.75, 1.5, 2.25], "per": "hit", "note": "first spirit hit makes an Explosion_Item with floor(D*0.75r) and destroys the spirit: +0.75r hits per spirit hit"}], "confidence": "C", "note": "card table p13 ([709])"},
         "name": "Soul Termination",
         "description": "Restless spirits explode on hit dealing a portion of their damage as area of effect damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 75 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 75}
         }
       },
       {
         "id": "feast_on_the_harvest",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD += 15 %/r; stacks of buff 89 add spirits but the dummy never dies, so 0 extra spirits"}], "confidence": "C", "note": "card table p14"},
         "name": "Feast on the Harvest",
         "description": "Increases the amount of restless spirits according to the stack amount of harvest the damned consuming the buff.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 15 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 15}
         }
       }
     ]
@@ -906,8 +925,8 @@
         "description": "Increases the tick frequency of dark oath.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 10 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 10}
         }
       },
       {
@@ -917,8 +936,8 @@
         "description": "Increases the damage dealt by dark oath.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 8}
         }
       },
       {
@@ -943,8 +962,8 @@
         "description": "Increases the area of effect radius of dark oath.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
@@ -954,8 +973,8 @@
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 10 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 10}
         }
       },
       {
@@ -980,8 +999,8 @@
         "description": "Chance to critically hit with increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "crit_chance": 0, "crit_damage": 0 },
-          "perRank": { "crit_chance": 3, "crit_damage": 20 }
+          "base": {"crit_chance": 0, "crit_damage": 0},
+          "perRank": {"crit_chance": 3, "crit_damage": 20}
         }
       },
       {
@@ -1006,8 +1025,8 @@
         "description": "Chance to inflict arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 15 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1036,8 +1055,8 @@
         "description": "Each pulse unleashes multiple restless spirits.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 5 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 5}
         }
       },
       {
@@ -1047,8 +1066,8 @@
         "description": "Dark oath pulses collect souls from monsters. After reaching the maximum stack of souls the next pulse will deal increased damage with increased area of effect radius.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "arcane_skill_damage": 2, "area_of_effect": 0.25 }
+          "base": {"arcane_skill_damage": 0, "area_of_effect": 0},
+          "perRank": {"arcane_skill_damage": 2, "area_of_effect": 0.25}
         }
       },
       {
@@ -1073,8 +1092,8 @@
         "description": "Inflicts shadow burn and slow on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_shadow_burning_damage": 0 },
-          "perRank": { "increased_shadow_burning_damage": 50 }
+          "base": {"increased_shadow_burning_damage": 0},
+          "perRank": {"increased_shadow_burning_damage": 50}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1089,6 +1108,8 @@
   {
     "id": "satans_mark",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 0.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "0 hits on a lone dummy. The base cast (cooldown 3 s*(1 - 0.15 r8), mark 5 s) creates only White_Mage_Satans_Mark_obj, a Player_Curse_Parent that deals no damage; it puts buff 24 (D, stacks 1 + p5.s9) on the dummy, and the mark DETONATES only when ANOTHER object with noProcs = 0 hits the marked dummy (ProjectileCollision L52-L53): one Explosion_Item_obj of damage[1] = D (modifier class 'none': no spell crit, LDM, vs-ailment, penetration, conversion - f_det < 1, e.g. ~0.45) per stack consumed. A recast on a still-marked dummy changes nothing (EnemyAddBuff ignores array buffs), so the mark renews every ceil(5 s*(1 + 0.15 r2)/c)*c = 6 s in the base. For the engine as a detonator: per mark cycle min(stacks = 1 + 2 r5 (+3 r12), hits by other skills in the window) explosions of f_det*D; this depends on the rest of the build and cannot be a per-cast constant, hence 0.0 here. baseProjectiles = 1, perExtraProjectile = 0. p13 (+1 hit D of a Stun_obj, which can itself detonate), p14 (transformation: D + f_det*D*(1 + 0.4r) per cast, no mark), p3 crows (0 at the centre), p11 (the explosion becomes an N0 chain, same 1 hit) are subskill effects."},
     "classId": "white_mage",
     "name": "Satans Mark",
     "kind": "active",
@@ -1108,13 +1129,10 @@
     ],
     "damageType": "arcane",
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 3,
     "effectDuration": 5,
-    "damageFormula": {
-      "base": 0.5,
-      "perLevel": 14.5
-    },
+    "damageFormula": { "base": 0, "perLevel": 12.5 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -1161,28 +1179,31 @@
       {
         "id": "heil_satan",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8 %/r (detonations only)"}], "confidence": "C", "note": "card table p1"},
         "name": "Heil Satan",
         "description": "Increases the damage dealt by satan´s mark.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "long_lasting_darkness",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "utility", "note": "buff time +15 %/r (detonation window)"}], "confidence": "C", "note": "card table p2"},
         "name": "Long Lasting Darkness",
         "description": "Increases the duration of satan´s mark.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 15 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 15}
         }
       },
       {
         "id": "mark_of_the_beast",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "other", "byRank": [0, 0, 0, 0, 0], "per": "use", "note": "already modelled by planner summon_max_amount; crows (3r) orbit the cast point at 96 px; dummy is ~24 px from centre -> no contact (~72 px gap). If the dummy sat on the ring: ~4 hits per crow x 0.25r D x chance 4r %"}], "confidence": "I", "note": "card table p3 (geometry I)", "plannerFix": "planner gives crows 25 %/r of total per proc (chance 4r %); card's orbit radius 96 px never touches a centred dummy"},
         "name": "Mark of the Beast",
         "description": "Chance on cast to spawn crows circling around the target location for a short duration dealing additional damage.",
         "maxRank": 5,
@@ -1204,39 +1225,43 @@
       {
         "id": "grasp_of_lucifer",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "orbit / area radius +15 %/r"}], "confidence": "C", "note": "card table p4"},
         "name": "Grasp of Lucifer",
         "description": "Increases the area of effect radius of satan´s mark.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "satanic_transe",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "stacks 1+2r: extra detonations need other hits; a lone dummy gives no detonation"}], "confidence": "C", "note": "card table p5"},
         "name": "Satanic Transe",
         "description": "Increases the amount of stacks applied to targets.",
         "maxRank": 3,
         "effects": {
-          "base": { "max_skill_stacks": 0 },
-          "perRank": { "max_skill_stacks": 2 }
+          "base": {"max_skill_stacks": 0},
+          "perRank": {"max_skill_stacks": 2}
         }
       },
       {
         "id": "blood_ritual",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "utility", "note": "detonation scale x(1+10 %/r)"}], "confidence": "C", "note": "card table p6"},
         "name": "Blood Ritual",
         "description": "Increases the blood ripple area of effect radius of satan´s mark.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 10 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 10}
         }
       },
       {
         "id": "the_black_bible",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Black Bible: extra mark only on a detonation hit; zero on a lone dummy"}], "confidence": "C", "note": "card table p7 (proc needs detonations)"},
         "name": "The Black Bible",
         "description": "Chance to apply satan´s mark to nearby monsters on hit.",
         "maxRank": 5,
@@ -1245,34 +1270,37 @@
       {
         "id": "messenger_of_satan",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-15, -30, -45, -60, -75], "note": "cooldown -15 %/r (GetTalentCooldown#236 B)"}], "confidence": "C", "note": "card table p8", "plannerFix": "planner models 15 %/r as skill_haste; card: cooldown -15 %/r"},
         "name": "Messenger of Satan",
         "description": "Decreases the cooldown of satan´s mark.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 15 }
+          "base": {"skill_haste": 0, "cooldown_reduction_pct": 0},
+          "perRank": {"skill_haste": 15, "cooldown_reduction_pct": 15}
         }
       },
       {
         "id": "reach_of_darkness",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "cast range +15 %/r; no dummy DPS"}], "confidence": "I", "note": "card table p9"},
         "name": "Reach of Darkness",
         "description": "Increases the maximum cast range of satan´s mark.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "false_prophecy",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [15, 30, 45, 60, 75], "note": "burning on detonations: floor(D*0.15r) with chance 3r % at cast roll; zero on a lone dummy"}], "confidence": "C", "note": "card table p10 ([18])", "plannerFix": "planner puts 3r % on_hit burning on the mark; card rolls at cast for detonation burns"},
         "name": "False Prophecy",
         "description": "Chance to inflict burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 15 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1285,42 +1313,37 @@
       {
         "id": "the_black_mass",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD += 25 %/r on detonation; detonation becomes a 1-hit chain (chainType 236), same count, class 'brak'"}], "confidence": "C", "note": "card table p11 (N0 chain, 1 hit per detonation)"},
         "name": "The Black Mass",
         "description": "Satan´s mark unleashes chains of unholy lightning when struck by black mass executing low life monsters on hit.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "arcane_skill_damage": 0,
-            "projectile_bounces": 0,
-            "execute_below": 0
-          },
-          "perRank": {
-            "arcane_skill_damage": 25,
-            "projectile_bounces": 3,
-            "execute_below": 2.5
-          }
+          "base": {"projectile_bounces": 0, "execute_below": 0, "subtree_damage": 0},
+          "perRank": {"projectile_bounces": 3, "execute_below": 2.5, "subtree_damage": 25}
         }
       },
       {
         "id": "the_rapture",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "cooldown_s", "byRank": [6, 6, 6], "note": "cooldown +6 s (GetTalentCooldown#236 A=6); stacks +3 r and radius +100 %/r; zero on a lone dummy"}], "confidence": "C", "note": "card table p12", "plannerFix": "planner has area 100r and stacks 3r but no +6 s cooldown"},
         "name": "The Rapture",
         "description": "Satan´s mark is applied to monsters around you on a large radius with increased stacks. Satan´s mark now has an increased cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "area_of_effect": 0, "max_skill_stacks": 0 },
-          "perRank": { "area_of_effect": 100, "max_skill_stacks": 3 }
+          "base": {"area_of_effect": 0, "max_skill_stacks": 0, "cooldown_added": 6},
+          "perRank": {"area_of_effect": 100, "max_skill_stacks": 3, "cooldown_added": 0}
         }
       },
       {
         "id": "the_devil_in_i",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 1, 1], "per": "use", "note": "White_Mage_Satans_Mark_Stun_obj hit with D every cast (full modifiers, Player_Damage_Parent, deadly from F+2)"}, {"kind": "extra_hits", "byRank": [0.45, 0.45, 0.45], "per": "use", "note": "R4 236#0: the Curse collision (0x149104510, no deadly gate) puts mark buff 24 on the dummy before the Stun hit, so the Stun hit (noProcs = 0) detonates it: one Explosion_Item_obj of f_det*D per cast (consumes one stack; also works while the mark of the previous cast still lasts). Modifier class \"none\" (rule 32): value = 0.45 is the card example f_det, gear dependent (I); upper bound f_det = 1"}, {"kind": "other", "byRank": [30, 60, 90], "note": "arcane break % 30 %/r on the stun hit for 5 s (buff 8); value = break %"}], "confidence": "I", "note": "R4 236#0 (Curse Collision 0x149104510, Stun_obj alarm[11] = 2, ProjectileCollision L52-L53, Player_Damage_Parent Create_0 L150 noProcs = 0): order C, GM frame numbering I; f_det example 0.45 from R3S; 2 hits per cast = 1 + f_det", "plannerFix": "planner has stun_duration 2r and on_hit break but no +1 D hit and no extra detonation hit (D + f_det*D per cast)"},
         "name": "The Devil In I",
         "description": "Stuns monsters affected by satan´s mark inflicting arcane break.",
         "maxRank": 3,
         "effects": {
-          "base": { "stun_duration_pct": 0, "arcane_break": 0 },
-          "perRank": { "stun_duration_pct": 2, "arcane_break": 30 }
+          "base": {"stun_duration_pct": 0, "arcane_break": 0},
+          "perRank": {"stun_duration_pct": 2, "arcane_break": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1333,18 +1356,20 @@
       {
         "id": "soul_combustion",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1.63, 1.81, 2.0], "per": "use", "note": "transformation: no mark; Stun_obj hit D + Soul_Combustion explosion floor(D*(1+0.4r)) x f_det. Uses the card's example f_det=0.45 (upper bound f_det=1: 2.4 / 2.8 / 3.2)"}], "confidence": "I", "note": "card table p14 (R3 class 'brak' for explosion)", "plannerFix": "planner has 0 hits and arcane 40 %/r (LSSD); card: 1 + f_det*(1+0.4r) hits per cast"},
         "name": "Soul Combustion",
         "description": "Satan´s mark causes target souls to explode after a short delay dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 40 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 40}
         }
       }
     ]
   },
   {
     "id": "malediction",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "classId": "white_mage",
     "name": "Malediction",
@@ -1400,7 +1425,10 @@
   },
   {
     "id": "black_mass",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 15.0, "baseProjectiles": 10, "perExtraProjectile": 1.5, "confidence": "I", "note": "Per cast (cooldown 14 s*(1 - 0.08 r3), engine side; abilityInstantCast - no rule-37 animation lock), placed at the cursor (x, y-24), player to the side (Resztki E: the controller spawns at T = player + lengthdir(tupm[6], tupm[7]) = 6 px above the cursor, asm 0x1465d6107; march direction from (x, y+6) to the cursor): White_Mage_Black_Mass_Controller_obj spawns skillAmount = ExtraSpellProj(10 + 3 r1) = 10 waves, one every 0.25 s; each wave is a row of floor(400/48) = 8 White_Mage_Black_Mass_Cultist_obj walking along the aim (1.5 px/frame, tick_frequency 21 frames, 5 s life; per-cultist offset 200 - 48 i + s with s = 0, +24, 0, -24 cycling). R4 CORRECTION of R3: the base skillSize is 1*(1 + p7), NOT 2 (the doubling sits inside the rank(p14) > 0 branch, asm 0x1465d1a7f / 0x1465d2dde), so the sprite Left mask is x -20..+12, y -38..+12 and covers the dummy (23.7 px across, 3.6 px along the march) for only 1-2 cultists per wave, each with 1 hit (contact shorter than the 21-frame tick): waves give 1 / 2 / 1 / 2 hits = 1.5 hits per wave (cursor (x, y): 2 / 1 / 2 / 1, also 1.5) x 10 waves = 15 hits of damage[1] = D = the main hit = 15.0 (was 50 with the wrong scale 2; the unmirrored mask at positive xscale and the player-to-the-side layout are I; Resztki E re-simulated bm3.py and left the base unchanged). baseProjectiles = 10 (waves; the planner has no baseProjectiles, unit = waves); perExtraProjectile = 1.5 = hits per extra wave (p1 Dark Gathering +3 waves per rank, gear extra projectiles). p2 (speed: 1.5 per wave for all r), p7 (scale: 1.5, 1.5, 2, 2, 2, 2.5 per wave for r = 0..5, Resztki E; cursor (x, y): 1.5, 1.5, 2, 2, 3, 4), p13 (static grid: 4 cultists cover the dummy at r1 = r7 = 0, 14 hits each = 56), p14 (one bishop, 0.5 s cooldown, 3 hits), p12 (convergence circle, not recomputed for scale 1), p5 and p8/p10 are subskill effects."},
     "classId": "white_mage",
     "name": "Black Mass",
     "kind": "active",
@@ -1422,12 +1450,9 @@
     ],
     "damageType": "arcane",
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 14,
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 24
-    },
+    "damageFormula": { "base": 0, "perLevel": 22 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -1474,50 +1499,55 @@
       {
         "id": "dark_gathering",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9, 12, 15], "note": "extra waves: ExtraSpellProj(10+3r); perExtraProjectile 5 hits per wave"}], "confidence": "C", "note": "card table p1 (planner label summon_max_amount +3r = same count)"},
         "name": "Dark Gathering",
         "description": "Increases the amount of cultists.",
         "maxRank": 5,
         "effects": {
-          "base": { "summon_max_amount": 0 },
-          "perRank": { "summon_max_amount": 3 }
+          "base": {"summon_max_amount": 0},
+          "perRank": {"summon_max_amount": 3}
         }
       },
       {
         "id": "cults_migration",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, 0, 0, 0, 0], "per": "use", "note": "cult speed x(1 + 15 %/r): 1.5 hits per wave for r = 0..5 at skillSize 1 (speed does not change the hit count); the R3 table 4 / 3.5 / 3 / 3 / 3 per wave (scale 2) is withdrawn; bishop (p14) table r2 = 0..5: 3, 3, 2, 3, 2, 2"}], "confidence": "I", "note": "R4 244#2 (bm simulation, scale 1) + Resztki E (p2 unchanged 1.5); hits relative to base 15 per cast at p1 rank 0 (10 waves)", "plannerFix": "planner adds movement_speed 15r with no hit change; card (R4, scale 1): speed leaves the hit count at 1.5 per wave"},
         "name": "Cult's Migration",
         "description": "Increases the movement speed of cultists.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0 },
-          "perRank": { "movement_speed": 15 }
+          "base": {"movement_speed": 0},
+          "perRank": {"movement_speed": 15}
         }
       },
       {
         "id": "loyal_followers",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-8, -16, -24, -32, -40], "note": "cooldown -8 %/r (B = p3.s9)"}], "confidence": "C", "note": "card table p3"},
         "name": "Loyal Followers",
         "description": "Decreases the cooldown of black mass.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 8 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 8}
         }
       },
       {
         "id": "raise_morale",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7 %/r"}], "confidence": "C", "note": "card table p4"},
         "name": "Raise Morale",
         "description": "Decreases the mana costs of black mass.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "the_devil_within",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0045, 0.018, 0.0405, 0.072, 0.1125], "per": "hit", "note": "Blood Ripple: chance 3r % per cultist hit, floor(D*0.15r): expected 0.0045 r^2 D per hit"}], "confidence": "C", "note": "card table p5 ([683])"},
         "name": "The Devil Within",
         "description": "Chance to unleash a ripple of blood on hit dealing additional damage.",
         "maxRank": 5,
@@ -1533,28 +1563,31 @@
       {
         "id": "darkness_infused",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8 %/r"}], "confidence": "C", "note": "card table p6"},
         "name": "Darkness Infused",
         "description": "Increases the damage dealt by black mass.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "bloated_followers",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, 5, 5, 5, 10], "per": "use", "note": "cultist size skillSize = 1*(1 + 10 %/r): hits per wave r = 0..5 = 1.5, 1.5, 2, 2, 2, 2.5 (Resztki E, controller at T 6 px above the cursor; before Resztki 1.5, 1.5, 1.5, 2, 2, 2.5) -> +0.5 / +0.5 / +0.5 / +1.0 per wave at r2..5 x 10 waves; cursor (x, y) variant 1.5, 1.5, 2, 2, 3, 4; bishop (p14) uses 2*(1 + 10 %/r): 3, 3, 3, 4, 4, 4"}], "confidence": "I", "note": "R4 244#2 + Resztki E (bm3.py); hits relative to base 15 per cast at p1 rank 0 (10 waves); mask at positive xscale I", "plannerFix": "planner gives projectile_size 10r but no hit change"},
         "name": "Bloated Followers",
         "description": "Increases the size of cultists.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 10 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 10}
         }
       },
       {
         "id": "crowd_stomp",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "stun on cultist spawn (chance 3r %, 3 s); no direct damage, only the condition for p10"}], "confidence": "C", "note": "card table p8", "plannerFix": "planner rolls stun on_hit; card rolls per cultist spawn (no DPS either way)"},
         "name": "Crowd Stomp",
         "description": "Chance to stun monsters on hit.",
         "maxRank": 5,
@@ -1567,6 +1600,7 @@
       {
         "id": "eternal_corruption",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.3, 0.6, 0.9, 1.2, 1.5], "per": "use", "note": "second loop set (+1 to the wave loop) with chance 2r % per cast: x(1 + 0.02r) on the 15 base hits per cast = 0.3r extra hits per use"}], "confidence": "I", "note": "card table p9 re-based on the R4 base 15 hits per cast (planner of_total 100 with chance 2r % = same expectation)"},
         "name": "Eternal Corruption",
         "description": "Chance on cast to summon an additional black mass.",
         "maxRank": 5,
@@ -1582,56 +1616,61 @@
       {
         "id": "murder_frenzy",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "other", "byRank": [10, 20, 30, 40, 50], "note": "+% damage vs stunned (conditional on stun from p8/p14); value = bonus %"}], "confidence": "C", "note": "card table p10 ([179])"},
         "name": "Murder Frenzy",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 10 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 10}
         }
       },
       {
         "id": "shadow_puppets",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "puppet returns damage taken; dummy has disableAttack = 1"}], "confidence": "C", "note": "card table p11", "plannerFix": "planner damage_return 8000 per rank; card damageReturn = 80/r (units differ); zero on dummy anyway"},
         "name": "Shadow Puppets",
         "description": "Summon a static cultist. The cultist emmits a portion of all damage taken to nearby monsters as area of effect damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "damage_return": 0 },
-          "perRank": { "damage_return": 8000 }
+          "base": {"damage_return": 0},
+          "perRank": {"damage_return": 8000}
         }
       },
       {
         "id": "protective_circle",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [342, 342, 342], "per": "use", "note": "convergence circle (r 224 px): all 8 cultists per wave pass the dummy; ~4.3 hits each (3.3-5.2) -> ~34 hits per wave x 10 waves at p1 rank 0"}], "confidence": "I", "note": "card table p12 (C/I, not recalculated in R3)", "plannerFix": "planner gives of_total_damage 40 %/r; card: circle makes ~34 hits per wave on the dummy"},
         "name": "Protective Circle",
         "description": "Increased amount of cultists are now summoned in a circle around target location.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 40 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 40}
         }
       },
       {
         "id": "loyal_followers_13",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [56, 56, 56], "per": "use", "note": "transformation: static grid floor(A/2) x floor(A/2) of motionless cultists (A = ExtraSpellProj(10 + 3 r1)), spacing floor(28 sk) x floor(44 sk), origin cursor - (floor(28 sk)*0.225 A, floor(44 sk)*0.125 A); cursor (x, y-24), r1 = 0, r7 = 0: 4 cultists cover the dummy (Resztki E; was 2) x 14 hits each (tick_hits.py 298 21) = 56. Count table by r7 = 0..5: r1 = 0: 4,2,2,2,2,2; r1 = 1: 4,4,4,2,2,2; r1 = 2: 2,2,2,2,2,2; r1 = 3: 4,4,4,2,2,2; r1 = 4: 4,4,4,4,2,2; r1 = 5: 2 (x 14 hits); cursor (x, y): 4 cultists (r1 = 3: 4,4,4,4,2,2; r1 = 4: 3,2,2,2,1,1)"}, {"kind": "damage_pct", "byRank": [75, 150, 225], "note": "LSSD += 75 %/r"}], "confidence": "I", "note": "R4 244#2 (grid formula) + Resztki E (bm3.py: r1 = 0, r7 = 0 4 cultists); hits absolute (set_hits) at p1 and p7 rank 0; the count changes with p1/p7 ranks (table in the effect note)", "plannerFix": "planner keeps the wave model; card: static grid, 4 cultists x 14 hits at r1 = r7 = 0 (depends on p1 and p7 ranks)"},
         "name": "Loyal Followers",
         "description": "Summon a horde of static cultists at target location for a short duration dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 75 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 75}
         }
       },
       {
         "id": "cult_bishops",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3, 3, 3], "per": "use", "note": "transformation: one bishop from the player (no mask rotation: x -20 sk..+12 sk, y -38 sk..+12 sk, sk = 2*(1 + 0.1 r7), speed 1.5*1.3, tick 21 frames, hit cooldown 3) walks THROUGH the dummy centre (rule 38): 3 hits (frames 65, 68, 92) at r2 = r7 = 0; r7 = 0..5: 3, 3, 3, 4, 4, 4 (dummy east of the player; west 3 x 6; vertical 4-5); r2 = 0..5: 3, 3, 2, 3, 2, 2; cursor (x, y-24) r7 = 0..5: 3, 3, 4, 4, 4, 4"}, {"kind": "cooldown_s", "byRank": [-13.5, -13.5, -13.5], "note": "cooldown set to 0.5 s from base 14 s (relative change at r3 = 0)"}, {"kind": "dot", "byRank": [50, 100, 150], "note": "burning floor(D*50 %/r) per hit; stun 3 s always (value = burn % per hit)"}], "confidence": "C", "note": "R4 244#2 + PoR4 (a) + Resztki B (bishop2.py, confirmed C); cooldown 0.5 s with abilityInstantCast (period 0.5 s, no animation lock)", "plannerFix": "planner keeps 50 hits per 14 s; card: bishop 3 hits per cast every 0.5 s cooldown"},
         "name": "Cult Bishops",
         "description": "Send forward a cult bishop inflicting burning, dealing increased damage according to your energy and stunning monsters on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_burning_damage": 0, "conversion_energy": 0 },
-          "perRank": { "increased_burning_damage": 50, "conversion_energy": 25 }
+          "base": {"increased_burning_damage": 0, "conversion_energy": 0, "cooldown_added": -13.5},
+          "perRank": {"increased_burning_damage": 50, "conversion_energy": 25, "cooldown_added": 0}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1646,6 +1685,8 @@
   {
     "id": "heavenly_fire",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 0.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast, placed at the cursor: Resztki E - the flame is created at T = player + lengthdir(tupm[6], tupm[7]), 6 px above the cursor (asm 0x1465dcc2e), i.e. 30 px above the dummy centre for the rule-22 cursor (x, y-24). White_Mage_Heavenly_Fire_obj (Player_Damage_Parent, tick_frequency 0.5 s = 30 frames, destroyTimer 3 s + ~20 frames of fade, scale growing 0.1 -> maxScale = 1 + 0.15*(r10 + r11) by 0.05 per frame, precise Holy_Fire_spr mask with filled rows y -17..+13 around the origin): a dummy 30 px below the origin is reached only when 14*scale >= 18, i.e. scale >= 1.29, so with maxScale = 1 (p10 r = 0) or 1.15 (r = 1) the mask never touches it = 0 hits (hf.py reproduces the old 7 hits for the 24 px offset). Base = 0.0. With p10 r >= 2 (maxScale 1.30) 7 hits (frames 24, 33, 66, 96, 126, 159, 189) of damage[1] = D = the main hit - see p10. Variant cursor on (x, y) (T = (x, y-6)): 7 hits (frames 16, 34, 64, 97, 127, 157, 190), unchanged; the 24 px offset of R3 gave 7 as well. Flames of consecutive casts overlap, each with its own map. baseProjectiles = 1; perExtraProjectile = 0 (no projectile count). p2 (tick x(1 - 0.08 r): 7, 7, 8, 9, 9, 11 hits, valid only once p10 r >= 2 opens the mask), p14 (scale/tick growth, may lift the scale over 1.29, not computed), p12 Chain of Fire (+0.35 r N0 chains of D*(1 + 0.25 r) per flame = 0.05 r (1 + 0.25 r) per flame hit), p4 burn, p11 orb (0 hits: needs r10 + r11 >= 9, unreachable with max ranks 5 + 3), p13 Righteous Path (0 for a standing player, +8 s cooldown) are subskill effects."},
     "classId": "white_mage",
     "name": "Heavenly Fire",
     "kind": "active",
@@ -1667,11 +1708,8 @@
     "damageType": "arcane",
     "movementDuringUse": 85,
     "range": 240,
-    "baseCastRate": 1,
-    "damageFormula": {
-      "base": 6,
-      "perLevel": 6.5
-    },
+    "baseCastRate": 1.75,
+    "damageFormula": { "base": 6, "perLevel": 6 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -1718,6 +1756,7 @@
       {
         "id": "lamb_of_god",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Lamb of God: chance 3r % per hit, buff 72 (flames spread while the target moves); 0 on a stationary dummy"}], "confidence": "I", "note": "card table p1", "plannerFix": "planner adds +10 %/r of total per proc; card: buff 72 only matters for a moving target (0 on stationary dummy)"},
         "name": "Lamb of God",
         "description": "Chance on hit to set monsters on fire causing them to spread flames while moving.",
         "maxRank": 5,
@@ -1733,34 +1772,37 @@
       {
         "id": "flame_of_the_heavens",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, 1, 2, 2, 4], "per": "use", "requires": "word_of_god", "note": "tick x(1 - 8 %/r): hits r0..5 = 7, 7, 8, 9, 9, 11 (R3 tick model) vs 7 -- valid only when the mask reaches the dummy, i.e. with p10 r >= 2 (Resztki E); with p10 r < 2 the flame never touches the dummy and all values are 0"}], "confidence": "C", "note": "card table p2 (R3 245#0) + Resztki E (table valid only at r10 >= 2); hits relative to the 7 hits that exist only with p10 r >= 2 (the engine base is 0)", "plannerFix": "planner models 8 %/r as faster_cast_rate; card: shorter tick adds hits (7 -> 11), only with p10 r >= 2"},
         "name": "Flame of the Heavens",
         "description": "Increases the tick frequency of heavenly fire.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 8 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 8}
         }
       },
       {
         "id": "heavens_burn",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8 %/r"}], "confidence": "C", "note": "card table p3"},
         "name": "Heaven's Burn",
         "description": "Increases the damage dealt by heavenly fire.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "scorched_retribution",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [15, 30, 45, 60, 75], "note": "burning floor(D*15 %/r) on every hit (value = burn % of D per hit)"}], "confidence": "C", "note": "card table p4 ([18])"},
         "name": "Scorched Retribution",
         "description": "Inflicts burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 15 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1773,28 +1815,31 @@
       {
         "id": "heavens_blessing",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7 %/r"}], "confidence": "C", "note": "card table p5"},
         "name": "Heaven's Blessing",
         "description": "Decreases the mana cost of heavenly fire.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "heavenly_smite",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "other", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "+10 %/r damage vs burning (value = multiplier while the target burns; burning from p4 on each hit)"}], "confidence": "C", "note": "card table p6 ([180])"},
         "name": "Heavenly Smite",
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 10 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 10}
         }
       },
       {
         "id": "inner_ignition",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "other", "note": "Inner Ignition: chance 3r % per hit gives buff 93 (+15r % damage, 3 s); uptime ~ 1-(1-0.03r)^(hits in 3 s), not a fixed value"}], "confidence": "I", "note": "card table p7 (C/I)", "plannerFix": "planner treats it as a fixed 15 %/r proc effect; card needs an uptime model"},
         "name": "Inner Ignition",
         "description": "Chance to increase your arcane damage on hit for a short duration.",
         "maxRank": 5,
@@ -1810,12 +1855,13 @@
       {
         "id": "shattering_flames",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "other", "byRank": [15, 30, 45, 60, 75], "note": "arcane break % applied with chance 3r % per CAST (value = break %)"}], "confidence": "C", "note": "card table p8 ([979])", "plannerFix": "planner rolls 3r % on_hit; card rolls once per cast"},
         "name": "Shattering Flames",
         "description": "Chance to inflict arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 15 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1828,39 +1874,43 @@
       {
         "id": "ethereal_burn",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [3, 6, 9, 12, 15], "note": "spell crit chance %; crit damage +20 %/r (planner spell_crit_damage 20r)"}], "confidence": "C", "note": "card table p9"},
         "name": "Ethereal Burn",
         "description": "Chance to critically hit dealing increased critical strike damage.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "spell_crit_damage": 0 },
-          "perRank": { "spell_crit_chance": 3, "spell_crit_damage": 20 }
+          "base": {"spell_crit_chance": 0, "spell_crit_damage": 0},
+          "perRank": {"spell_crit_chance": 3, "spell_crit_damage": 20}
         }
       },
       {
         "id": "word_of_god",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, 7, 7, 7, 7], "per": "use", "note": "maxScale = 1 + 0.15 r10: r1 = 1.15 -> 0 hits, r >= 2 (1.30 >= 1.29 needed to reach the dummy 30 px below the origin) -> the 7 hits (frames 24, 33, 66, 96, 126, 159, 189) of the base card; threshold margin 1.30 vs 1.286 is pixel rounding (I)"}], "confidence": "I", "note": "Resztki E (E: flame at T 6 px above the cursor, hf.py; p10 r = 0, 1: 0, r >= 2: 7); the planner area_of_effect 15 %/r is the same maxScale; hits relative to the new base 0"},
         "name": "Word of God",
         "description": "Increases the area of effect radius of heavenly fire.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "essence_of_heavens",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0, 0, 0], "per": "use", "note": "transformation: Heavenly_Fire_Orb_obj starts at T (6 px above the cursor, same point as the flame; shared instance_create_layer L888), 2 px/frame, first flame after 22 frames / 44 px along the aim, then every 44 px; for cursor (x, y-24) the first flame is 30+ px from the dummy: 0 hits unless r10 + r11 >= 9 (maxScale >= 2.35, then 6 hits); max ranks r10 5 + r11 3 = 8 -> always 0. Cursor (x, y) variant: 7 hits from r10 + r11 >= 3. LSSD +40 %/r"}, {"kind": "damage_pct", "byRank": [40, 80, 120], "note": "LSSD += 40 %/r"}], "confidence": "C", "note": "R4 245#1 (asm 0x1465dc952-0x1465dcc4b) + Resztki E (threshold 7 -> 9); position, direction, spacing, mask C, pixel rounding I", "plannerFix": "planner keeps 7 flame hits; card: orb replaces the flame, 0 dummy hits (threshold r10 + r11 >= 9 unreachable)"},
         "name": "Essence of Heavens",
         "description": "Unleash a heavenly orb scorching the ground below leaving behind a trail of burning flames.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "arcane_skill_damage": 40, "area_of_effect": 15 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 15, "subtree_damage": 40}
         }
       },
       {
         "id": "chain_of_fire",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0625, 0.15, 0.2625], "per": "hit", "note": "chain (N0, 1 hit of D*(1 + 0.25r)) with chance 5r % on EVERY flame hit: 0.05 r (1 + 0.25 r) per flame hit; was 0.35 r (1 + 0.25 r) per use assuming 7 flame hits, now per hit because the base is 0 (appears only with p10 r >= 2)"}], "confidence": "I", "note": "card table p12 (druga runda: chain N0 1 hit, chance 5r % per hit) re-based per flame hit since the dummy base is now 0 (Resztki E)"},
         "name": "Chain of Fire",
         "description": "Chance to unleash a chain of fire on hit dealing increased damage.",
         "maxRank": 3,
@@ -1876,12 +1926,13 @@
       {
         "id": "righteous_path",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0, 0, 0], "per": "use", "note": "transformation: controller at player; flame only after the player walks 42*scale px -> 0 for a standing player"}, {"kind": "cooldown_s", "byRank": [8, 8, 8], "note": "cooldown +8 s (GetTalentCooldown#245 A=8)"}], "confidence": "C", "note": "card table p13", "plannerFix": "planner keeps 7 flame hits and no cooldown change; card: 0 hits for standing player, cooldown +8 s"},
         "name": "Righteous Path",
         "description": "Leave behind a trail of heavenly fire for a short duration inflicting elemental break on hit. Heavenly Fire now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "elemental_break": 0, "skill_duration": 0 },
-          "perRank": { "elemental_break": 30, "skill_duration": 25 }
+          "base": {"elemental_break": 0, "skill_duration": 0, "cooldown_added": 8},
+          "perRank": {"elemental_break": 30, "skill_duration": 25, "cooldown_added": 0}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1897,12 +1948,13 @@
       {
         "id": "ascendant_flame",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "other", "note": "maxScale +5 %/r every 0.5 s and tick x(1-2 %/r): small rise in hits (r3 ~ 7 -> 8); not simulated for r1, r2 (no value given)"}], "confidence": "I", "note": "card table p14", "plannerFix": "planner uses faster_cast_rate +2r; card: tick x(1-2 r %) and scale growth (more hits)"},
         "name": "Ascendant Flame",
         "description": "Increases the size and tick frequency of heavenly fire over time.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_size": 0, "faster_cast_rate": 0 },
-          "perRank": { "projectile_size": 5, "faster_cast_rate": 2 }
+          "base": {"projectile_size": 0, "faster_cast_rate": 0},
+          "perRank": {"projectile_size": 5, "faster_cast_rate": 2}
         }
       }
     ]
@@ -1910,6 +1962,7 @@
   {
     "id": "flash_heal",
     "activationKind": "cast",
+    "speedPath": "cast",
     "classId": "white_mage",
     "name": "Flash Heal",
     "kind": "active",
@@ -1927,7 +1980,7 @@
       "Spell"
     ],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -1949,6 +2002,8 @@
   {
     "id": "burst_of_light",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast, dummy on the aim line at 160 px: White_Mage_Burst_Of_Light_obj (a beam 271x34 px glued to the player, rotated to the aim, i.e. an oriented rectangle for rule 26: the dummy centre is 160*sin(8.53 deg) = 23.7 px off the axis for the (x, y-24) cursor, inside half-width 17 + 12 = 29 px; length 271*(1 + p7) > 160 px) hits the dummy, then at alpha < 0.65 (~7 frames) it clears its map once (resetHit) and hits again before it fades at alpha 0 (~20 frames) = 2 hits of damage[1] = D = the main hit = 2.0 (not a tick_frequency object). baseProjectiles = 1; perExtraProjectile = 0.0 (I): extra beams (p11 Holy Beam +3/r in the planner, p5 chance, gear) are spread in an arc whose angle the card did not read, so only the beam on the axis is assumed to hit the dummy. p1/p10 procs, p6 Forking Glare (a new beam at the dummy), p8 orb, p12 (+100 %/r LSSD, width x(1 + r), burning flame of 7 hits at 10r %), p13 Purification (break stacks up to +100r %), p14 Light Within (nova of radius 96*(1 + ...) px, hits only if >= 148 px, 0 for 160 px otherwise) are subskill effects."},
     "classId": "white_mage",
     "name": "Burst of Light",
     "kind": "active",
@@ -1967,11 +2022,8 @@
     ],
     "damageType": "arcane",
     "movementDuringUse": 85,
-    "baseCastRate": 1,
-    "damageFormula": {
-      "base": 1,
-      "perLevel": 11
-    },
+    "baseCastRate": 1.75,
+    "damageFormula": { "base": 0, "perLevel": 9.5 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -2018,6 +2070,7 @@
       {
         "id": "manabinded_cast",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use", "note": "Manabinded Cast: chance 3r % per hit gives Smite of D*(1+energy*0.15r): +2 x 0.03 r hits per use (energy factor taken as 1)"}], "confidence": "C", "note": "card table p1 ([688])", "plannerFix": "planner gives conversion_energy 15 %/r on on_hit chance 3r; card: Smite object (extra hit) per hit"},
         "name": "Manabinded Cast",
         "description": "Chance to smite monsters with a pillar of searing light on hit dealing additional damage according to your energy.",
         "maxRank": 5,
@@ -2033,15 +2086,13 @@
       {
         "id": "solar_infusion",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8 %/r"}, {"kind": "dot", "byRank": [20, 40, 60, 80, 100], "note": "burn floor(D*20 %/r), chance 3r % once per cast (value = burn % of D)"}], "confidence": "C", "note": "card table p2 ([18])", "plannerFix": "planner rolls the burn on_hit; card rolls once per cast"},
         "name": "Solar Infusion",
         "description": "Increases damage dealt by burst of light and a chance to inflict burning on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "increased_burning_damage": 0 },
-          "perRank": {
-            "arcane_skill_damage": 8,
-            "increased_burning_damage": 20
-          }
+          "base": {"increased_burning_damage": 0, "subtree_damage": 0},
+          "perRank": {"increased_burning_damage": 20, "subtree_damage": 8}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2054,12 +2105,13 @@
       {
         "id": "piercing_ray",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "other", "byRank": [15, 30, 45, 60, 75], "note": "arcane break % applied with chance 3r % per CAST (value = break %)"}], "confidence": "C", "note": "card table p3 ([979])", "plannerFix": "planner rolls 3r % on_hit; card rolls once per cast"},
         "name": "Piercing Ray",
         "description": "Chance to inflict arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 15 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2072,6 +2124,7 @@
       {
         "id": "heavens_brightness",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana replenish on a 3r % per-cast roll; no DPS"}], "confidence": "C", "note": "card table p4 ([967])", "plannerFix": "planner rolls mana on_hit; card rolls once per cast (no DPS either way)"},
         "name": "Heaven's Brightness",
         "description": "Chance to replenish a portion of your maximum mana on hit.",
         "maxRank": 5,
@@ -2087,6 +2140,7 @@
       {
         "id": "total_illumination",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [0.03, 0.12, 0.27, 0.48, 0.75], "note": "expected extra beams: chance 3r % per cast x r extra beams (0.03 r^2); beams fall beside the dummy, perExtraProjectile 0 gives no hits"}, {"kind": "extra_hits", "byRank": [0.06, 0.12, 0.18, 0.24, 0.3], "per": "use", "replacesProjectileHits": true, "note": "chance 3r % per cast of n = 1 + r beams every 12 deg around the aim: for the dummy 160 px to the side and the aim through the centre (Resztki D, horizontal) n = 2..6 hit with 2 beams (was 1 for odd n): +2 hits for r = 1..5 -> 0.03r x 2 = 0.06r; vertical azimuth: +2 only for r = 1, 3, 5; beam margin 0.6 px (27.4 vs 28) I; p12 widens the strip (more beams hit)"}], "confidence": "I", "note": "Resztki D (bl2.py, 2 rays for n >= 2 horizontally) + PoR4 (a); beams hit 2 times each, hits relative to base 2.0; replaces the projectile conversion (perExtraProjectile 0)"},
         "name": "Total Illumination",
         "description": "Chance on cast to unleash additional bursts in an arc.",
         "maxRank": 5,
@@ -2102,6 +2156,7 @@
       {
         "id": "forking_glare",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.12, 0.23, 0.34, 0.45, 0.56], "per": "use", "note": "Forking Glare: one new beam once per cast if any of the 2 hits rolls chance 3r %; beam hits the dummy ~2 times"}], "confidence": "I", "note": "card table p6 ([689])", "plannerFix": "planner counts +100 % of total per hit proc (~1 hit); card: once per cast, beam of ~2 hits"},
         "name": "Forking Glare",
         "description": "Chance to unleash an additional burst of light from a nearby monster on hit.",
         "maxRank": 5,
@@ -2117,17 +2172,19 @@
       {
         "id": "lens_flare",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "beam length x(1+15 %/r); dummy already inside"}], "confidence": "C", "note": "card table p7"},
         "name": "Lens Flare",
         "description": "Increases the range of burst of light.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "light_orb",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use", "note": "extra Burst_Of_Light_Orb with chance 3r % per cast: ~1 hit of D"}], "confidence": "I", "note": "card table p8", "plannerFix": "planner has on_cast chance 3r with no effect; card: +1 hit of D"},
         "name": "Light Orb",
         "description": "Chance on cast to unleash an orb of light briefly bursting into a burst of light.",
         "maxRank": 5,
@@ -2136,17 +2193,19 @@
       {
         "id": "blazing_light",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "other", "byRank": [10, 20, 30, 40, 50], "note": "+% damage vs burning (conditional on burn present); value = bonus %"}], "confidence": "C", "note": "card table p9 ([180])"},
         "name": "Blazing Light",
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_burning": 0 },
-          "perRank": { "extra_damage_burning": 10 }
+          "base": {"extra_damage_burning": 0},
+          "perRank": {"extra_damage_burning": 10}
         }
       },
       {
         "id": "blinding_light",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.016, 0.064, 0.144, 0.256, 0.4], "per": "hit", "note": "Blinding Light: chance 4r % per hit -> Universal Damage Return floor(D*0.4r) + stun 3 s: 0.04r*0.4r D per hit"}], "confidence": "C", "note": "card table p10 ([690])", "plannerFix": "planner adds +40 %/r arcane damage (LSSD) on the proc; card: separate return object of 0.4r*D with chance 4r %"},
         "name": "Blinding Light",
         "description": "Chance to inflict stun and deal increased damage on hit.",
         "maxRank": 5,
@@ -2163,17 +2222,23 @@
       {
         "id": "holy_beam",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9], "note": "extra beams in the arc (3r)"}, {"kind": "extra_hits", "byRank": [2, 2, 2], "per": "use", "replacesProjectileHits": true, "note": "n = 1 + 3r beams (4, 7, 10) every 12 deg around the aim: 2 beams cross the dummy (Resztki D horizontal: 2 for every r; vertical azimuth 2, 1, 2 for r = 1..3) x 2 hits each, minus the base beam: +2 hits per cast; planner maxRank 3 (card table lists r4-5 too); margin 0.6 px I"}], "confidence": "I", "note": "R4 246#0 + PoR4 (a) + Resztki D (bl2.py, rule 38 aim through the centre); hits relative to base 2.0; replaces the projectile conversion"},
         "name": "Holy Beam",
         "description": "Unleash multiple bursts of light in an arc on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 3 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 3}
         }
       },
       {
         "id": "burning_smite",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [100, 200, 300], "note": "LSSD += 100 %/r and beam width x(1+100 %/r)"}, {"kind": "extra_hits", "byRank": [1.4, 2.8, 4.2], "per": "use", "note": "Burning Smite: chance 10r % per beam hit makes a Heavenly Fire (7 hits of D): 0.1r * 2 hits * 7 = 1.4r hits per use"}], "confidence": "C", "note": "card table p12 ([691])", "plannerFix": "planner has on_hit chance 10r with arcane 100 %/r and burning/slow states but no 7-hit flame"},
+        "effects": {
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 100}
+        },
         "name": "Burning Smite",
         "description": "Unleash burst of light with increased size leaving the ground burning and inflicting slow on hit.",
         "maxRank": 3,
@@ -2190,23 +2255,25 @@
       {
         "id": "purification",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "other", "byRank": [100, 200, 300], "note": "break %: buff 73 gains 10r stacks per hit (max 10 stacks, 3 s): break +100r % at full stacks (value = break %, reached after ~5 casts)"}], "confidence": "C", "note": "card table p13 ([692])", "plannerFix": "planner adds 10 %/r arcane damage; card: stacking break buff 73 (up to +100r %)"},
         "name": "Purification",
         "description": "Inflict monsters with a stack of purification on hit increasing the damage dealt by burst of light.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 10 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 10}
         }
       },
       {
         "id": "light_within",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [35, 70, 105], "note": "LSSD += 35 %/r"}, {"kind": "set_hits", "byRank": [0, 0, 1], "per": "use", "note": "transformation: nova ring replaces beam; 1 hit only if maxRadius >= 148 px (r14=3, or with p7/p12); else 0"}], "confidence": "I", "note": "card table p14 (C/I)", "plannerFix": "planner keeps 2 beam hits and area 20 %/r; card: nova replaces beam, 0 hits unless radius >= 148 px"},
         "name": "Light Within",
         "description": "Burst of light unleashes as a nova of light around you with increased area of effect radius and dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "arcane_skill_damage": 35, "area_of_effect": 20 }
+          "base": {"area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"area_of_effect": 20, "subtree_damage": 35}
         }
       }
     ]
@@ -2246,6 +2313,8 @@
   {
     "id": "chain_of_holy_lightning",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast, dummy at 160 px (max_range 360): White_Mage_Chain_of_Holy_Light_obj is an N0 chain of rule 23 (projTravel 0, chainType 250, max_bounces = 4 + p7.s9, inst_prev = player): Alarm_0 picks the nearest enemy (the dummy) and every jump re-targets the same dummy via instance_nth_nearest (rule 17), but only chainType 139 clears the hit map on a jump, so the dummy takes exactly 1 hit of damage[1] = D = the main hit = 1.0 regardless of max_bounces. baseProjectiles = 1; perExtraProjectile = 0 (no projectile count; the extra jumps add no hits). p4 Divine Divergence (+0.0075 r^2 D: a new chain of 0.25 r D at 3r %), p12 Recursive Light (transformation: 1 chain hit + 1 Smite + 4 + 3 r7 pulses = 6 + 3 r7 hits of 0.6 r12 D, Smite pulses every 15 frames), p11 God's Altar (a sentry chain every max(1 - 0.25 r, 0.1) s for 2.5 s, +1 s cooldown), p13/p14 extra objects, p3 Smite are subskill effects."},
     "classId": "white_mage",
     "name": "Chain of Holy Lightning",
     "kind": "active",
@@ -2266,11 +2335,8 @@
     "damageType": "arcane",
     "movementDuringUse": 85,
     "range": 320,
-    "baseCastRate": 1,
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 12
-    },
+    "baseCastRate": 1.75,
+    "damageFormula": { "base": 0, "perLevel": 9.5 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -2317,28 +2383,31 @@
       {
         "id": "holy_velocity",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "utility", "note": "next-target frequency -25 %/r; no dummy DPS (one chain hit)"}], "confidence": "C", "note": "card table p1"},
         "name": "Holy Velocity",
         "description": "Increases the projectile speed of chain of holy light.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 25 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 25}
         }
       },
       {
         "id": "plasma_burst",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD += 15 %/r"}], "confidence": "C", "note": "card table p2"},
         "name": "Plasma Burst",
         "description": "Increases the damage dealt by chain of holy light.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 15 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 15}
         }
       },
       {
         "id": "holy_discharge",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.015, 0.06, 0.135], "per": "hit", "note": "Holy Discharge: chance 5r % per chain hit makes Smite of D*0.3r: 0.05r * 0.3r D per hit"}], "confidence": "C", "note": "card table p3 ([693])"},
         "name": "Holy Discharge",
         "description": "Chance to smite monsters with holy lightning on hit dealing additional damage.",
         "maxRank": 3,
@@ -2354,6 +2423,7 @@
       {
         "id": "divine_divergence",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0075, 0.03, 0.0675, 0.12, 0.1875], "per": "use", "note": "Divine Divergence: chance 3r % per chain hit makes a new chain (N0, 1 hit of D*0.25r): 0.0075 r^2 hits per use"}], "confidence": "C", "note": "card table p4 ([694]; druga runda N0)"},
         "name": "Divine Divergence",
         "description": "Chance to unleash an additional chain of holy light on hit.",
         "maxRank": 5,
@@ -2369,23 +2439,25 @@
       {
         "id": "amplifying_prayer",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Amplifying Prayer: +3 %/r damage per bounce; a single dummy gets no bounce hit"}], "confidence": "C", "note": "card table p5", "plannerFix": "planner adds 3 %/r arcane damage to all hits; card: applies per bounce (0 on a lone dummy)"},
         "name": "Amplifying Prayer",
         "description": "Increases the damage dealt by chain of holy light with each bounce.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 3 }
+          "base": {"arcane_skill_damage": 0},
+          "perRank": {"arcane_skill_damage": 3}
         }
       },
       {
         "id": "spellbreak_prayer",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "other", "byRank": [25, 50, 75, 100, 125], "note": "arcane break % applied with chance 3r % per CAST (value = break %)"}], "confidence": "C", "note": "card table p6", "plannerFix": "planner rolls 3r % on_hit; card rolls once per cast (buff 979 [25r, 5 s])"},
         "name": "Spellbreak Prayer",
         "description": "Chance to inflict arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 25 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2398,89 +2470,97 @@
       {
         "id": "celestial_light",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "max_bounces +3 %/r: zero without p12; with p12 adds 3r pulses of 0.6 r12 D each (counted in p12 note)"}], "confidence": "C", "note": "card table p7"},
         "name": "Celestial Light",
         "description": "Increases the amount of bounces.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_bounces": 0 },
-          "perRank": { "projectile_bounces": 3 }
+          "base": {"projectile_bounces": 0},
+          "perRank": {"projectile_bounces": 3}
         }
       },
       {
         "id": "sacred_steps",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "utility", "note": "movement diminish 10 %/r"}], "confidence": "I", "note": "card table p8"},
         "name": "Sacred Steps",
         "description": "Decreases movement diminish when using chain of holy light.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "lightened_path",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -15 %/r"}], "confidence": "C", "note": "card table p9"},
         "name": "Lightened Path",
         "description": "Decreases the mana cost of chain of holy light.",
         "maxRank": 3,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 15 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 15}
         }
       },
       {
         "id": "lights_embrace",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "utility", "note": "lights embrace: heal and benediction on bounce (0 dummy hits)"}], "confidence": "C", "note": "card table p10"},
         "name": "Light's Embrace",
         "description": "Chain of holy light heals you for a portion of your maximum life when hitting its last target.",
         "maxRank": 5,
         "effects": {
-          "base": { "life_replenish_pct": 0 },
-          "perRank": { "life_replenish_pct": 1 }
+          "base": {"life_replenish_pct": 0},
+          "perRank": {"life_replenish_pct": 1}
         }
       },
       {
         "id": "gods_altar",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3, 5, 9], "per": "use", "note": "God Altar lives 150 frames (Altar_Create_0 L11), fires every P + 1 frames with P = fps*shootFrequency, shootFrequency = max(max(1 - 0.25 r, 0.1) - 0.4 sentryAS, 0.2) (floor 0.2 s from Sentry_Alarm_8) = 0.75 / 0.5 / 0.25 s for r1..3, first shot after 15 frames: 3 / 5 / 9 shots (11 / 11 at r4-5); one N0 chain = 1 hit of D each; was 2.5 / shootFrequency = 3.33 / 5 / 10"}, {"kind": "cooldown_s", "byRank": [1, 1, 1], "note": "cooldown +1 s (GetTalentCooldown#250 A=1)"}], "confidence": "C", "note": "R4 250#1 (Shaman_Totem_Parent_Step_0 0x149e27690, Sentry_Alarm_8 0x149315a70): mechanism C, +-1 frame of the first shot I (margin >= 3 frames at the 150 frame boundary); sentry attack speed 0 in the scenario", "plannerFix": "planner models 25 %/r as faster_cast_rate; card: altar shots every max(1-0.25r, 0.2) s (floor 0.2 s), 3 / 5 / 9 shots, cooldown +1 s"},
         "name": "God´s Altar",
         "description": "Summon an altar of light unleashing chain of holy light on nearby monsters. Chain of holy light now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 25 }
+          "base": {"faster_cast_rate": 0, "cooldown_added": 1},
+          "perRank": {"faster_cast_rate": 25, "cooldown_added": 0}
         }
       },
       {
         "id": "recursive_light",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.6, 6.2, 9.8], "per": "use", "note": "Recursive Light: chain hit is 0.6r*D, then Smite pulses (6+3*r7 hits of 0.6r*D in total at r7=0); value = (6)*0.6r - 1 base hit, at celestial_light rank 0; each celestial rank adds 3*0.6r hits-equiv"}], "confidence": "C", "note": "card table p12 (Runda 2c, N0 + Smite, C)", "plannerFix": "planner gives of_total_damage 60 %/r (x(1+0.6r)); card: 6 hits of 0.6r D (Smite pulses) at r7=0"},
         "name": "Recursive Light",
         "description": "Chain of holy light strikes the same target multiple times if there are no monsters nearby dealing a portion of its damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 60 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 60}
         }
       },
       {
         "id": "echo_of_heavens",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.5, 1, 1.5], "per": "hit", "note": "Echo of Heavens: each chain hit spawns a bolt of floor(D*0.5r) (bolt hit on dummy assumed, I)"}], "confidence": "C", "note": "PoR4 (d) + R4 250#0: Chain_of_Holy_Light_Bolt_obj is created at the PLAYER (argument[1], asm 0x1452320a8/0x145232225) for every chain hit, flies 8 px/frame at the dummy centre (~20 frames, singleHit, full modifiers) and hits exactly once for floor(D*0.5r); C, not I as before"},
         "name": "Echo of Heavens",
         "description": "Unleash holy bolts towards targets on hit with a chance to proc heavenly fire on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 50 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 50}
         }
       },
       {
         "id": "gods_grasp",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.9, 2.8, 3.7], "per": "use", "note": "God's Grasp: one-shot grasp with explosion floor(D*(1+0.9r)) per cast; value = 1+0.9r hits"}], "confidence": "C", "note": "R4 250#0 (Grasp_obj_Destroy_0 0x14b2dd610: Explosion_Item_obj idx 1492 at the dummy, scale 1.25, full modifiers, 1 hit, no dice, ~2 s after the cast; asm 0x145232d1c); C, explosion object now read", "plannerFix": "planner applies arcane 90 %/r (LSSD) to the chain; card: separate Explosion_Item_obj hit D*(1+0.9r) once per cast (Grasp -> explosion)"},
         "name": "God's Grasp",
         "description": "Pull monsters towards the first target on hit unleashing a divine explosion dealing increased damage with increased area of effect radius.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "area_of_effect": 0 },
-          "perRank": { "arcane_skill_damage": 90, "area_of_effect": 30 }
+          "base": {"arcane_skill_damage": 0, "area_of_effect": 0},
+          "perRank": {"arcane_skill_damage": 90, "area_of_effect": 30}
         }
       }
     ]
@@ -2505,7 +2585,7 @@
       "Buff"
     ],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 300,
     "effectDuration": 1.5,
     "manaCostFormula": {
@@ -2591,6 +2671,7 @@
   {
     "id": "healing_zone",
     "activationKind": "cast",
+    "speedPath": "cast",
     "classId": "white_mage",
     "name": "Healing Zone",
     "kind": "active",
@@ -2610,7 +2691,7 @@
       "Area of Effect"
     ],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 14,
     "effectDuration": 8,
     "manaCostFormula": {
@@ -2633,7 +2714,10 @@
   },
   {
     "id": "mana_orb",
+    "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 5.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast (cooldown 6 s*(1 - 0.08 r6), engine side), orb placed at the throw point = the cursor (x, y-24), 24 px from the dummy (Resztki E, C: orb created at T = player + lengthdir(tupm[6], tupm[7]) = 6 px above the cursor, asm 0x146602d58, 30 px from the dummy, pulse radius ~86 px covers it; rule 24, same at 160 px): White_Mage_Mana_Orb_obj (Player_Ability_Parent, no contact damage) lives T = 5 s*(1 + p4) (L1402 overrides the 3 s of Create_0) and every pulseFrequency = max(1 s*(1 - p8), 0.1 s) (first after 0.5 s) creates a White_Mage_Mana_Pulse_obj (a precise filled disc 230x230 growing from scale 0.1 to maxScale 0.75*orb scale, radius ~86 px at full size; covers the dummy from frame 2, singleHit, no tick) with damage[1] = D = the main hit: N = 1 + floor((T - 0.5 s)/pf) = 1 + floor(4.5) = 5 pulses x 1 hit = 5.0 per cast (the 5 s orb ends before the 6 s cooldown, so orbs do not overlap). baseProjectiles = 1 (orbs per cast); perExtraProjectile = 0.0 (I): the card says only p11 Energy Orbit uses ExtraSpellProj for orbs (orbiting at 102 px; the pulse reaches the dummy ~20 % of the time); the planner flags usesExtraSpellProjectiles, and if every gear-extra orb stood at the cursor it would add ~5 pulses each - not stated in the card. p4 (T +15 %/r), p8 (pf -10 %/r: r5 = 10 pulses), p14 (T +30 %/r, damage x(1 + 0.04r)^k), p12 Chosen One (orb in the player: 20 pulses per 51 s, only for a dummy within ~98 px, 0 at 160 px, +45 s cooldown), p13 Hauling Manawell (the orb drifts away: ~1 pulse), p11, p9 are subskill effects."},
     "classId": "white_mage",
     "name": "Mana Orb",
     "kind": "active",
@@ -2653,12 +2737,9 @@
     ],
     "damageType": "arcane",
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 6,
-    "damageFormula": {
-      "base": 0,
-      "perLevel": 19.5
-    },
+    "damageFormula": { "base": 0, "perLevel": 18 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -2713,56 +2794,61 @@
       {
         "id": "conduit",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana replenish +2 %/r"}], "confidence": "C", "note": "card table p1"},
         "name": "Conduit",
         "description": "Increases the mana replenish from mana orb.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_replenish_pct": 0 },
-          "perRank": { "mana_replenish_pct": 2 }
+          "base": {"mana_replenish_pct": 0},
+          "perRank": {"mana_replenish_pct": 2}
         }
       },
       {
         "id": "mana_incursion",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD += 8 %/r"}], "confidence": "C", "note": "card table p2"},
         "name": "Mana Incursion",
         "description": "Increases the damage dealt by mana orb.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_skill_damage": 0 },
-          "perRank": { "arcane_skill_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "burst_of_energy",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [3, 6, 9, 12, 15], "note": "spell crit chance %; crit damage = RSS20 energy * 10 %/r (energy dependent, not fixed)"}], "confidence": "C", "note": "card table p3 ([1004], [1003])", "plannerFix": "planner gives crit damage as conversion_energy 10r; card: crit damage from energy*10r"},
         "name": "Burst of Energy",
         "description": "Chance to critically hit dealing increased critical strike damage according to your energy.",
         "maxRank": 5,
         "effects": {
-          "base": { "spell_crit_chance": 0, "conversion_energy": 0 },
-          "perRank": { "spell_crit_chance": 3, "conversion_energy": 10 }
+          "base": {"spell_crit_chance": 0, "conversion_energy": 0},
+          "perRank": {"spell_crit_chance": 3, "conversion_energy": 10}
         }
       },
       {
         "id": "energy_charges",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 2, 2, 3, 4], "per": "use", "note": "T x(1+15 %/r): pulses N = 1+floor((5(1+0.15r)-0.5)/pf): r1..5 = 6,7,7,8,9 vs 5"}], "confidence": "C", "note": "card table p4", "plannerFix": "planner models 15 %/r as skill_duration but keeps 5 pulses; card: N = 6/7/7/8/9"},
         "name": "Energy Charges",
         "description": "Increases the duration of mana orb.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 15 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 15}
         }
       },
       {
         "id": "corrupting_manapulse",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "other", "byRank": [15, 30, 45, 60, 75], "note": "arcane break % with chance 3r % per pulse (value = break %)"}], "confidence": "C", "note": "card table p5 (planner on_hit 3r, 15r)"},
         "name": "Corrupting Manapulse",
         "description": "Chance to inflict arcane break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "arcane_break": 0 },
-          "perRank": { "arcane_break": 15 }
+          "base": {"arcane_break": 0},
+          "perRank": {"arcane_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2775,39 +2861,43 @@
       {
         "id": "meditation",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-8, -16, -24, -32, -40], "note": "cooldown -8 %/r (B = p6.s9)"}], "confidence": "C", "note": "card table p6"},
         "name": "Meditation",
         "description": "Reduces the cooldown of mana orb.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 8 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 8}
         }
       },
       {
         "id": "mages_might",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "orb and pulse scale +15 %/r; hit count unchanged"}], "confidence": "C", "note": "card table p7"},
         "name": "Mage's Might",
         "description": "Increases the area of effect radius of mana orb.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "amplified_magic",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 1, 2, 3, 5], "per": "use", "note": "pulse period pf = 1 s x(1-10 %/r): N = 6/6/7/8/10 vs 5 (r5: 0.5 s -> 10 pulses)"}], "confidence": "C", "note": "card table p8", "plannerFix": "planner models 10 %/r as faster_cast_rate; card: pulse period 1 s x(1-0.1r) gives more pulses"},
         "name": "Amplified Magic",
         "description": "Increases the tick frequency of mana orb.",
         "maxRank": 5,
         "effects": {
-          "base": { "faster_cast_rate": 0 },
-          "perRank": { "faster_cast_rate": 10 }
+          "base": {"faster_cast_rate": 0},
+          "perRank": {"faster_cast_rate": 10}
         }
       },
       {
         "id": "heavens_aid",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.5, 1, 1.5, 2, 2.5], "per": "use", "note": "Heaven's Aid: chance 2r % per pulse spawns a new orb with its own ~5 pulses: 5 pulses x 5 x 0.02r = 0.5 r hits per use"}], "confidence": "I", "note": "card table p9 ([698])", "plannerFix": "planner gives +100 % of total per impulse proc (0.1 r hits per use); card: new orb with ~5 pulses each"},
         "name": "Heaven's Aid",
         "description": "Chance to summon an additional mana orb at target location on hit.",
         "maxRank": 5,
@@ -2823,72 +2913,61 @@
       {
         "id": "energy_fountain",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Energy Fountain: +10 %/r vs stunned; the mana orb sets no stun, so 0"}], "confidence": "C", "note": "card table p10 ([179])"},
         "name": "Energy Fountain",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 10 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 10}
         }
       },
       {
         "id": "energy_orbit",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 3, 5], "note": "ExtraSpellProj(1+2r) orbs on player orbit (r 102 px); orb count = 1+2r"}, {"kind": "extra_hits", "byRank": [3, 5, 7], "per": "use", "replacesProjectileHits": true, "note": "extra orb pulses reach the dummy ~20 % of the time: (1+2r) orbs x 5 pulses x 0.2 hits per use"}, {"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD += 50 %/r x RSS20 energy (energy dependent; shown at energy 100 %)"}], "confidence": "I", "note": "card table p11 (C/I)", "plannerFix": "planner projectile_count 2r with perExtraProjectile 0 (no hits); card: extra orbs hit ~20 % of pulses"},
         "name": "Energy Orbit",
         "description": "Summon multiple mana orbs orbitting you and dealing damage based on your energy. Consumes all of your mana on cast.",
         "maxRank": 3,
         "effects": {
-          "base": { "conversion_energy": 0, "projectile_count": 0 },
-          "perRank": { "conversion_energy": 50, "projectile_count": 2 }
+          "base": {"conversion_energy": 0, "projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"conversion_energy": 50, "projectile_count": 2, "subtree_damage": 50}
         }
       },
       {
         "id": "chosen_one",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0, 0, 0], "per": "use", "note": "Chosen One: orb sits on the player; pulses ~86 px around player do not reach a 160 px dummy -> 0 hits"}, {"kind": "cooldown_s", "byRank": [45, 45, 45], "note": "cooldown +45 s"}, {"kind": "utility", "note": "player buff: life/mana and +50 %/r arcane damage for 20 s (applies to other skills, not orb hits)"}], "confidence": "I", "note": "card table p12 (C/I)", "plannerFix": "planner applies +50 %/r arcane damage and life/mana replenish to the orb; card: buff for the player, orb hits 0 at 160 px; cooldown +45 s missing"},
         "name": "Chosen One",
         "description": "Summon a mana orb within you gaining increased life replenish, mana replenish and arcane damage for the duration of mana orb.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "arcane_skill_damage": 0,
-            "life_replenish_pct": 0,
-            "mana_replenish_pct": 0
-          },
-          "perRank": {
-            "arcane_skill_damage": 50,
-            "life_replenish_pct": 75,
-            "mana_replenish_pct": 75
-          }
+          "base": {"arcane_skill_damage": 0, "life_replenish_pct": 0, "mana_replenish_pct": 0, "cooldown_added": 45},
+          "perRank": {"arcane_skill_damage": 50, "life_replenish_pct": 75, "mana_replenish_pct": 75, "cooldown_added": 0}
         }
       },
       {
         "id": "hauling_manawell",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1, 1, 1], "per": "use", "note": "Hauling Manawell: orb flies away at 2 px/frame and pulls nothing; only the first pulse (~60 px away) reaches the dummy"}, {"kind": "damage_pct", "byRank": [30, 60, 90], "note": "LSSD += 30 %/r"}], "confidence": "I", "note": "card table p13 (regua 22; C/I)", "plannerFix": "planner keeps 5 pulses; card: only ~1 pulse reaches the dummy"},
         "name": "Hauling Manawell",
         "description": "Conjure a flying mana orb pulling monsters into its core on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "arcane_skill_damage": 0, "projectile_size": 0 },
-          "perRank": { "arcane_skill_damage": 30, "projectile_size": 15 }
+          "base": {"projectile_size": 0, "subtree_damage": 0},
+          "perRank": {"projectile_size": 15, "subtree_damage": 30}
         }
       },
       {
         "id": "compacting_power",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.9, 5.64, 12.55], "per": "use", "note": "Compacting Power: T x(1+30 %/r), pulses N = 7/8/10 at r1..3, damage x(1+0.04r)^k per pulse, sum over pulses = 7.9 / 10.6 / 17.6 hits; delta from 5"}], "confidence": "I", "note": "card table p14 (C)", "plannerFix": "planner gives skill_duration and projectile_size but keeps 5 pulses at fixed damage"},
         "name": "Compacting Power",
         "description": "Summon a mana orb with increased duration and size. Each mana pulse now increases its damage but shrinks it in size.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "skill_duration": 0,
-            "projectile_size": 0,
-            "arcane_skill_damage": 0
-          },
-          "perRank": {
-            "skill_duration": 30,
-            "projectile_size": 25,
-            "arcane_skill_damage": 4
-          }
+          "base": {"skill_duration": 0, "projectile_size": 0, "arcane_skill_damage": 0},
+          "perRank": {"skill_duration": 30, "projectile_size": 25, "arcane_skill_damage": 4}
         }
       }
     ]

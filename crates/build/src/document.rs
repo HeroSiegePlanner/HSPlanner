@@ -4,8 +4,11 @@ use hsplanner_engine::calc::{
     commands::BuildPerformanceInput,
     data,
     planner::PlannerInput,
+    stats::weapon_kind_of,
     types::{CustomStat, Inventory, TreeSocketContent},
 };
+
+use crate::weapon_rules;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -21,6 +24,9 @@ pub struct BuildSnapshot {
     #[serde(deserialize_with = "deserialize_max_subskill_points")]
     pub max_subskill_points: u32,
     pub allocated_tree_nodes: Vec<u32>,
+    /// Incarnation nodes the tree suggester must not allocate or path through.
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub suggest_excluded_nodes: Vec<u32>,
     pub tree_socketed: HashMap<u32, TreeSocketContent>,
     pub active_skill_ids: Vec<String>,
     pub active_aura_id: Option<String>,
@@ -35,6 +41,9 @@ pub struct BuildSnapshot {
     pub entity_rates: HashMap<String, f64>,
     pub stack_counts: HashMap<String, u32>,
     pub custom_stats: Vec<CustomStat>,
+    /// The custom config text as typed, with `//` notes; `custom_stats` is parsed from it.
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub custom_stats_text: String,
     pub allocated_ether_nodes: Vec<u32>,
     pub merc_class_id: Option<String>,
     pub merc_skill_ranks: HashMap<String, u32>,
@@ -55,6 +64,7 @@ impl Default for BuildSnapshot {
             subskill_ranks: HashMap::new(),
             max_subskill_points: 20,
             allocated_tree_nodes: Vec::new(),
+            suggest_excluded_nodes: Vec::new(),
             tree_socketed: HashMap::new(),
             active_skill_ids: Vec::new(),
             active_aura_id: None,
@@ -75,6 +85,7 @@ impl Default for BuildSnapshot {
                 .collect(),
             stack_counts: HashMap::new(),
             custom_stats: Vec::new(),
+            custom_stats_text: String::new(),
             allocated_ether_nodes: Vec::new(),
             merc_class_id: None,
             merc_skill_ranks: HashMap::new(),
@@ -168,12 +179,53 @@ impl BuildSnapshot {
         if base.two_handed.unwrap_or(false) || main.is_some_and(|b| b.two_handed.unwrap_or(false)) {
             return base.slot == "weapon" && grip && main.is_none_or(grip_type) && grip_type(base);
         }
-        base.slot == "offhand"
-            || (base.slot == "weapon"
-                && (base.base_type != "Wand"
-                    || notes.iter().any(|s| {
-                        s.contains("dual wield wands") || s.contains("dual wielding wands")
-                    })))
+        if base.slot == "offhand" {
+            return true;
+        }
+        if base.slot != "weapon" || !self.can_wield(base) {
+            return false;
+        }
+        let kind = weapon_kind_of(base);
+        let wands = notes
+            .iter()
+            .any(|s| s.contains("dual wield wands") || s.contains("dual wielding wands"));
+        // Hercules Grip (game stat 203) opens these to every class; Master of Wands opens wands.
+        (kind == "Wand" && wands)
+            || (grip && ["Sword", "Mace", "Claw", "Polearm", "Axe"].contains(&kind.as_str()))
+            || weapon_rules::class_dual_wield_types(self.class_id.as_deref())
+                .contains(&kind.as_str())
+    }
+
+    /// Whether the player's class (or an Unbound Power item) allows this weapon type.
+    pub fn can_wield(&self, base: &hsplanner_engine::calc::types::ItemBase) -> bool {
+        weapon_rules::class_can_wield(
+            self.class_id.as_deref(),
+            base,
+            weapon_rules::grants_unbound_power(self.inventory.values()),
+        )
+    }
+
+    /// Drop weapons the current class or mercenary can no longer hold.
+    pub fn validate_weapons(&mut self) {
+        if self
+            .inventory
+            .get("weapon")
+            .and_then(|item| data::get_item(&item.base_id))
+            .is_some_and(|base| !self.can_wield(base))
+        {
+            self.inventory.remove("weapon");
+        }
+        if self
+            .merc_inventory
+            .get("weapon")
+            .and_then(|item| data::get_item(&item.base_id))
+            .is_some_and(|base| {
+                !weapon_rules::mercenary_can_wield(self.merc_class_id.as_deref(), base)
+            })
+        {
+            self.merc_inventory.remove("weapon");
+        }
+        self.validate_offhand();
     }
 
     pub fn validate_offhand(&mut self) {
@@ -201,6 +253,7 @@ impl BuildSnapshot {
         self.subskill_ranks.clear();
         self.tree_socketed.clear();
         self.skill_projectiles.clear();
+        self.validate_weapons();
     }
 
     pub fn set_mercenary_class(&mut self, id: Option<&str>) {
@@ -217,6 +270,7 @@ impl BuildSnapshot {
         }
         self.merc_class_id = id.map(str::to_owned);
         self.merc_skill_ranks.clear();
+        self.validate_weapons();
     }
 
     pub fn set_mercenary_skill(&mut self, id: &str, rank: u32) {

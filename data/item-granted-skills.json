@@ -104,7 +104,21 @@
   {
     "id": "amun_ra_s_demise",
     "name": "Amun Ra's Demise",
-    "description": "Monsters have a chance to explode on death dealing a portion of their maximum life as fire damage in a small area"
+    "description": "Monsters have a chance to explode on death dealing a portion of their maximum life as fire damage in a small area",
+    "effects": [
+      {
+        "label": "Damage Based on Life",
+        "base": 6,
+        "perRank": 1,
+        "unit": "%"
+      },
+      {
+        "label": "Proc Chance",
+        "base": 10,
+        "perRank": 5,
+        "unit": "%"
+      }
+    ]
   },
   {
     "id": "apocalyptic_thunder",
@@ -345,7 +359,14 @@
   {
     "id": "chaos_unleashed",
     "name": "Chaos Unleashed",
-    "description": "Causes your skills to rain down comets dealing fire damage for a short period of time"
+    "description": "Causes your skills to rain down comets dealing fire damage for a short period of time",
+    "effects": [
+      {
+        "label": "Comet Level",
+        "base": 44,
+        "perRank": 3
+      }
+    ]
   },
   {
     "id": "charmed_blood",
@@ -1489,15 +1510,14 @@
   {
     "id": "berserker_s_rage",
     "name": "Berserker's Rage",
-    "description": "",
+    "description": "Increases your damage for a short period of time",
+    "condition": "berserker_s_rage_buff",
     "passiveStats": {
       "base": {
-        "life_steal": 3,
-        "all_resistances": -2
+        "damage": 24
       },
       "perRank": {
-        "life_steal": 2,
-        "all_resistances": -4
+        "damage": 3
       }
     }
   },
@@ -1527,6 +1547,17 @@
       }
     ],
     "procCooldown": 0.25
+  },
+  {
+    "id": "caffeinated",
+    "name": "Caffeinated",
+    "description": "Increases your movement speed for a short period of time",
+    "condition": "caffeinated_buff",
+    "passiveStats": {
+      "base": {
+        "movement_speed": 60
+      }
+    }
   },
   {
     "id": "corrosion_of_darkness",
@@ -1574,9 +1605,6 @@
     "description": "Increases All Skills for a short period of time",
     "condition": "drunken_infused_wisdom_buff",
     "passiveStats": {
-      "base": {
-        "all_skills": -1
-      },
       "perRank": {
         "all_skills": 1
       }
@@ -2301,7 +2329,18 @@
   {
     "id": "live_by_the_sword",
     "name": "Live by the Sword",
-    "description": "Temporarily increases your attack speed and movement speed."
+    "description": "Temporarily increases your attack speed and movement speed.",
+    "condition": "live_by_the_sword_buff",
+    "passiveStats": {
+      "base": {
+        "increased_attack_speed": 28,
+        "movement_speed": 28
+      },
+      "perRank": {
+        "increased_attack_speed": 1,
+        "movement_speed": 1
+      }
+    }
   },
   {
     "id": "snowball_throw",
@@ -2342,5 +2381,18 @@
     "id": "disease",
     "name": "Disease",
     "description": ""
+  },
+  {
+    "id": "leviathan_s_presence",
+    "name": "Leviathan’s Presence",
+    "description": "",
+    "effects": [
+      {
+        "label": "Damage Based on Life",
+        "base": 750,
+        "perRank": 250,
+        "unit": "%"
+      }
+    ]
   }
 ]

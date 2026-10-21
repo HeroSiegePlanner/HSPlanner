@@ -34,6 +34,8 @@ pub struct Settings {
     pub number_scale: String,
     pub extra_charm_slot: bool,
     pub ui_zoom: f32,
+    /// Stat keys shown first on the Stats page, in pin order.
+    pub pinned_stats: Vec<String>,
 }
 impl Default for Settings {
     fn default() -> Self {
@@ -43,6 +45,7 @@ impl Default for Settings {
             number_scale: "billions".into(),
             extra_charm_slot: true,
             ui_zoom: 1.,
+            pinned_stats: Vec::new(),
         }
     }
 }
@@ -351,6 +354,14 @@ impl Session {
     }
     pub fn import_code(&mut self, code: &str) -> Result<String, String> {
         let (snapshot, notes, loadouts) = codec::decode_loadouts(code)?;
+        let stash: Vec<StashEntry> = codec::decode_stash(code)?
+            .into_iter()
+            .map(|item| StashEntry {
+                id: crate::library::new_id("stash"),
+                saved_at: chrono::Utc::now().timestamp_millis().max(0) as u64,
+                item,
+            })
+            .collect();
         let name = snapshot
             .class_id
             .as_deref()
@@ -360,7 +371,7 @@ impl Session {
         let id = self
             .state
             .library
-            .create(&name, &snapshot, &notes, &[], None)?;
+            .create(&name, &snapshot, &notes, &stash, None)?;
         self.state.library.build_mut(&id)?.loadouts = loadouts;
         self.open(&id)?;
         Ok(id)
@@ -509,8 +520,8 @@ mod tests {
         assert!(!session.has_undo());
         writer.save(session.state()).unwrap();
         writer.flush().unwrap();
-        drop(writer);
-        let (_, reopened) = crate::storage::Writer::open(directory.path().into()).unwrap();
+        // The save thread releases the library lock asynchronously; read the file directly.
+        let reopened = crate::storage::load(directory.path()).unwrap();
         assert_eq!(reopened.settings.language, "ko");
     }
 }

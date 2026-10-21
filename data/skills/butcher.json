@@ -2,6 +2,9 @@
   {
     "id": "slicing_throw",
     "activationKind": "cast",
+    "speedPath": "attack",
+    "baseCooldown": 1,
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Butcher_Slicing_Throw_obj flies from the player at 10 px/frame for returnTimer 55 frames (~549 px), then clears its hit map (singleHitListClear = 1) and returns: a dummy on the throw line (160 px) is hit once going out and once coming back = 2 hits, each the full hit D = W*(1+V1%)*(1+LSSD) (rule 18: 3v = 30 px << 156 px contact window, no skipping). The next throw does not wait for the return; blades are independent. No extra projectiles/objects in the base skill (chain p5, splitting p11, vortex p12, saws p13, Daisy p14 are subskills)."},
     "weaponRequirement": "melee",
     "classId": "butcher",
     "name": "Slicing Throw",
@@ -40,45 +43,49 @@
       {
         "id": "cut_in_half",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD of the whole cut (V1 = 210+30L)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: 160px] card Slicing Throw table p1; LSSD 10 %/r = planner subtree_damage"},
         "name": "Cut In Half",
         "description": "Increases the damage of slicing throw.",
         "maxRank": 5,
         "effects": {
-          "base": { "subtree_damage": 0 },
-          "perRank": { "subtree_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "precision_blade",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "other", "byRank": [1, 2, 3, 4, 5], "note": "player stat: +10 flat dexterity/r (not on dummy hit) and +1 % increased dexterity/r; numeric reading = increased dexterity % (applies via player stats, not as a hit effect)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: 160px] card table p2 (LoadSpecificStat StatDexterity s9/s10)"},
         "name": "Precision Blade",
         "description": "Passively increases your dexterity.",
         "maxRank": 5,
         "effects": {
-          "base": { "to_dexterity": 0, "increased_dexterity": 0 },
-          "perRank": { "to_dexterity": 10, "increased_dexterity": 1 }
+          "base": {"to_dexterity": 0, "increased_dexterity": 0},
+          "perRank": {"to_dexterity": 10, "increased_dexterity": 1}
         }
       },
       {
         "id": "one_swift_strike",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [0, 0, 0, 0, 0], "note": "crit chance unchanged; crit damage +20 %/r of the attack ([1019]=20/r), applies only when the dummy crits; projectile speed +12.5 %/r shortens return timer but still 2 hits (no hit change)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: 160px] card table p3 (galaz L93)"},
         "name": "One Swift Strike",
         "description": "Increases the critical strike damage and projectile speed of slicing throw.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_crit_damage": 0, "projectile_speed": 0 },
-          "perRank": { "skill_crit_damage": 20, "projectile_speed": 12.5 }
+          "base": {"skill_crit_damage": 0, "projectile_speed": 0},
+          "perRank": {"skill_crit_damage": 20, "projectile_speed": 12.5}
         }
       },
       {
         "id": "cuts_and_wounds",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.046, 1.17, 1.354, 1.582, 1.84], "note": "physical break 25r % (buff 7, 5 s) rolled ONCE per use with chance 4r %; expected value = 25r * (1-(1-0.04r)^5) % (uptime 18/34/47/58/67 %); added to the physical break sum (1+K), so relative gain vs other breaks is K/(1+K0)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: 160px] card table p4 (galaz L54, rzut na uzycie)", "plannerFix": "planner rolls the 4r % chance on every hit (on_hit); the card rolls it once per use (1 per cast, 5 s duration)"},
         "name": "Cuts and Wounds",
         "description": "Chance to inflict armor break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "armor_break": 0 },
-          "perRank": { "armor_break": 25 }
+          "base": {"armor_break": 0},
+          "perRank": {"armor_break": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -91,6 +98,7 @@
       {
         "id": "splitting_chain",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.12, 0.24, 0.36, 0.48, 0.6], "per": "hit", "note": "proc chance 4r % per blade hit x 3 chain hits of d0 (max_bounces 5 -> H = 1+floor(6/3) = 3, regula 23) = 0.12r per hit"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: 160px] card table p5 + Druga runda; chain phase +-1 frame is I", "plannerFix": "planner models the proc as one extra hit (of_total_damage 100); the chain makes 3 hits of d0 per proc (5 bounces, regula 23)"},
         "name": "Splitting Chain",
         "description": "Chance to unleash an additional chaining blade on hit.",
         "maxRank": 5,
@@ -106,12 +114,13 @@
       {
         "id": "burn_the_corpses",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [15, 30, 45], "note": "burning DoT = 15r % of the hit damage per tick (5 s); rolled once per use with chance 8r %; expected uptime 1-(1-0.08r)^5 = 34/58/76 %"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: 160px] card table p6 (galaz L67, rzut na uzycie < 8/r); DoT formula reports/dot_debuffs.md", "plannerFix": "planner rolls 8r % on each hit (on_hit) and adds increased_burning_damage 15/r; the card rolls once per use and the 15r % is the DoT ratio per tick"},
         "name": "Burn the Corpses!",
         "description": "Chance to inflict burning on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 15 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -124,39 +133,43 @@
       {
         "id": "daisys_insight",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-7, -14, -21, -28, -35], "note": "cooldown = 1 s * (1 - 0.07r) (r5: 0.65 s)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: 160px] card table p7; planner has no baseCooldown (1 s) for slicing_throw, that is a gap outside this subskill"},
         "name": "Daisy´s Insight",
         "description": "Reduced the cooldown of slicing throw.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 7 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 7}
         }
       },
       {
         "id": "executioners_apprentice",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "execute below % HP (not bosses); the training dummy does not die, 0 DPS on dummy"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: 160px] card table p8 ([140] = 1.3/r, 00Skills L1610)"},
         "name": "Executioner's Apprentice",
         "description": "Slicing throw executes monsters below a threshold.",
         "maxRank": 5,
         "effects": {
-          "base": { "execute_below": 0 },
-          "perRank": { "execute_below": 1.3 }
+          "base": {"execute_below": 0},
+          "perRank": {"execute_below": 1.3}
         }
       },
       {
         "id": "bladestorm",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "projectile size +15 %/r and spin +15 %/r (bigger mask, sprite spin); hit count unchanged (0 on dummy hits)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: 160px] card table p9 (spinForce, scale 1.1*(1+15 %/r))"},
         "name": "Bladestorm",
         "description": "Increases the size and spinning speed of slicing throw.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0, "spin_speed": 0 },
-          "perRank": { "projectile_size": 15, "spin_speed": 15 }
+          "base": {"projectile_size": 0, "spin_speed": 0},
+          "perRank": {"projectile_size": 15, "spin_speed": 15}
         }
       },
       {
         "id": "bloody_combustion",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "hit", "note": "Blood_Ripple_obj with damage floor(d0 + 0.3r) ~ d0, chance 3r % per hit, ONLY while the dummy is burning (buff 1); value assumes the dummy burns (upper bound), multiply by burning uptime from p6/p14"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: 160px] card table p10 (galaz [825], handler L38)", "plannerFix": "planner adds physical_skill_damage +30 %/r on every hit; the card gives an extra ~d0 hit at 3r % chance per hit, only while the dummy is burning"},
         "name": "Bloody Combustion",
         "description": "Chance to unleash a ripple of blood from burning monsters on hit dealing additional damage.",
         "maxRank": 5,
@@ -173,48 +186,49 @@
       {
         "id": "splitting_blade",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [40, 80, 120], "note": "LSSD 40 %/r"}, {"kind": "projectiles", "byRank": [3, 4, 5], "note": "2+r new blades at the first hit of the parent"}, {"kind": "extra_hits", "byRank": [6, 7.5, 8], "per": "use", "replacesProjectileHits": true, "note": "R4 362#0: total per use = 2 (parent out + back) + n spawn hits (n = 2+r) + returning children that hit = 8 / 9 (9-10) / 10 for r1/r2/r3 (old 8 / 10 / 10); r2 midpoint 9.5 -> extra over the parent's 2 hits = 6 / 7.5 / 8. Children spawn 8 px from the dummy (self of ProjectileCollision21Butcher = dummy), direction fan 24*i - 12*(n-1), 1 hit at birth + a return hit when the return line passes < 72.4 px of the dummy: r1 alpha = -24/0/+24 -> 3/3, r2 alpha = +-12, +-36 -> 3 of 4 (+-36 deg lies on the threshold, 67 vs 75 px depending on the side), r3 alpha = +-24, 0 hit, +-48 miss -> 3/5"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: 160px] R4 362#0 (supersedes table p11 8/10/10; formulas C, the +-36 deg threshold I) + PoR4 rule 38 (through the dummy centre, same counts)", "plannerFix": "planner has projectile_count 2+r but perExtraProjectile is 0 for slicing_throw, so the extra blades add no hits; the card gives 6 / 7.5 / 8 extra hits per use (births + returns, R4)"},
         "name": "Splitting blade",
         "description": "Slicing throw splits into multiple orbiting blades spiraling outwards and returning to the initial location.",
         "maxRank": 3,
         "effects": {
-          "base": { "subtree_damage": 0, "projectile_count": 2 },
-          "perRank": { "subtree_damage": 40, "projectile_count": 1 }
+          "base": {"subtree_damage": 0, "projectile_count": 2},
+          "perRank": {"subtree_damage": 40, "projectile_count": 1}
         }
       },
       {
         "id": "slicing_vortex",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD 50 %/r"}, {"kind": "set_hits", "byRank": [4, 5.5, 7], "note": "transformation into a spiral (orbit radius 8 + 1.25*t, angle += 10*(1 + 0.35r) = 13.5 / 17 / 20.5 deg/frame from the aim direction, map cleared every 360 deg, returnTimer 180 frames, then straight back to the player with a map clear): hits per use on a dummy at 160 px, frame simulation vortex_sim.py (R4 362#1): 4 (r1), 5-6 (r2), 6-8 (r3) -> midpoints 4 / 5.5 / 7 (old 3.7 / 5 / 5). Mask is a filled disc (bitmap Butcher_Sword_spr, r_eff 78.5 px at scale 1.1), not a rotating 132x130 box; robust vs dummy offset +-24 px, spin direction, T +-2 frames, aim +-8.5 deg (rule 38 through-centre value). p9 (+15 %/r scale) adds about +1 hit with p12 (rank not specified)"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: 160px] R4 362#1 (supersedes table p12 3.7/5/5) + PoR4 rule 38; C for the formulas and the mask, I for the frame simulation", "plannerFix": "planner models projectile_speed 35/r; the card is a spiral transformation with 4 / 5-6 / 6-8 hits per use (set_hits), speed does not set the hit count"},
         "name": "Slicing Vortex",
         "description": "Slicing throw now orbits you with increased projectile speed and increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "subtree_damage": 0, "projectile_speed": 0 },
-          "perRank": { "subtree_damage": 50, "projectile_speed": 35 }
+          "base": {"subtree_damage": 0, "projectile_speed": 0},
+          "perRank": {"subtree_damage": 50, "projectile_speed": 35}
         }
       },
       {
         "id": "bladesaw_massacre",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [35, 70, 105], "note": "LSSD 35 %/r"}, {"kind": "set_hits", "byRank": [41, 43, 45], "note": "transformation: n = 4+r saws replace the normal blade; 41/43/45 hits per use on a dummy at 160 px (geometry I)"}, {"kind": "cooldown_s", "byRank": [4, 4, 4], "note": "+4 s cooldown (base 1 s, minus 7 %/r of p7)"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: 160px] card table p13 (asm 0x1467cdc8e, Bladesaw_obj, tick 0.33 s, returnTimer 4 s)", "plannerFix": "planner models 4+r projectiles with no set_hits and no +4 s cooldown; the card says the saws replace the blade and add 4 s cooldown"},
         "name": "Bladesaw Massacre",
         "description": "Throw multiple blades forming a huge chainsaw that can be controlled. Slicing throw cooldown is now increased.",
         "maxRank": 3,
         "effects": {
-          "base": { "subtree_damage": 0, "projectile_count": 4 },
-          "perRank": { "subtree_damage": 35, "projectile_count": 1 }
+          "base": {"subtree_damage": 0, "projectile_count": 4, "cooldown_added": 4},
+          "perRank": {"subtree_damage": 35, "projectile_count": 1, "cooldown_added": 0}
         }
       },
       {
         "id": "daisys_regards",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.3, 1.6, 1.9], "per": "hit", "note": "Daisys_Regard_obj on every blade hit with damage floor(d0*(1+0.3r)); in main-hit units (1+0.3r) per blade hit"}, {"kind": "dot", "byRank": [1.625, 4.0, 7.125], "note": "burning amount 1.25r * d_DR (d_DR = d0*(1+0.3r)), refreshed per blade hit; value in d0 units per hit (total burn amount, not per tick)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: 160px] card table p14 (galaz [827], handler L62, no roll)", "plannerFix": "planner adds physical_skill_damage +30 %/r to the whole cut and burning 125/r at chance 100 %; the card adds a separate object d0*(1+0.3r) per blade hit plus a burn of 1.25r*d_DR"},
         "name": "Daisy´s Regards",
         "description": "Slicing throw explodes into a fiery pentagram inflicting burning on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "increased_burning_damage": 0 },
-          "perRank": {
-            "physical_skill_damage": 30,
-            "increased_burning_damage": 125
-          }
+          "base": {"physical_skill_damage": 0, "increased_burning_damage": 0},
+          "perRank": {"physical_skill_damage": 30, "increased_burning_damage": 125}
         },
         "proc": {
           "trigger": "on_hit",
@@ -229,6 +243,8 @@
   {
     "id": "furious_strike",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Plain weapon strike with projEffect[1020] (no skill object): 1 hit per attack (METODA rule 6), dummy within strike reach. The crushing-blow debuff (buff 41, up to 3 stacks) is applied by the hit and multiplies later physical hits (modifier, not extra hits). Subskill objects (embers, rats, flies, bones, Firenova) excluded. The strike hit itself is I (no skill object), the rest C."},
     "weaponRequirement": "melee",
     "classId": "butcher",
     "name": "Furious Strike",
@@ -245,6 +261,7 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 3.5, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackScaling": {
+      "weaponSubtreeScalesFullHit": false,
       "weaponBonusScaling": true,
       "weaponDamagePct": { "base": 268, "perLevel": 28 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -269,12 +286,13 @@
       {
         "id": "wide_spread_epidemic",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0252, 1.0505, 1.0757, 1.101, 1.1262], "note": "crushing blow (buff 41) stack value V3*(1+7 %/r); multiplier on the physical break sum (1+K) vs base 3 stacks at L20 (V3 18.8, K0 = 56.4 %)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: strike reach] card table p1 ([1025] = V3*(1+7 %/r)); planner increased_rabies_damage 7/r matches"},
         "name": "Wide Spread Epidemic",
         "description": "Increases the power of rabies from furious strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_rabies_damage": 0 },
-          "perRank": { "increased_rabies_damage": 7 }
+          "base": {"increased_rabies_damage": 0},
+          "perRank": {"increased_rabies_damage": 7}
         },
         "proc": {
           "trigger": "on_hit",
@@ -287,12 +305,13 @@
       {
         "id": "down_with_sickness",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [35, 70, 105, 140, 175], "note": "poison DoT amount 0.35r * W-based hit (buff 2, 5 s), rolled per attack with chance 4r %; value in % of the hit damage"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: strike reach] card table p2 (galaz L201); DoT formula reports/dot_debuffs.md"},
         "name": "Down with Sickness",
         "description": "Chance to inflict poison on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_poisoned_damage": 0 },
-          "perRank": { "increased_poisoned_damage": 35 }
+          "base": {"increased_poisoned_damage": 0},
+          "perRank": {"increased_poisoned_damage": 35}
         },
         "proc": {
           "trigger": "on_hit",
@@ -305,28 +324,31 @@
       {
         "id": "furious_reach",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "skill range [130] = 15/r; dummy already in reach at 160 px, 0 extra hits"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: strike reach] card table p3"},
         "name": "Furious Reach",
         "description": "Increases the attack range of furious strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "strike_of_hate",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [12.5, 25, 37.5, 50, 62.5], "note": "LSSD 12.5 %/r; per card it multiplies only the V1 part of the strike (effective about 0.88x at L20, V1 = 728 %), engine should apply the same as planner (no weaponSubtreeScalesFullHit)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: strike reach] card table p4 and planner section (2)"},
         "name": "Strike of Hate",
         "description": "Increases the damage dealt by furious strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "subtree_damage": 0 },
-          "perRank": { "subtree_damage": 12.5 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 12.5}
         }
       },
       {
         "id": "blade_uppercut",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [2, 8, 18, 32, 50], "note": "expected LSSD on the V1 part: chance 4r % per attack x 50r % extra = 2r^2 % (nominal; V1 part only); the proc also stuns the dummy 3 s (uptime feeds p9)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: strike reach] card table p5 (galaz L205, FUN_1401ba3c0 +50)", "plannerFix": "planner models the on_attack proc as subtree_damage_on_proc; the card has a 4r % per attack roll adding 50r % to the V1 part plus a 3 s stun that enables Stay Still!"},
         "name": "Blade Uppercut",
         "description": "Chance to slice monsters stunning and knocking them up dealing increased damage.",
         "maxRank": 5,
@@ -343,28 +365,31 @@
       {
         "id": "serious_fever",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.3606, 1.4808, 1.601], "note": "crushing stack limit [1026] = 3 + (2+r): +(2+r) stacks x V3 (18.8 %) on the physical break sum; multiplier vs base 3 stacks, steady state (stacks reached within 5 s)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: strike reach] card table p6; planner max_skill_stacks 2+r matches (card section (7)); combine with p13 by stack sum, not by product"},
         "name": "Serious Fever",
         "description": "Increases the maximum amount of rabies stacks.",
         "maxRank": 3,
         "effects": {
-          "base": { "max_skill_stacks": 2 },
-          "perRank": { "max_skill_stacks": 1 }
+          "base": {"max_skill_stacks": 2},
+          "perRank": {"max_skill_stacks": 1}
         }
       },
       {
         "id": "fueled_anger",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [10, 20, 30, 40, 50], "note": "attack speed of the skill x(1+0.10r) (TalentUseSetSpeed L458-459); period T_att = 0.75/(APS*(1+0.1r))"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: strike reach] card table p7; planner skill_attack_speed_more 10/r"},
         "name": "Fueled Anger",
         "description": "Increases attack speed when using furious strike.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 10 }
+          "base": {"skill_attack_speed_more": 0},
+          "perRank": {"skill_attack_speed_more": 10}
         }
       },
       {
         "id": "mediocre_unit",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.32, 0.64, 0.96, 1.28, 1.6], "per": "hit", "note": "Unholy Form only: chance 8r % per hit spawns 4 Mediocre Rat objects (d0 each, singleHit, 3 s); 4*0.08r = 0.32r per hit; Holy Form gives a Healthglobe (0 dmg), so value assumes Unholy Form is active"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: strike reach] card table p8 (handler L315, geometry of rats I)", "plannerFix": "planner has the on_hit 8r % proc with no effect; the rats (4 x d0 per proc in Unholy Form) are not modelled"},
         "name": "Mediocre Unit",
         "description": "Chance to spawn healing orbs from targets on hit when in holy form. Chance to unleash piercing enraged rats spreading rabies on hit when in unholy form.",
         "maxRank": 5,
@@ -373,17 +398,19 @@
       {
         "id": "stay_still",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.04, 1.137, 1.27, 1.427, 1.6], "note": "+20 %/r vs stunned dummy x uptime of the p5 stun (chance q = 4r % per attack, 3 s window, n = 5 follow-up attacks at T_att 0.5 s): U = (1+n)q/((1-q)+(1+n)q) = 0.20/0.34/0.45/0.53/0.60; multiplier = 1 + 0.2r*U. Stun is not refreshed while active (regula 27)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: strike reach] card table p9 (regula 27, [179] = 20 %/r); n depends on attack speed, example for T_att 0.5 s", "plannerFix": "planner applies extra_damage_stunned 20 %/r unconditionally; it needs the stun uptime from p5 (4r % per attack, 3 s): planner must scale by uptime 0.20-0.60"},
         "name": "Stay Still!",
         "description": "Increases damage dealt to stunned target.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 20 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 20}
         }
       },
       {
         "id": "spread_the_word",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "chance 4r % spawns 5 Fly objects orbiting the player at 32 px; they hit only if the dummy is ~20-45 px from the player; 0 hits at 160 px"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: strike reach] card table p10 (handler L349, Orbit_Parent_obj)"},
         "name": "Spread the Word",
         "description": "Chance to summon enraged flies on hit orbiting you and inflicting rabies.",
         "maxRank": 5,
@@ -392,23 +419,25 @@
       {
         "id": "consumed_by_hatred",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "branch needs crushing stacks >= 1 + [1026], unreachable (stacks <= [1026]); dead branch, 0 DPS"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: strike reach] card table p11 (handler L377-403) and section (3)", "plannerFix": "planner models of_total_damage 35 %/r; the card's branch is unreachable (stack condition never met), so 0"},
         "name": "Consumed by Hatred",
         "description": "Striking monsters with maximum stacks of rabies consumes them ripping and crushing the monster unleashing its bones in an arc behind it dealing damage according to the rabies stacks.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0 },
-          "perRank": { "of_total_damage": 35 }
+          "base": {"of_total_damage": 0},
+          "perRank": {"of_total_damage": 35}
         }
       },
       {
         "id": "flames_of_fury",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.7375, 3.475, 5.2125], "per": "hit", "note": "fire embers: 3 cinders per attack at 3 stacks (5 + r with p6), each landing at dummy + lengthdir(irandom(64), irandom(360)) (flight 34.8 frames, scale 0.85, bitmap mask), P(flame touches the dummy) 0.446-0.473, 5 ticks of floor(d0*0.25r) per touching flame (tick_hits 139 f, T = 30): 3 * P * 5 = 6.7 (f = 1.0) / 6.8 (f = 0.9857) / 6.9 (f = 0.9713) / 7.1 (f = 0.9425, PoR4) fire hits per attack. Resztki B: stays I in the interval 6.8-7.1 (the exact number of motion steps to yy <= 0 / Alarm_0 phase is missing, f in [0.94, 0.99]); midpoint 6.95 * 0.25r = 1.7375r main-hit units per attack (old 6.8 -> 1.7r). Fire damage, dummy fire resistance applies (rule 16: 15/35/70/85 % by gDataProtected[68]); Firenova branch dead; Cinder InheritModifiers L224 and Flame InheritModifiers = full"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: strike reach] Resztki B + PoR4 (c) + R4 363#0 (supersede table p12 6.8 hits)", "plannerFix": "planner adds increased_burning_damage 60 %/r and a 100 % burning proc; the card gives fire embers of 0.25r*d0 per stack with no burn (burning 60 not in the card); about 6.95 flame hits per attack at 3 stacks (6.8-7.1)"},
         "name": "Flames of Fury",
         "description": "Striking a monster inflicted with rabies causes flaming cinders to fly around the target lightning the ground on fire. Striking a monster with maximum stacks of rabies additionally consumes the stacks unleashing a scorching nova inflicting burning on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "of_total_damage": 0, "increased_burning_damage": 0 },
-          "perRank": { "of_total_damage": 25, "increased_burning_damage": 60 }
+          "base": {"of_total_damage": 0, "increased_burning_damage": 0},
+          "perRank": {"of_total_damage": 25, "increased_burning_damage": 60}
         },
         "proc": {
           "trigger": "on_hit",
@@ -421,17 +450,19 @@
       {
         "id": "sick_to_the_core",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [42.5, 85, 127.5], "note": "LSSD 42.5 %/r (nominal; V1 part only, see p4)"}, {"kind": "damage_mult", "byRank": [1.3606, 1.4808, 1.601], "note": "+(2+r) crushing stacks (same stack math as p6, 3+(2+r) stacks at L20)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: strike reach] card table p13 (LSSD and [1026] += 2+r); planner subtree_damage 42.5 and max_skill_stacks 2+r match"},
         "name": "Sick to the Core",
         "description": "Increases the maximum stacks of rabies and damage dealt by furious strike.",
         "maxRank": 3,
         "effects": {
-          "base": { "subtree_damage": 0, "max_skill_stacks": 2 },
-          "perRank": { "subtree_damage": 42.5, "max_skill_stacks": 1 }
+          "base": {"subtree_damage": 0, "max_skill_stacks": 2},
+          "perRank": {"subtree_damage": 42.5, "max_skill_stacks": 1}
         }
       },
       {
         "id": "the_absolute_unit",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "other", "byRank": [2, 8, 18], "note": "Holy Form value at life replenish RSS38 = 200 (placeholder; scales with RSS38): proc chance 10r % per attack x N hits x floor(d0*RSS38*0.02r) = 0.1r * 5 * 4r = 2r^2 main-hit units per attack (old 0.4r^2: Holy was counted as 1 hit, the Fire_Emmit object ticks 5 times: prism 85x85 follows the dummy, life 1.5 s, tick 0.33 s = 19.8 frames, tick_hits 88 19.8 = 5). Unholy Form: 3 Spikewave objects, only the first spike touches the dummy -> 3 hits: 1.2r^2 = [1.2, 4.8, 10.8] at RSS38 = 200 (unchanged). R4 363#1: the whole proc is BLOCKED while Insatiable Hunger (buff 144) is active (gate GetBuff(144) <= 0, 0x14527d4d1); no form -> 0. Fire_Emmit is fire damage (dummy fire resistance applies, rule 16); Spikewave pe[110] = 20 knock-up gives no landing hit (no pe[139])"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: strike reach] R4 363#1 (handler L233-270; gate C, counters tick_hits C, spike geometry I)", "plannerFix": "planner models fire_skill_damage 2/r on a 10r % proc; the card's damage scales with life replenish (RSS38*0.02r per proc), the form (Holy: 5 Fire_Emmit ticks, Unholy: 3 spikes) and is blocked during Insatiable Hunger"},
         "name": "The Absolute Unit",
         "description": "Striking a monster causes it to emmit fire damage based on your life replenish over time for a short duration on a radius around it when using holy form. Striking a monster unleashes impaling spikes dealing additional damage and a chance to replenish a portion of your maximum life on hit when using unholy form.",
         "maxRank": 3,
@@ -567,7 +598,7 @@
     "description": "Awaken the full potential of both holy and unholy to gain both benefits for a short period of time with increased effectiveness.",
     "tags": ["Cast", "Active", "Buff"],
     "movementDuringUse": 100,
-    "baseCastRate": 1,
+    "baseCastRate": 6,
     "baseCooldown": 50,
     "effectDuration": 25,
     "maxRank": 20,
@@ -584,6 +615,8 @@
   {
     "id": "chain_rip",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "In-zone per rule 24 (dummy within reach of the base hook). One Butcher_Chain_Rip_obj per enemy found by collision_circle_list(player, 128*(1+p1+p11), prec = 0, notme = 0) (TalentsButcher L451/L453): prec = 0 is a BBOX test of the dummy (x-12..x+11) against the circle, so the condition is ~centre distance <= R + 12, not <= R. Base fires for the dummy at <= 140 px (was 128); at 160 px the base skill does NOT trigger (0 hits) unless p1 is learned: p1 r1 gives 150.4 + 12 = 162 px >= 160 (was: p1 r2, 172 px), p1 r2 = 185 px (Resztki class / F; C for the arguments, I for the bbox implementation of prec = false in the runner). The hook hits once (singleHitPackId); the dummy is not pulled (em[162]/[26]). 1 hit D = W*(1+V1%)*(1+LSSD). Cooldown 1.25 s sets the period (R4 rule 37: max(cd_eff, (ceil(72/S)+1)/60), cd binds for S >= 1.3). Chain_Rip_Alarm_1 distance_to_object only matters for getNearest = 1 (the extra Carcass Rip p14 hook created on the dummy: bbox gap 0), base hook and Chain Swing hook use getNearest = 0 (Resztki A, C): no change."},
     "weaponRequirement": "melee",
     "classId": "butcher",
     "name": "Chain Rip",
@@ -621,34 +654,37 @@
       {
         "id": "ranged_suffering",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "search/max_length radius 128*(1 + 17.5 %/r): only the hit gate; in-zone convention -> 0 extra hits. At 160 px it IS the gate: the test is a bbox test (collision_circle_list prec = 0), reach = R + 12: p1 r1 = 150.4 + 12 = 162 px >= 160 (was: r2 = 172 px needed), r2 = 185 px, r3 = 207 px, r4 = 230 px, r5 = 252 px"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=140px] Resztki class/F (collision_circle_list args prec = notme = 0, TalentsButcher L451/L453; implementation of prec = false as bbox I) supersedes table p1 'r>=2 reaches 172 px'"},
         "name": "Ranged Suffering",
         "description": "Increases the range of chain rip.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 17.5 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 17.5}
         }
       },
       {
         "id": "chains_of_hatred",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45, 60, 75], "note": "LSSD 15 %/r multiplies the whole cut"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=128px] card table p2 (s9 15/r)"},
         "name": "Chains of Hatred",
         "description": "Increases the damage dealt by chain rip.",
         "maxRank": 5,
         "effects": {
-          "base": { "subtree_damage": 0 },
-          "perRank": { "subtree_damage": 15 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 15}
         }
       },
       {
         "id": "torture_the_skin",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [40, 80, 120, 160, 200], "note": "bleeding DoT 0.4r * dmg (buff 3, 5 s), rolled once per use with chance 4r %; value in % of the hit damage"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=128px] card table p3; one roll per use = one roll per hit for single-hit Chain Rip"},
         "name": "Torture the Skin",
         "description": "Chance to inflict bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 40 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 40}
         },
         "proc": {
           "trigger": "on_hit",
@@ -661,12 +697,13 @@
       {
         "id": "break_the_flesh",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0459, 1.1754, 1.3771, 1.6405, 1.956], "note": "physical break 40r % (buff 969, 5 s) rolled once per use with chance 3r %; expected = 40r * (1-(1-0.03r)^4) (5 s / 1.25 s cooldown = 4 follow-up uses), multiplier on the physical break sum"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=128px] card table p4 (galaz L193); with one hit per use per-use vs per-hit roll is equivalent here (card planner item 8 matters only for multi-hit skills)"},
         "name": "Break the Flesh",
         "description": "Inflicts armor break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "armor_break": 0 },
-          "perRank": { "armor_break": 40 }
+          "base": {"armor_break": 0},
+          "perRank": {"armor_break": 40}
         },
         "proc": {
           "trigger": "on_hit",
@@ -679,18 +716,20 @@
       {
         "id": "the_real_monster",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "[966]/[967] scalars, the reads need arrays (00Skills L1239/L1271): no effect on DPS; life/mana recovery only"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone <=128px] card table p5"},
         "name": "The Real Monster",
         "description": "Recover life and gradually recover mana from qualifying Chain Rip contacts.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_life_recovery_from_max_life_pct": 0, "skill_mana_recovery_from_max_mana_pct": 0 },
-          "perRank": { "skill_life_recovery_from_max_life_pct": 0.5, "skill_mana_recovery_from_max_mana_pct": 0.5 }
+          "base": {"skill_life_recovery_from_max_life_pct": 0, "skill_mana_recovery_from_max_mana_pct": 0},
+          "perRank": {"skill_life_recovery_from_max_life_pct": 0.5, "skill_mana_recovery_from_max_mana_pct": 0.5}
         },
         "calculationNote": "Its Chain Rip recovery payload is separate from passive regeneration. Life recovery can be reduced or blocked. Mana recovery requires no existing mana controller; controller scheduling and total recovery per cast remain unverified."
       },
       {
         "id": "shift_of_power",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "buff 16 on enemy (5 s) has no reader in the file -> 0 damage; branch [53] = 2 s slow (buff 17) enters the dummy, no DPS effect"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=128px] card table p6 (00Skills L1177; reports/dummy_debuffs.md 0.4)", "plannerFix": "planner applies a 'shocked' state (12.5 %/r, on_hit 100 %) that the card cannot find as a damage effect; buff 16 has no reader, so 0 DPS on the dummy"},
         "name": "Shift of Power",
         "description": "Decreases monster attack rating inflicting slow on hit.",
         "maxRank": 5,
@@ -705,34 +744,37 @@
       {
         "id": "rocket_propelled_chains",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "hookSpeed x(1+15 %/r); the chain speed does not change the single hit"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=128px] card table p7"},
         "name": "Rocket Propelled Chains",
         "description": "Increases the projectile speed of chain rip.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 15 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 15}
         }
       },
       {
         "id": "chains_unchained",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-7, -14, -21, -28, -35], "note": "cooldown 1.25 s * (1 - 0.07r)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=128px] card table p8 (GetTalentCooldown R = 1.25*p8.s9)"},
         "name": "Chains Unchained",
         "description": "Decreases the cooldown of chain rip.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 7 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 7}
         }
       },
       {
         "id": "rage_trance",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "buff 154 damage reduction 8 %/r for 3 s, defensive only; 0 dummy DPS"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=128px] card table p9"},
         "name": "Rage Trance",
         "description": "Casting Chain Rip grants physical and magic damage reduction for three seconds.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_damage_reduction": 0, "magic_damage_reduction": 0 },
-          "perRank": { "physical_damage_reduction": 8, "magic_damage_reduction": 8 }
+          "base": {"physical_damage_reduction": 0, "magic_damage_reduction": 0},
+          "perRank": {"physical_damage_reduction": 8, "magic_damage_reduction": 8}
         },
         "triggeredBuff": { "trigger": "on_cast", "chance": 100, "duration": 3 },
         "calculationNote": "The active reduction applies independently of the selected skill or form. Both normal and Chainfueled Chain Rip can grant it."
@@ -740,6 +782,7 @@
       {
         "id": "they_never_know_what_hit_them",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.2539, 1.6811, 2.05, 2.4, 2.75], "note": "stun 3 s rolled per use with chance min(1, 35r %), stun not refreshed while active, so the own hit is stunned with P = 1-(1-q)^3 (current use plus 2 earlier uses inside 3 s); multiplier = 1 + 35r % * P (r>=3 always stunned); stun applied before CalculateEndDamage"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=128px] card table p10 (asm L0x188 selector 9, regula 27)", "plannerFix": "planner uses on_hit chance 4r % and a 35 %/r stun bonus with no stun roll; the game rolls 35r % per use (s9 field) and the bonus needs the stun"},
         "name": "They Never Know What Hit Them",
         "description": "Chance to stun targets on hit dealing increased damage to stunned targets.",
         "maxRank": 5,
@@ -756,34 +799,37 @@
       {
         "id": "chains_attached",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [75, 150, 225], "note": "LSSD 75 %/r"}, {"kind": "cooldown_s", "byRank": [5, 5, 5], "note": "+5 s cooldown (asm 0x143ce9102), range +40 %/r is 0 in-zone"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=128px] card table p11 (DPS x(1+LSSD)*1.25/(1.25*(1-0.07 r8)+5))", "plannerFix": "planner lacks the +5 s cooldown from p11 (card planner item 3)"},
         "name": "Chains Attached",
         "description": "Increases the range and damage of chain rip greatly. Cooldown is increased.",
         "maxRank": 3,
         "effects": {
-          "base": { "subtree_damage": 0, "skill_range": 0 },
-          "perRank": { "subtree_damage": 75, "skill_range": 40 }
+          "base": {"subtree_damage": 0, "skill_range": 0, "cooldown_added": 5},
+          "perRank": {"subtree_damage": 75, "skill_range": 40, "cooldown_added": 0}
         }
       },
       {
         "id": "chainfueled_hunting",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD 50 %/r"}, {"kind": "set_hits", "byRank": [4, 4, 4], "note": "transformation: normal hook is not created; Chainfueled_Hunting_obj every 0.05 s spawns 4r chains in a ~4 deg fan, 0.8 s, range ~408 px; ~4 hits on a dummy at 160 px regardless of rank"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone <=128px] card table p12 (asm 0x1467cf38b; fan geometry I)", "plannerFix": "planner models projectile_count 4/r on top of the base hook; the card says the hook is replaced and the dummy gets ~4 hits per use regardless of rank (set_hits 4)"},
         "name": "Chainfueled Hunting",
         "description": "Rapidly throw multiple piercing chains in a cone towards target location dealing increased damage. Chain rip no longer pulls enemies.",
         "maxRank": 3,
         "effects": {
-          "base": { "subtree_damage": 0, "projectile_count": 0 },
-          "perRank": { "subtree_damage": 50, "projectile_count": 4 }
+          "base": {"subtree_damage": 0, "projectile_count": 0},
+          "perRank": {"subtree_damage": 50, "projectile_count": 4}
         }
       },
       {
         "id": "prey_on_the_weak",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45], "note": "every hit stuns the dummy (2 s, [51]) so the buff 155 StatExtraDamageStunned 15 %/r always applies (5 s buff); stable, not refreshed"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=128px] card table p13 (regula 27, [833] = 15/r, handler L411)"},
         "name": "Prey on the Weak",
         "description": "Grants you and allies a five-second damage bonus against stunned targets after a qualifying Chain Rip hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 15 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 15}
         },
         "triggeredBuff": { "trigger": "on_hit", "chance": 100, "duration": 5 },
         "calculationNote": "Set whether the enemy is stunned separately. The active bonus applies to all skills. Acquisition through Chainfueled Hunting remains unverified."
@@ -791,12 +837,13 @@
       {
         "id": "carcass_rip",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [35, 70, 105], "note": "LSSD 35 %/r"}, {"kind": "extra_hits", "byRank": [1, 1, 1], "per": "use", "note": "an extra Chain Rip hook to the second-nearest enemy (<= 260 px); with a single dummy instance_nth_nearest(...,2) returns the dummy itself (regula 17): +1 hit d0 per use, deterministic per card"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone <=128px] card table p14 ([834], handler L423, regula 17)", "plannerFix": "planner models area_of_effect 30 %/r (no hit change); the game adds one extra Chain Rip hit d0 per use on the second-nearest enemy"},
         "name": "Carcass Rip",
         "description": "Chain rip chains into additional nearby monsters on hit pulling them towards the target.",
         "maxRank": 3,
         "effects": {
-          "base": { "subtree_damage": 0, "area_of_effect": 0 },
-          "perRank": { "subtree_damage": 35, "area_of_effect": 30 }
+          "base": {"subtree_damage": 0, "area_of_effect": 0},
+          "perRank": {"subtree_damage": 35, "area_of_effect": 30}
         }
       }
     ]
@@ -804,6 +851,8 @@
   {
     "id": "brutalizing_slash",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.68, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "1 strike hit d0 = W*(1+[1020]/100) (METODA rule 6, [117] = 0) + the blood ripple: [836] = V4*0.01 = (28+2L)% = 0.68 at rank 20 -> ProjectileCollision00Skills L1704 creates Butcher_Slicing_Throw_Blood_Ripple_obj (no notDeadly/pack, hits the same dummy) with damage floor(d0*[836]) = 0.68 of the main hit, once per attack (rule 15). 1 + 0.68 = 1.68. Planner passiveStats ripple_damage (30+2/r) models this same object: do not count it twice. Bleeding DoT excluded."},
     "weaponRequirement": "melee",
     "classId": "butcher",
     "name": "Brutalizing Slash",
@@ -820,6 +869,7 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 3.5, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "attackScaling": {
+      "weaponSubtreeScalesFullHit": false,
       "weaponBonusScaling": true,
       "weaponDamagePct": { "base": 130, "perLevel": 20 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -844,50 +894,55 @@
       {
         "id": "bucthering_skill",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [3, 6, 9, 12, 15], "note": "crit chance +3 %/r (buff [1018]); accuracy rating x(1+10 %/r) affects only armor/evasion interaction, 0 on dummy hits"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone] card table p1 ([1018] = 3/r, [1022] = V3*(1+10 %/r))"},
         "name": "Bucthering Skill",
         "description": "Increases attack rating when using brutalizing slash.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_attack_rating_multiplier_pct": 0, "skill_crit_chance": 0 },
-          "perRank": { "skill_attack_rating_multiplier_pct": 10, "skill_crit_chance": 3 }
+          "base": {"skill_attack_rating_multiplier_pct": 0, "skill_crit_chance": 0},
+          "perRank": {"skill_attack_rating_multiplier_pct": 10, "skill_crit_chance": 3}
         }
       },
       {
         "id": "bonebreaker",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD 10 %/r, applies to the V1 part only (nominal value, same convention as furious_strike p4)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone] card table p2"},
         "name": "Bonebreaker",
         "description": "Increases the damage dealt by brutalizing slash.",
         "maxRank": 5,
         "effects": {
-          "base": { "subtree_damage": 0 },
-          "perRank": { "subtree_damage": 10 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
         "id": "unstoppable_rage",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "no read in script or Stat* (card skeleton '-'); assumed 0 on dummy DPS"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone] card table p3 (movement diminish, unresolved)"},
         "name": "Unstoppable Rage",
         "description": "Decreases movement diminish when using brutalizing slash.",
         "maxRank": 5,
         "effects": {
-          "base": { "reduced_movement_diminish": 0 },
-          "perRank": { "reduced_movement_diminish": 10 }
+          "base": {"reduced_movement_diminish": 0},
+          "perRank": {"reduced_movement_diminish": 10}
         }
       },
       {
         "id": "descent_to_madness",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [7.5, 15, 22.5, 30, 37.5], "note": "attack speed of the skill x(1+7.5 %/r) (TalentUseSetSpeed L464-465)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone] card table p4; planner skill_attack_speed_more 7.5/r"},
         "name": "Descent to Madness",
         "description": "Increases attack speed when using brutalizing slash.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 7.5 }
+          "base": {"skill_attack_speed_more": 0},
+          "perRank": {"skill_attack_speed_more": 7.5}
         }
       },
       {
         "id": "with_2_hands",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "use", "note": "chance 4r % per attack (random(99) < 4r, RV_inc of projEffect[117], 0x1467f0e1c) for +1 salvo; R4 372#0: the loop of salvos (attackClasses L405, 0x1402c1af5) shares singleHitPackId only inside one salvo and increments it after EVERY iteration (L507, 0x1402c4f39-0x1402c4f4e), so each extra salvo has its own pack; position and direction do not depend on i (pe[118] = 0 for butcher, no angular spread, I) -> the extra salvo lands where the main strike does and hits the dummy like it: +0.04r full strike hits per attack (r5 +0.2, ~+12 % skill DPS). The extra hits get no blood ripple (pe[836] is zeroed after the first hit), refresh the DoT [22] and have isAttack (proc triggers; Awakening Fury hit rate for Brutalizing Slash = (1 + 0.04r)/T_att)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone] R4 372#0 + PoR4 (e) (supersede the old 'whether it hits the same dummy is I (salvo package)'; an intermediate R4 text 'p5 = 0, shared pack' is obsolete); C for the loop and packs, I for pe[118] = 0"},
         "name": "With 2 Hands",
         "description": "Chance on attack to unleash an additional brutalizing slash.",
         "maxRank": 5,
@@ -904,17 +959,19 @@
       {
         "id": "skullsplitter",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [0, 0, 0, 0, 0], "note": "crit damage +30 %/r ([1019] = 30/r); chance unchanged; applies only on crits"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone] card table p6"},
         "name": "Skullsplitter",
         "description": "Increases the critical strike damage dealt by brutalizing slash.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_crit_damage": 0 },
-          "perRank": { "skill_crit_damage": 30 }
+          "base": {"skill_crit_damage": 0},
+          "perRank": {"skill_crit_damage": 30}
         }
       },
       {
         "id": "afterlife_burner",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "on-kill proc (3r %), buff 79 on enemy for 1.5 s; the training dummy does not die, 0 DPS"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone] card table p7 (handler L475)"},
         "name": "Afterlife Burner",
         "description": "Chance on kill for the target to explode into a pile of corpses.",
         "maxRank": 5,
@@ -930,48 +987,49 @@
       {
         "id": "precision_equals_power",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "other", "byRank": [6, 12, 18, 24, 30], "note": "LSSD += 6 %/r per 100 dexterity (RSS18/100 * 6 %/r); value = LSSD % per 100 dexterity at rank r; depends on player dexterity, applies to the V1 part"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone] card table p8"},
         "name": "Precision Equals Power",
         "description": "Increases the damage dealt by brutalizing slash based on your dexterity.",
         "maxRank": 5,
         "effects": {
-          "base": { "subtree_damage_per_100_dexterity": 0 },
-          "perRank": { "subtree_damage_per_100_dexterity": 6 }
+          "base": {"subtree_damage_per_100_dexterity": 0},
+          "perRank": {"subtree_damage_per_100_dexterity": 6}
         }
       },
       {
         "id": "for_the_weak",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "melee hit size += 2.5 %/r per 100 strength ([130]); no hit-count change on a single dummy"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone] card table p9"},
         "name": "For the Weak",
         "description": "Increases the attack range of brutalizing slash based on your strength.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_melee_size_offset_per_100_strength": 0 },
-          "perRank": { "skill_melee_size_offset_per_100_strength": 2.5 }
+          "base": {"skill_melee_size_offset_per_100_strength": 0},
+          "perRank": {"skill_melee_size_offset_per_100_strength": 2.5}
         }
       },
       {
         "id": "bleeding_the_prey",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "note": "extra damage vs bleeding enemy ([177] = 15 %/r); the dummy bleeds from its own strike DoT, so it applies to every hit"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone] card table p10"},
         "name": "Bleeding the Prey",
         "description": "Increases damage dealt to bleeding targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_extra_damage_bleeding": 0 },
-          "perRank": { "skill_extra_damage_bleeding": 15 }
+          "base": {"skill_extra_damage_bleeding": 0},
+          "perRank": {"skill_extra_damage_bleeding": 15}
         }
       },
       {
         "id": "pummeling_slashwave",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [22.5, 45, 67.5], "note": "LSSD 22.5 %/r (V1 part)"}, {"kind": "extra_hits", "byRank": [1, 1, 1], "per": "use", "note": "Slashwave object with damage = full strike, one extra full hit per attack (x2 hits)"}, {"kind": "dot", "byRank": [30, 60, 90], "note": "slashwave bleed x(1+30 %/r): the wave's bleeding DoT is multiplied by 1+0.3r; value = % increase of the bleed DoT from the wave"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone] card table p11 (L570, Brutalizing_Slash_Slashwave_obj, maska ~140x163)", "plannerFix": "planner has the bleed 30 %/r and LSSD but no second full-damage slashwave hit per attack (card: +1 hit, x2 hits)"},
         "name": "Pummeling Slashwave",
         "description": "Unleash a slash wave on attack inflicting increased bleeding on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "subtree_damage": 0, "increased_bleeding_damage": 0 },
-          "perRank": {
-            "subtree_damage": 22.5,
-            "increased_bleeding_damage": 30
-          }
+          "base": {"subtree_damage": 0, "increased_bleeding_damage": 0},
+          "perRank": {"subtree_damage": 22.5, "increased_bleeding_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -984,20 +1042,19 @@
       {
         "id": "painmongering",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [1.333, 2.0, 4.0], "note": "bleed tick rate x 1/(1-0.25r) (value = tick multiplier); bleed stacks up to 1+r (steady-state stack count not modelled, I)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone] card table p12 ([23] = 25/r, [24] = 1/r)"},
         "name": "Painmongering",
         "description": "Gain a stack of painmongering on hit increasing the tick frequency of bleed.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_bleeding_frequency": 0, "max_skill_stacks": 0 },
-          "perRank": {
-            "increased_bleeding_frequency": 25,
-            "max_skill_stacks": 1
-          }
+          "base": {"increased_bleeding_frequency": 0, "max_skill_stacks": 0},
+          "perRank": {"increased_bleeding_frequency": 25, "max_skill_stacks": 1}
         }
       },
       {
         "id": "gutting_frenzy",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.1, 0.2, 0.3], "per": "hit", "note": "chance 10r % per hit spawns Blood_Ripple_obj with damage d0 (crit damage +strength/100*15 %/r on the ripple); expected 0.1r per hit"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone] card table p13 ([837], handler L453)", "plannerFix": "planner names the 15 %/r term conversion_strength; in the card it is a strength-scaled crit damage bonus on the ripple, and the planner has no extra ripple hit model for the 10r % proc"},
         "name": "Gutting Frenzy",
         "description": "Chance to unleashes a ripple of blood on hit dealing increased critical damage based on your strength.",
         "maxRank": 3,
@@ -1013,20 +1070,13 @@
       {
         "id": "meet_daisy",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [16.7, 33.3, 50.0], "note": "every 3rd attack: V1*(1+LSSD+50r %) and crit +50r (crit ignored here); expected per attack = 50r/3 %, nominal (V1 part)"}, {"kind": "extra_hits", "byRank": [0.333, 0.333, 0.333], "per": "use", "note": "Brutalizing_Slash_Daisy_obj with the same damage on every 3rd attack: 1/3 extra hit per attack (orbit, 270 deg, in strike reach)"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone] card table p14 (playerEffect[279] counter to 3; Daisy_obj geometry I)", "plannerFix": "planner has the third-attack damage bonus but no Daisy object hit (+1 hit on every 3rd attack)"},
         "name": "Meet Daisy",
         "description": "Every third attack unleashes daisy with increased damage and critical strike damage. The size of daisy is increased based on your missing life.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "third_attack_subtree_damage": 0,
-            "third_attack_skill_crit_damage": 0,
-            "daisy_size_scaling": 0
-          },
-          "perRank": {
-            "third_attack_subtree_damage": 50,
-            "third_attack_skill_crit_damage": 50,
-            "daisy_size_scaling": 25
-          }
+          "base": {"third_attack_subtree_damage": 0, "third_attack_skill_crit_damage": 0, "daisy_size_scaling": 0},
+          "perRank": {"third_attack_subtree_damage": 50, "third_attack_skill_crit_damage": 50, "daisy_size_scaling": 25}
         }
       }
     ]
@@ -1039,7 +1089,7 @@
     "kind": "buff",
     "description": "Increase your damage dealt for a short period of time. Every corpse close to you will be siphoned for additional damage.",
     "tags": ["Cast", "Active", "Buff"],
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 50,
     "movementDuringUse": 65,
     "effectDuration": 12,
@@ -1075,6 +1125,8 @@
   {
     "id": "butchers_hook",
     "activationKind": "cast",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 1.0, "confidence": "I", "note": "One Butcher_Butchers_Hook_obj orbiting out in a spiral (radius +1.65 px/frame over lifetime 105 frames to ~174 px, 7 deg/frame, then radius -8/frame, singleHit, no map clear): 1 hit per hook. R4 375#0 (hook_sim.py, unrotated mask rect -49..+115 x -16..+14 px * scale; Step_0 never writes image_angle): every hook hits the dummy at 160 px exactly once (grid of 4800 cases, n = 1..6 hooks, orbit speed 7-10.5 deg/frame, life 105-152 frames, scale 1.0/0.6/0.4, cursor offset -5..+12 deg; first contact ~frame 48 at scale 1.0, ~101 at scale 0.4) - closed as I (simulation), no longer 'geometry not simulated'. The dummy cannot be grabbed (em[26]) so no grab/explosion effects; the hook's own stun [51] (2 s) applies (enables 'vs stunned' bonuses of other skills). baseProjectiles = 1; perExtraProjectile = 1 per extra hook (n = 1 + r hooks of p13 spaced 360/n deg, each still hits once even at scale 0.4, mask 66x12; p3 adds +1 hook with chance 3r %). Cooldown 6.75 s sets the period; with p14 the period is the animation lock (ceil(72/S)+1)/60 s (R4 rule 37)."},
     "classId": "butcher",
     "name": "Butchers Hook",
     "kind": "active",
@@ -1112,28 +1164,31 @@
       {
         "id": "everlasting_anger",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "lifetime x(1+15 %/r) (1.75 s base) changes spiral reach, 0 change in hit count"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone spiral] card table p1"},
         "name": "Everlasting Anger",
         "description": "Increases the duration of butchers hook.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 15 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 15}
         }
       },
       {
         "id": "backed_by_rage",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "orbit speed 7 deg/frame x(1+10 %/r); 0 change in hit count"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone spiral] card table p2"},
         "name": "Backed by Rage",
         "description": "Increases the projectile speed of butchers hook.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 10 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 10}
         }
       },
       {
         "id": "hook_discharge",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use", "note": "on cast chance 3r % adds one extra hook (one hit if the spiral covers the dummy); expected 0.03r per use (I: contact of the extra hook)"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone spiral] card table p3 (hook counter +1 on roll < 3/r)"},
         "name": "Hook Discharge",
         "description": "Chance on cast to unleash an additional butchers hook.",
         "maxRank": 5,
@@ -1149,23 +1204,25 @@
       {
         "id": "carcass_carrier",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "projectile size +15 %/r; the card's write target is unresolved, 0 hits assumed"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone spiral] card table p4"},
         "name": "Carcass Carrier",
         "description": "Increases the size of butchers hook.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_size": 0 },
-          "perRank": { "projectile_size": 15 }
+          "base": {"projectile_size": 0},
+          "perRank": {"projectile_size": 15}
         }
       },
       {
         "id": "fresh_meat",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "dot", "byRank": [30, 60, 90, 120, 150], "note": "bleeding DoT 30r % of the hit damage (buff 3, 5 s), rolled once per use with chance 4r %"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone spiral] card table p5 ([22] = floor(dmg*30 %/r))"},
         "name": "Fresh Meat",
         "description": "Chance to inflict bleeding on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_bleeding_damage": 0 },
-          "perRank": { "increased_bleeding_damage": 30 }
+          "base": {"increased_bleeding_damage": 0},
+          "perRank": {"increased_bleeding_damage": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1178,12 +1235,13 @@
       {
         "id": "pierce_the_torso",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0089, 1.0359, 1.0813, 1.1454, 1.2285], "note": "physical break 30r % (buff 969, 5 s) rolled once per use with chance 4r %; with base period 6.75 s uptime = 1-(1-0.04r)^(5/6.75): 3/6/9/12/15 %; with p14 (period = attack time) the uptime rises to 1-(1-0.04r)^(5/T_att)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone spiral] card table p6 (galaz [969] = [30/r + RSS234, 5 s])"},
         "name": "Pierce the Torso",
         "description": "Chance to inflict armor break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "armor_break": 0 },
-          "perRank": { "armor_break": 30 }
+          "base": {"armor_break": 0},
+          "perRank": {"armor_break": 30}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1196,23 +1254,25 @@
       {
         "id": "spin_of_death",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD 8 %/r over the whole hook hit"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone spiral] card table p7"},
         "name": "Spin of Death",
         "description": "Increases the damage dealt by butchers hook.",
         "maxRank": 5,
         "effects": {
-          "base": { "subtree_damage": 0 },
-          "perRank": { "subtree_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "hellsent",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "utility", "note": "movement speed +15 %/r for 1.75 s buff 156 and phasing; no dummy DPS"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone spiral] card table p8"},
         "name": "Hellsent",
         "description": "Casting Butchers Hook grants movement speed and phasing for 1.75 seconds.",
         "maxRank": 5,
         "effects": {
-          "base": { "movement_speed": 0, "phasing": 1 },
-          "perRank": { "movement_speed": 15, "phasing": 0 }
+          "base": {"movement_speed": 0, "phasing": 1},
+          "perRank": {"movement_speed": 15, "phasing": 0}
         },
         "triggeredBuff": { "trigger": "on_cast", "chance": 100, "duration": 1.75 },
         "calculationNote": "The active buff grants phasing independently of the selected skill or form. Hook lifetime modifiers do not extend its base duration."
@@ -1220,68 +1280,74 @@
       {
         "id": "immaculate_butcher",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [0, 0, 0, 0, 0], "note": "crit damage +30 %/r ([1019] = 30/r); chance unchanged"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone spiral] card table p9"},
         "name": "Immaculate Butcher",
         "description": "Increases the critical strike damage dealt by butchers hook.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_crit_damage": 0 },
-          "perRank": { "skill_crit_damage": 30 }
+          "base": {"skill_crit_damage": 0},
+          "perRank": {"skill_crit_damage": 30}
         }
       },
       {
         "id": "bring_the_carnage",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-7, -14, -21, -28, -35], "note": "cooldown 6.75 s x (1-0.07r) (inactive when p14 sets 0.5 s)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone spiral] card table p10"},
         "name": "Bring the Carnage",
         "description": "Decreases the cooldown of butchers hook.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 7 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 7}
         }
       },
       {
         "id": "concussive_blow",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "explosion only when captured enemies exist (ds_list_size(enemyList) > 0); the dummy is not captured (enemyModifier[26] = 1), 0 DPS"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone spiral] card table p11 (Destroy_0 L40-49)"},
         "name": "Concussive Blow",
         "description": "Butchers hook circles onces and slams into target location unleashing a corpse explosion with increased size and damage based on the amount of enemies captured in the hook.",
         "maxRank": 3,
         "effects": {
-          "base": { "secondary_damage_per_captured_enemy": 0, "secondary_size_per_captured_enemy": 0 },
-          "perRank": { "secondary_damage_per_captured_enemy": 2.5, "secondary_size_per_captured_enemy": 1.25 }
+          "base": {"secondary_damage_per_captured_enemy": 0, "secondary_size_per_captured_enemy": 0},
+          "perRank": {"secondary_damage_per_captured_enemy": 2.5, "secondary_size_per_captured_enemy": 1.25}
         },
         "calculationNote": "When the hook ends with N captured enemies, its separate explosion receives floor(stored physical damage × (1 + 0.025 × node rank × N)) and size 1 + 0.0125 × node rank × N. No explosion is created for N = 0. Explosion contacts are excluded from displayed DPS until verified."
       },
       {
         "id": "critical_velocity",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "lifetime +15 %/r (reach of the spiral only, 0 change of the hit count: each hook already hits once). criticalVelocity 5 %/r: criticalVelocityAmount = criticalVelocity * deltaSpeed computed once in Alarm_1 (L15, 0x1474062c1-0x147406300) and added every 0.33 s to orbit_speed (Step_0 L44, 0x147409072, the only consumer; no damage/crit consumer exists); deltaSpeed = 0 at that moment (Player_Damage_Parent_obj_Create_0 L0x77 zeroes it, the hook does not set it; p14 sets it only in L20, after) -> the bonus is 0 (R4 375#1)"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone spiral] R4 375#1 (supersedes 'consumer not found, most likely crit'); C for the formula and the only consumer, I for deltaSpeed = 0", "plannerFix": "planner gives projectile_speed 5/r (criticalVelocity) and skill_duration 15/r; in game the criticalVelocity bonus is 0 (deltaSpeed = 0) and only the lifetime +15 %/r is real"},
         "name": "Critical Velocity",
         "description": "Increases the velocity of butchers hook over time causing it to deal damage more frequently.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_speed": 0, "skill_duration": 0 },
-          "perRank": { "projectile_speed": 5, "skill_duration": 15 }
+          "base": {"projectile_speed": 0, "skill_duration": 0},
+          "perRank": {"projectile_speed": 5, "skill_duration": 15}
         }
       },
       {
         "id": "master_of_meat_hooks",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD 15 %/r"}, {"kind": "projectiles", "byRank": [1, 2, 3], "note": "n = 1+r hooks every 360/n deg; engine converts via perExtraProjectile = 1 (x(1+r) hits): R4 375#0/375#2 hook_sim.py - every hook crosses the dummy at 160 px exactly once (n = 1..6, scale 1.0 and 0.4)"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone spiral] R4 375#2: the local factor 0.4 of p13 is the image scale of each hook (image_xscale = image_yscale = 0.4*(1 + p4.s9 %), 0x1467fdad7 / 0x1467fde8b / 0x1467fe5ab; mask 66x12 instead of 165x31, C) - still 1 hit per hook (first contact ~frame 101 of 105), so x(1+r) stays; the contact itself is a simulation (I), previously 'not simulated'"},
         "name": "Master of Meat Hooks",
         "description": "Unleash multiple smaller hooks.",
         "maxRank": 3,
         "effects": {
-          "base": { "subtree_damage": 0, "projectile_count": 0 },
-          "perRank": { "subtree_damage": 15, "projectile_count": 1 }
+          "base": {"subtree_damage": 0, "projectile_count": 0},
+          "perRank": {"subtree_damage": 15, "projectile_count": 1}
         }
       },
       {
         "id": "welcome_to_hell",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [40, 80, 120], "note": "LSSD 40 %/r"}, {"kind": "cooldown_s", "byRank": [-6.25, -6.25, -6.25], "note": "cooldown 6.75 s -> 0.5 s (asm 0x143ce9325: base = 0.5, R = A = 0, so p10 does not apply). R4 rules 31(k)/37: the same talent cannot be repeated before its own sequence ends (CheckTalentUse L104 exception needs the current [207] not instant), so the period is the animation lock max(0.5/(1 + 0.005h), (ceil(72/S)+1)/60) = (ceil(72/S)+1)/60 s with S = APS*(1 + AS): S = 2 -> 0.617 s (old 0.75/S = 0.375 s), S = 3 -> 0.417 s (old 0.25 s). Hit in flight straight out (9 px/frame, 0.365 s, ~197 px) and back at 13 px/frame, 1 hit per hook (3v = 27 px, rule 18 ok)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone spiral] card table p14 (asm 0x143ce9325, Alarm_1 L103-118) + R4 period table (supersedes period 0.75/S)", "plannerFix": "planner lacks the cooldown change to 0.5 s (period = animation lock (ceil(72/S)+1)/60 s, R4) - the largest DPS difference for this skill; DPS of p14 is x(6.75/T_att)*(1 + LSSD) relative to the base"},
         "name": "Welcome to Hell",
         "description": "Unleash butchers hook towards target location with increased range and damage returning back after a short duration. Butchers hook no longer has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": { "subtree_damage": 0, "skill_range": 0 },
-          "perRank": { "subtree_damage": 40, "skill_range": 25 }
+          "base": {"subtree_damage": 0, "skill_range": 0, "cooldown_added": -6.25},
+          "perRank": {"subtree_damage": 40, "skill_range": 25, "cooldown_added": 0}
         }
       }
     ]
@@ -1289,6 +1355,9 @@
   {
     "id": "chain_swing",
     "activationKind": "cast",
+    "speedPath": "cast",
+    "dummyHits": {"base": 3.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "I", "note": "In-zone value per rule 24 (the hook lands at a fixed distance independent of the cursor: yy-flight of 41 frames at 12 px/frame = 480-492 px (R3), ~456-468 px with the rule-40 ballistic shortfall (PoR4); the pulling Butcher_Chain_Rip_obj chains spawn for enemies within hookRange 128 px of the LANDING point, tested with collision_circle_list prec = 0 = bbox, so reach R + 12: landing zone for the dummy ~350-610 px -> ~340-620 px (+-12) (Resztki class)): dummy near the landing point = myHitBox line (Butcher_Chain_Swing_Chain_obj, singleHit, 1 hit) + the hook itself (deadly after 2 frames, mask 49x14*2, 1 hit, I) + 1 pulling Butcher_Chain_Rip_obj (d0, does not pull the dummy) = 3 hits of D. At the strict 160 px convention the hook flies over the dummy and there is no pulling chain: 2 hits (line + hook). No Hookstorm / Warm Welcome in the base. All objects have full modifiers. Base DPS 1.45*d0/s (160 px) or 2.17*d0/s (in zone) at period 83 frames (R4)."},
+    "usePeriod": {"kind": "dash", "extraFrames": 69, "note": "hook flight 41 frames (zSpeed 6, g 0.3, yy0 10: lands in step 41) + dash 28 frames (27 gravity steps + 1 transition, g' = 0.85) = 69 frames; Chain_Swing_obj_Step_0 L63-65 sets playerEffect[142] = 1 (and [143] = 376, [144] = 16, [155] = 0.5) only in phase 1, i.e. after the hook lands, and skillsLeap releases it when the dash lands (so during the 41-frame hook flight [142] = 0, but tag 6 Movement bypasses the [204] lock and the cooldown of 60 frames ends inside the dash, so [142] gates the next cast until frame 83); casting is blocked while [142] > 0 (rule 30). Period = t_wyw + 69 with t_wyw = floor(24/c) + 1 = 14 frames at c = 1.75 (the engine trigger frames) = 83 frames = 1.383 s (R4 rules 31(k)/37, Resztki C: confirmed, skillsLeap runs before PlayerMovement 0x14927a6b1 < 0x14928fd99 so the next cast happens in the landing frame; the old R3 range 1.31-1.47 s with t_wyw 7|14 is obsolete); the 1 s cooldown does not bind; the Land_* sequence (4 frames @ 12) is not counted (I, +-1 frame). p13 (no dash): period = cooldown_eff = 60/(1 + 0.005*h_eff) frames, NOT max(60, 55) - the hook flight does not block the cast (h = 0: 60 frames, unchanged); p14: ~248 frames (14 + 26 + 180 + 28, I) - see the subskill entries."},
     "classId": "butcher",
     "name": "Chain Swing",
     "kind": "active",
@@ -1296,7 +1365,7 @@
     "damageType": "physical",
     "tags": ["Cast", "Active", "Spell", "Movement", "Strike"],
     "movementDuringUse": 85,
-    "baseCastRate": 1,
+    "baseCastRate": 1.75,
     "baseCooldown": 1,
     "maxRank": 20,
     "requiresLevel": 16,
@@ -1327,17 +1396,19 @@
       {
         "id": "the_huntsman",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "hook speed x(1+10 %/r); flight time fixed by yy (41 frames), only landing range 492*(1+0.1r) grows; cadence unchanged"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone landing] card table p1 (R3)"},
         "name": "The Huntsman",
         "description": "Increases the projectile speed of chain swing.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_speed": 0 },
-          "perRank": { "projectile_speed": 10 }
+          "base": {"projectile_speed": 0},
+          "perRank": {"projectile_speed": 10}
         }
       },
       {
         "id": "immobilizing_hit",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "stun 3 s (buff 51) rolled once per use with chance 3r %; the stun has no damage term for Chain Swing on the dummy"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone landing] card table p2 (rzut na uzycie)"},
         "name": "Immobilizing Hit",
         "description": "Chance to stun targets on hit.",
         "maxRank": 5,
@@ -1350,45 +1421,49 @@
       {
         "id": "no_quarter",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "utility", "note": "mana cost -7 %/r"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone landing] card table p3"},
         "name": "No Quarter",
         "description": "Reduces the mana cost of chain swing.",
         "maxRank": 5,
         "effects": {
-          "base": { "mana_cost_reduction": 0 },
-          "perRank": { "mana_cost_reduction": 7 }
+          "base": {"mana_cost_reduction": 0},
+          "perRank": {"mana_cost_reduction": 7}
         }
       },
       {
         "id": "demonic_chains",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD 8 %/r over the whole cut"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone landing] card table p4"},
         "name": "Demonic Chains",
         "description": "Increases the damage dealt by chain swing.",
         "maxRank": 5,
         "effects": {
-          "base": { "subtree_damage": 0 },
-          "perRank": { "subtree_damage": 8 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
         "id": "introduce_fear",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "hookRange x(1+15 %/r) for pulling chains; range only (pull enters the dummy at 128 px landing reach, not affecting the hit count here)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone landing] card table p5"},
         "name": "Introduce Fear",
         "description": "Pull monsters towards you from an increased radius after landing.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "physical_torture",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0156, 1.0599, 1.1295, 1.2212, 1.332], "note": "physical break 15r % (buff 969, 5 s) rolled once per use with chance 3r %; uptime 1-(1-0.03r)^(5/1.39) = 10/20/29/37/44 % (period 1.39 s, exponent non-integer, card formula)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone landing] card table p6 (galaz [969] = [15/r + RSS234, 5 s])", "plannerFix": "planner rolls the 3r % chance on every hit (on_hit); the card rolls once per use, and Chain Swing has 2-3 hits per use"},
         "name": "Physical Torture",
         "description": "Chance to inflict armor break on hit.",
         "maxRank": 5,
         "effects": {
-          "base": { "armor_break": 0 },
-          "perRank": { "armor_break": 15 }
+          "base": {"armor_break": 0},
+          "perRank": {"armor_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1401,12 +1476,13 @@
       {
         "id": "killing_spree",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "utility", "note": "after the skill, buff 308 gives the player +8 %/r attack speed for 5 s; boosts other skills, no direct dummy hits for Chain Swing (I: uptime ~100 % at use every <= 5 s)"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone landing] card table p7 (phase 2 L149-150)"},
         "name": "Killing Spree",
         "description": "Qualifying Chain Swing completion grants a five-second attack speed buff.",
         "maxRank": 5,
         "effects": {
-          "base": { "increased_attack_speed": 0 },
-          "perRank": { "increased_attack_speed": 8 }
+          "base": {"increased_attack_speed": 0},
+          "perRank": {"increased_attack_speed": 8}
         },
         "triggeredBuff": { "trigger": "on_skill_complete", "chance": 100, "duration": 5 },
         "calculationNote": "Prey of the Day prevents acquisition on its alternative completion path. An already-active buff still benefits all attacks. A cast, hit or kill alone does not guarantee acquisition."
@@ -1414,45 +1490,49 @@
       {
         "id": "scent_of_prey",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "extra damage vs bleeding ([177] = 10 %/r); applies only while the dummy bleeds from another source (0 if the dummy is not bleeding)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone landing] card table p8"},
         "name": "Scent of Prey",
         "description": "Increases damage dealt to bleeding targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_extra_damage_bleeding": 0 },
-          "perRank": { "skill_extra_damage_bleeding": 10 }
+          "base": {"skill_extra_damage_bleeding": 0},
+          "perRank": {"skill_extra_damage_bleeding": 10}
         }
       },
       {
         "id": "entry_frenzy",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [0, 0, 0, 0, 0], "note": "crit damage +20 %/r ([1019] = 20/r); chance unchanged"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone landing] card table p9"},
         "name": "Entry Frenzy",
         "description": "Increases the critical strike damage dealt by chain swing.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_crit_damage": 0 },
-          "perRank": { "skill_crit_damage": 20 }
+          "base": {"skill_crit_damage": 0},
+          "perRank": {"skill_crit_damage": 20}
         }
       },
       {
         "id": "unblessed_path",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "safe landing (xSafe/ySafe) only; no dummy DPS"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone landing] card table p10"},
         "name": "Unblessed Path",
         "description": "Increases the maximum cast range. Chain swing now ignores terrain.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "warm_welcome",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 1, 1], "per": "use", "note": "one fire object Warm_Welcome per enemy in range, damage d0 (fire: dummy fire resistance 15/35/70/85 % per regula 16 applies; card gives pre-resistance value)"}, {"kind": "dot", "byRank": [50, 100, 150], "note": "burning total = floor(d0*0.5r), i.e. 50r % of d0 per use (not per tick)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone landing] card table p11 (warmWelcome = 50 %/r); section (3)", "plannerFix": "planner models increased_burning_damage 50 %/r on a 100 % burn; the card gives a separate fire object (d0 per enemy, one hit) plus a burn of 0.5r*d0"},
         "name": "Warm Welcome",
         "description": "Unleash burning fissures at nearby monsters when landing inflicting burning.",
         "maxRank": 3,
         "effects": {
-          "base": { "increased_burning_damage": 0 },
-          "perRank": { "increased_burning_damage": 50 }
+          "base": {"increased_burning_damage": 0},
+          "perRank": {"increased_burning_damage": 50}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1465,35 +1545,38 @@
       {
         "id": "hookstorm",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.95, 2.4, 2.85], "per": "use", "note": "5 Hookstorm objects (d0*(1+0.3r) each) in an expanding orbit for 1 s; ~1-2 hits on a lone dummy depending on its distance (expected 1.5); value = 1.5*(1+0.3r) main-hit units; hook speed x0.5 also changes landing (I)"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone landing] card table p12 (branch, asm 0x146803f1c)", "plannerFix": "planner models secondary_damage_increased 30 %/r only; the card's 5 Hookstorm objects add about 1-2 hits of d0*(1+0.3r) on a lone dummy"},
         "name": "Hookstorm",
         "description": "Swing hooks around while travelling dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": { "secondary_damage_increased": 0, "secondary_range_increased": 0 },
-          "perRank": { "secondary_damage_increased": 30, "secondary_range_increased": 15 }
+          "base": {"secondary_damage_increased": 0, "secondary_range_increased": 0},
+          "perRank": {"secondary_damage_increased": 30, "secondary_range_increased": 15}
         },
         "calculationNote": "Creates five separate hooks, each with floor(cast physical damage × (1 + 0.30 × node rank)) and maximum range floor(220 × (1 + 0.15 × node rank)). Their contacts are excluded from displayed DPS until verified."
       },
       {
         "id": "prey_of_the_day",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD 15 %/r"}, {"kind": "period_frames", "byRank": [-23, -23, -23], "note": "no dash (preyOfTheDay): the use period is the cooldown, cooldown_eff = 60/(1 + 0.005*h_eff) frames, NOT max(60, 55) (Resztki C: the hook flight does not block the cast, [142] is never set); the -23 is exact for h = 0 (83 -> 60 frames incl. the 14 trigger frames); with skill haste h > 0 the period is shorter than 60 frames (not expressible by a fixed -23). Hook speed x0.75 and hookRange +30 %/r change the landing (~369 px) only"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone landing] Resztki C (supersedes 'max(60, 55)') + R4 period table (Chain Swing p13 = max(60, 55) = 1.0 s)", "plannerFix": "planner has the 3 hits per use and LSSD 15/r but no cooldown-bound period for preyOfTheDay (approach removed): period = 60/(1 + 0.005h) frames"},
         "name": "Prey of the Day",
         "description": "Connecting with a monster causes chain swing to pull all monsters nearby the target towards you.",
         "maxRank": 3,
         "effects": {
-          "base": { "subtree_damage": 0, "skill_range": 0 },
-          "perRank": { "subtree_damage": 15, "skill_range": 30 }
+          "base": {"subtree_damage": 0, "skill_range": 0},
+          "perRank": {"subtree_damage": 15, "skill_range": 30}
         }
       },
       {
         "id": "centrifugal_force",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [125, 250, 375], "note": "LSSD 125 %/r (DPS per hit x(1 + 1.25r))"}, {"kind": "set_hits", "byRank": [2, 2, 2], "note": "transformation (centrifugalForce): the hook flies to the cursor (xTarget = player + lengthdir(tupm[6], tupm[7]); objects lie 6 px ABOVE the cursor, Resztki E; ballistic arc of 26 frames lands ~12 px short, PoR4) and the player circles the landing point at 4*roomSpd deg/frame for [163] = 3 s = 180 frames = 2 revolutions; Chain_obj (rotated rect 20 px x rho) clears its map every 360 deg (90 frames) -> the dummy within ~64 px of the pivot gets 1 chain hit per revolution = 2. Main result, cursor on the visible dummy centre (x, y-24): pivot ~(148, -28), chain 2 hits, the hook head (rect 98x28, half height 14 + 12 = 26) misses by 2 px (|dy| = 28) -> 2 hits (Resztki E: was ~3, I: head rect orientation). Variant cursor at (x, y): pivot (148, -6), 2 chain hits + head = 3. Pulling Butcher_Chain_Rip_obj at the landing (dummy inside hookRange of the pivot) is not mentioned for p14 (open)"}, {"kind": "period_frames", "byRank": [165, 165, 165], "note": "period ~248 frames = 14 (t_wyw) + 26 (hook flight) + 180 (spin) + 28 (dash) = 4.1 s (R4 376#0 narrowed, I: exact finish of the dash after the spin and the Land_* sequence) instead of 83 frames: +165 frames on the extraFrames 69 (engine adds the 14 trigger frames)"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone landing] R4 376#0 (narrowed: C for the spin rate/time/map clear, I for period and hit count) + PoR4 (c) + Resztki E (head misses: ~3 -> ~2 at cursor (x, y-24))", "plannerFix": "planner has subtree_damage 125/r only; the 3 s rotation (2 chain hits + 0-1 head hit per 248-frame use) is not modelled"},
         "name": "Centrifugal Force",
         "description": "Chain swing maximum length is significantly shorter but can be targeted. Spin around the target ignoring collision. Monsters hit by the chain take increased damage on hit.",
         "maxRank": 3,
         "effects": {
-          "base": { "subtree_damage": 0 },
-          "perRank": { "subtree_damage": 125 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 125}
         }
       }
     ]
@@ -1501,6 +1584,8 @@
   {
     "id": "submerged_knives",
     "activationKind": "attack",
+    "speedPath": "attack",
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Butcher_Submerged_Knives_obj (circle r = 56 px, singleHit) is created at the aim point (cursor on the dummy, in-zone, rule 24): deadly from frame 2 (inherited Alarm_11), Alarm_1 (frame 3) sets deadly = 0 -> one collision window -> 1 hit of D = W*(1+V1%)*(1+LSSD). Repeat knives need p1 (number) / p11 (tidal wave, +56 px steps), excluded. Cooldown 1.5 s sets the period. Knife position at the aim point is I."},
     "weaponRequirement": "melee",
     "classId": "butcher",
     "name": "Submerged Knives",
@@ -1539,72 +1624,79 @@
       {
         "id": "impaling_horde",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5], "note": "number = 1/r: r extra knives in the same place every 0.225 s"}, {"kind": "extra_hits", "byRank": [1, 2, 3, 4, 5], "per": "use", "replacesProjectileHits": true, "note": "each extra knife hits the dummy once (+r hits per use), explicit from the card"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone aim point] card table p1 (Alarm_10, number - 1)", "plannerFix": "planner adds projectile_count 1/r but perExtraProjectile is 0 for submerged_knives, so the extra knives add no hits; card: +r hits per use"},
         "name": "Impaling Horde",
         "description": "Increases the amount of waves of submerged knives.",
         "maxRank": 5,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "agravating_wounds",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [11, 22, 33, 44, 55], "note": "LSSD 11 %/r over the whole cut"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone aim point] card table p2"},
         "name": "Agravating Wounds",
         "description": "Increases the damage dealt by submerged knives.",
         "maxRank": 5,
         "effects": {
-          "base": { "subtree_damage": 0 },
-          "perRank": { "subtree_damage": 11 }
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 11}
         }
       },
       {
         "id": "sharp_edges",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "attack rating x(1+10 %/r) (V2 AR); no effect on the dummy's damage (no evasion)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone aim point] card table p3 ([1022] = V2*(1+10 %/r))"},
         "name": "Sharp Edges",
         "description": "Increases attack rating when using submerged knives.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_attack_rating_multiplier_pct": 0 },
-          "perRank": { "skill_attack_rating_multiplier_pct": 10 }
+          "base": {"skill_attack_rating_multiplier_pct": 0},
+          "perRank": {"skill_attack_rating_multiplier_pct": 10}
         }
       },
       {
         "id": "encased_cutters",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "area radius 112*(1+15 %/r) of the knife; single dummy in the aim point is hit either way"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone aim point] card table p4"},
         "name": "Encased Cutters",
         "description": "Increases the area of effect radius of submerged knives.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 15 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 15}
         }
       },
       {
         "id": "jugular_cut",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "note": "extra damage vs stunned ([179] = 15 %/r) upper bound: assumes the dummy is stunned at every hit; the stun comes from p7 (4r % per use, 3 s) or p10 (4r % per use), so the real uptime is lower (roughly 1-(1-q)^2 with q the per-use stun chance)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone aim point] card table p5 (regula 27)", "plannerFix": "planner applies extra_damage_stunned 15 %/r without the stun uptime from p7/p10 (rolls per use, 3 s); needs uptime scaling"},
         "name": "Jugular Cut",
         "description": "Increases damage dealt to stunned targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_stunned": 0 },
-          "perRank": { "extra_damage_stunned": 15 }
+          "base": {"extra_damage_stunned": 0},
+          "perRank": {"extra_damage_stunned": 15}
         }
       },
       {
         "id": "the_bigger_they_are",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "extra damage vs bosses ([121] = 25 %/r); the training dummy is not a boss (I)"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone aim point] card table p6"},
         "name": "The Bigger They Are",
         "description": "Increases damage dealt to bosses when using submerged knives.",
         "maxRank": 5,
         "effects": {
-          "base": { "extra_damage_bosses": 0 },
-          "perRank": { "extra_damage_bosses": 25 }
+          "base": {"extra_damage_bosses": 0},
+          "perRank": {"extra_damage_bosses": 25}
         }
       },
       {
         "id": "blunt_cleaver",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "stun 3 s rolled once per use with chance 4r %; the stun itself has no damage term, it only enables p5"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone aim point] card table p7 ([51] = 3 s)"},
         "name": "Blunt Cleaver",
         "description": "Chance to stun targets hit.",
         "maxRank": 5,
@@ -1617,28 +1709,31 @@
       {
         "id": "extended_gutting",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "no read in script (aim range?), 0 assumed"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone aim point] card table p8"},
         "name": "Extended Gutting",
         "description": "Increases the maximum cast range of submerged knives.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_range": 0 },
-          "perRank": { "skill_range": 15 }
+          "base": {"skill_range": 0},
+          "perRank": {"skill_range": 15}
         }
       },
       {
         "id": "nimble_handcraft",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-7, -14, -21, -28, -35], "note": "cooldown 1.5 s x(1-0.07r)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone aim point] card table p9"},
         "name": "Nimble Handcraft",
         "description": "Reduces the cooldown of submerged knives.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_haste": 0 },
-          "perRank": { "skill_haste": 7 }
+          "base": {"cooldown_reduction_pct": 0},
+          "perRank": {"cooldown_reduction_pct": 7}
         }
       },
       {
         "id": "meat_skewer",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.32, 0.64, 0.96, 1.28, 1.6], "per": "hit", "note": "R4 377#1: ProjectileCollision21Butcher has self = the dummy, so Butcher_Impale_obj is created ON the dummy (Var_GetInst(r13,...) 0x14527ab3a, InheritModifiers L148 0x14527b3c2 = full minus trigger): mask Mask_Dot_Small_spr 6x6 inside the dummy circle, tick_frequency 0.4 s, grows 12 frames, destroyTimer 2.85 s + ~14 frames fade -> ~195 frames active -> tick_hits 194 24 = 8 hits of d0 per proc (7 without the fade; stun 3 s, knock-up pe[50], isAttack 1). Value = proc chance 0.04r x 8 ticks per knife hit = 0.32r main-hit units per base hit (old 0.04r: one hit per proc); the card multiplies by the number of knife hits (1 + r of p1), hence per hit; r5, one knife: +1.6 d0 per use instead of +0.2"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone aim point] R4 377#1 (supersedes 0.04r single hit; C for the formulas and self = dummy, I for the tick count +-1); PoR4/Resztki unchanged", "plannerFix": "planner has the on_hit 4r % proc with no effect; the card gives an Impale object ticking 8 times (0.4 s, ~3.2 s) with d0 per tick at 4r % per knife hit, plus a 3 s stun"},
         "name": "Meat Skewer",
         "description": "Chance to impale targets on hit dealing damage over time.",
         "maxRank": 5,
@@ -1647,17 +1742,19 @@
       {
         "id": "tidal_knives",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD 15 %/r over the whole cut"}, {"kind": "projectiles", "byRank": [4, 5, 6], "note": "tidalKnives = 3+r knives in a wave, 56 px apart (base field 3 + r already used)"}, {"kind": "extra_hits", "byRank": [0.56, 0.56, 0.56], "per": "use", "replacesProjectileHits": true, "note": "Resztki E (supersedes PoR4 'both variants +1'): the knives are created at player + lengthdir(tupm[6], tupm[7]) = 6 px ABOVE the cursor, so with the cursor on the visible centre (x, y-24) knife 1 sits at (x, y-30), knife 2 is shifted by 56 px along the throw direction u and hits when |(0, -30) + 56u| <= 56 + 12, i.e. u_y >= -0.175 (direction not 'up'): averaged over directions +0.56 instead of +1 (I: direction of the shift); cursor at (x, y): +1 unchanged. Further knives 0. Base (r = 56 + 12 >= 30) and p1 (same place): unchanged"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone aim point] Resztki E (newest) over PoR4/R4 'second knife 56-64 px from the centre, both < 68 -> +1'", "plannerFix": "planner adds projectile_count 3+r but perExtraProjectile is 0, so no hit is added; card: +0.56 hit per use on a lone dummy (cursor on the visible centre; +1 for cursor (x, y))"},
         "name": "Tidal Knives",
         "description": "Unleash a shockwave of submerged knives towards target location.",
         "maxRank": 3,
         "effects": {
-          "base": { "subtree_damage": 0, "projectile_count": 3 },
-          "perRank": { "subtree_damage": 15, "projectile_count": 1 }
+          "base": {"subtree_damage": 0, "projectile_count": 3},
+          "perRank": {"subtree_damage": 15, "projectile_count": 1}
         }
       },
       {
         "id": "sudden_chaining",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.084, 0.216, 0.396], "per": "use", "note": "chance 6r % per hit spawns Chainfueled_Chain_obj of floor(d0*(1+0.4r)) starting at the target; expected 0.06r*(1+0.4r) main-hit units per use (chain start in the dummy, I)"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone aim point] card table p12 ([842] = [40 %/r, 6/r], handler L109)", "plannerFix": "planner adds physical_skill_damage 40 %/r to the whole cut; the card has a separate chain object floor(d0*(1+0.4r)) with chance 6r % per hit"},
         "name": "Sudden Chaining",
         "description": "Chance to unleash chains towards target on hit dealing additional damage.",
         "maxRank": 3,
@@ -1673,20 +1770,13 @@
       {
         "id": "knifehoarder",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "other", "byRank": [1, 1, 1], "note": "transformation: cut is replaced by Knifehoarder_obj: a knife every 1 s at the nearest enemy within 300 px (1 hit per second of object life, not per cast); mana drain 5 %/r"}, {"kind": "dot", "byRank": [75, 150, 225], "note": "bleeding DoT 75r % of the knife damage (on_hit 100 %, no roll), value in % of the hit damage"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone aim point] card table p13 (L969-993, Knifehoarder_obj); hits per second is the card's numeric reading", "plannerFix": "planner keeps the cut's per-use hit and bleed; the card replaces the cut with a knife every 1 s (independent of casts)"},
         "name": "Knifehoarder",
         "description": "Submerged knives can be activated/deactivated. While active periodically unleash submerged knives at nearby monsters inflicting bleeding. Drains a portion of your maximum mana while active.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "increased_bleeding_damage": 0,
-            "area_of_effect": 0,
-            "mana_drain_pct": 0
-          },
-          "perRank": {
-            "increased_bleeding_damage": 75,
-            "area_of_effect": 30,
-            "mana_drain_pct": 5
-          }
+          "base": {"increased_bleeding_damage": 0, "area_of_effect": 0, "mana_drain_pct": 0},
+          "perRank": {"increased_bleeding_damage": 75, "area_of_effect": 30, "mana_drain_pct": 5}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1699,12 +1789,13 @@
       {
         "id": "bone_daggers",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "daggers spawn from corpses (boneDaggers = 100 %/r -> Collision_Corpse_obj); the dummy leaves no corpses, 0 DPS"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone aim point] card table p14", "plannerFix": "planner adds physical_skill_damage 100 %/r; the card's daggers need corpses, which the dummy never gives, so 0 DPS on the dummy"},
         "name": "Bone Daggers",
         "description": "Consume corpses hit by submerged knives unleashing piercing gutting knives towards nearby monsters.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 100 }
+          "base": {"physical_skill_damage": 0},
+          "perRank": {"physical_skill_damage": 100}
         }
       }
     ]
@@ -1730,6 +1821,8 @@
   {
     "id": "blender",
     "activationKind": "cast",
+    "speedPath": "attack",
+    "dummyHits": {"base": 9.0, "baseProjectiles": 2, "perExtraProjectile": 4.5, "confidence": "C", "note": "In-zone value (rule 24: the cleaver sweeps a disc around the player, reach 235.6*0.66 = 155.5 px): n = 2 + p5.s9 = 2 blades (planner baseProjectiles 2), each Butcher_Blender_obj makes 1 hit per revolution (map cleared when spinAngle >= 360; spin 4 deg/frame + 0.0095/frame^2 over destroyTimer 300 frames = 5 s): theta(T)/360 = 4.52, frame simulation with the precise mask for the dummy at <= 155 px = 4.5 per blade -> 2*4.5 = 9.0. At the strict 160 px (just past the range cliff) it is 4.38 per blade = 8.76 (165 px 2.7, 170 px 1.4). perExtraProjectile = 4.5 hits per additional blade (linear in n; p5 gives n = 2 + 2r). Blades are independent, no stop on hit, no skipped contacts (rule 18). Cooldown 8 s sets the period. Phase +-1 hit per blade is I."},
     "weaponRequirement": "melee",
     "classId": "butcher",
     "name": "Blender",
@@ -1750,6 +1843,7 @@
     "attackKind": "attack",
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "attackScaling": {
+      "weaponSubtreeScalesFullHit": true,
       "weaponBonusScaling": true,
       "weaponDamagePct": { "base": 175, "perLevel": 15 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -1770,72 +1864,79 @@
       {
         "id": "sharpened_cleavers",
         "positionIndex": 1,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD 8 %/r over the whole cut"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=155px] card table p1 (s9 8/r)"},
         "name": "Sharpened Cleavers",
         "description": "Increases the damage dealt by blender.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 8 }
+          "base": {"physical_skill_damage": 0},
+          "perRank": {"physical_skill_damage": 8}
         }
       },
       {
         "id": "industrial_sized",
         "positionIndex": 2,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "blade max scale x(1+0.175r): reach 155.5 -> 182.7 px at r1; in-zone convention the dummy is already hit (0 extra); at 160 px this is the difference between 4.38 and ~4.5 per blade"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=155px] card table p2 (maxScale 0.66*(1+17.5 %/r))"},
         "name": "Industrial Sized",
         "description": "Increases the area of effect radius of blender.",
         "maxRank": 5,
         "effects": {
-          "base": { "area_of_effect": 0 },
-          "perRank": { "area_of_effect": 17.5 }
+          "base": {"area_of_effect": 0},
+          "perRank": {"area_of_effect": 17.5}
         }
       },
       {
         "id": "no_bits_nor_pieces",
         "positionIndex": 3,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "attack rating x(1+10 %/r) (V2 AR); no dummy damage effect"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=155px] card table p3"},
         "name": "No Bits Nor Pieces",
         "description": "Increases attack rating when using blender.",
         "maxRank": 5,
         "effects": {
-          "base": { "attack_rating_pct": 0 },
-          "perRank": { "attack_rating_pct": 10 }
+          "base": {"attack_rating_pct": 0},
+          "perRank": {"attack_rating_pct": 10}
         }
       },
       {
         "id": "ragefueled_energy",
         "positionIndex": 4,
+        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [15, 30, 45, 60, 75], "note": "blade life destroyTimer 300 frames x(1+0.15r); hits per blade = theta(T)/360 grow ~quadratically (r5: 9.47 instead of 4.52 per blade at 5 s base, card value)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=155px] card table p4 (T = 300*(1+15 %/r))"},
         "name": "Ragefueled Energy",
         "description": "Increases the duration of blender.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_duration": 0 },
-          "perRank": { "skill_duration": 15 }
+          "base": {"skill_duration": 0},
+          "perRank": {"skill_duration": 15}
         }
       },
       {
         "id": "extra_cleaver_addon",
         "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4], "note": "n = 2 + 2r blades; linear in n, each blade 4.5 hits via perExtraProjectile"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=155px] card table p5 (L1099-1124)"},
         "name": "Extra Cleaver Addon",
         "description": "Increases the amount of blades on blender.",
         "maxRank": 2,
         "effects": {
-          "base": { "projectile_count": 0 },
-          "perRank": { "projectile_count": 2 }
+          "base": {"projectile_count": 0},
+          "perRank": {"projectile_count": 2}
         }
       },
       {
         "id": "obsidian_blades",
         "positionIndex": 6,
+        "dummy": {"effects": [{"kind": "crit", "byRank": [0, 0, 0, 0, 0], "note": "crit damage +32.5 %/r ([1019]); chance unchanged"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=155px] card table p6"},
         "name": "Obsidian Blades",
         "description": "Increases the critical strike damage dealt by blender.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_crit_damage": 0 },
-          "perRank": { "skill_crit_damage": 32.5 }
+          "base": {"skill_crit_damage": 0},
+          "perRank": {"skill_crit_damage": 32.5}
         }
       },
       {
         "id": "attachment_malfunction",
         "positionIndex": 7,
+        "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "chance 10r % per hit: blade attaches and returns (8 px/frame out, 15 px/frame back), shifts its track; ~0 change on the dummy"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone <=155px] card table p7 (handler L167)"},
         "name": "Attachment Malfunction",
         "description": "Chance to send blades towards target on hit briefly returning back to you.",
         "maxRank": 5,
@@ -1844,17 +1945,19 @@
       {
         "id": "it_will_blend",
         "positionIndex": 8,
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.175, 1.35, 1.525, 1.7, 1.875], "note": "extra damage vs bleeding ([177] = 17.5 %/r); applies only while the dummy bleeds from another source (0 otherwise)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=155px] card table p8"},
         "name": "It Will Blend",
         "description": "Increases damage dealt to bleeding targets.",
         "maxRank": 5,
         "effects": {
-          "base": { "skill_extra_damage_bleeding": 0 },
-          "perRank": { "skill_extra_damage_bleeding": 17.5 }
+          "base": {"skill_extra_damage_bleeding": 0},
+          "perRank": {"skill_extra_damage_bleeding": 17.5}
         }
       },
       {
         "id": "blood_thirsting_killing_machine",
         "positionIndex": 9,
+        "dummy": {"effects": [{"kind": "utility", "note": "movement speed buff 157 (4 %/r, 3 s, 5 stacks) on chance 4r % per hit; no dummy DPS"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=155px] card table p9"},
         "name": "Blood Thirsting Killing Machine",
         "description": "Chance to gain a stack of blood thirst on hit increasing your movement speed for a short duration.",
         "maxRank": 5,
@@ -1870,47 +1973,43 @@
       {
         "id": "will_it_blend",
         "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [5, 10, 15, 20, 25], "note": "LSSD 5 %/r over the whole cut; slow 3 s on the dummy ([53]) is 0 DPS"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=155px] card table p10 (LSSD 5 %/r)"},
         "name": "Will it Blend?",
         "description": "Knock monsters back dealing increased damage and slowing them.",
         "maxRank": 5,
         "effects": {
-          "base": { "physical_skill_damage": 0 },
-          "perRank": { "physical_skill_damage": 5 }
+          "base": {"physical_skill_damage": 0},
+          "perRank": {"physical_skill_damage": 5}
         }
       },
       {
         "id": "a_i_empowered_nanoblenders",
         "positionIndex": 11,
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [18.6, 24.8, 31.0], "note": "transformation: (2+r) groups of nanoblades orbit the player at r=160 px, each group 2+p5 blades (p5 r0 = 2 blades per group); ~3.1 hits per blade over 5 s on the dummy; total = (2+r)*2*3.1 per use. Replaces the normal blades. p5 rank raises blades per group (not included)"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone <=155px] card table p11 (Nanoblades_obj, Step 0x1473f3c70)", "plannerFix": "planner models 2+r groups as projectiles at 4.5 hits each (converted via perExtraProjectile); card: each group has 2+p5 blades, ~6.2 hits per group (2 blades x 3.1), and the normal blades are replaced (set_hits)"},
         "name": "A.I. Empowered Nanoblenders",
         "description": "Summon multiple small blenders orbiting around you.",
         "maxRank": 3,
         "effects": {
-          "base": { "projectile_count": 2 },
-          "perRank": { "projectile_count": 1 }
+          "base": {"projectile_count": 2},
+          "perRank": {"projectile_count": 1}
         }
       },
       {
         "id": "blenderang",
         "positionIndex": 12,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD 50 %/r"}, {"kind": "cooldown_pct", "byRank": [-25, -50, -75], "note": "cooldown 8 s x(1-0.25r) (6/4/2 s)"}, {"kind": "set_hits", "byRank": [4, 4, 4], "note": "blenderang: spin speed doubled (8 deg/frame), centre flies 12 px/frame out to 320*(1+0.3r) px and back; blade life drops to ~0.9-1.7 s, ~2 hits per blade on a dummy on the line at 160 px (2 blades = 4 total per use, card value)"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone <=155px] card table p12 (Alarm_0 doubles spinSpeed)", "plannerFix": "planner keeps the 5 s blade life and the full-spin hit count; card: blades last ~1-1.7 s with doubled spin, about 2 hits per blade (set_hits 4 total)"},
         "name": "Blenderang",
         "description": "Throw a traveling blender towards target location returning back to you shortly. Blender cooldown is reduced.",
         "maxRank": 3,
         "effects": {
-          "base": {
-            "physical_skill_damage": 0,
-            "skill_range": 0,
-            "skill_haste": 0
-          },
-          "perRank": {
-            "physical_skill_damage": 50,
-            "skill_range": 30,
-            "skill_haste": 25
-          }
+          "base": {"skill_range": 0, "cooldown_reduction_pct": 0, "physical_skill_damage": 0},
+          "perRank": {"skill_range": 30, "cooldown_reduction_pct": 25, "physical_skill_damage": 50}
         }
       },
       {
         "id": "attachable_microblades",
         "positionIndex": 13,
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.506, 1.275, 2.306], "per": "hit", "note": "chance 5r % per blade hit spawns a microblade group in place of the dummy (3 blades, 2 s, damage floor(d0*(1+0.35r))), ~7.5 hits per proc: per blade hit 0.05r*7.5*(1+0.35r) main-hit units"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone <=155px] card table p13 ([840] = [0.35r, 5r], handler L82, Nanoblades_obj microBlades = 1)", "plannerFix": "planner adds physical_skill_damage 35 %/r to the whole cut; the card gives a microblade group at the dummy (chance 5r % per blade hit, ~7.5 hits of d0*(1+0.35r) per proc)"},
         "name": "Attachable Microblades",
         "description": "Chance to conjure a small blender at target location on hit dealing additional damage for a short duration.",
         "maxRank": 3,
@@ -1926,12 +2025,13 @@
       {
         "id": "blending_blood_pact",
         "positionIndex": 14,
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [75, 150, 225], "note": "LSSD 75 %/r over the whole cut"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=155px] card table p14 (life drain buff 80 on enemy has no DPS)"},
         "name": "Blending Blood Pact",
         "description": "Blender gains increased damage but killing monsters drains a portion of your maximum life. This effect is non-lethal and will de-activate blender if you cannot sacrifice your life anymore.",
         "maxRank": 3,
         "effects": {
-          "base": { "physical_skill_damage": 0, "life_drain_pct": 0 },
-          "perRank": { "physical_skill_damage": 75, "life_drain_pct": 4 }
+          "base": {"life_drain_pct": 0, "physical_skill_damage": 0},
+          "perRank": {"life_drain_pct": 4, "physical_skill_damage": 75}
         }
       }
     ]

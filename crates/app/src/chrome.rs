@@ -1,12 +1,13 @@
-use crate::shell::{OpenSettings, Save, SaveAs, Section, SelectSection};
+use crate::shell::{OpenSettings, Save, SaveAs, Section, SelectSection, ShareWithStash};
 use gpui_kit::base::Disableable;
 use gpui_kit::component::{
-    Icon, IconName, Sizable, WindowExt,
+    Icon, IconName, Sizable,
     button::{Button, ButtonCustomVariant, ButtonVariants},
     link::Link,
     menu::DropdownMenu,
 };
 use gpui_kit::{prelude::*, *};
+use hsplanner_ui::components::PlannerDialogExt;
 use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use hsplanner_ui::{
@@ -437,6 +438,7 @@ impl RenderOnce for TopBar {
                             .dropdown_menu(|menu, _, _| {
                                 menu.menu(tr("shell.save"), Box::new(Save))
                                     .menu(tr("loadouts.save_as"), Box::new(SaveAs))
+                                    .menu(tr("chrome.share_with_stash"), Box::new(ShareWithStash))
                             }),
                     )
                     .child(
@@ -458,7 +460,7 @@ impl RenderOnce for TopBar {
                             .label("?")
                             .cursor_tooltip(tr("chrome.shortcuts"))
                             .on_click(|_, window, cx| {
-                                window.open_dialog(cx, |dialog, _, _| {
+                                window.open_planner_dialog(cx, |dialog, _, _| {
                                     dialog.title(tr("chrome.shortcuts")).child(
                                         div()
                                             .flex()
@@ -742,34 +744,32 @@ fn update_button(updater: Entity<crate::update::Updater>, cx: &App) -> Button {
             tr("update.available").to_string(),
             ButtonTone::Primary,
         ),
-        State::Installing(_) => (
-            tr("update.installing").to_string(),
+        State::Downloading { progress, .. } => (
+            progress.percent().map_or_else(
+                || tr("update.downloading").to_string(),
+                |percent| format!("{percent:.0}%"),
+            ),
             tr("update.downloading_hint").to_string(),
             ButtonTone::Primary,
         ),
-        State::Failed(message) => (
+        State::Installing(_) => (
+            tr("update.installing").to_string(),
+            tr("update.installing_hint").to_string(),
+            ButtonTone::Primary,
+        ),
+        State::Failed { failure, .. } => (
             tr("update.failed").to_string(),
-            message.message(),
+            failure.message(),
             ButtonTone::Danger,
         ),
     };
-    let opens_dialog = matches!(
-        state,
-        State::Available(_) | State::Installing(_) | State::Failed(_)
-    );
     hsplanner_ui::controls::planner_button("check-updates", tone, cx)
         .small()
         .gap_1p5()
         .accessibility_label(tr("update.check"))
         .label(label)
         .cursor_tooltip(tooltip)
-        .on_click(move |_, window, cx| {
-            if opens_dialog {
-                crate::update::open_dialog(updater.clone(), window, cx);
-            } else {
-                updater.update(cx, |updater, cx| updater.check(false, cx));
-            }
-        })
+        .on_click(move |_, window, cx| crate::update_dialog::open(updater.clone(), window, cx))
 }
 
 fn chrome_button(id: &'static str, label: &'static str, cx: &App) -> Button {

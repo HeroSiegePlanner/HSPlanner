@@ -126,6 +126,23 @@ pub(super) fn tree_graph(graph: &tree::Graph) -> TreeGraph {
     }
 }
 
+/// Drops excluded nodes so the suggester can neither allocate nor path through them.
+fn without_nodes(mut graph: TreeGraph, excluded: &HashSet<u32>) -> TreeGraph {
+    graph.adjacency.retain(|id, _| !excluded.contains(id));
+    for neighbours in graph.adjacency.values_mut() {
+        neighbours.retain(|id| !excluded.contains(id));
+    }
+    for ids in [
+        &mut graph.start_ids,
+        &mut graph.warp_ids,
+        &mut graph.valuable_ids,
+        &mut graph.jewelry_ids,
+    ] {
+        ids.retain(|id| !excluded.contains(id));
+    }
+    graph
+}
+
 fn apply_order(current: &[u32], sequence: &[SuggestStep]) -> Vec<u32> {
     let mut ordered = current.to_vec();
     for step in sequence {
@@ -165,6 +182,23 @@ impl TreeView {
             }));
     }
 
+    pub(super) fn toggle_suggest_exclusion(&mut self, index: usize, cx: &mut Context<Self>) {
+        let id = self.scene.graph.nodes[index].id as u32;
+        self.session.update(cx, |session, cx| {
+            session.edit(|draft| {
+                let excluded = &mut draft.snapshot.suggest_excluded_nodes;
+                match excluded.iter().position(|&node| node == id) {
+                    Some(at) => {
+                        excluded.remove(at);
+                    }
+                    None => excluded.push(id),
+                }
+            });
+            cx.notify();
+        });
+        self.sync_document(cx);
+    }
+
     pub(super) fn toggle_suggest(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         self.suggest_open = !self.suggest_open;
         if self.suggest_open {
@@ -192,10 +226,17 @@ impl TreeView {
             .iter()
             .map(|&ix| self.scene.graph.nodes[ix].id as u32)
             .collect();
+        let excluded: HashSet<u32> = self
+            .build_input
+            .suggest_excluded_nodes
+            .iter()
+            .copied()
+            .filter(|id| !perf.allocated_tree_nodes.contains(id))
+            .collect();
         let input = SuggestInput {
             perf,
             active_skill_ids: planner.active_skill_ids,
-            graph: tree_graph(&self.scene.graph),
+            graph: without_nodes(tree_graph(&self.scene.graph), &excluded),
             budget: self.suggest.budget,
         };
         let task = cx.background_spawn(async move {
@@ -709,9 +750,9 @@ impl TreeView {
 
 #[cfg(test)]
 mod tests {
-    use super::{SuggestStep, apply_order, gain_percent, tree_graph};
+    use super::{SuggestStep, TreeGraph, apply_order, gain_percent, tree_graph, without_nodes};
     use crate::tree;
-    use std::collections::HashSet;
+    use std::collections::{HashMap, HashSet};
 
     #[test]
     fn graph_payload_matches_the_tauri_classification() {
@@ -761,6 +802,22 @@ mod tests {
                 .iter()
                 .all(|id| input.graph.adjacency.contains_key(id))
         );
+    }
+
+    #[test]
+    fn excluded_nodes_leave_the_suggest_graph() {
+        let graph = TreeGraph {
+            adjacency: HashMap::from([(1, vec![2]), (2, vec![1, 3]), (3, vec![2])]),
+            start_ids: vec![1],
+            warp_ids: vec![],
+            valuable_ids: vec![2, 3],
+            jewelry_ids: vec![2],
+        };
+        let graph = without_nodes(graph, &HashSet::from([2]));
+        assert_eq!(graph.adjacency.len(), 2);
+        assert!(graph.adjacency.values().all(|next| next.is_empty()));
+        assert_eq!(graph.valuable_ids, [3]);
+        assert!(graph.jewelry_ids.is_empty());
     }
 
     #[test]

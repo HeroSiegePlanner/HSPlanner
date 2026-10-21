@@ -480,3 +480,35 @@ fn malformed_share_collection_shapes_return_errors_without_panicking() {
         assert!(codec::decode_loadouts(&code).is_err());
     }
 }
+
+#[test]
+fn share_code_with_stash_imports_the_stash_and_plain_code_does_not() {
+    let mut session = populated_session();
+    let stashed = EquippedItem {
+        base_id: "boots_normal_boots".into(),
+        ..Default::default()
+    };
+    session.edit(|draft| {
+        draft.stash = vec![StashEntry {
+            id: "stash_a".into(),
+            saved_at: 1,
+            item: stashed.clone(),
+        }]
+    });
+    let draft = session.draft().clone();
+    let with_stash = codec::encode_loadouts_with_stash(
+        &draft.snapshot,
+        &draft.notes,
+        &draft.loadouts,
+        &draft.stash,
+    )
+    .unwrap();
+    let plain = codec::encode_loadouts(&draft.snapshot, &draft.notes, &draft.loadouts).unwrap();
+
+    assert!(codec::decode_stash(&plain).unwrap().is_empty());
+    let imported = session.import_code(&with_stash).unwrap();
+    let stash = &session.state().library.build(&imported).unwrap().stash;
+    assert_eq!(stash.len(), 1);
+    assert_ne!(stash[0].id, "stash_a");
+    assert_eq!(value(&stash[0].item), value(&stashed));
+}
