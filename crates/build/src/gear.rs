@@ -258,6 +258,11 @@ pub fn accepts(snapshot: &BuildSnapshot, slot: &str, base: &ItemBase, mercenary:
         {
             return false;
         }
+        if slot == "weapon"
+            && !crate::weapon_rules::mercenary_can_wield(snapshot.merc_class_id.as_deref(), base)
+        {
+            return false;
+        }
         if slot == "offhand" {
             return base.slot == "offhand"
                 && !snapshot
@@ -268,6 +273,8 @@ pub fn accepts(snapshot: &BuildSnapshot, slot: &str, base: &ItemBase, mercenary:
         }
     } else if slot == "offhand" {
         return snapshot.can_offhand(base);
+    } else if slot == "weapon" && !snapshot.can_wield(base) {
+        return false;
     }
     slot_group(slot) == slot_group(&base.slot)
 }
@@ -322,9 +329,8 @@ pub fn commit(
     } else {
         inventory.remove(slot);
     }
-    if !mercenary {
-        snapshot.validate_offhand();
-    }
+    // Removing an Unbound Power item can strand a weapon the class cannot hold.
+    snapshot.validate_weapons();
     Ok(())
 }
 

@@ -200,7 +200,7 @@ pub(crate) fn equipped_weapon_kind(inventory: &crate::calc::types::Inventory) ->
 }
 
 // A few bases carry their own long type names; tree gates say "Throwing"/"Gun".
-fn weapon_kind_of(base: &crate::calc::types::ItemBase) -> String {
+pub fn weapon_kind_of(base: &crate::calc::types::ItemBase) -> String {
     match base.base_type.as_str() {
         "1-Handed Throwing Weapon" => "Throwing".to_string(),
         "Rifle Gun" => "Gun".to_string(),

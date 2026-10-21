@@ -190,7 +190,11 @@ fn master_of_wands_enables_the_offhand_and_losing_it_removes_the_wand() {
         .filter(|base| base.base_type == "Wand" && !base.two_handed.unwrap_or(false))
         .min_by_key(|base| &base.id)
         .unwrap();
-    let mut snapshot = BuildSnapshot::default();
+    // Wands are caster weapons; a physical default class could not hold one.
+    let mut snapshot = BuildSnapshot {
+        class_id: Some("pyromancer".into()),
+        ..Default::default()
+    };
     let item = gear::make_item(&wand.id).unwrap();
     gear::commit(&mut snapshot, "weapon", Some(item.clone()), false, true).unwrap();
     assert!(!gear::accepts(&snapshot, "offhand", wand, false));
@@ -346,4 +350,51 @@ fn refreshed_relics_have_source_stats_without_neighbour_contamination() {
         data::get_item("relic_relic_devil_horn").unwrap().name,
         "Devil Horn"
     );
+}
+
+#[test]
+fn class_and_mercenary_changes_drop_weapons_they_cannot_hold() {
+    let kind = |kind: &str, one_handed: bool| {
+        data::data()
+            .items
+            .values()
+            .filter(|base| {
+                base.slot == "weapon"
+                    && base.base_type == kind
+                    && (!one_handed || !base.two_handed.unwrap_or(false))
+            })
+            .min_by_key(|base| &base.id)
+            .unwrap()
+    };
+    let (book, sword, bow) = (kind("Book", false), kind("Sword", true), kind("Bow", false));
+    let mut snapshot = BuildSnapshot {
+        class_id: Some("pyromancer".into()),
+        ..Default::default()
+    };
+    gear::commit(
+        &mut snapshot,
+        "weapon",
+        Some(gear::make_item(&book.id).unwrap()),
+        false,
+        true,
+    )
+    .unwrap();
+    assert!(!gear::accepts(&snapshot, "offhand", sword, false));
+    snapshot.set_class("viking");
+    assert!(!snapshot.inventory.contains_key("weapon"));
+    assert!(!gear::accepts(&snapshot, "weapon", book, false));
+    assert!(gear::accepts(&snapshot, "offhand", sword, false));
+
+    snapshot.set_mercenary_class(Some("merc_archer"));
+    gear::commit(
+        &mut snapshot,
+        "weapon",
+        Some(gear::make_item(&bow.id).unwrap()),
+        true,
+        true,
+    )
+    .unwrap();
+    assert!(!gear::accepts(&snapshot, "weapon", sword, true));
+    snapshot.set_mercenary_class(Some("merc_knight"));
+    assert!(!snapshot.merc_inventory.contains_key("weapon"));
 }
