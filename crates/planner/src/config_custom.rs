@@ -1,6 +1,13 @@
 //! Custom config text: one stat per line, `//` notes, edited in its own dialog.
 use super::*;
-use gpui_kit::component::{WindowExt, button::ButtonVariants};
+use gpui_kit::component::{
+    WindowExt,
+    button::ButtonVariants,
+    input::{InlineToken, InputContent},
+};
+use hsplanner_engine::calc::skills::Ranged;
+use hsplanner_ui::components::PlannerDialogExt;
+use std::ops::Range;
 
 pub(super) fn serialize_custom_stats(stats: &[CustomStat]) -> String {
     stats
@@ -22,16 +29,24 @@ fn insertable(def: &StatDef) -> bool {
     !def.item_only.unwrap_or(false) && !def.skill_scoped.unwrap_or(false)
 }
 
-pub(super) fn parse_custom_text(text: &str) -> (Vec<CustomStat>, Vec<String>) {
-    let mut stats = Vec::new();
-    let mut issues = Vec::new();
-    for (ix, line) in text.lines().enumerate() {
-        let line = line.split_once("//").map_or(line, |(stat, _)| stat).trim();
-        if line.is_empty() {
-            continue;
-        }
-        let lower = line.to_lowercase();
-        let matched = data::game_config()
+/// A stat line: its stat, value, and the byte range of the stat name in the line.
+struct LineMatch {
+    stat: CustomStat,
+    name: Range<usize>,
+}
+
+/// `None` for blank and note-only lines; `Some(None)` for a line that names no stat.
+fn match_line(line: &str) -> Option<Option<LineMatch>> {
+    let stat = line.split_once("//").map_or(line, |(stat, _)| stat);
+    let end = stat.trim_end().len();
+    let start = stat.len() - stat.trim_start().len();
+    if start >= end {
+        return None;
+    }
+    let body = &stat[start..end];
+    let lower = body.to_lowercase();
+    Some(
+        data::game_config()
             .stats
             .iter()
             .filter(|def| insertable(def))
@@ -40,19 +55,32 @@ pub(super) fn parse_custom_text(text: &str) -> (Vec<CustomStat>, Vec<String>) {
                     .into_iter()
                     .find_map(|name| {
                         let suffix = format!(" {}", name.to_lowercase());
-                        lower
+                        let value = lower
                             .strip_suffix(&suffix)
-                            .filter(|value| parse_custom_stat_value(value).is_some())
-                            .map(|value| {
-                                (
-                                    def.key.clone(),
-                                    value.split_whitespace().collect::<String>(),
-                                )
-                            })
+                            .filter(|value| parse_custom_stat_value(value).is_some())?;
+                        // Names are ASCII, so the suffix keeps its byte length in `body`.
+                        let name_start = end - name.len();
+                        Some(LineMatch {
+                            stat: CustomStat {
+                                stat_key: def.key.clone(),
+                                value: value.split_whitespace().collect(),
+                            },
+                            name: name_start..end,
+                        })
                     })
-            });
-        if let Some((stat_key, value)) = matched {
-            stats.push(CustomStat { stat_key, value })
+            }),
+    )
+}
+
+pub(super) fn parse_custom_text(text: &str) -> (Vec<CustomStat>, Vec<String>) {
+    let mut stats = Vec::new();
+    let mut issues = Vec::new();
+    for (ix, line) in text.lines().enumerate() {
+        let Some(matched) = match_line(line) else {
+            continue;
+        };
+        if let Some(matched) = matched {
+            stats.push(matched.stat)
         } else {
             issues.push(trf(
                 "planner.config.invalid_custom_line",
@@ -61,6 +89,21 @@ pub(super) fn parse_custom_text(text: &str) -> (Vec<CustomStat>, Vec<String>) {
         }
     }
     (stats, issues)
+}
+
+pub(super) fn tokenized(text: &str) -> InputContent {
+    let mut content = InputContent::new(text.to_owned());
+    let mut offset = 0;
+    for line in text.split('\n') {
+        if let Some(Some(matched)) = match_line(line) {
+            let range = offset + matched.name.start..offset + matched.name.end;
+            let token = InlineToken::new(matched.stat.stat_key, text[range.clone()].to_owned());
+            let next = content.clone().with_token(range, token);
+            content = next.unwrap_or(content);
+        }
+        offset += line.len() + 1;
+    }
+    content
 }
 
 /// The text the build was saved with, or one rebuilt from its stats when they no
@@ -85,8 +128,17 @@ impl ConfigView {
         let owner = cx.entity().downgrade();
         let build = self.document.build.clone();
         let text = custom_text(self.session.read(cx).snapshot());
-        let editor = cx.new(|cx| CustomStatsEditor::new(text, owner, build, window, cx));
-        window.open_dialog(cx, move |dialog, window, cx| {
+        let totals = self
+            .observed_performance
+            .as_ref()
+            .map(|result| {
+                let mut totals = result.current.stats.clone();
+                totals.extend(result.current.stats_combined.clone());
+                totals
+            })
+            .unwrap_or_default();
+        let editor = cx.new(|cx| CustomStatsEditor::new(text, totals, owner, build, window, cx));
+        window.open_planner_dialog(cx, move |dialog, window, cx| {
             let p = cx.global::<TooltipTheme>();
             dialog
                 .width((window.rem_size() * (1100. / 13.)).min(window.viewport_size().width * 0.96))
@@ -131,11 +183,14 @@ struct CustomStatsEditor {
     search: Entity<InputState>,
     stats: Vec<(String, String, bool)>,
     issues: Vec<String>,
+    totals: HashMap<String, Ranged>,
+    hovered: Option<(String, Bounds<Pixels>)>,
     _subscriptions: Vec<Subscription>,
 }
 impl CustomStatsEditor {
     fn new(
         value: String,
+        totals: HashMap<String, Ranged>,
         owner: WeakEntity<ConfigView>,
         build: Option<String>,
         window: &mut Window,
@@ -146,7 +201,7 @@ impl CustomStatsEditor {
             let mut state = TextareaState::new(window, cx)
                 .rows(24)
                 .placeholder(tr("planner.config.custom_example"));
-            state.set_value(value, window, cx);
+            state.set_value(tokenized(&value), window, cx);
             state
         });
         let search = cx.new(|cx| {
@@ -182,10 +237,19 @@ impl CustomStatsEditor {
             search,
             stats,
             issues,
+            totals,
+            hovered: None,
             _subscriptions: subscriptions,
         }
     }
-    fn insert(&mut self, name: &str, percent: bool, window: &mut Window, cx: &mut Context<Self>) {
+    fn insert(
+        &mut self,
+        key: &str,
+        name: &str,
+        percent: bool,
+        window: &mut Window,
+        cx: &mut Context<Self>,
+    ) {
         let value = self.text.read(cx).value().to_string();
         let offset = value.len();
         let prefix = if value.is_empty() || value.ends_with('\n') {
@@ -193,10 +257,14 @@ impl CustomStatsEditor {
         } else {
             "\n"
         };
-        let line = format!("{prefix}+1{} {name}", if percent { "%" } else { "" });
+        let line = format!("{prefix}+1{} ", if percent { "%" } else { "" });
+        let token = InlineToken::new(key.to_owned(), name.to_owned());
         self.text.update(cx, |state, cx| {
             state.set_selected_range(offset..offset, cx);
             state.replace(line, window, cx);
+            if state.replace_with_token(token, window, cx).is_err() {
+                state.replace(name.to_owned(), window, cx);
+            }
             let number = offset + prefix.len() + 1;
             state.set_selected_range(number..number + 1, cx);
             state.focus(window, cx);
@@ -258,6 +326,7 @@ impl Render for CustomStatsEditor {
             }
             matches += 1;
             let insert = name.clone();
+            let insert_key = key.clone();
             let percent = *percent;
             list = list.child(
                 Button::new(SharedString::from(format!("insert-custom-{key}")))
@@ -278,7 +347,7 @@ impl Render for CustomStatsEditor {
                             .child(format!("+1{} {label}", if percent { "%" } else { "" })),
                     )
                     .on_click(cx.listener(move |this, _, window, cx| {
-                        this.insert(&insert, percent, window, cx)
+                        this.insert(&insert_key, &insert, percent, window, cx)
                     })),
             );
         }
@@ -305,8 +374,55 @@ impl Render for CustomStatsEditor {
         for issue in &self.issues {
             validation = validation.child(div().mb_2().text_color(negative).child(issue.clone()));
         }
+        let hover_card = self.hovered.as_ref().map(|(key, bounds)| {
+            let def = data::game_config().stats.iter().find(|def| &def.key == key);
+            let percent = def.is_some_and(|def| def.format.as_deref() == Some("percent"));
+            let name =
+                crate::stat_labels::stat_name(key, def.map_or(key.as_str(), |def| &def.name));
+            let total = self.totals.get(key).copied().unwrap_or_default();
+            deferred(
+                anchored()
+                    .position(bounds.bottom_left())
+                    .snap_to_window()
+                    .child(
+                        div()
+                            .mt_1()
+                            .px_2p5()
+                            .py_1p5()
+                            .rounded_sm()
+                            .border_1()
+                            .border_color(border)
+                            .bg(p.panel)
+                            .text_xs()
+                            .flex()
+                            .flex_col()
+                            .gap_0p5()
+                            .child(
+                                div()
+                                    .text_color(text)
+                                    .font_weight(FontWeight::SEMIBOLD)
+                                    .child(name),
+                            )
+                            .child(
+                                div()
+                                    .font_family(theme::MONO_FONT_FAMILY)
+                                    .text_color(muted)
+                                    .child(key.clone()),
+                            )
+                            .child(div().text_color(muted).child(trf(
+                                "planner.config.custom_current",
+                                &[(
+                                    "value",
+                                    crate::source_breakdown::format_source(total, percent),
+                                )],
+                            ))),
+                    ),
+            )
+            .with_priority(2)
+        });
         // Bound the editor inside the dialog's title and padding so Save stays on screen.
         div()
+            .children(hover_card)
             .h((window.viewport_size().height * 0.88 - window.rem_size() * 8.).max(px(0.)))
             .flex_none()
             .min_h_0()
@@ -339,6 +455,18 @@ impl Render for CustomStatsEditor {
                             .child(
                                 div().flex_1().min_h_0().child(
                                     Textarea::new(&self.text)
+                                        .on_token_hover({
+                                            let editor = cx.entity().downgrade();
+                                            move |event, _, cx| {
+                                                let hovered = event.is_hovered().then(|| {
+                                                    (event.token().id().to_string(), event.bounds())
+                                                });
+                                                let _ = editor.update(cx, |this, cx| {
+                                                    this.hovered = hovered;
+                                                    cx.notify();
+                                                });
+                                            }
+                                        })
                                         .h_full()
                                         .bordered(false)
                                         .aria_label(tr("planner.config.custom"))

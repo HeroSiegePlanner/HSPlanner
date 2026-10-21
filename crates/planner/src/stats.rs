@@ -52,7 +52,6 @@ enum Cell {
 }
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 enum Row {
-    Header,
     Calculating,
     Top,
     StatsStart,
@@ -64,7 +63,7 @@ enum Row {
     StatsEnd,
 }
 const LIST_OVERDRAW: Pixels = px(400.);
-const TOP_ROW: usize = 2;
+const TOP_ROW: usize = 0;
 
 fn pair_columns([left, right]: [Vec<Cell>; 2]) -> Vec<Row> {
     if left.is_empty() && right.is_empty() {
@@ -1808,7 +1807,6 @@ impl StatsView {
         };
         // List items are laid out as roots, so they must claim the full width themselves.
         let content: AnyElement = match (row, result) {
-            (Row::Header, _) => self.header(window, cx).into_any_element(),
             (Row::Calculating, _) | (Row::Top, None) => div()
                 .px_6()
                 .py_5()
@@ -1950,13 +1948,12 @@ impl StatsView {
 }
 impl Render for StatsView {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
-        let p = cx.global::<TooltipTheme>();
         let query = self.query.read(cx).value().trim().to_lowercase();
         let ready = self.tree.read(cx).performance().is_some();
         let row_filter = (query, self.filter, ready);
         let rem = window.rem_size();
         if self.row_filter.as_ref() != Some(&row_filter) {
-            let mut rows = vec![Row::Header];
+            let mut rows = Vec::new();
             if ready {
                 rows.push(Row::Top);
                 rows.extend(self.stat_rows(&row_filter.0));
@@ -1976,15 +1973,27 @@ impl Render for StatsView {
         let rows = list(self.list.clone(), cx.processor(Self::render_row))
             .size_full()
             .min_h_0();
+        let header = self.header(window, cx);
+        let p = cx.global::<TooltipTheme>();
+        // The title, filters and search stay put while the stats scroll beneath them.
         div()
-            .id("stats-scroll")
-            .page_scroll_list(&self.list)
             .size_full()
             .min_h_0()
             .min_w_0()
+            .flex()
+            .flex_col()
             .bg(p.background)
             .text_color(p.text)
-            .child(rows)
+            .child(header.flex_none().border_b_1().border_color(p.border))
+            .child(
+                div()
+                    .id("stats-scroll")
+                    .page_scroll_list(&self.list)
+                    .flex_1()
+                    .min_h_0()
+                    .min_w_0()
+                    .child(rows),
+            )
     }
 }
 

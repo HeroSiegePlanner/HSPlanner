@@ -2377,6 +2377,24 @@ mod tests {
     }
 
     #[::core::prelude::v1::test]
+    fn custom_stat_names_become_tokens_and_notes_stay_text() {
+        let text = "// Wizard's Dice\n  +8 Light Radius // dice\nunknown\n+50 Life";
+        let content = super::custom::tokenized(text);
+        let tokens = content
+            .tokens()
+            .iter()
+            .map(|span| (span.token().id().to_string(), &text[span.range()]))
+            .collect::<Vec<_>>();
+        assert_eq!(
+            tokens,
+            vec![
+                ("light_radius".to_string(), "Light Radius"),
+                ("life".to_string(), "Life")
+            ]
+        );
+    }
+
+    #[::core::prelude::v1::test]
     fn custom_text_keeps_notes_and_rebuilds_stale_or_missing_text() {
         let mut snapshot = BuildSnapshot::default();
         snapshot.custom_stats = parse_custom_text("+8 Light Radius").0;

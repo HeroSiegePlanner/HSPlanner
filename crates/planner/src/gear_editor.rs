@@ -1828,6 +1828,10 @@ impl GearView {
                             match row.group {
                                 "Prefixes" => tr("gear.prefixes"),
                                 "Suffixes" => tr("gear.suffixes"),
+                                "Gems" => tr("gear.group_gems"),
+                                "Jewels" => tr("gear.group_jewels"),
+                                "Soulgems" => tr("gear.group_soulgems"),
+                                "Runes" => tr("gear.group_runes"),
                                 group => group,
                             }
                             .to_uppercase(),
@@ -1857,7 +1861,7 @@ impl GearView {
             .items_center()
             .gap(units(14.))
             .px_4()
-            .py_2p5()
+            .py_1p5()
             .border_b_1()
             .border_color(border)
             .cursor_pointer()
@@ -1916,7 +1920,13 @@ impl GearView {
             })
             .child(
                 div()
-                    .flex_1()
+                    .map(|view| {
+                        if row.icon.is_some() && row.kind.is_empty() {
+                            view.w(units(190.)).flex_none()
+                        } else {
+                            view.flex_1()
+                        }
+                    })
                     .min_w_0()
                     .truncate()
                     .text_size(units(13.))
@@ -1949,8 +1959,8 @@ impl GearView {
                         .min_w_0()
                         .truncate()
                         .font_family(theme::MONO_FONT_FAMILY)
-                        .text_size(units(10.))
-                        .text_color(muted.opacity(0.8))
+                        .text_size(units(11.))
+                        .text_color(muted)
                         .child(row.detail.clone()),
                 )
             })
@@ -2009,18 +2019,18 @@ impl GearView {
                     })),
             )
             .child(
-                div()
-                    .flex()
-                    .items_center()
+                gpui_kit::component::toolbar::Toolbar::new("gear-item-actions")
+                    .p_0()
+                    .h_auto()
                     .gap_2()
                     .when(base.is_some(), |v| {
-                        v.child(
+                        v.content(
                             ghost_button("item-text-edit", tr("gear.text_edit"), cx).on_click(
                                 cx.listener(|this, _, window, cx| this.open_text_edit(window, cx)),
                             ),
                         )
                         .when(!self.is_relic_slot(), |v| {
-                            v.child(
+                            v.content(
                                 ghost_button("stash-item", tr("gear.save_to_stash"), cx).on_click(
                                     cx.listener(|this, _, _, cx| {
                                         if let Some(item) = this.candidate.clone() {
@@ -2033,7 +2043,7 @@ impl GearView {
                                 ),
                             )
                         })
-                        .child(
+                        .content(
                             ghost_button("unequip-item", tr("gear.remove"), cx)
                                 .text_color(p.negative)
                                 .on_click(cx.listener(|this, _, _, cx| {
@@ -2043,7 +2053,7 @@ impl GearView {
                                 })),
                         )
                     })
-                    .child(
+                    .content(
                         ghost_button("change-item", tr("gear.change_item"), cx).on_click(
                             cx.listener(|this, _, window, cx| {
                                 this.choose_picker(Picker::Items, window, cx)
