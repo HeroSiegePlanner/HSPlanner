@@ -520,8 +520,8 @@ mod tests {
         assert!(!session.has_undo());
         writer.save(session.state()).unwrap();
         writer.flush().unwrap();
-        drop(writer);
-        let (_, reopened) = crate::storage::Writer::open(directory.path().into()).unwrap();
+        // The save thread releases the library lock asynchronously; read the file directly.
+        let reopened = crate::storage::load(directory.path()).unwrap();
         assert_eq!(reopened.settings.language, "ko");
     }
 }
