@@ -59,9 +59,7 @@ impl NotesView {
                 editor.set_placeholder(tr("notes.placeholder"), window, cx);
             })
             .detach();
-            let mut state = TextareaState::new(window, cx)
-                .rows(24)
-                .placeholder(tr("notes.placeholder"));
+            let mut state = TextareaState::new(window, cx).placeholder(tr("notes.placeholder"));
             state.set_value(markdown, window, cx);
             state
         });
