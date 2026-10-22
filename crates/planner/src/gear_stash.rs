@@ -123,6 +123,48 @@ pub(crate) fn group_stash_rows(
     rows
 }
 
+pub(crate) const MAX_STASH_COLUMNS: usize = 6;
+
+/// One line of the stash list: a full-width group header or entries side by side.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) enum StashLine {
+    Header(usize),
+    Entries(std::ops::Range<usize>),
+}
+
+/// How many entry columns fit `width`, each at least `min_column` wide with `gap` between.
+pub(crate) fn stash_columns(width: f32, min_column: f32, gap: f32) -> usize {
+    (((width + gap) / (min_column + gap)) as usize).clamp(1, MAX_STASH_COLUMNS)
+}
+
+/// Packs stash rows into lines of up to `columns` entries; headers keep their own line.
+pub(crate) fn stash_lines(rows: &[StashRow], columns: usize) -> Vec<StashLine> {
+    let columns = columns.max(1);
+    let mut lines = Vec::new();
+    let mut start: Option<usize> = None;
+    for (ix, row) in rows.iter().enumerate() {
+        match row {
+            StashRow::Header { .. } => {
+                if let Some(first) = start.take() {
+                    lines.push(StashLine::Entries(first..ix));
+                }
+                lines.push(StashLine::Header(ix));
+            }
+            StashRow::Entry { .. } => {
+                let first = *start.get_or_insert(ix);
+                if ix + 1 - first == columns {
+                    lines.push(StashLine::Entries(first..ix + 1));
+                    start = None;
+                }
+            }
+        }
+    }
+    if let Some(first) = start {
+        lines.push(StashLine::Entries(first..rows.len()));
+    }
+    lines
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -146,6 +188,47 @@ mod tests {
             entry("r2", "ring_angelic_fury_of_tarethiel"),
             entry("h1", "helmet_angelic_lucifers_crown"),
         ]
+    }
+
+    #[::core::prelude::v1::test]
+    fn lines_pack_entries_into_columns_and_keep_headers_full_width() {
+        let header = |group: &str| StashRow::Header {
+            group: group.into(),
+            count: 0,
+        };
+        let item = |index: usize| StashRow::Entry {
+            index,
+            id: index.to_string(),
+        };
+        let rows = vec![
+            header("ring"),
+            item(0),
+            item(1),
+            item(2),
+            item(3),
+            item(4),
+            header("belt"),
+            item(5),
+        ];
+        assert_eq!(
+            stash_lines(&rows, 3),
+            vec![
+                StashLine::Header(0),
+                StashLine::Entries(1..4),
+                StashLine::Entries(4..6),
+                StashLine::Header(6),
+                StashLine::Entries(7..8),
+            ]
+        );
+        assert_eq!(stash_lines(&rows, 0).len(), rows.len());
+    }
+
+    #[::core::prelude::v1::test]
+    fn columns_follow_the_available_width() {
+        assert_eq!(stash_columns(0., 300., 8.), 1);
+        assert_eq!(stash_columns(299., 300., 8.), 1);
+        assert_eq!(stash_columns(608., 300., 8.), 2);
+        assert_eq!(stash_columns(3000., 300., 8.), MAX_STASH_COLUMNS);
     }
 
     #[::core::prelude::v1::test]
