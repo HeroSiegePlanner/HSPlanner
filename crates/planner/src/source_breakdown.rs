@@ -1,4 +1,5 @@
 //! SourceTooltip.tsx presentation over the existing engine breakdown contract.
+use crate::hitbox::AreaPreview;
 use gpui_kit::{
     base::Disableable,
     component::{WindowExt, button::Button},
@@ -177,7 +178,7 @@ fn section(key: &str, value: Option<String>, cx: &App) -> Div {
                 .child(v)
         }))
 }
-fn value_row(label: &str, value: String, combined: bool, cx: &App) -> Div {
+pub(crate) fn value_row(label: &str, value: String, combined: bool, cx: &App) -> Div {
     let p = cx.global::<TooltipTheme>();
     div()
         .flex()
@@ -438,10 +439,20 @@ fn body(
     b: &StatBreakdown,
     extended: bool,
     snapshot: Option<&hsplanner_build::BuildSnapshot>,
+    area: Option<&AreaPreview>,
     cx: &App,
 ) -> Div {
     let mut content = div().when(extended, |v| {
-        v.child(calculation(b, cx)).child(by_source(b, cx))
+        v.child(calculation(b, cx))
+            .when_some(area, |v, area| {
+                v.child(section(
+                    "planner.sources.area",
+                    crate::area_diagram::headline(area),
+                    cx,
+                ))
+                .child(crate::area_diagram::body(area, cx))
+            })
+            .child(by_source(b, cx))
     });
     let grouped = b.has_more || b.has_increased;
     if grouped {
@@ -546,12 +557,13 @@ impl Render for SourcesTooltip {
                             .child(tr("planner.sources.pin_hint")),
                     ),
             )
-            .child(body(&self.0, false, None, cx))
+            .child(body(&self.0, false, None, None, cx))
     }
 }
 struct SourceDialog {
     snapshot: hsplanner_build::BuildSnapshot,
     breakdown: Arc<StatBreakdown>,
+    area: Option<Arc<AreaPreview>>,
     scroll: ScrollHandle,
     measured_height: Option<Pixels>,
     _subscription: Subscription,
@@ -665,7 +677,13 @@ impl Render for SourceDialog {
                     .max_h(max_height - window.rem_size() * (76. / 13.))
                     .overflow_y_scroll()
                     .page_scroll(&self.scroll)
-                    .child(body(&self.breakdown, true, Some(&self.snapshot), cx)),
+                    .child(body(
+                        &self.breakdown,
+                        true,
+                        Some(&self.snapshot),
+                        self.area.as_deref(),
+                        cx,
+                    )),
             )
             .child(
                 div()
@@ -683,6 +701,7 @@ impl Render for SourceDialog {
 }
 fn open(
     breakdown: Arc<StatBreakdown>,
+    area: Option<Arc<AreaPreview>>,
     session: Entity<Session>,
     window: &mut Window,
     cx: &mut App,
@@ -697,6 +716,7 @@ fn open(
         SourceDialog {
             snapshot: session.read(cx).snapshot().clone(),
             breakdown,
+            area,
             scroll: ScrollHandle::new(),
             measured_height: None,
             _subscription: subscription,
@@ -724,12 +744,15 @@ pub(crate) fn trigger(
     id: impl Into<ElementId>,
     button: Button,
     breakdown: StatBreakdown,
+    area: Option<AreaPreview>,
     session: Entity<Session>,
 ) -> Stateful<Div> {
     let available =
         !breakdown.additive_sources.is_empty() || breakdown.has_increased || breakdown.has_more;
     let breakdown = Arc::new(breakdown);
+    let area = area.map(Arc::new);
     let click_data = breakdown.clone();
+    let click_area = area.clone();
     let click_session = session.clone();
     div()
         .id(id)
@@ -741,12 +764,18 @@ pub(crate) fn trigger(
             })
             .on_mouse_down(MouseButton::Right, move |_, window, cx| {
                 cx.stop_propagation();
-                open(breakdown.clone(), session.clone(), window, cx);
+                open(breakdown.clone(), area.clone(), session.clone(), window, cx);
             })
         })
         .child(button.disabled(!available).on_click(move |_, window, cx| {
             if available {
-                open(click_data.clone(), click_session.clone(), window, cx);
+                open(
+                    click_data.clone(),
+                    click_area.clone(),
+                    click_session.clone(),
+                    window,
+                    cx,
+                );
             }
         }))
 }

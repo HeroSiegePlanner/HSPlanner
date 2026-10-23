@@ -14,6 +14,7 @@
 - Gem, jewel, soulgem and rune pickers group by kind and show each socketable's stats.
 - The update dialog shows your version, the new one and its release notes as a readable list. Downloads show progress, a failed check or install can be retried, macOS replaces the app and restarts it, and Windows now finds its installer.
 - Page Up / Page Down scroll the planner panels (including Stats), the build library and the notes preview.
+- Size stats (Area of Effect, Explosion AoE, Orbiting Skill Size, Melee Attack Range, Projectile Size and the rest) show a Hit area diagram, like Path of Building's AoE preview: the main skill's real collision masks from the game, drawn to scale over an Act 1 town screenshot at field of view 1.0 (training dummies 72 px apart) at their base size and with your build, with the reach of spinning objects and the skill's hit radius checks. It lists which size stats reach the skill and how much each adds to its scale, following the game's rules: Area of Effect only for Area of Effect skills, half of melee attack range for melee skills, Fire Nova and Whirlwind taking a reduced share, Spacial Conversion and Concentrated Damage removing the radius they convert; stats that do not reach the skill are named.
 
 ## Interface
 

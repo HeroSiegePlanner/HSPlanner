@@ -1,6 +1,7 @@
 use hsplanner_ui::controls::PlannerControl;
 use hsplanner_ui::i18n::{Locale, tr, trf};
 use hsplanner_ui::tooltip::CursorTooltipExt;
+mod area_diagram;
 mod build_panel;
 mod build_session;
 pub mod character;
@@ -9,6 +10,7 @@ pub mod editor;
 pub mod gear;
 mod gear_sections;
 mod gear_stash;
+mod hitbox;
 mod item_tooltip;
 pub mod mercenary;
 mod node_tooltip;
