@@ -10,7 +10,10 @@ use hsplanner_build::session::Session;
 use hsplanner_engine::calc::stats::{
     SourceContribution, SourceType, StatBreakdown, StatTypeSubtotal,
 };
-use hsplanner_ui::components::PlannerDialogExt;
+use hsplanner_ui::components::{
+    ModalSize, PlannerDialogExt, modal_eyebrow, modal_footer, modal_header, modal_layout,
+    modal_status,
+};
 use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::tooltip::CursorTooltipExt;
@@ -565,116 +568,24 @@ struct SourceDialog {
     breakdown: Arc<StatBreakdown>,
     area: Option<Arc<AreaPreview>>,
     scroll: ScrollHandle,
-    measured_height: Option<Pixels>,
     _subscription: Subscription,
 }
 impl Render for SourceDialog {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let p = cx.global::<TooltipTheme>();
-        let max_height = window.viewport_size().height * 0.8;
-        let weak = cx.entity().downgrade();
-        let measured_height = self.measured_height;
-        div()
-            .on_children_prepainted(move |bounds, window, cx| {
-                let Some(first) = bounds.first() else {
-                    return;
-                };
-                let height = bounds
-                    .iter()
-                    .map(|b| b.bottom())
-                    .fold(first.top(), Pixels::max)
-                    - first.top()
-                    + px(2.);
-                if measured_height != Some(height) {
-                    let weak = weak.clone();
-                    window.defer(cx, move |window, cx| {
-                        let _ = weak.update(cx, |this, cx| {
-                            if this.measured_height != Some(height) {
-                                this.measured_height = Some(height);
-                                cx.notify();
-                                window.refresh();
-                            }
-                        });
-                    });
-                }
-            })
-            .flex()
-            .flex_col()
-            .max_h(max_height)
-            .overflow_hidden()
+        modal_layout(window)
             .text_color(p.text)
-            .bg(linear_gradient(
-                180.,
-                linear_color_stop(p.panel_secondary, 0.),
-                linear_color_stop(p.background, 1.),
+            .child(modal_header(
+                modal_eyebrow("breakdown-eyebrow", tr("planner.sources.title")),
+                crate::stat_labels::stat_name(&self.breakdown.stat_key, &self.breakdown.stat_name),
+                Some(self.breakdown.stat_key.clone().into()),
+                cx,
             ))
             .child(
                 div()
-                    .flex_shrink_0()
-                    .flex()
-                    .items_center()
-                    .gap_2()
-                    .px_4()
-                    .py_2()
-                    .border_b_1()
-                    .border_color(p.border.opacity(0.7))
-                    .bg(linear_gradient(
-                        180.,
-                        linear_color_stop(p.accent.opacity(0.18), 0.),
-                        linear_color_stop(p.accent.opacity(0.06), 1.),
-                    ))
-                    .child(
-                        div()
-                            .min_w_0()
-                            .flex_1()
-                            .flex()
-                            .items_baseline()
-                            .gap_2()
-                            .child(
-                                div()
-                                    .min_w_0()
-                                    .text_size(units(11.))
-                                    .font_weight(FontWeight::SEMIBOLD)
-                                    .text_color(p.accent_hot)
-                                    .child(
-                                        TooltipText::new(
-                                            "breakdown-title",
-                                            crate::stat_labels::stat_name(
-                                                &self.breakdown.stat_key,
-                                                &self.breakdown.stat_name,
-                                            )
-                                            .to_uppercase(),
-                                            0.14,
-                                        )
-                                        .wrap(),
-                                    ),
-                            )
-                            .child(
-                                div()
-                                    .min_w_0()
-                                    .truncate()
-                                    .font_family(theme::MONO_FONT_FAMILY)
-                                    .text_size(units(10.))
-                                    .text_color(p.text.opacity(0.6))
-                                    .child(self.breakdown.stat_key.clone()),
-                            ),
-                    )
-                    .child(
-                        hsplanner_ui::controls::icon_button(
-                            "close-source-breakdown",
-                            "×",
-                            false,
-                            cx,
-                        )
-                        .accessibility_label(tr("planner.sources.close"))
-                        .on_click(|_, window, cx| window.close_dialog(cx)),
-                    ),
-            )
-            .child(
-                div()
                     .id("source-breakdown-scroll")
+                    .flex_1()
                     .min_h_0()
-                    .max_h(max_height - window.rem_size() * (76. / 13.))
                     .overflow_y_scroll()
                     .page_scroll(&self.scroll)
                     .child(body(
@@ -686,16 +597,7 @@ impl Render for SourceDialog {
                     )),
             )
             .child(
-                div()
-                    .flex_shrink_0()
-                    .px_4()
-                    .py_1p5()
-                    .border_t_1()
-                    .border_color(p.border.opacity(0.7))
-                    .font_family(theme::MONO_FONT_FAMILY)
-                    .text_size(units(9.))
-                    .text_color(p.faint)
-                    .child(tr("planner.sources.preview_hint")),
+                modal_footer(cx).child(modal_status(tr("planner.sources.preview_hint"), p.faint)),
             )
     }
 }
@@ -718,25 +620,11 @@ fn open(
             breakdown,
             area,
             scroll: ScrollHandle::new(),
-            measured_height: None,
             _subscription: subscription,
         }
     });
-    window.open_planner_dialog(cx, move |dialog, window, cx| {
-        let height = view.read(cx).measured_height;
-        dialog
-            .opacity(if height.is_some() { 1. } else { 0. })
-            .close_button(false)
-            .p_0()
-            .gap_0()
-            .w((window.rem_size() * (520. / 13.)).min(window.viewport_size().width * 0.9))
-            .margin_top(
-                ((window.viewport_size().height
-                    - height.unwrap_or(window.viewport_size().height * 0.8))
-                    / 2.)
-                    .max(window.viewport_size().height * 0.1),
-            )
-            .child(view.clone())
+    window.open_planner_modal(cx, ModalSize::Standard, move |dialog, _, _| {
+        dialog.child(view.clone())
     });
 }
 

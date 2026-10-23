@@ -3,7 +3,7 @@ use crate::bug_report_transport::{self as transport, MAX_SHOTS, Report, Shot};
 use gpui_kit::{
     base::Disableable,
     component::{
-        IndexPath, WindowExt,
+        IndexPath,
         checkbox::Checkbox,
         input::{Input, InputEvent, InputState, Textarea, TextareaState},
         select::{SearchableVec, Select, SelectEvent, SelectItem, SelectState},
@@ -12,10 +12,12 @@ use gpui_kit::{
     *,
 };
 use hsplanner_build::session::Session;
-use hsplanner_ui::components::PlannerDialogExt;
+use hsplanner_ui::components::{ModalSize, PlannerDialogExt};
 use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::{
-    components::{modal_eyebrow, modal_footer, modal_header, modal_label, modal_status},
+    components::{
+        modal_eyebrow, modal_footer, modal_header, modal_label, modal_layout, modal_status,
+    },
     controls::{ButtonTone, PlannerControl, icon_button, modal_button},
     theme::TooltipTheme,
 };
@@ -53,20 +55,8 @@ pub(super) fn open(session: Entity<Session>, window: &mut Window, cx: &mut App) 
                 (label, code)
             });
     let editor = cx.new(|cx| ReportEditor::new(build, window, cx));
-    window.open_planner_dialog(cx, move |dialog, window, cx| {
-        let palette = cx.global::<TooltipTheme>();
+    window.open_planner_modal(cx, ModalSize::Standard, move |dialog, _, _| {
         dialog
-            .p_0()
-            .gap_0()
-            .rounded_xl()
-            .bg(linear_gradient(
-                180.,
-                linear_color_stop(palette.panel_secondary, 0.),
-                linear_color_stop(palette.background, 1.),
-            ))
-            .width((window.rem_size() * 36.).min(window.viewport_size().width * 0.94))
-            .max_h(window.viewport_size().height * 0.88)
-            .margin_top(window.viewport_size().height * 0.06)
             .overlay_closable(false)
             .on_ok(|_, _, _| false)
             .child(editor.clone())
@@ -316,7 +306,7 @@ impl ReportEditor {
     }
 }
 impl Render for ReportEditor {
-    fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+    fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let p = cx.global::<TooltipTheme>();
         let locked = self.busy || self.sent;
         let validation = self.report(cx).validate().err();
@@ -473,10 +463,7 @@ impl Render for ReportEditor {
                 ),
             );
         }
-        div()
-            .size_full()
-            .flex()
-            .flex_col()
+        modal_layout(window)
             .child(modal_header(
                 modal_eyebrow("bug-report-eyebrow", tr("report.feedback")),
                 tr("report.heading"),
@@ -487,12 +474,6 @@ impl Render for ReportEditor {
             .child(
                 modal_footer(cx)
                     .child(modal_status(status, status_color))
-                    .when(self.sent, |view| {
-                        view.child(
-                            modal_button("report-done", tr("report.done"), ButtonTone::Primary, cx)
-                                .on_click(|_, window, cx| window.close_dialog(cx)),
-                        )
-                    })
                     .when(!self.sent, |view| {
                         view.child(
                             modal_button(

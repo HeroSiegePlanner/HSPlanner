@@ -4,8 +4,10 @@ use crate::gear_stash::{self, StashLine, StashRow};
 use crate::item_tooltip;
 use gpui_kit::component::button::{ButtonCustomVariant, ButtonVariants};
 use gpui_kit::component::scroll::{Scrollbar, ScrollbarMode};
-use hsplanner_ui::components::PlannerDialogExt;
-use hsplanner_ui::components::{panel, panel_with_trailing, section_heading};
+use hsplanner_ui::components::{
+    ModalSize, PlannerDialogExt, modal_eyebrow, modal_frame, modal_header, modal_height,
+    modal_layout, panel, panel_with_trailing, section_heading,
+};
 use hsplanner_ui::controls::segment;
 use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::tooltip::CursorTooltipExt;
@@ -138,7 +140,6 @@ impl GearView {
         let mercenary = self.mercenary;
         window.open_planner_dialog(cx, move |dialog, window, cx| {
             let on_close = weak.clone();
-            let palette = cx.global::<TooltipTheme>();
             let view = owner.read(cx);
             let picker_width = uses_item_picker_width(view.choosing, &view.picker);
             let logical_width = if picker_width > 0 {
@@ -148,62 +149,13 @@ impl GearView {
             } else {
                 1180.
             };
-            let width = (window.viewport_size().width * 0.96)
-                .min(window.rem_size() * (logical_width / 13.));
-            let heading = gpui_kit::component::dialog::DialogTitle::new()
-                .flex_none()
-                .child(
-                    div()
-                        .font_family(theme::FONT_FAMILY)
-                        .font_weight(FontWeight::NORMAL)
-                        .line_height(relative(1.5))
-                        .px_6()
-                        .py_4()
-                        .border_b_1()
-                        .border_color(palette.border)
-                        .child(
-                            div()
-                                .mb_1p5()
-                                .flex()
-                                .items_center()
-                                .gap_2()
-                                .child(div().size_1().rounded_full().bg(palette.accent))
-                                .child(
-                                    div()
-                                        .font_family(theme::MONO_FONT_FAMILY)
-                                        .text_size(rems(10. / 13.))
-                                        .text_color(palette.faint)
-                                        .child(hsplanner_ui::tooltip_text::TooltipText::new(
-                                            "gear-slot-eyebrow",
-                                            tr("gear.slot"),
-                                            0.12,
-                                        )),
-                                ),
-                        )
-                        .child(
-                            div()
-                                .text_size(rems(17. / 13.))
-                                .font_weight(FontWeight::SEMIBOLD)
-                                .text_color(palette.text)
-                                .child(gear_stash::slot_label(&slot_key)),
-                        ),
-                );
-            dialog
-                .p_0()
-                .gap_0()
-                .bg(linear_gradient(
-                    180.,
-                    linear_color_stop(palette.panel_secondary, 0.),
-                    linear_color_stop(palette.background, 1.),
-                ))
-                .width(width)
-                .h(window.viewport_size().height * 0.88)
-                .margin_top(window.viewport_size().height * 0.06)
+            modal_frame(dialog, ModalSize::Custom(logical_width), window, cx)
+                .h(modal_height(window))
                 .overlay_closable(false)
                 // Focused buttons keep their native Enter activation. An Enter
                 // bubbling from search or the dialog itself must not discard a draft.
                 .on_ok(|_, _, _| false)
-                // The close icon and Escape discard the draft, like Cancel.
+                // The close button and Escape discard the draft.
                 .on_cancel(|_, _, _| true)
                 .on_close(move |_, _, cx| {
                     let _ = on_close.update(cx, |owner, cx| {
@@ -212,14 +164,14 @@ impl GearView {
                         owner.revert(cx);
                     });
                 })
-                // The stock title/content split inserts an internal gap_y_2.
-                // One column retains DialogTitle semantics without that extra gap.
                 .child(
-                    div()
-                        .size_full()
-                        .flex()
-                        .flex_col()
-                        .child(heading)
+                    modal_layout(window)
+                        .child(modal_header(
+                            modal_eyebrow("gear-slot-eyebrow", tr("gear.slot")),
+                            gear_stash::slot_label(&slot_key),
+                            None,
+                            cx,
+                        ))
                         .child(editor.clone()),
                 )
         });

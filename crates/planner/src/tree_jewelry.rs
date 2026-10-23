@@ -14,7 +14,7 @@ use hsplanner_engine::calc::{
     data,
     types::{Affix, AffixSign, EquippedAffix, TreeSocketContent},
 };
-use hsplanner_ui::components::PlannerDialogExt;
+use hsplanner_ui::components::{ModalSize, PlannerDialogExt, modal_height, modal_layout};
 use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::{
     components::{modal_eyebrow, modal_footer, modal_header, modal_status},
@@ -103,21 +103,10 @@ impl TreeView {
         let session = self.session.clone();
         let editor = cx.new(|cx| JewelryEditor::new(session, node_id, window, cx));
         let focus = self.focus.clone();
-        window.open_planner_dialog(cx, move |dialog, window, cx| {
+        window.open_planner_modal(cx, ModalSize::Large, move |dialog, window, _| {
             let focus = focus.clone();
-            let palette = cx.global::<theme::TooltipTheme>();
             dialog
-                .p_0()
-                .gap_0()
-                .rounded_xl()
-                .bg(linear_gradient(
-                    180.,
-                    linear_color_stop(palette.panel_secondary, 0.),
-                    linear_color_stop(palette.background, 1.),
-                ))
-                .width((window.rem_size() * (640. / 13.)).min(window.viewport_size().width * 0.94))
-                .h(window.viewport_size().height * 0.88)
-                .margin_top(window.viewport_size().height * 0.06)
+                .h(modal_height(window))
                 .overlay_closable(false)
                 .on_ok(|_, _, _| false)
                 .on_close(move |_, window, cx| window.focus(&focus, cx))
@@ -984,7 +973,7 @@ impl JewelryEditor {
 }
 
 impl Render for JewelryEditor {
-    fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+    fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let p = cx.global::<theme::TooltipTheme>();
         let dirty = !jewelry::same_content(self.original.as_ref(), self.pending.as_ref());
         let has_pending = self.pending.is_some();
@@ -1020,10 +1009,7 @@ impl Render for JewelryEditor {
             .as_ref()
             .or_else(|| self.invalid_rolls.values().next())
             .cloned();
-        div()
-            .size_full()
-            .flex()
-            .flex_col()
+        modal_layout(window)
             .child(modal_header(
                 eyebrow,
                 tr("jewelry.insert_socketable"),

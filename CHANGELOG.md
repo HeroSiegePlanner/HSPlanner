@@ -23,6 +23,7 @@
 - The Stats page title, filters and search stay in place while the list scrolls. Gear item and tree actions sit in toolbars.
 - The main window no longer opens partly off-screen at 125% display scaling on Windows, which hid the title bar and close button. The app starts maximized and restores to a size that fits the monitor's work area.
 - The gear picker's close button discards an unsaved selection like Cancel.
+- Dialogs share one layout: a header naming what the dialog is about, a body that scrolls between a header and footer that stay in view, widths by purpose and the close button with Escape as the only way out (footer Cancel, Close and Done buttons are gone). Save as, Rename, New folder, the changelog, keyboard shortcuts, stat sources, skill subtrees and both text editors now match Settings and the update dialog, and dialogs with typing in them no longer close on a stray click outside.
 
 ## Calculations
 

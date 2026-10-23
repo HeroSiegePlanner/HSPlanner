@@ -4,7 +4,7 @@ use gpui_kit::base::{Disableable, Link};
 use gpui_kit::component::{button::Button, progress::Progress};
 use gpui_kit::{prelude::*, *};
 use hsplanner_ui::components::{
-    PlannerDialogExt, modal_eyebrow, modal_footer, modal_header, modal_label,
+    ModalSize, PlannerDialogExt, modal_eyebrow, modal_footer, modal_header, modal_label,
 };
 use hsplanner_ui::controls::{ButtonTone, modal_button};
 use hsplanner_ui::i18n::{tr, trf};
@@ -19,22 +19,8 @@ pub fn open(updater: Entity<Updater>, window: &mut Window, cx: &mut App) {
             updater.check(false, cx);
         }
     });
-    window.open_planner_dialog(cx, move |dialog, window, cx| {
-        let palette = cx.global::<TooltipTheme>();
-        let viewport = window.viewport_size();
-        dialog
-            .p_0()
-            .gap_0()
-            .rounded_xl()
-            .bg(linear_gradient(
-                180.,
-                linear_color_stop(palette.panel_secondary, 0.),
-                linear_color_stop(palette.background, 1.),
-            ))
-            .width((window.rem_size() * 40.).min(viewport.width * 0.92))
-            .max_h(viewport.height * 0.86)
-            .margin_top(viewport.height * 0.07)
-            .child(panel(&updater, viewport.height * 0.5, cx))
+    window.open_planner_modal(cx, ModalSize::Standard, move |dialog, window, cx| {
+        dialog.child(panel(&updater, window.viewport_size().height * 0.5, cx))
     });
 }
 

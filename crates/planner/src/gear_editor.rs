@@ -2147,15 +2147,6 @@ impl GearView {
                             .on_click(cx.listener(|this, _, _, cx| this.revert(cx))),
                     )
                     .child(
-                        editor_button("cancel-item", tr("gear.cancel"), false, cx).on_click(
-                            cx.listener(|this, _, window, cx| {
-                                this.editing = false;
-                                this.revert(cx);
-                                window.close_dialog(cx);
-                            }),
-                        ),
-                    )
-                    .child(
                         editor_button("apply-item", tr("gear.apply"), true, cx)
                             .text_color(p.accent_hot)
                             .border_color(p.accent_deep)

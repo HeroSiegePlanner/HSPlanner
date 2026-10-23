@@ -1,6 +1,5 @@
 use super::*;
-use gpui_kit::component::dialog::Confirm;
-use hsplanner_ui::components::PlannerDialogExt;
+use hsplanner_ui::components::{ModalSize, PlannerDialogExt, name_form};
 
 #[derive(Clone, Copy)]
 pub(super) enum EditKind {
@@ -49,63 +48,57 @@ impl LibraryView {
         }
         let focus = input.read(cx).focus_handle(cx);
         let weak = cx.entity().downgrade();
-        window.open_planner_dialog(cx, move |dialog, _, cx| {
+        window.open_planner_modal(cx, ModalSize::Form, move |dialog, _, cx| {
             let title = tr(title_key);
             let target = weak.clone();
             let input_for_save = input.clone();
             let build_id = build_id.clone();
             let error = weak.upgrade().and_then(|view| view.read(cx).error.clone());
-            let content = div()
-                .flex()
-                .flex_col()
-                .gap_3()
-                .child(Input::new(&input).planner_style(cx))
-                .children(error.map(|error| {
-                    div()
-                        .text_color(cx.global::<TooltipTheme>().negative)
-                        .child(render_error(&error))
-                }))
-                .child(
-                    Button::new("submit-library-edit")
-                        .planner_style(cx)
-                        .label(title)
-                        .on_click(|_, window, cx| {
-                            window.dispatch_action(Box::new(Confirm { secondary: false }), cx);
-                        }),
-                );
-            dialog.title(title).child(content).on_ok(move |_, _, cx| {
-                // Both the button and Enter use Dialog's confirm action. A
-                // failed validation keeps the same input and focus mounted;
-                // successful dismissal restores focus through the modal host.
-                let name = input_for_save.read(cx).value().to_string();
-                target
-                    .update(cx, |this, cx| {
-                        let folder = this.folder.clone();
-                        let success = this.apply(cx, |session| match kind {
-                            EditKind::NewBuild => session.new_build(&name).map(|_| ()),
-                            EditKind::NewFolder => session.edit_library(|library| {
-                                library.create_folder(&name, folder).map(|_| ())
-                            }),
-                            EditKind::RenameFolder => session.edit_library(|library| {
-                                library.rename_folder(
-                                    folder.as_deref().ok_or("library.select_folder")?,
-                                    &name,
-                                )
-                            }),
-                            EditKind::Rename => session.edit_library(|library| {
-                                library.rename(
-                                    build_id.as_deref().ok_or("library.select_build")?,
-                                    &name,
-                                )
-                            }),
-                        });
-                        if success && matches!(kind, EditKind::NewBuild) {
-                            cx.emit(Opened);
-                        }
-                        success
-                    })
-                    .unwrap_or(false)
-            })
+            let content = name_form(
+                tr("chrome.builds"),
+                title,
+                tr("library.name"),
+                &input,
+                error.map(|error| render_error(&error).into()),
+                title,
+                cx,
+            );
+            dialog
+                .overlay_closable(false)
+                .child(content)
+                .on_ok(move |_, _, cx| {
+                    // Both the button and Enter use Dialog's confirm action. A
+                    // failed validation keeps the same input and focus mounted;
+                    // successful dismissal restores focus through the modal host.
+                    let name = input_for_save.read(cx).value().to_string();
+                    target
+                        .update(cx, |this, cx| {
+                            let folder = this.folder.clone();
+                            let success = this.apply(cx, |session| match kind {
+                                EditKind::NewBuild => session.new_build(&name).map(|_| ()),
+                                EditKind::NewFolder => session.edit_library(|library| {
+                                    library.create_folder(&name, folder).map(|_| ())
+                                }),
+                                EditKind::RenameFolder => session.edit_library(|library| {
+                                    library.rename_folder(
+                                        folder.as_deref().ok_or("library.select_folder")?,
+                                        &name,
+                                    )
+                                }),
+                                EditKind::Rename => session.edit_library(|library| {
+                                    library.rename(
+                                        build_id.as_deref().ok_or("library.select_build")?,
+                                        &name,
+                                    )
+                                }),
+                            });
+                            if success && matches!(kind, EditKind::NewBuild) {
+                                cx.emit(Opened);
+                            }
+                            success
+                        })
+                        .unwrap_or(false)
+                })
         });
         window.focus(&focus, cx);
     }

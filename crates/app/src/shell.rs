@@ -1,18 +1,12 @@
 use crate::chrome::{self, BottomBar, SaveState, TopBar};
 use crate::loadouts::LoadoutBar;
-use gpui_kit::component::{
-    Root, WindowExt,
-    button::Button,
-    dialog::Confirm,
-    input::{Input, InputState},
-};
+use gpui_kit::component::{Root, input::InputState};
 use gpui_kit::{prelude::*, *};
 use hsplanner_build::{loadout::LoadoutKind, session::Session, storage::Writer};
 use hsplanner_library::LibraryView;
 use hsplanner_notes::NotesView;
 use hsplanner_planner::TreeView;
-use hsplanner_ui::components::PlannerDialogExt;
-use hsplanner_ui::controls::PlannerControl;
+use hsplanner_ui::components::{ModalSize, PlannerDialogExt, name_form};
 use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::theme::TooltipTheme;
 use std::{rc::Rc, sync::Arc, time::Duration};
@@ -409,50 +403,23 @@ impl Shell {
         let owner = cx.entity().downgrade();
         // Shell renders the dialog layer, so its builder must not read Shell.
         let dialog_error = cx.new(|_| None::<String>);
-        window.open_planner_dialog(cx, move |dialog, _, cx| {
+        window.open_planner_modal(cx, ModalSize::Form, move |dialog, _, cx| {
             let target = owner.clone();
             let input_for_save = input.clone();
             let build_id = build_id.clone();
             let error = dialog_error.read(cx).clone();
             let error_for_save = dialog_error.clone();
             dialog
-                .title(tr("loadouts.save_as_title"))
-                .child(
-                    div()
-                        .flex()
-                        .flex_col()
-                        .gap_2()
-                        .child(div().child(tr("shell.build_name")))
-                        .child(Input::new(&input).planner_style(cx))
-                        .children(error.map(|error| {
-                            div()
-                                .text_color(cx.global::<TooltipTheme>().negative)
-                                .child(error)
-                        })),
-                )
-                .footer(
-                    div()
-                        .flex()
-                        .justify_end()
-                        .gap_2()
-                        .child(
-                            Button::new("cancel-save-as")
-                                .planner_style(cx)
-                                .label(tr("component.Dialog.cancel"))
-                                .on_click(|_, window, cx| window.close_dialog(cx)),
-                        )
-                        .child(
-                            hsplanner_ui::controls::planner_button(
-                                "confirm-save-as",
-                                hsplanner_ui::controls::ButtonTone::Primary,
-                                cx,
-                            )
-                            .label(tr("shell.save"))
-                            .on_click(|_, window, cx| {
-                                window.dispatch_action(Box::new(Confirm { secondary: false }), cx)
-                            }),
-                        ),
-                )
+                .overlay_closable(false)
+                .child(name_form(
+                    tr("chrome.builds"),
+                    tr("loadouts.save_as_title"),
+                    tr("shell.build_name"),
+                    &input,
+                    error.map(Into::into),
+                    tr("shell.save"),
+                    cx,
+                ))
                 .on_ok(move |_, _, cx| {
                     let name = input_for_save.read(cx).value().to_string();
                     target

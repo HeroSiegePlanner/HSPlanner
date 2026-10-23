@@ -6,7 +6,11 @@ use gpui_kit::component::{
     input::{InlineToken, InputContent},
 };
 use hsplanner_engine::calc::skills::Ranged;
-use hsplanner_ui::components::PlannerDialogExt;
+use hsplanner_ui::components::{
+    ModalSize, PlannerDialogExt, modal_eyebrow, modal_footer, modal_header, modal_height,
+    modal_layout, modal_status,
+};
+use hsplanner_ui::controls::{ButtonTone, modal_button};
 use std::ops::Range;
 
 pub(super) fn serialize_custom_stats(stats: &[CustomStat]) -> String {
@@ -138,38 +142,22 @@ impl ConfigView {
             })
             .unwrap_or_default();
         let editor = cx.new(|cx| CustomStatsEditor::new(text, totals, owner, build, window, cx));
-        window.open_planner_dialog(cx, move |dialog, window, cx| {
-            let p = cx.global::<TooltipTheme>();
+        window.open_planner_modal(cx, ModalSize::Editor, move |dialog, window, cx| {
             dialog
-                .width((window.rem_size() * (1100. / 13.)).min(window.viewport_size().width * 0.96))
-                .h(window.viewport_size().height * 0.88)
-                .margin_top(window.viewport_size().height * 0.06)
-                .bg(p.background)
+                .h(modal_height(window))
+                .overlay_closable(false)
                 .on_ok(|_, _, _| false)
                 .child(
-                    div()
-                        .size_full()
-                        .flex()
-                        .flex_col()
-                        .gap_3()
-                        .child(
-                            gpui_kit::component::dialog::DialogTitle::new()
-                                .flex_none()
-                                .child(
-                                    div()
-                                        .flex()
-                                        .flex_col()
-                                        .gap_1()
-                                        .child(
-                                            div()
-                                                .font_family(theme::MONO_FONT_FAMILY)
-                                                .text_xs()
-                                                .text_color(p.accent)
-                                                .child(tr("planner.config.custom_heading")),
-                                        )
-                                        .child(tr("planner.config.custom")),
-                                ),
-                        )
+                    modal_layout(window)
+                        .child(modal_header(
+                            modal_eyebrow(
+                                "custom-stats-eyebrow",
+                                tr("planner.config.custom_heading"),
+                            ),
+                            tr("planner.config.custom"),
+                            None,
+                            cx,
+                        ))
                         .child(editor.clone()),
                 )
         });
@@ -298,7 +286,7 @@ impl CustomStatsEditor {
     }
 }
 impl Render for CustomStatsEditor {
-    fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+    fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let p = cx.global::<TooltipTheme>();
         let (border, muted, text, accent, negative, background) = (
             p.border,
@@ -420,11 +408,10 @@ impl Render for CustomStatsEditor {
             )
             .with_priority(2)
         });
-        // Bound the editor inside the dialog's title and padding so Save stays on screen.
+        // The fixed modal height bounds the textarea and list, so Save stays in the footer.
         div()
             .children(hover_card)
-            .h((window.viewport_size().height * 0.88 - window.rem_size() * 8.).max(px(0.)))
-            .flex_none()
+            .flex_1()
             .min_h_0()
             .overflow_hidden()
             .flex()
@@ -434,6 +421,8 @@ impl Render for CustomStatsEditor {
                 div()
                     .flex_1()
                     .min_h_0()
+                    .mx_6()
+                    .my_4()
                     .flex()
                     .border_1()
                     .border_color(border)
@@ -505,35 +494,24 @@ impl Render for CustomStatsEditor {
                     ),
             )
             .child(
-                div()
-                    .flex_none()
-                    .pt_3()
-                    .flex()
-                    .items_center()
-                    .gap_2()
+                modal_footer(cx)
+                    .child(modal_status(
+                        if ready {
+                            tr("gear.ready_to_save")
+                        } else {
+                            tr("gear.fix_errors")
+                        },
+                        if ready { accent } else { muted },
+                    ))
                     .child(
-                        div()
-                            .flex_1()
-                            .text_xs()
-                            .text_color(if ready { accent } else { muted })
-                            .child(if ready {
-                                tr("gear.ready_to_save")
-                            } else {
-                                tr("gear.fix_errors")
-                            }),
-                    )
-                    .child(
-                        Button::new("cancel-custom-stats")
-                            .planner_style(cx)
-                            .label(tr("gear.cancel"))
-                            .on_click(|_, window, cx| window.close_dialog(cx)),
-                    )
-                    .child(
-                        Button::new("save-custom-stats")
-                            .planner_style(cx)
-                            .label(tr("gear.save"))
-                            .disabled(!ready)
-                            .on_click(cx.listener(|this, _, window, cx| this.save(window, cx))),
+                        modal_button(
+                            "save-custom-stats",
+                            tr("gear.save"),
+                            ButtonTone::Primary,
+                            cx,
+                        )
+                        .disabled(!ready)
+                        .on_click(cx.listener(|this, _, window, cx| this.save(window, cx))),
                     ),
             )
     }

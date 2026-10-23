@@ -1,10 +1,8 @@
 //! Category-scoped loadout controls; the session owns selection, content and history.
 use gpui_kit::{
     component::{
-        Icon, IconName, IndexPath, Sizable, WindowExt,
-        button::Button,
-        dialog::Confirm,
-        input::{Input, InputState},
+        Icon, IconName, IndexPath, Sizable,
+        input::InputState,
         menu::{DropdownMenu, PopupMenuItem},
         select::{SearchableVec, Select, SelectEvent, SelectItem, SelectState},
     },
@@ -12,9 +10,9 @@ use gpui_kit::{
     *,
 };
 use hsplanner_build::{loadout::LoadoutKind, session::Session};
-use hsplanner_ui::components::PlannerDialogExt;
+use hsplanner_ui::components::{ModalSize, PlannerDialogExt, name_form};
 use hsplanner_ui::{
-    controls::{ButtonTone, PlannerControl, planner_button},
+    controls::{ButtonTone, planner_button},
     i18n::{tr, trf},
     theme::TooltipTheme,
     tooltip::CursorTooltipExt,
@@ -169,57 +167,31 @@ impl LoadoutBar {
         let owner = cx.entity().downgrade();
         // The menu is transient; return dialog focus to the retained selector.
         window.focus(&self.select.read(cx).focus_handle(cx), cx);
-        window.open_planner_dialog(cx, move |dialog, _, cx| {
+        window.open_planner_modal(cx, ModalSize::Form, move |dialog, _, cx| {
             let target = owner.clone();
             let input_for_save = input.clone();
             let build_id = build_id.clone();
             let active_id = active_id.clone();
             let error = owner.upgrade().and_then(|view| view.read(cx).error.clone());
-            let commit = if duplicate {
-                "loadouts.duplicate_commit"
+            let (title, commit) = if duplicate {
+                ("loadouts.duplicate_title", "loadouts.duplicate_commit")
             } else {
-                "loadouts.rename_commit"
+                ("loadouts.rename_title", "loadouts.rename_commit")
             };
             dialog
-                .title(tr(if duplicate {
-                    "loadouts.duplicate_title"
-                } else {
-                    "loadouts.rename_title"
-                }))
-                .child(
-                    div()
-                        .flex()
-                        .flex_col()
-                        .gap_2()
-                        .child(div().text_sm().child(tr("loadouts.name")))
-                        .child(Input::new(&input).planner_style(cx))
-                        .children(error.map(|error| {
-                            div()
-                                .text_sm()
-                                .text_color(cx.global::<TooltipTheme>().negative)
-                                .child(error)
-                        })),
-                )
-                .footer(
-                    div()
-                        .flex()
-                        .justify_end()
-                        .gap_2()
-                        .child(
-                            Button::new("cancel-loadout-name")
-                                .planner_style(cx)
-                                .label(tr("component.Dialog.cancel"))
-                                .on_click(|_, window, cx| window.close_dialog(cx)),
-                        )
-                        .child(
-                            planner_button("confirm-loadout-name", ButtonTone::Primary, cx)
-                                .label(tr(commit))
-                                .on_click(|_, window, cx| {
-                                    window
-                                        .dispatch_action(Box::new(Confirm { secondary: false }), cx)
-                                }),
-                        ),
-                )
+                .overlay_closable(false)
+                .child(name_form(
+                    trf(
+                        "loadouts.category",
+                        &[("category", tr(category_key(kind)).to_string())],
+                    ),
+                    tr(title),
+                    tr("loadouts.name"),
+                    &input,
+                    error.map(Into::into),
+                    tr(commit),
+                    cx,
+                ))
                 .on_ok(move |_, _, cx| {
                     let name = input_for_save.read(cx).value().to_string();
                     target
