@@ -9,7 +9,7 @@ use super::contrib;
 fn augment_stats_apply_and_level_clamps() {
     use crate::calc::types::{AugmentRef, EquippedItem};
 
-    let aug = data::get_augment("artful_dodger").expect("artful_dodger in augments.json");
+    let aug = data::get_augment("divine_piercing").expect("divine_piercing in augments.json");
     let last_tier = aug.levels.last().expect("levels present");
     let (key, &expected) = last_tier.stats.iter().next().expect("tier has stats");
 
@@ -38,14 +38,14 @@ fn augment_stats_apply_and_level_clamps() {
     let max_level = aug.levels.len() as u32;
     let without = sum_for(None);
     let with_max = sum_for(Some(AugmentRef {
-        id: "artful_dodger".into(),
+        id: "divine_piercing".into(),
         level: max_level,
     }));
     assert_eq!(with_max.0 - without.0, expected);
     assert_eq!(with_max.1 - without.1, expected);
 
     let with_overflow = sum_for(Some(AugmentRef {
-        id: "artful_dodger".into(),
+        id: "divine_piercing".into(),
         level: 99,
     }));
     assert_eq!(with_overflow, with_max);

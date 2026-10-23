@@ -22,7 +22,7 @@ use hsplanner_engine::calc::{
     planner::PlannerPerformance,
     rank::{item_skill_bonus_override, item_skill_rank_range},
     subskill::subskill_key,
-    types::{CustomStat, SkillKind, StatDef},
+    types::{AugmentCalc, CustomStat, SkillKind, StatDef, augment_toggle_key},
 };
 use hsplanner_ui::i18n::{Locale, tr, trf};
 use hsplanner_ui::scroll::PageScroll;
@@ -1448,8 +1448,22 @@ impl ConfigView {
                 if let Some(skill) = data::get_item_granted_skill_by_name(name)
                     && let Some(condition) = &skill.condition
                 {
-                    granted.insert(condition.clone(), skill);
+                    granted.insert(
+                        condition.clone(),
+                        (skill.name.clone(), skill.description.clone()),
+                    );
                 }
+            }
+            if let Some(augment) = item
+                .augment
+                .as_ref()
+                .and_then(|a| data::get_augment(&a.id))
+                .filter(|a| a.calc == AugmentCalc::Toggle)
+            {
+                granted.insert(
+                    augment_toggle_key(&augment.id),
+                    (augment.name.clone(), augment.description.clone()),
+                );
             }
         }
         if granted.is_empty() {
@@ -1476,7 +1490,7 @@ impl ConfigView {
             cx,
         )
         .child(help(tr("planner.config.blessings_help"), cx));
-        for (key, skill) in granted {
+        for (key, (name, description)) in granted {
             let checked = snapshot
                 .player_conditions
                 .get(&key)
@@ -1488,14 +1502,14 @@ impl ConfigView {
                     .child(
                         Checkbox::new(SharedString::from(format!("config-blessing-{key}")))
                             .checked(checked)
-                            .label(skill.name.clone())
+                            .label(name)
                             .on_click(cx.listener(move |this, checked: &bool, _, cx| {
                                 this.edit(cx, |snapshot| {
                                     snapshot.player_conditions.insert(key.clone(), *checked);
                                 })
                             })),
                     )
-                    .when_some(skill.description.clone(), |view, description| {
+                    .when_some(description, |view, description| {
                         view.child(
                             div()
                                 .pl_6()
@@ -1550,6 +1564,30 @@ impl ConfigView {
         }
         let mut item_procs = std::collections::BTreeMap::new();
         for item in snapshot.inventory.values() {
+            if let Some((augment, level)) = item
+                .augment
+                .as_ref()
+                .and_then(|a| Some((data::get_augment(&a.id)?, a.level)))
+                .filter(|(a, _)| a.calc == AugmentCalc::Proc)
+            {
+                let chance = augment
+                    .tier(level)
+                    .and_then(|tier| tier.proc_chance)
+                    .unwrap_or(0.);
+                item_procs.insert(
+                    augment_toggle_key(&augment.id),
+                    (
+                        augment.name.clone(),
+                        match augment.period {
+                            Some(period) => trf(
+                                "planner.config.every_seconds",
+                                &[("0", period.to_string())],
+                            ),
+                            None => format!("{chance}% · {}", augment.trigger.replace("on_", "")),
+                        },
+                    ),
+                );
+            }
             let Some(base) = data::get_item(&item.base_id) else {
                 continue;
             };

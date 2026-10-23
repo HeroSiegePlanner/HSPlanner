@@ -701,6 +701,37 @@ mod tests {
     }
 
     #[test]
+    fn augment_procs_carry_a_chance_and_their_damage() {
+        use crate::calc::types::AugmentCalc;
+        let procs: Vec<_> = data()
+            .augments
+            .values()
+            .filter(|aug| aug.calc == AugmentCalc::Proc)
+            .collect();
+        assert_eq!(procs.len(), 32);
+        for aug in procs {
+            let tier = aug.tier(1).expect(&aug.id);
+            assert!(
+                tier.proc_chance.is_some_and(|c| c > 0.) || aug.period.is_some(),
+                "{} chance",
+                aug.id
+            );
+            assert!(
+                tier.stats.keys().any(|k| k == "enhanced_damage"
+                    || k == "incoming_damage_as_lightning_pct"
+                    || k == "recast_damage_increase"
+                    || (k.starts_with("flat_") && k.ends_with("_skill_damage"))),
+                "{} damage",
+                aug.id
+            );
+        }
+        // Hero_Siege.exe: start + per level × L.
+        let staticshot = get_augment("staticshot").unwrap();
+        assert_eq!(staticshot.tier(7).unwrap().stats["flat_lightning_skill_damage"], 6500.);
+        assert_eq!(get_augment("gut_rippers_spikeball").unwrap().trigger, "on_attack");
+    }
+
+    #[test]
     fn potion_buffs_match_game_values_and_need_their_toggle() {
         let at_rank = |name: &str, key: &str, rank: f64| {
             let skill = get_item_granted_skill_by_name(name).expect(name);

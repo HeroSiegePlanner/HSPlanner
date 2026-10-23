@@ -16,15 +16,19 @@ use super::skills::{
     StatMap, Weapon,
 };
 use super::stats::{
-    compute_build_stats, BuildStatsInput, ComputedStats,
+    augment_burst_key, compute_build_stats, AugmentUptimeScope, BuildStatsInput, ComputedStats,
 };
 use super::subskill::subskill_key;
 use super::types::{
-    CustomStat, Inventory, SkillActivationKind, SkillKind, SkillSpec, TreeSocketContent,
+    augment_toggle_key, AugmentCalc, CustomStat, Inventory, SkillActivationKind, SkillKind,
+    SkillSpec, TreeSocketContent,
 };
 
 /// A build can never execute the whole life bar; 90% keeps the multiplier finite.
 const EXECUTE_MAX_PCT: f64 = 90.0;
+
+/// Item and augment procs fire on this ICD even when their listed cooldown is shorter.
+const ITEM_PROC_ICD_SECS: f64 = 1.5;
 
 /// Config default when a build predates the per-kind rate knobs.
 pub const DEFAULT_ENTITY_RATE: f64 = 1.0;
@@ -402,6 +406,128 @@ fn global_proc_trigger_rate(
         _ => (0.0, 0.0),
     };
     proc_trigger_rate(trigger, eligible_actions, contacts, kills)
+}
+
+/// Share of time each switched-on augment buff is up: procs per second (capped by
+/// the item-proc cooldown) × its duration. Only buffs below full uptime are listed.
+fn augment_buff_uptimes(
+    deps: &BuildPerformanceDeps<'_>,
+    activation: Option<SkillActivationKind>,
+    actions: Ranged,
+    contacts: Ranged,
+) -> HashMap<String, Ranged> {
+    let mut out = HashMap::new();
+    for eq in deps.inventory.values() {
+        let Some(aug_ref) = eq.augment.as_ref() else {
+            continue;
+        };
+        // A full-stack burst: one stack per hit fills it, then it lasts its duration.
+        if let Some(aug) = data::get_augment(&aug_ref.id) {
+            let tier = aug.tier(aug_ref.level);
+            if let (Some(stacks), Some(duration)) = (
+                aug.burst_stacks,
+                tier.filter(|t| t.burst.is_some())
+                    .and_then(|t| t.proc_duration_sec),
+            ) {
+                let uptime = |hits: f64| {
+                    if hits > 0.0 {
+                        duration / (stacks / hits + duration)
+                    } else {
+                        0.0
+                    }
+                };
+                out.insert(
+                    augment_burst_key(&aug.id),
+                    (uptime(contacts.0), uptime(contacts.1)),
+                );
+            }
+        }
+        let Some(aug) = data::get_augment(&aug_ref.id).filter(|a| a.calc == AugmentCalc::Toggle)
+        else {
+            continue;
+        };
+        let on = deps
+            .player_conditions
+            .get(&augment_toggle_key(&aug.id))
+            .copied()
+            .unwrap_or(false);
+        let Some(tier) = aug.tier(aug_ref.level).filter(|_| on) else {
+            continue;
+        };
+        let (Some(chance), Some(duration)) = (tier.proc_chance, tier.proc_duration_sec) else {
+            continue;
+        };
+        if !matches!(
+            aug.trigger.as_str(),
+            "on_attack" | "on_cast" | "on_strike" | "on_hit" | "on_spell_hit" | "on_kill"
+        ) {
+            continue;
+        }
+        let rate = augment_trigger_rate(&aug.trigger, activation, actions, contacts, deps.kills_per_sec);
+        let interval = aug.proc_cooldown.unwrap_or(0.0).max(ITEM_PROC_ICD_SECS);
+        let uptime = |rate: f64| ((rate * chance / 100.0).min(1.0 / interval) * duration).min(1.0);
+        let uptime = (uptime(rate.0), uptime(rate.1));
+        if uptime.0 < 1.0 || uptime.1 < 1.0 {
+            out.insert(aug.id.clone(), uptime);
+        }
+    }
+    out
+}
+
+/// Strike and attack procs need an attack skill; spell-hit and cast procs a cast.
+fn augment_trigger_rate(
+    trigger: &str,
+    activation: Option<SkillActivationKind>,
+    actions: Ranged,
+    contacts: Ranged,
+    kills: f64,
+) -> Ranged {
+    let attack = activation == Some(SkillActivationKind::Attack);
+    let cast = activation == Some(SkillActivationKind::Cast);
+    match trigger {
+        "on_attack" if attack => actions,
+        "on_cast" if cast => actions,
+        "on_strike" | "on_hit" if attack => contacts,
+        "on_spell_hit" if cast => contacts,
+        "on_kill" => (kills.max(0.0), kills.max(0.0)),
+        _ => (0.0, 0.0),
+    }
+}
+
+/// One augment proc's damage: a share of the attack's contact hit, or flat
+/// elemental damage scaled like item-granted procs.
+fn augment_hit(
+    tier_stats: &HashMap<String, f64>,
+    contact: Ranged,
+    synergy: f64,
+    stats: &HashMap<String, Ranged>,
+    deps: &BuildPerformanceDeps<'_>,
+) -> Ranged {
+    let mut hit = (0.0, 0.0);
+    for (key, &value) in tier_stats.iter() {
+        if key == "enhanced_damage" {
+            hit.0 += contact.0 * value / 100.0;
+            hit.1 += contact.1 * value / 100.0;
+            continue;
+        }
+        let Some(element) = key
+            .strip_prefix("flat_")
+            .and_then(|k| k.strip_suffix("_skill_damage"))
+        else {
+            continue;
+        };
+        let (extra, _) =
+            super::skills::collect_extra_damage(stats, deps.enemy_conditions, Some(element));
+        let add = rg(stats, &format!("{element}_skill_damage"));
+        let more = rg(stats, &format!("{element}_skill_damage_more"));
+        let res = deps.enemy_resistances.get(element).copied().unwrap_or(0.0);
+        let scale = |add: f64, more: f64| {
+            value * synergy * (1.0 + add / 100.0) * (1.0 + more / 100.0) * extra * (1.0 - res / 100.0)
+        };
+        hit.0 += scale(r_min(add), r_min(more));
+        hit.1 += scale(r_max(add), r_max(more));
+    }
+    hit
 }
 
 fn proc_trigger_assumption(trigger: &str) -> &'static str {
@@ -1484,6 +1610,16 @@ pub(crate) fn performance_from_stats(
         None if deps.main_skill_id.is_none() => Some(SkillActivationKind::Attack),
         None => None,
     };
+    // Switched-on augment buffs that proc less often than they last are rerun
+    // at their uptime, once: the second pass keeps this pass's trigger rates.
+    if !AugmentUptimeScope::active() {
+        let uptimes =
+            augment_buff_uptimes(deps, proc_activation, player_actions, proc_contacts);
+        if !uptimes.is_empty() {
+            let _scope = AugmentUptimeScope::enter(uptimes);
+            return performance_from_stats(deps, compute_stats_for_skill(deps, deps.main_skill_id));
+        }
+    }
     for proc_skill in all_class_skills.iter() {
         let Some(proc) = proc_skill.proc.as_ref() else {
             continue;
@@ -1606,9 +1742,6 @@ pub(crate) fn performance_from_stats(
         }
     }
 
-    // Item procs fire on this ICD even when their listed cooldown is shorter.
-    const ITEM_PROC_ICD_SECS: f64 = 1.5;
-
     // "18% Chance on Hit to cast Breath of Ice Level 60": the item casts a class
     // skill at its own level, independent of the rank the build put into it.
     for eq in deps.inventory.values() {
@@ -1729,6 +1862,126 @@ pub(crate) fn performance_from_stats(
         (None, Some(d)) => (d.avg_min as f64, d.avg_max as f64),
         _ => (0.0, 0.0),
     };
+
+    // Angelic augment procs: their own hit on the item-proc cooldown, gated by an
+    // `augment:{id}` toggle. Attack-damage procs scale one contact's mean hit.
+    if !super::skills::self_damage_disabled(&computed.stats, &[]) {
+        let contact = (
+            hit_avg_min / (projectiles * multicast),
+            hit_avg_max / (projectiles * multicast),
+        );
+        let mut granted_stats = None;
+        for eq in deps.inventory.values() {
+            let Some(aug_ref) = eq.augment.as_ref() else {
+                continue;
+            };
+            let Some(aug) = data::get_augment(&aug_ref.id).filter(|a| a.calc == AugmentCalc::Proc)
+            else {
+                continue;
+            };
+            if !deps
+                .proc_toggles
+                .get(&augment_toggle_key(&aug.id))
+                .copied()
+                .unwrap_or(false)
+            {
+                continue;
+            }
+            let Some(tier) = aug.tier(aug_ref.level) else {
+                continue;
+            };
+            // Echoes of the Void: one free recast of the skill at bonus damage per
+            // period; each kill shortens the wait.
+            if let Some(&bonus) = tier.stats.get("recast_damage_increase") {
+                let period = aug.period.unwrap_or(30.0);
+                let per_kill = aug.cooldown_per_kill.unwrap_or(0.0);
+                let wait = period / (1.0 + per_kill * deps.kills_per_sec.max(0.0));
+                let dps = (
+                    hit_avg_min * (1.0 + bonus / 100.0) / wait,
+                    hit_avg_max * (1.0 + bonus / 100.0) / wait,
+                );
+                calculation.push(CalculationStep::new(
+                    format!("Augment · {}", aug.name),
+                    format!(
+                        "{} damage per cast × (1 + {}% / 100) every {}s ({}s, −{}s per kill × {} kills/s)",
+                        range((hit_avg_min, hit_avg_max)),
+                        number(bonus),
+                        number(wait),
+                        number(period),
+                        number(per_kill),
+                        number(deps.kills_per_sec)
+                    ),
+                    dps,
+                ));
+                proc_dps_min += dps.0;
+                proc_dps_max += dps.1;
+                continue;
+            }
+            // Zapper: electrocuted monsters pass a share of every hit they take to
+            // nearby monsters as lightning. Only lightning damage electrocutes.
+            if let Some(&share) = tier.stats.get("incoming_damage_as_lightning_pct") {
+                let lightning = active_skill
+                    .and_then(|s| s.damage_type.as_deref())
+                    .is_some_and(|t| t.eq_ignore_ascii_case("lightning"));
+                let res = deps.enemy_resistances.get("lightning").copied().unwrap_or(0.0);
+                let scale = if lightning {
+                    share / 100.0 * (1.0 - res / 100.0)
+                } else {
+                    0.0
+                };
+                let dps = (
+                    contact.0 * proc_contacts.0 * scale,
+                    contact.1 * proc_contacts.1 * scale,
+                );
+                calculation.push(CalculationStep::new(
+                    format!("Augment · {}", aug.name),
+                    format!(
+                        "{} hit damage/s × {}% to nearby monsters × {} lightning resistance",
+                        range((contact.0 * proc_contacts.0, contact.1 * proc_contacts.1)),
+                        number(share),
+                        number(1.0 - res / 100.0)
+                    ),
+                    dps,
+                ));
+                proc_dps_min += dps.0;
+                proc_dps_max += dps.1;
+                continue;
+            }
+            let rate = augment_trigger_rate(
+                &aug.trigger,
+                proc_activation,
+                player_actions,
+                proc_contacts,
+                deps.kills_per_sec,
+            );
+            let chance = tier.proc_chance.unwrap_or(0.0);
+            let interval = aug.proc_cooldown.unwrap_or(0.0).max(ITEM_PROC_ICD_SECS);
+            let per_sec = (
+                (rate.0 * chance / 100.0).min(1.0 / interval),
+                (rate.1 * chance / 100.0).min(1.0 / interval),
+            );
+            let stats = &granted_stats
+                .get_or_insert_with(|| compute_stats_for_skill(deps, None))
+                .stats;
+            let level = aug_ref.level.clamp(1, aug.levels.len() as u32) as f64;
+            let synergy = 1.0 + aug.synergy_per_level.unwrap_or(0.0) * level / 100.0;
+            let hit = augment_hit(&tier.stats, contact, synergy, stats, deps);
+            calculation.push(CalculationStep::new(
+                format!("Augment proc · {}", aug.name),
+                format!(
+                    "min({} triggers/s{} × {}% / 100, 1 / {}s cooldown) × {} damage per proc",
+                    range(rate),
+                    proc_trigger_assumption(&aug.trigger),
+                    number(chance),
+                    number(interval),
+                    range(hit)
+                ),
+                (per_sec.0 * hit.0, per_sec.1 * hit.1),
+            ));
+            proc_dps_min += per_sec.0 * hit.0;
+            proc_dps_max += per_sec.1 * hit.1;
+        }
+    }
     let apply_chances =
         subtree_apply_chances(active_skill, deps.subskill_ranks, deps.enemy_conditions);
     // Volley averages include projectiles and repeated casts; ailments use

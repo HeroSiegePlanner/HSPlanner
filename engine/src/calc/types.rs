@@ -264,6 +264,31 @@ pub struct ItemSet {
 pub struct AugmentLevel {
     #[serde(default)]
     pub stats: StatMap,
+    #[serde(default)]
+    pub proc_chance: Option<f64>,
+    #[serde(default)]
+    pub proc_duration_sec: Option<f64>,
+    /// Stats for `proc_duration_sec` once `burst_stacks` stacks are full (Monstrosity).
+    #[serde(default)]
+    pub burst: Option<StatMap>,
+    /// Shown-only facts (range, projectiles, summon life, immunity).
+    #[serde(default)]
+    pub meta: HashMap<String, f64>,
+}
+
+/// How an augment's level stats reach the calculation.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize, Default)]
+#[serde(rename_all = "snake_case")]
+pub enum AugmentCalc {
+    /// Always-on character stats.
+    #[default]
+    Stats,
+    /// A timed buff or conditional bonus: stats apply while its Config toggle is on.
+    Toggle,
+    /// Its own hit: proc damage, never character stats.
+    Proc,
+    /// Not modelled; shown only.
+    None,
 }
 
 #[derive(Debug, Clone, Deserialize, Default)]
@@ -273,7 +298,40 @@ pub struct AngelicAugment {
     #[serde(default)]
     pub name: String,
     #[serde(default)]
+    pub description: Option<String>,
+    #[serde(default)]
+    pub trigger: String,
+    #[serde(default)]
+    pub calc: AugmentCalc,
+    #[serde(default)]
+    pub proc_cooldown: Option<f64>,
+    /// "+X% damage per level of this augment" on its flat proc damage.
+    #[serde(default)]
+    pub synergy_per_level: Option<f64>,
+    /// Hits (one stack each) that fill the burst.
+    #[serde(default)]
+    pub burst_stacks: Option<f64>,
+    /// Seconds between periodic effects (Titan's Power, Echoes of the Void).
+    #[serde(default)]
+    pub period: Option<f64>,
+    /// Seconds each kill takes off `period`.
+    #[serde(default)]
+    pub cooldown_per_kill: Option<f64>,
+    #[serde(default)]
     pub levels: Vec<AugmentLevel>,
+}
+
+impl AngelicAugment {
+    /// The level's stats, clamped to the augment's level range.
+    pub fn tier(&self, level: u32) -> Option<&AugmentLevel> {
+        let last = self.levels.len() as u32;
+        (last > 0).then(|| &self.levels[(level.clamp(1, last) - 1) as usize])
+    }
+}
+
+/// Player-condition / proc-toggle key for an augment's Config switch.
+pub fn augment_toggle_key(id: &str) -> String {
+    format!("augment:{id}")
 }
 
 // ---------- item-granted skill ----------

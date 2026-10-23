@@ -195,6 +195,11 @@ const PER_MANA_STATS: &[(&str, &str, f64)] = &[
         750.0,
     ),
     (
+        "magic_skill_damage_per_100_mana",
+        "magic_skill_damage",
+        100.0,
+    ),
+    (
         "ranged_physical_per_500_mana",
         "ranged_projectile_damage",
         500.0,
@@ -214,6 +219,35 @@ const PER_LIGHT_RADIUS_STATS: &[(&str, &str, f64)] = &[
         1.0,
     ),
 ];
+
+/// "+X% magic skill damage per attack per second" (Magistriker) reads the final attack rate.
+pub fn apply_per_attack_rate_stats(
+    stats: &HashMap<String, Ranged>,
+    stat_sources: &mut SourceMap,
+) -> HashSet<String> {
+    let rate = stats
+        .get("magic_skill_damage_per_attack_per_second")
+        .copied()
+        .unwrap_or((0.0, 0.0));
+    if rate == (0.0, 0.0) {
+        return HashSet::new();
+    }
+    let aps = crate::calc::skills::attacks_per_second(stats);
+    push_source(
+        stat_sources,
+        "magic_skill_damage",
+        SourceContribution {
+            label: format!(
+                "{} (per attack per second)",
+                stat_name("magic_skill_damage")
+            ),
+            source_type: SourceType::Item,
+            value: (rate.0 * aps.0, rate.1 * aps.1),
+            forge: None,
+        },
+    );
+    HashSet::from(["magic_skill_damage".to_string()])
+}
 
 pub fn apply_per_mana_stats(
     stats: &HashMap<String, Ranged>,

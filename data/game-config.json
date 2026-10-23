@@ -102,6 +102,24 @@
         "damage_per_rage_stack": "damage",
         "ranged_damage_per_rage_stack": "ranged_projectile_damage"
       }
+    },
+    {
+      "key": "tempest", "name": "Tempest", "maxStat": "max_tempest_stacks",
+      "perStack": {},
+      "perStackStats": { "tempest_attack_speed": "increased_attack_speed", "tempest_movement_speed": "movement_speed" }
+    },
+    {
+      "key": "corrosion", "name": "Corrosion", "maxStat": "max_corrosion_stacks",
+      "perStack": {},
+      "perStackStats": { "corrosion_damage_increase": "enemy_damage_taken_increased" }
+    },
+    {
+      "key": "manastream", "name": "Manastream", "maxStat": "max_manastream_stacks",
+      "perStack": {}, "perStackStats": { "manastream_magic_skill_damage": "magic_skill_damage" }
+    },
+    {
+      "key": "avarice", "name": "Avarice", "maxStat": "max_avarice_stacks",
+      "perStack": {}, "perStackStats": { "avarice_magic_find": "magic_find", "avarice_gold_find": "gold_find" }
     }
   ],
   "attributes": [

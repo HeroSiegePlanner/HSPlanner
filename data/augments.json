@@ -14,7 +14,8 @@
       { "level": 5, "stats": { "movement_speed": 10, "increased_attack_speed": 20, "enhanced_damage": 40 }, "cost": 3 },
       { "level": 6, "stats": { "movement_speed": 12, "increased_attack_speed": 24, "enhanced_damage": 48 }, "cost": 4 },
       { "level": 7, "stats": { "movement_speed": 14, "increased_attack_speed": 28, "enhanced_damage": 56 }, "cost": 5 }
-    ]
+    ],
+    "calc": "toggle"
   },
   {
     "id": "artillery_aid",
@@ -31,7 +32,8 @@
       { "level": 5, "stats": { "enhanced_damage": 675 }, "procChance": 10, "cost": 3 },
       { "level": 6, "stats": { "enhanced_damage": 810 }, "procChance": 10, "cost": 4 },
       { "level": 7, "stats": { "enhanced_damage": 945 }, "procChance": 10, "cost": 5 }
-    ]
+    ],
+    "calc": "proc"
   },
   {
     "id": "avariciousness",
@@ -39,16 +41,17 @@
     "description": "Picking up gold grants a stack of Avarice. Each stack increases Magic Find and Gold Find. Up to 20 stacks, 8s duration refreshing on pickup.",
     "trigger": "on_pickup",
     "triggerNote": "OnGoldPickup (20 stacks, 8s)",
-    "primaryStats": ["magic_find", "gold_find"],
+    "primaryStats": ["avarice_magic_find", "avarice_gold_find"],
     "levels": [
-      { "level": 1, "stats": { "magic_find": 1, "gold_find": 1 }, "procDurationSec": 8, "cost": 0, "meta": { "max_stacks": 20 } },
-      { "level": 2, "stats": { "magic_find": 2, "gold_find": 2 }, "procDurationSec": 8, "cost": 0, "meta": { "max_stacks": 20 } },
-      { "level": 3, "stats": { "magic_find": 3, "gold_find": 3 }, "procDurationSec": 8, "cost": 1, "meta": { "max_stacks": 20 } },
-      { "level": 4, "stats": { "magic_find": 4, "gold_find": 4 }, "procDurationSec": 8, "cost": 2, "meta": { "max_stacks": 20 } },
-      { "level": 5, "stats": { "magic_find": 5, "gold_find": 5 }, "procDurationSec": 8, "cost": 3, "meta": { "max_stacks": 20 } },
-      { "level": 6, "stats": { "magic_find": 6, "gold_find": 6 }, "procDurationSec": 8, "cost": 4, "meta": { "max_stacks": 20 } },
-      { "level": 7, "stats": { "magic_find": 7, "gold_find": 7 }, "procDurationSec": 8, "cost": 5, "meta": { "max_stacks": 20 } }
-    ]
+      { "level": 1, "stats": { "max_avarice_stacks": 20, "avarice_magic_find": 1, "avarice_gold_find": 1 }, "procDurationSec": 8, "cost": 0, "meta": { "max_stacks": 20 } },
+      { "level": 2, "stats": { "max_avarice_stacks": 20, "avarice_magic_find": 2, "avarice_gold_find": 2 }, "procDurationSec": 8, "cost": 0, "meta": { "max_stacks": 20 } },
+      { "level": 3, "stats": { "max_avarice_stacks": 20, "avarice_magic_find": 3, "avarice_gold_find": 3 }, "procDurationSec": 8, "cost": 1, "meta": { "max_stacks": 20 } },
+      { "level": 4, "stats": { "max_avarice_stacks": 20, "avarice_magic_find": 4, "avarice_gold_find": 4 }, "procDurationSec": 8, "cost": 2, "meta": { "max_stacks": 20 } },
+      { "level": 5, "stats": { "max_avarice_stacks": 20, "avarice_magic_find": 5, "avarice_gold_find": 5 }, "procDurationSec": 8, "cost": 3, "meta": { "max_stacks": 20 } },
+      { "level": 6, "stats": { "max_avarice_stacks": 20, "avarice_magic_find": 6, "avarice_gold_find": 6 }, "procDurationSec": 8, "cost": 4, "meta": { "max_stacks": 20 } },
+      { "level": 7, "stats": { "max_avarice_stacks": 20, "avarice_magic_find": 7, "avarice_gold_find": 7 }, "procDurationSec": 8, "cost": 5, "meta": { "max_stacks": 20 } }
+    ],
+    "calc": "stats"
   },
   {
     "id": "awareness",
@@ -65,7 +68,8 @@
       { "level": 5, "stats": { "movement_speed": 62 }, "procChance": 25, "procDurationSec": 5, "cost": 3 },
       { "level": 6, "stats": { "movement_speed": 70 }, "procChance": 25, "procDurationSec": 5, "cost": 4 },
       { "level": 7, "stats": { "movement_speed": 78 }, "procChance": 25, "procDurationSec": 5, "cost": 5 }
-    ]
+    ],
+    "calc": "toggle"
   },
   {
     "id": "berserkers_rage",
@@ -75,14 +79,15 @@
     "triggerNote": "OnStrike (10%, 4s)",
     "primaryStats": ["life_steal", "enhanced_damage", "all_resistances"],
     "levels": [
-      { "level": 1, "stats": { "life_steal": 5, "enhanced_damage": 100, "all_resistances": 0 }, "procChance": 10, "procDurationSec": 4, "cost": 0 },
-      { "level": 2, "stats": { "life_steal": 7, "enhanced_damage": 110, "all_resistances": -5 }, "procChance": 10, "procDurationSec": 4, "cost": 0 },
-      { "level": 3, "stats": { "life_steal": 9, "enhanced_damage": 120, "all_resistances": -10 }, "procChance": 10, "procDurationSec": 4, "cost": 1 },
-      { "level": 4, "stats": { "life_steal": 11, "enhanced_damage": 130, "all_resistances": -15 }, "procChance": 10, "procDurationSec": 4, "cost": 2 },
-      { "level": 5, "stats": { "life_steal": 13, "enhanced_damage": 140, "all_resistances": -20 }, "procChance": 10, "procDurationSec": 4, "cost": 3 },
-      { "level": 6, "stats": { "life_steal": 15, "enhanced_damage": 150, "all_resistances": -25 }, "procChance": 10, "procDurationSec": 4, "cost": 4 },
+      { "level": 1, "stats": { "life_steal": 5, "enhanced_damage": 100, "all_resistances": -6 }, "procChance": 10, "procDurationSec": 4, "cost": 0 },
+      { "level": 2, "stats": { "life_steal": 7, "enhanced_damage": 110, "all_resistances": -10 }, "procChance": 10, "procDurationSec": 4, "cost": 0 },
+      { "level": 3, "stats": { "life_steal": 9, "enhanced_damage": 120, "all_resistances": -14 }, "procChance": 10, "procDurationSec": 4, "cost": 1 },
+      { "level": 4, "stats": { "life_steal": 11, "enhanced_damage": 130, "all_resistances": -18 }, "procChance": 10, "procDurationSec": 4, "cost": 2 },
+      { "level": 5, "stats": { "life_steal": 13, "enhanced_damage": 140, "all_resistances": -22 }, "procChance": 10, "procDurationSec": 4, "cost": 3 },
+      { "level": 6, "stats": { "life_steal": 15, "enhanced_damage": 150, "all_resistances": -26 }, "procChance": 10, "procDurationSec": 4, "cost": 4 },
       { "level": 7, "stats": { "life_steal": 17, "enhanced_damage": 160, "all_resistances": -30 }, "procChance": 10, "procDurationSec": 4, "cost": 5 }
-    ]
+    ],
+    "calc": "toggle"
   },
   {
     "id": "butchers_fury",
@@ -99,7 +104,8 @@
       { "level": 5, "stats": { "enhanced_damage": 900, "stun_duration": 5 }, "procChance": 18, "cost": 3 },
       { "level": 6, "stats": { "enhanced_damage": 1080, "stun_duration": 5.5 }, "procChance": 18, "cost": 4 },
       { "level": 7, "stats": { "enhanced_damage": 1260, "stun_duration": 6 }, "procChance": 18, "cost": 5 }
-    ]
+    ],
+    "calc": "proc"
   },
   {
     "id": "conjured_hex",
@@ -116,7 +122,8 @@
       { "level": 5, "stats": { "arcane_break": 75 }, "procChance": 12, "procDurationSec": 3, "cost": 3 },
       { "level": 6, "stats": { "arcane_break": 90 }, "procChance": 12, "procDurationSec": 3.25, "cost": 4 },
       { "level": 7, "stats": { "arcane_break": 105 }, "procChance": 12, "procDurationSec": 3.5, "cost": 5 }
-    ]
+    ],
+    "calc": "toggle"
   },
   {
     "id": "corrosion",
@@ -124,16 +131,17 @@
     "description": "Damage over time effects last longer. Every second a monster is affected by damage over time, the damage they take from that element is increased.",
     "trigger": "passive",
     "triggerNote": "Passive",
-    "primaryStats": ["dot_duration", "damage_increase"],
+    "primaryStats": ["dot_duration", "corrosion_damage_increase"],
     "levels": [
-      { "level": 1, "stats": { "dot_duration": 0.5, "damage_increase": 5 }, "cost": 0 },
-      { "level": 2, "stats": { "dot_duration": 1, "damage_increase": 5 }, "cost": 0 },
-      { "level": 3, "stats": { "dot_duration": 1.5, "damage_increase": 5 }, "cost": 1 },
-      { "level": 4, "stats": { "dot_duration": 2, "damage_increase": 5 }, "cost": 2 },
-      { "level": 5, "stats": { "dot_duration": 2.5, "damage_increase": 5 }, "cost": 3 },
-      { "level": 6, "stats": { "dot_duration": 3, "damage_increase": 5 }, "cost": 4 },
-      { "level": 7, "stats": { "dot_duration": 3.5, "damage_increase": 5 }, "cost": 5 }
-    ]
+      { "level": 1, "stats": { "dot_duration": 0.5, "max_corrosion_stacks": 10, "corrosion_damage_increase": 1 }, "cost": 0 },
+      { "level": 2, "stats": { "dot_duration": 1, "max_corrosion_stacks": 10, "corrosion_damage_increase": 1 }, "cost": 0 },
+      { "level": 3, "stats": { "dot_duration": 1.5, "max_corrosion_stacks": 10, "corrosion_damage_increase": 1 }, "cost": 1 },
+      { "level": 4, "stats": { "dot_duration": 2, "max_corrosion_stacks": 10, "corrosion_damage_increase": 1 }, "cost": 2 },
+      { "level": 5, "stats": { "dot_duration": 2.5, "max_corrosion_stacks": 10, "corrosion_damage_increase": 1 }, "cost": 3 },
+      { "level": 6, "stats": { "dot_duration": 3, "max_corrosion_stacks": 10, "corrosion_damage_increase": 1 }, "cost": 4 },
+      { "level": 7, "stats": { "dot_duration": 3.5, "max_corrosion_stacks": 10, "corrosion_damage_increase": 1 }, "cost": 5 }
+    ],
+    "calc": "toggle"
   },
   {
     "id": "deaths_anguish",
@@ -142,15 +150,17 @@
     "trigger": "on_kill",
     "triggerNote": "OnKill (35%)",
     "primaryStats": ["flat_arcane_skill_damage"],
+    "synergyPerLevel": 125.0,
     "levels": [
-      { "level": 1, "stats": { "flat_arcane_skill_damage": 3439 }, "procChance": 35, "cost": 0 },
-      { "level": 2, "stats": { "flat_arcane_skill_damage": 9002 }, "procChance": 35, "cost": 0 },
-      { "level": 3, "stats": { "flat_arcane_skill_damage": 16946 }, "procChance": 35, "cost": 1 },
-      { "level": 4, "stats": { "flat_arcane_skill_damage": 27970 }, "procChance": 35, "cost": 2 },
-      { "level": 5, "stats": { "flat_arcane_skill_damage": 41874 }, "procChance": 35, "cost": 3 },
-      { "level": 6, "stats": { "flat_arcane_skill_damage": 58658 }, "procChance": 35, "cost": 4 },
-      { "level": 7, "stats": { "flat_arcane_skill_damage": 78322 }, "procChance": 35, "cost": 5 }
-    ]
+      { "level": 1, "stats": { "flat_arcane_skill_damage": 1900 }, "procChance": 35, "cost": 0 },
+      { "level": 2, "stats": { "flat_arcane_skill_damage": 3050 }, "procChance": 35, "cost": 0 },
+      { "level": 3, "stats": { "flat_arcane_skill_damage": 4200 }, "procChance": 35, "cost": 1 },
+      { "level": 4, "stats": { "flat_arcane_skill_damage": 5350 }, "procChance": 35, "cost": 2 },
+      { "level": 5, "stats": { "flat_arcane_skill_damage": 6500 }, "procChance": 35, "cost": 3 },
+      { "level": 6, "stats": { "flat_arcane_skill_damage": 7650 }, "procChance": 35, "cost": 4 },
+      { "level": 7, "stats": { "flat_arcane_skill_damage": 8800 }, "procChance": 35, "cost": 5 }
+    ],
+    "calc": "proc"
   },
   {
     "id": "divine_piercing",
@@ -167,7 +177,8 @@
       { "level": 5, "stats": { "armor_break": 16 }, "cost": 3 },
       { "level": 6, "stats": { "armor_break": 17.5 }, "cost": 4 },
       { "level": 7, "stats": { "armor_break": 19 }, "cost": 5 }
-    ]
+    ],
+    "calc": "stats"
   },
   {
     "id": "doomcannon",
@@ -184,7 +195,8 @@
       { "level": 5, "stats": { "enhanced_damage": 625 }, "procChance": 18, "cost": 3 },
       { "level": 6, "stats": { "enhanced_damage": 750 }, "procChance": 18, "cost": 4 },
       { "level": 7, "stats": { "enhanced_damage": 875 }, "procChance": 18, "cost": 5 }
-    ]
+    ],
+    "calc": "proc"
   },
   {
     "id": "double_swing",
@@ -201,7 +213,8 @@
       { "level": 5, "stats": { "enhanced_damage": 300, "attack_rating": 40 }, "procChance": 15, "cost": 3 },
       { "level": 6, "stats": { "enhanced_damage": 350, "attack_rating": 48 }, "procChance": 15, "cost": 4 },
       { "level": 7, "stats": { "enhanced_damage": 400, "attack_rating": 56 }, "procChance": 15, "cost": 5 }
-    ]
+    ],
+    "calc": "proc"
   },
   {
     "id": "drunkard_mayhem",
@@ -209,16 +222,17 @@
     "description": "Each active buff you have decreases your damage taken.",
     "trigger": "passive",
     "triggerNote": "Passive (per active buff)",
-    "primaryStats": ["all_damage_taken_reduced_pct"],
+    "primaryStats": ["damage_taken_reduced_per_active_buff"],
     "levels": [
-      { "level": 1, "stats": { "all_damage_taken_reduced_pct": 0.75 }, "cost": 0 },
-      { "level": 2, "stats": { "all_damage_taken_reduced_pct": 1 }, "cost": 0 },
-      { "level": 3, "stats": { "all_damage_taken_reduced_pct": 1.25 }, "cost": 1 },
-      { "level": 4, "stats": { "all_damage_taken_reduced_pct": 1.5 }, "cost": 2 },
-      { "level": 5, "stats": { "all_damage_taken_reduced_pct": 1.75 }, "cost": 3 },
-      { "level": 6, "stats": { "all_damage_taken_reduced_pct": 2 }, "cost": 4 },
-      { "level": 7, "stats": { "all_damage_taken_reduced_pct": 2.25 }, "cost": 5 }
-    ]
+      { "level": 1, "stats": { "damage_taken_reduced_per_active_buff": 0.75 }, "cost": 0 },
+      { "level": 2, "stats": { "damage_taken_reduced_per_active_buff": 1 }, "cost": 0 },
+      { "level": 3, "stats": { "damage_taken_reduced_per_active_buff": 1.25 }, "cost": 1 },
+      { "level": 4, "stats": { "damage_taken_reduced_per_active_buff": 1.5 }, "cost": 2 },
+      { "level": 5, "stats": { "damage_taken_reduced_per_active_buff": 1.75 }, "cost": 3 },
+      { "level": 6, "stats": { "damage_taken_reduced_per_active_buff": 2 }, "cost": 4 },
+      { "level": 7, "stats": { "damage_taken_reduced_per_active_buff": 2.25 }, "cost": 5 }
+    ],
+    "calc": "stats"
   },
   {
     "id": "echoes_of_the_void",
@@ -226,16 +240,19 @@
     "description": "Every 30 seconds cast your last used skill dealing increased damage. Cooldown reduced by 0.5s after each kill.",
     "trigger": "periodic",
     "triggerNote": "Every 30s",
-    "primaryStats": ["damage_increase"],
+    "primaryStats": ["recast_damage_increase"],
+    "period": 30,
+    "cooldownPerKill": 0.5,
     "levels": [
-      { "level": 1, "stats": { "damage_increase": 10 }, "cost": 0 },
-      { "level": 2, "stats": { "damage_increase": 20 }, "cost": 0 },
-      { "level": 3, "stats": { "damage_increase": 30 }, "cost": 1 },
-      { "level": 4, "stats": { "damage_increase": 40 }, "cost": 2 },
-      { "level": 5, "stats": { "damage_increase": 50 }, "cost": 3 },
-      { "level": 6, "stats": { "damage_increase": 60 }, "cost": 4 },
-      { "level": 7, "stats": { "damage_increase": 70 }, "cost": 5 }
-    ]
+      { "level": 1, "stats": { "recast_damage_increase": 10 }, "cost": 0 },
+      { "level": 2, "stats": { "recast_damage_increase": 20 }, "cost": 0 },
+      { "level": 3, "stats": { "recast_damage_increase": 30 }, "cost": 1 },
+      { "level": 4, "stats": { "recast_damage_increase": 40 }, "cost": 2 },
+      { "level": 5, "stats": { "recast_damage_increase": 50 }, "cost": 3 },
+      { "level": 6, "stats": { "recast_damage_increase": 60 }, "cost": 4 },
+      { "level": 7, "stats": { "recast_damage_increase": 70 }, "cost": 5 }
+    ],
+    "calc": "proc"
   },
   {
     "id": "elementalist",
@@ -243,16 +260,17 @@
     "description": "Gain magic skill damage for every 100 points of maximum mana.",
     "trigger": "passive",
     "triggerNote": "Passive (per 100 max mana)",
-    "primaryStats": ["magic_skill_damage"],
+    "primaryStats": ["magic_skill_damage_per_100_mana"],
     "levels": [
-      { "level": 1, "stats": { "magic_skill_damage": 0.1 }, "cost": 0 },
-      { "level": 2, "stats": { "magic_skill_damage": 0.2 }, "cost": 0 },
-      { "level": 3, "stats": { "magic_skill_damage": 0.3 }, "cost": 1 },
-      { "level": 4, "stats": { "magic_skill_damage": 0.4 }, "cost": 2 },
-      { "level": 5, "stats": { "magic_skill_damage": 0.5 }, "cost": 3 },
-      { "level": 6, "stats": { "magic_skill_damage": 0.6 }, "cost": 4 },
-      { "level": 7, "stats": { "magic_skill_damage": 0.7 }, "cost": 5 }
-    ]
+      { "level": 1, "stats": { "magic_skill_damage_per_100_mana": 0.1 }, "cost": 0 },
+      { "level": 2, "stats": { "magic_skill_damage_per_100_mana": 0.2 }, "cost": 0 },
+      { "level": 3, "stats": { "magic_skill_damage_per_100_mana": 0.3 }, "cost": 1 },
+      { "level": 4, "stats": { "magic_skill_damage_per_100_mana": 0.4 }, "cost": 2 },
+      { "level": 5, "stats": { "magic_skill_damage_per_100_mana": 0.5 }, "cost": 3 },
+      { "level": 6, "stats": { "magic_skill_damage_per_100_mana": 0.6 }, "cost": 4 },
+      { "level": 7, "stats": { "magic_skill_damage_per_100_mana": 0.7 }, "cost": 5 }
+    ],
+    "calc": "stats"
   },
   {
     "id": "fleet_feet",
@@ -269,7 +287,8 @@
       { "level": 5, "stats": { "dodge_chance": 50 }, "procChance": 8, "procDurationSec": 5, "cost": 3 },
       { "level": 6, "stats": { "dodge_chance": 60 }, "procChance": 8, "procDurationSec": 5, "cost": 4 },
       { "level": 7, "stats": { "dodge_chance": 70 }, "procChance": 8, "procDurationSec": 5, "cost": 5 }
-    ]
+    ],
+    "calc": "toggle"
   },
   {
     "id": "flurry",
@@ -286,7 +305,8 @@
       { "level": 5, "stats": { "enhanced_damage": 700 }, "procChance": 15, "cost": 3 },
       { "level": 6, "stats": { "enhanced_damage": 840 }, "procChance": 15, "cost": 4 },
       { "level": 7, "stats": { "enhanced_damage": 980 }, "procChance": 15, "cost": 5 }
-    ]
+    ],
+    "calc": "proc"
   },
   {
     "id": "freezing_enchant",
@@ -295,15 +315,17 @@
     "trigger": "on_spell_hit",
     "triggerNote": "OnSpellHit (22%)",
     "primaryStats": ["flat_cold_skill_damage", "freeze_duration"],
+    "synergyPerLevel": 140.0,
     "levels": [
-      { "level": 1, "stats": { "flat_cold_skill_damage": 2116, "freeze_duration": 2 }, "procChance": 22, "cost": 0 },
-      { "level": 2, "stats": { "flat_cold_skill_damage": 6082, "freeze_duration": 2.25 }, "procChance": 22, "cost": 0 },
-      { "level": 3, "stats": { "flat_cold_skill_damage": 11647, "freeze_duration": 2.5 }, "procChance": 22, "cost": 1 },
-      { "level": 4, "stats": { "flat_cold_skill_damage": 18713, "freeze_duration": 2.75 }, "procChance": 22, "cost": 2 },
-      { "level": 5, "stats": { "flat_cold_skill_damage": 27279, "freeze_duration": 3 }, "procChance": 22, "cost": 3 },
-      { "level": 6, "stats": { "flat_cold_skill_damage": 37344, "freeze_duration": 3.25 }, "procChance": 22, "cost": 4 },
-      { "level": 7, "stats": { "flat_cold_skill_damage": 48910, "freeze_duration": 3.5 }, "procChance": 22, "cost": 5 }
-    ]
+      { "level": 1, "stats": { "flat_cold_skill_damage": 1000, "freeze_duration": 2 }, "procChance": 22, "cost": 0 },
+      { "level": 2, "stats": { "flat_cold_skill_damage": 1750, "freeze_duration": 2.25 }, "procChance": 22, "cost": 0 },
+      { "level": 3, "stats": { "flat_cold_skill_damage": 2500, "freeze_duration": 2.5 }, "procChance": 22, "cost": 1 },
+      { "level": 4, "stats": { "flat_cold_skill_damage": 3250, "freeze_duration": 2.75 }, "procChance": 22, "cost": 2 },
+      { "level": 5, "stats": { "flat_cold_skill_damage": 4000, "freeze_duration": 3 }, "procChance": 22, "cost": 3 },
+      { "level": 6, "stats": { "flat_cold_skill_damage": 4750, "freeze_duration": 3.25 }, "procChance": 22, "cost": 4 },
+      { "level": 7, "stats": { "flat_cold_skill_damage": 5500, "freeze_duration": 3.5 }, "procChance": 22, "cost": 5 }
+    ],
+    "calc": "proc"
   },
   {
     "id": "graves_grasp",
@@ -312,15 +334,17 @@
     "trigger": "on_spell_hit",
     "triggerNote": "OnSpellHit (8%)",
     "primaryStats": ["flat_arcane_skill_damage", "life"],
+    "synergyPerLevel": 125.0,
     "levels": [
-      { "level": 1, "stats": { "flat_arcane_skill_damage": 2104 }, "procChance": 8, "cost": 0, "meta": { "summon_life": 6000 } },
-      { "level": 2, "stats": { "flat_arcane_skill_damage": 5732 }, "procChance": 8, "cost": 0, "meta": { "summon_life": 7500 } },
-      { "level": 3, "stats": { "flat_arcane_skill_damage": 11235 }, "procChance": 8, "cost": 1, "meta": { "summon_life": 9000 } },
-      { "level": 4, "stats": { "flat_arcane_skill_damage": 18613 }, "procChance": 8, "cost": 2, "meta": { "summon_life": 10500 } },
-      { "level": 5, "stats": { "flat_arcane_skill_damage": 27866 }, "procChance": 8, "cost": 3, "meta": { "summon_life": 12000 } },
-      { "level": 6, "stats": { "flat_arcane_skill_damage": 38994 }, "procChance": 8, "cost": 4, "meta": { "summon_life": 13500 } },
-      { "level": 7, "stats": { "flat_arcane_skill_damage": 52097 }, "procChance": 8, "cost": 5, "meta": { "summon_life": 15000 } }
-    ]
+      { "level": 1, "stats": { "flat_arcane_skill_damage": 925 }, "procChance": 8, "cost": 0, "meta": { "summon_life": 6000 } },
+      { "level": 2, "stats": { "flat_arcane_skill_damage": 1550 }, "procChance": 8, "cost": 0, "meta": { "summon_life": 7500 } },
+      { "level": 3, "stats": { "flat_arcane_skill_damage": 2175 }, "procChance": 8, "cost": 1, "meta": { "summon_life": 9000 } },
+      { "level": 4, "stats": { "flat_arcane_skill_damage": 2800 }, "procChance": 8, "cost": 2, "meta": { "summon_life": 10500 } },
+      { "level": 5, "stats": { "flat_arcane_skill_damage": 3425 }, "procChance": 8, "cost": 3, "meta": { "summon_life": 12000 } },
+      { "level": 6, "stats": { "flat_arcane_skill_damage": 4050 }, "procChance": 8, "cost": 4, "meta": { "summon_life": 13500 } },
+      { "level": 7, "stats": { "flat_arcane_skill_damage": 4675 }, "procChance": 8, "cost": 5, "meta": { "summon_life": 15000 } }
+    ],
+    "calc": "proc"
   },
   {
     "id": "gravity",
@@ -328,23 +352,24 @@
     "description": "You are surrounded by a gravity field slowing and pulling monsters towards you and lowering their damage dealt. The field grows whenever you hit a monster with a spell and decreases in size over time.",
     "trigger": "passive",
     "triggerNote": "Passive (grows on spell hit)",
-    "primaryStats": ["area_of_effect", "enemy_damage_reduced"],
+    "primaryStats": ["area_of_effect", "all_damage_taken_reduced_pct"],
     "levels": [
-      { "level": 1, "stats": { "area_of_effect": 7, "enemy_damage_reduced": 1 }, "cost": 0 },
-      { "level": 2, "stats": { "area_of_effect": 14, "enemy_damage_reduced": 2 }, "cost": 0 },
-      { "level": 3, "stats": { "area_of_effect": 21, "enemy_damage_reduced": 3 }, "cost": 1 },
-      { "level": 4, "stats": { "area_of_effect": 28, "enemy_damage_reduced": 4 }, "cost": 2 },
-      { "level": 5, "stats": { "area_of_effect": 35, "enemy_damage_reduced": 5 }, "cost": 3 },
-      { "level": 6, "stats": { "area_of_effect": 42, "enemy_damage_reduced": 6 }, "cost": 4 },
-      { "level": 7, "stats": { "area_of_effect": 49, "enemy_damage_reduced": 7 }, "cost": 5 }
-    ]
+      { "level": 1, "stats": { "area_of_effect": 7, "all_damage_taken_reduced_pct": 1 }, "cost": 0 },
+      { "level": 2, "stats": { "area_of_effect": 14, "all_damage_taken_reduced_pct": 2 }, "cost": 0 },
+      { "level": 3, "stats": { "area_of_effect": 21, "all_damage_taken_reduced_pct": 3 }, "cost": 1 },
+      { "level": 4, "stats": { "area_of_effect": 28, "all_damage_taken_reduced_pct": 4 }, "cost": 2 },
+      { "level": 5, "stats": { "area_of_effect": 35, "all_damage_taken_reduced_pct": 5 }, "cost": 3 },
+      { "level": 6, "stats": { "area_of_effect": 42, "all_damage_taken_reduced_pct": 6 }, "cost": 4 },
+      { "level": 7, "stats": { "area_of_effect": 49, "all_damage_taken_reduced_pct": 7 }, "cost": 5 }
+    ],
+    "calc": "toggle"
   },
   {
     "id": "gut_rippers_spikeball",
     "name": "Gut Ripper's Spikeball",
     "description": "Summons a deadly Spike Ball to orbit around you for a short period.",
-    "trigger": "on_strike",
-    "triggerNote": "OnStrike (18%)",
+    "trigger": "on_attack",
+    "triggerNote": "OnAttack (18%, 6s cooldown)",
     "primaryStats": ["enhanced_damage"],
     "levels": [
       { "level": 1, "stats": { "enhanced_damage": 160 }, "procChance": 18, "cost": 0 },
@@ -354,7 +379,9 @@
       { "level": 5, "stats": { "enhanced_damage": 480 }, "procChance": 18, "cost": 3 },
       { "level": 6, "stats": { "enhanced_damage": 560 }, "procChance": 18, "cost": 4 },
       { "level": 7, "stats": { "enhanced_damage": 640 }, "procChance": 18, "cost": 5 }
-    ]
+    ],
+    "procCooldown": 6,
+    "calc": "proc"
   },
   {
     "id": "hellfire",
@@ -363,15 +390,17 @@
     "trigger": "on_cast",
     "triggerNote": "OnCast (12%)",
     "primaryStats": ["flat_fire_skill_damage", "increased_burning_damage"],
+    "synergyPerLevel": 120.0,
     "levels": [
-      { "level": 1, "stats": { "flat_fire_skill_damage": 2695, "increased_burning_damage": 50 }, "procChance": 12, "cost": 0 },
-      { "level": 2, "stats": { "flat_fire_skill_damage": 6679, "increased_burning_damage": 55 }, "procChance": 12, "cost": 0 },
-      { "level": 3, "stats": { "flat_fire_skill_damage": 12414, "increased_burning_damage": 60 }, "procChance": 12, "cost": 1 },
-      { "level": 4, "stats": { "flat_fire_skill_damage": 20500, "increased_burning_damage": 65 }, "procChance": 12, "cost": 2 },
-      { "level": 5, "stats": { "flat_fire_skill_damage": 30746, "increased_burning_damage": 70 }, "procChance": 12, "cost": 3 },
-      { "level": 6, "stats": { "flat_fire_skill_damage": 43153, "increased_burning_damage": 75 }, "procChance": 12, "cost": 4 },
-      { "level": 7, "stats": { "flat_fire_skill_damage": 57721, "increased_burning_damage": 80 }, "procChance": 12, "cost": 5 }
-    ]
+      { "level": 1, "stats": { "flat_fire_skill_damage": 1600, "increased_burning_damage": 50 }, "procChance": 12, "cost": 0 },
+      { "level": 2, "stats": { "flat_fire_skill_damage": 2450, "increased_burning_damage": 55 }, "procChance": 12, "cost": 0 },
+      { "level": 3, "stats": { "flat_fire_skill_damage": 3300, "increased_burning_damage": 60 }, "procChance": 12, "cost": 1 },
+      { "level": 4, "stats": { "flat_fire_skill_damage": 4150, "increased_burning_damage": 65 }, "procChance": 12, "cost": 2 },
+      { "level": 5, "stats": { "flat_fire_skill_damage": 5000, "increased_burning_damage": 70 }, "procChance": 12, "cost": 3 },
+      { "level": 6, "stats": { "flat_fire_skill_damage": 5850, "increased_burning_damage": 75 }, "procChance": 12, "cost": 4 },
+      { "level": 7, "stats": { "flat_fire_skill_damage": 6700, "increased_burning_damage": 80 }, "procChance": 12, "cost": 5 }
+    ],
+    "calc": "proc"
   },
   {
     "id": "homing_missiles",
@@ -388,7 +417,8 @@
       { "level": 5, "stats": { "enhanced_damage": 900 }, "procChance": 18, "cost": 3 },
       { "level": 6, "stats": { "enhanced_damage": 1080 }, "procChance": 18, "cost": 4 },
       { "level": 7, "stats": { "enhanced_damage": 1260 }, "procChance": 18, "cost": 5 }
-    ]
+    ],
+    "calc": "proc"
   },
   {
     "id": "impetus",
@@ -405,7 +435,8 @@
       { "level": 5, "stats": { "enhanced_damage": 875, "stun_duration": 2 }, "procChance": 15, "cost": 3 },
       { "level": 6, "stats": { "enhanced_damage": 1025, "stun_duration": 2 }, "procChance": 15, "cost": 4 },
       { "level": 7, "stats": { "enhanced_damage": 1175, "stun_duration": 2 }, "procChance": 15, "cost": 5 }
-    ]
+    ],
+    "calc": "proc"
   },
   {
     "id": "infinity",
@@ -413,16 +444,17 @@
     "description": "Casting an elemental skill has a chance to double cast it.",
     "trigger": "passive",
     "triggerNote": "Passive (chance per cast)",
-    "primaryStats": ["double_cast_chance"],
+    "primaryStats": ["multicast_chance"],
     "levels": [
-      { "level": 1, "stats": { "double_cast_chance": 2 }, "cost": 0 },
-      { "level": 2, "stats": { "double_cast_chance": 4 }, "cost": 0 },
-      { "level": 3, "stats": { "double_cast_chance": 6 }, "cost": 1 },
-      { "level": 4, "stats": { "double_cast_chance": 8 }, "cost": 2 },
-      { "level": 5, "stats": { "double_cast_chance": 10 }, "cost": 3 },
-      { "level": 6, "stats": { "double_cast_chance": 12 }, "cost": 4 },
-      { "level": 7, "stats": { "double_cast_chance": 14 }, "cost": 5 }
-    ]
+      { "level": 1, "stats": { "multicast_chance": 2 }, "cost": 0 },
+      { "level": 2, "stats": { "multicast_chance": 4 }, "cost": 0 },
+      { "level": 3, "stats": { "multicast_chance": 6 }, "cost": 1 },
+      { "level": 4, "stats": { "multicast_chance": 8 }, "cost": 2 },
+      { "level": 5, "stats": { "multicast_chance": 10 }, "cost": 3 },
+      { "level": 6, "stats": { "multicast_chance": 12 }, "cost": 4 },
+      { "level": 7, "stats": { "multicast_chance": 14 }, "cost": 5 }
+    ],
+    "calc": "stats"
   },
   {
     "id": "lethal_tempo",
@@ -439,7 +471,8 @@
       { "level": 5, "stats": { "increased_attack_speed": 80, "crit_damage": 40 }, "procChance": 8, "procDurationSec": 2, "cost": 3 },
       { "level": 6, "stats": { "increased_attack_speed": 90, "crit_damage": 48 }, "procChance": 8, "procDurationSec": 2, "cost": 4 },
       { "level": 7, "stats": { "increased_attack_speed": 100, "crit_damage": 56 }, "procChance": 8, "procDurationSec": 2, "cost": 5 }
-    ]
+    ],
+    "calc": "toggle"
   },
   {
     "id": "longevity",
@@ -447,16 +480,17 @@
     "description": "All orbiting skills last longer and pulse when hitting monsters dealing damage in area of effect.",
     "trigger": "passive",
     "triggerNote": "Passive (orbiting skills)",
-    "primaryStats": ["damage_increase"],
+    "primaryStats": ["orbital_skill_damage", "orbital_skill_duration"],
     "levels": [
-      { "level": 1, "stats": { "damage_increase": 2.25 }, "cost": 0, "meta": { "orbital_duration_pct": 1.5 } },
-      { "level": 2, "stats": { "damage_increase": 4.5 }, "cost": 0, "meta": { "orbital_duration_pct": 3 } },
-      { "level": 3, "stats": { "damage_increase": 6.75 }, "cost": 1, "meta": { "orbital_duration_pct": 4.5 } },
-      { "level": 4, "stats": { "damage_increase": 9 }, "cost": 2, "meta": { "orbital_duration_pct": 6 } },
-      { "level": 5, "stats": { "damage_increase": 11.25 }, "cost": 3, "meta": { "orbital_duration_pct": 7.5 } },
-      { "level": 6, "stats": { "damage_increase": 13.5 }, "cost": 4, "meta": { "orbital_duration_pct": 9 } },
-      { "level": 7, "stats": { "damage_increase": 15.75 }, "cost": 5, "meta": { "orbital_duration_pct": 10.5 } }
-    ]
+      { "level": 1, "stats": { "orbital_skill_damage": 2.25, "orbital_skill_duration": 1.5 }, "cost": 0 },
+      { "level": 2, "stats": { "orbital_skill_damage": 4.5, "orbital_skill_duration": 3 }, "cost": 0 },
+      { "level": 3, "stats": { "orbital_skill_damage": 6.75, "orbital_skill_duration": 4.5 }, "cost": 1 },
+      { "level": 4, "stats": { "orbital_skill_damage": 9, "orbital_skill_duration": 6 }, "cost": 2 },
+      { "level": 5, "stats": { "orbital_skill_damage": 11.25, "orbital_skill_duration": 7.5 }, "cost": 3 },
+      { "level": 6, "stats": { "orbital_skill_damage": 13.5, "orbital_skill_duration": 9 }, "cost": 4 },
+      { "level": 7, "stats": { "orbital_skill_damage": 15.75, "orbital_skill_duration": 10.5 }, "cost": 5 }
+    ],
+    "calc": "stats"
   },
   {
     "id": "magefury",
@@ -465,15 +499,17 @@
     "trigger": "on_cast",
     "triggerNote": "OnCast (18%)",
     "primaryStats": ["flat_arcane_skill_damage"],
+    "synergyPerLevel": 110.0,
     "levels": [
-      { "level": 1, "stats": { "flat_arcane_skill_damage": 2491 }, "procChance": 18, "cost": 0 },
-      { "level": 2, "stats": { "flat_arcane_skill_damage": 5782 }, "procChance": 18, "cost": 0 },
-      { "level": 3, "stats": { "flat_arcane_skill_damage": 10154 }, "procChance": 18, "cost": 1 },
-      { "level": 4, "stats": { "flat_arcane_skill_damage": 15807 }, "procChance": 18, "cost": 2 },
-      { "level": 5, "stats": { "flat_arcane_skill_damage": 22741 }, "procChance": 18, "cost": 3 },
-      { "level": 6, "stats": { "flat_arcane_skill_damage": 30956 }, "procChance": 18, "cost": 4 },
-      { "level": 7, "stats": { "flat_arcane_skill_damage": 40452 }, "procChance": 18, "cost": 5 }
-    ]
+      { "level": 1, "stats": { "flat_arcane_skill_damage": 1600 }, "procChance": 18, "cost": 0 },
+      { "level": 2, "stats": { "flat_arcane_skill_damage": 2350 }, "procChance": 18, "cost": 0 },
+      { "level": 3, "stats": { "flat_arcane_skill_damage": 3100 }, "procChance": 18, "cost": 1 },
+      { "level": 4, "stats": { "flat_arcane_skill_damage": 3850 }, "procChance": 18, "cost": 2 },
+      { "level": 5, "stats": { "flat_arcane_skill_damage": 4600 }, "procChance": 18, "cost": 3 },
+      { "level": 6, "stats": { "flat_arcane_skill_damage": 5350 }, "procChance": 18, "cost": 4 },
+      { "level": 7, "stats": { "flat_arcane_skill_damage": 6100 }, "procChance": 18, "cost": 5 }
+    ],
+    "calc": "proc"
   },
   {
     "id": "magistriker",
@@ -481,16 +517,17 @@
     "description": "Your magic skill damage is increased based on your total attacks per second.",
     "trigger": "passive",
     "triggerNote": "Passive (per attack/s)",
-    "primaryStats": ["magic_skill_damage"],
+    "primaryStats": ["magic_skill_damage_per_attack_per_second"],
     "levels": [
-      { "level": 1, "stats": { "magic_skill_damage": 2.5 }, "cost": 0 },
-      { "level": 2, "stats": { "magic_skill_damage": 5 }, "cost": 0 },
-      { "level": 3, "stats": { "magic_skill_damage": 7.5 }, "cost": 1 },
-      { "level": 4, "stats": { "magic_skill_damage": 10 }, "cost": 2 },
-      { "level": 5, "stats": { "magic_skill_damage": 12.5 }, "cost": 3 },
-      { "level": 6, "stats": { "magic_skill_damage": 15 }, "cost": 4 },
-      { "level": 7, "stats": { "magic_skill_damage": 17.5 }, "cost": 5 }
-    ]
+      { "level": 1, "stats": { "magic_skill_damage_per_attack_per_second": 1 }, "cost": 0 },
+      { "level": 2, "stats": { "magic_skill_damage_per_attack_per_second": 2 }, "cost": 0 },
+      { "level": 3, "stats": { "magic_skill_damage_per_attack_per_second": 3 }, "cost": 1 },
+      { "level": 4, "stats": { "magic_skill_damage_per_attack_per_second": 4 }, "cost": 2 },
+      { "level": 5, "stats": { "magic_skill_damage_per_attack_per_second": 5 }, "cost": 3 },
+      { "level": 6, "stats": { "magic_skill_damage_per_attack_per_second": 6 }, "cost": 4 },
+      { "level": 7, "stats": { "magic_skill_damage_per_attack_per_second": 7 }, "cost": 5 }
+    ],
+    "calc": "stats"
   },
   {
     "id": "minion_mastery",
@@ -498,16 +535,17 @@
     "description": "Increases your summons attack speed. The bonus gets doubled for 8 seconds whenever you summon or command them.",
     "trigger": "passive",
     "triggerNote": "Passive (summons)",
-    "primaryStats": ["increased_attack_speed"],
+    "primaryStats": ["summon_attack_speed"],
     "levels": [
-      { "level": 1, "stats": { "increased_attack_speed": 8 }, "cost": 0 },
-      { "level": 2, "stats": { "increased_attack_speed": 16 }, "cost": 0 },
-      { "level": 3, "stats": { "increased_attack_speed": 24 }, "cost": 1 },
-      { "level": 4, "stats": { "increased_attack_speed": 32 }, "cost": 2 },
-      { "level": 5, "stats": { "increased_attack_speed": 40 }, "cost": 3 },
-      { "level": 6, "stats": { "increased_attack_speed": 48 }, "cost": 4 },
-      { "level": 7, "stats": { "increased_attack_speed": 56 }, "cost": 5 }
-    ]
+      { "level": 1, "stats": { "summon_attack_speed": 8 }, "cost": 0 },
+      { "level": 2, "stats": { "summon_attack_speed": 16 }, "cost": 0 },
+      { "level": 3, "stats": { "summon_attack_speed": 24 }, "cost": 1 },
+      { "level": 4, "stats": { "summon_attack_speed": 32 }, "cost": 2 },
+      { "level": 5, "stats": { "summon_attack_speed": 40 }, "cost": 3 },
+      { "level": 6, "stats": { "summon_attack_speed": 48 }, "cost": 4 },
+      { "level": 7, "stats": { "summon_attack_speed": 56 }, "cost": 5 }
+    ],
+    "calc": "stats"
   },
   {
     "id": "mixture_of_doom",
@@ -524,7 +562,8 @@
       { "level": 5, "stats": { "poison_break": 75 }, "procChance": 20, "cost": 3 },
       { "level": 6, "stats": { "poison_break": 90 }, "procChance": 20, "cost": 4 },
       { "level": 7, "stats": { "poison_break": 105 }, "procChance": 20, "cost": 5 }
-    ]
+    ],
+    "calc": "toggle"
   },
   {
     "id": "monstrosity",
@@ -532,16 +571,18 @@
     "description": "Dealing elemental damage to monsters grants you a stack of Manastream increasing your magic skill damage. 1000 stacks grants you 80% reduced mana costs, increased cast rate and increased cooldown recovery rate for a short period and dropping the stacks.",
     "trigger": "stacking",
     "triggerNote": "1000 stacks, 15s",
-    "primaryStats": ["magic_skill_damage", "faster_cast_rate", "skill_haste"],
+    "primaryStats": ["manastream_magic_skill_damage"],
+    "burstStacks": 1000,
     "levels": [
-      { "level": 1, "stats": { "magic_skill_damage": 0.02, "faster_cast_rate": 10, "skill_haste": 10 }, "procDurationSec": 15, "cost": 0, "meta": { "max_stacks": 1000 } },
-      { "level": 2, "stats": { "magic_skill_damage": 0.04, "faster_cast_rate": 20, "skill_haste": 20 }, "procDurationSec": 15, "cost": 0, "meta": { "max_stacks": 1000 } },
-      { "level": 3, "stats": { "magic_skill_damage": 0.06, "faster_cast_rate": 30, "skill_haste": 30 }, "procDurationSec": 15, "cost": 1, "meta": { "max_stacks": 1000 } },
-      { "level": 4, "stats": { "magic_skill_damage": 0.08, "faster_cast_rate": 40, "skill_haste": 40 }, "procDurationSec": 15, "cost": 2, "meta": { "max_stacks": 1000 } },
-      { "level": 5, "stats": { "magic_skill_damage": 0.1, "faster_cast_rate": 50, "skill_haste": 50 }, "procDurationSec": 15, "cost": 3, "meta": { "max_stacks": 1000 } },
-      { "level": 6, "stats": { "magic_skill_damage": 0.12, "faster_cast_rate": 60, "skill_haste": 60 }, "procDurationSec": 15, "cost": 4, "meta": { "max_stacks": 1000 } },
-      { "level": 7, "stats": { "magic_skill_damage": 0.14, "faster_cast_rate": 70, "skill_haste": 70 }, "procDurationSec": 15, "cost": 5, "meta": { "max_stacks": 1000 } }
-    ]
+      { "level": 1, "stats": { "max_manastream_stacks": 1000, "manastream_magic_skill_damage": 0.02 }, "procDurationSec": 15, "cost": 0, "meta": { "max_stacks": 1000 }, "burst": { "mana_cost_reduction": 80, "faster_cast_rate": 10, "skill_haste": 10 } },
+      { "level": 2, "stats": { "max_manastream_stacks": 1000, "manastream_magic_skill_damage": 0.04 }, "procDurationSec": 15, "cost": 0, "meta": { "max_stacks": 1000 }, "burst": { "mana_cost_reduction": 80, "faster_cast_rate": 20, "skill_haste": 20 } },
+      { "level": 3, "stats": { "max_manastream_stacks": 1000, "manastream_magic_skill_damage": 0.06 }, "procDurationSec": 15, "cost": 1, "meta": { "max_stacks": 1000 }, "burst": { "mana_cost_reduction": 80, "faster_cast_rate": 30, "skill_haste": 30 } },
+      { "level": 4, "stats": { "max_manastream_stacks": 1000, "manastream_magic_skill_damage": 0.08 }, "procDurationSec": 15, "cost": 2, "meta": { "max_stacks": 1000 }, "burst": { "mana_cost_reduction": 80, "faster_cast_rate": 40, "skill_haste": 40 } },
+      { "level": 5, "stats": { "max_manastream_stacks": 1000, "manastream_magic_skill_damage": 0.1 }, "procDurationSec": 15, "cost": 3, "meta": { "max_stacks": 1000 }, "burst": { "mana_cost_reduction": 80, "faster_cast_rate": 50, "skill_haste": 50 } },
+      { "level": 6, "stats": { "max_manastream_stacks": 1000, "manastream_magic_skill_damage": 0.12 }, "procDurationSec": 15, "cost": 4, "meta": { "max_stacks": 1000 }, "burst": { "mana_cost_reduction": 80, "faster_cast_rate": 60, "skill_haste": 60 } },
+      { "level": 7, "stats": { "max_manastream_stacks": 1000, "manastream_magic_skill_damage": 0.14 }, "procDurationSec": 15, "cost": 5, "meta": { "max_stacks": 1000 }, "burst": { "mana_cost_reduction": 80, "faster_cast_rate": 70, "skill_haste": 70 } }
+    ],
+    "calc": "stats"
   },
   {
     "id": "mystic_insight",
@@ -558,7 +599,8 @@
       { "level": 5, "stats": { "spell_crit_chance": 5, "spell_crit_damage": 20 }, "cost": 4 },
       { "level": 6, "stats": { "spell_crit_chance": 5, "spell_crit_damage": 24 }, "cost": 5 },
       { "level": 7, "stats": { "spell_crit_chance": 5, "spell_crit_damage": 28 }, "cost": 6 }
-    ]
+    ],
+    "calc": "stats"
   },
   {
     "id": "mystic_orb",
@@ -567,15 +609,17 @@
     "trigger": "on_cast",
     "triggerNote": "OnCast (15%)",
     "primaryStats": ["flat_arcane_skill_damage", "mana_replenish"],
+    "synergyPerLevel": 100.0,
     "levels": [
-      { "level": 1, "stats": { "flat_arcane_skill_damage": 2525, "mana_replenish": 50 }, "procChance": 15, "cost": 0 },
-      { "level": 2, "stats": { "flat_arcane_skill_damage": 5999, "mana_replenish": 60 }, "procChance": 15, "cost": 1 },
-      { "level": 3, "stats": { "flat_arcane_skill_damage": 10654, "mana_replenish": 70 }, "procChance": 15, "cost": 2 },
-      { "level": 4, "stats": { "flat_arcane_skill_damage": 16690, "mana_replenish": 80 }, "procChance": 15, "cost": 3 },
-      { "level": 5, "stats": { "flat_arcane_skill_damage": 24007, "mana_replenish": 90 }, "procChance": 15, "cost": 4 },
-      { "level": 6, "stats": { "flat_arcane_skill_damage": 32605, "mana_replenish": 100 }, "procChance": 15, "cost": 5 },
-      { "level": 7, "stats": { "flat_arcane_skill_damage": 42484, "mana_replenish": 110 }, "procChance": 15, "cost": 6 }
-    ]
+      { "level": 1, "stats": { "flat_arcane_skill_damage": 1600, "mana_replenish": 50 }, "procChance": 15, "cost": 0 },
+      { "level": 2, "stats": { "flat_arcane_skill_damage": 2450, "mana_replenish": 60 }, "procChance": 15, "cost": 1 },
+      { "level": 3, "stats": { "flat_arcane_skill_damage": 3300, "mana_replenish": 70 }, "procChance": 15, "cost": 2 },
+      { "level": 4, "stats": { "flat_arcane_skill_damage": 4150, "mana_replenish": 80 }, "procChance": 15, "cost": 3 },
+      { "level": 5, "stats": { "flat_arcane_skill_damage": 5000, "mana_replenish": 90 }, "procChance": 15, "cost": 4 },
+      { "level": 6, "stats": { "flat_arcane_skill_damage": 5850, "mana_replenish": 100 }, "procChance": 15, "cost": 5 },
+      { "level": 7, "stats": { "flat_arcane_skill_damage": 6700, "mana_replenish": 110 }, "procChance": 15, "cost": 6 }
+    ],
+    "calc": "proc"
   },
   {
     "id": "nordic_winter",
@@ -583,16 +627,17 @@
     "description": "Cold damage has a chance to stack freeze on monsters. At 5 stacks inflict Deep Freeze which deals 50% of incoming damage as cold damage for 5 seconds and causes the monster to take increased damage.",
     "trigger": "on_hit",
     "triggerNote": "OnHit (30%)",
-    "primaryStats": ["damage_amplification"],
+    "primaryStats": ["damage"],
     "levels": [
-      { "level": 1, "stats": { "damage_amplification": 17.5 }, "procChance": 30, "cost": 0 },
-      { "level": 2, "stats": { "damage_amplification": 35 }, "procChance": 30, "cost": 1 },
-      { "level": 3, "stats": { "damage_amplification": 52.5 }, "procChance": 30, "cost": 2 },
-      { "level": 4, "stats": { "damage_amplification": 70 }, "procChance": 30, "cost": 3 },
-      { "level": 5, "stats": { "damage_amplification": 87.5 }, "procChance": 30, "cost": 4 },
-      { "level": 6, "stats": { "damage_amplification": 105 }, "procChance": 30, "cost": 5 },
-      { "level": 7, "stats": { "damage_amplification": 122.5 }, "procChance": 30, "cost": 6 }
-    ]
+      { "level": 1, "stats": { "damage": 15.5 }, "procChance": 30, "cost": 0 },
+      { "level": 2, "stats": { "damage": 31 }, "procChance": 30, "cost": 1 },
+      { "level": 3, "stats": { "damage": 46.5 }, "procChance": 30, "cost": 2 },
+      { "level": 4, "stats": { "damage": 62 }, "procChance": 30, "cost": 3 },
+      { "level": 5, "stats": { "damage": 77.5 }, "procChance": 30, "cost": 4 },
+      { "level": 6, "stats": { "damage": 93 }, "procChance": 30, "cost": 5 },
+      { "level": 7, "stats": { "damage": 108.5 }, "procChance": 30, "cost": 6 }
+    ],
+    "calc": "toggle"
   },
   {
     "id": "odins_wrath",
@@ -609,11 +654,12 @@
       { "level": 5, "stats": { "enhanced_damage": 900 }, "procChance": 15, "cost": 4 },
       { "level": 6, "stats": { "enhanced_damage": 1080 }, "procChance": 15, "cost": 5 },
       { "level": 7, "stats": { "enhanced_damage": 1260 }, "procChance": 15, "cost": 6 }
-    ]
+    ],
+    "calc": "proc"
   },
   {
     "id": "overloaded",
-    "name": "Overloaded",
+    "name": "Overloader",
     "description": "When using a ranged weapon your attacks gain increased projectile speed and critical strike damage.",
     "trigger": "passive",
     "triggerNote": "Passive (ranged only)",
@@ -627,7 +673,8 @@
       { "level": 5, "stats": { "projectile_speed": 25, "crit_damage": 75 }, "cost": 4 },
       { "level": 6, "stats": { "projectile_speed": 30, "crit_damage": 90 }, "cost": 5 },
       { "level": 7, "stats": { "projectile_speed": 35, "crit_damage": 105 }, "cost": 6 }
-    ]
+    ],
+    "calc": "toggle"
   },
   {
     "id": "powder_keg",
@@ -644,7 +691,8 @@
       { "level": 5, "stats": { "enhanced_damage": 950 }, "procChance": 15, "cost": 4 },
       { "level": 6, "stats": { "enhanced_damage": 1130 }, "procChance": 15, "cost": 5 },
       { "level": 7, "stats": { "enhanced_damage": 1310 }, "procChance": 15, "cost": 6 }
-    ]
+    ],
+    "calc": "proc"
   },
   {
     "id": "powershot",
@@ -661,7 +709,8 @@
       { "level": 5, "stats": { "enhanced_damage": 900 }, "procChance": 35, "cost": 4 },
       { "level": 6, "stats": { "enhanced_damage": 1080 }, "procChance": 35, "cost": 5 },
       { "level": 7, "stats": { "enhanced_damage": 1260 }, "procChance": 35, "cost": 6 }
-    ]
+    ],
+    "calc": "proc"
   },
   {
     "id": "precision",
@@ -678,7 +727,8 @@
       { "level": 5, "stats": { "defense_ignored": 50 }, "cost": 4 },
       { "level": 6, "stats": { "defense_ignored": 60 }, "cost": 5 },
       { "level": 7, "stats": { "defense_ignored": 70 }, "cost": 6 }
-    ]
+    ],
+    "calc": "stats"
   },
   {
     "id": "rupturing_strike",
@@ -695,7 +745,8 @@
       { "level": 5, "stats": { "enhanced_damage": 300, "increased_bleeding_damage": 90 }, "procChance": 8, "cost": 4 },
       { "level": 6, "stats": { "enhanced_damage": 350, "increased_bleeding_damage": 108 }, "procChance": 8, "cost": 5 },
       { "level": 7, "stats": { "enhanced_damage": 400, "increased_bleeding_damage": 126 }, "procChance": 8, "cost": 6 }
-    ]
+    ],
+    "calc": "proc"
   },
   {
     "id": "seed_of_destruction",
@@ -704,15 +755,17 @@
     "trigger": "on_spell_hit",
     "triggerNote": "OnSpellHit (8%, 3s)",
     "primaryStats": ["flat_arcane_skill_damage"],
+    "synergyPerLevel": 125.0,
     "levels": [
-      { "level": 1, "stats": { "flat_arcane_skill_damage": 2737 }, "procChance": 8, "procDurationSec": 3, "cost": 0 },
-      { "level": 2, "stats": { "flat_arcane_skill_damage": 6873 }, "procChance": 8, "procDurationSec": 3, "cost": 1 },
-      { "level": 3, "stats": { "flat_arcane_skill_damage": 12678 }, "procChance": 8, "procDurationSec": 3, "cost": 2 },
-      { "level": 4, "stats": { "flat_arcane_skill_damage": 20852 }, "procChance": 8, "procDurationSec": 3, "cost": 3 },
-      { "level": 5, "stats": { "flat_arcane_skill_damage": 31097 }, "procChance": 8, "procDurationSec": 3, "cost": 4 },
-      { "level": 6, "stats": { "flat_arcane_skill_damage": 43413 }, "procChance": 8, "procDurationSec": 3, "cost": 5 },
-      { "level": 7, "stats": { "flat_arcane_skill_damage": 57800 }, "procChance": 8, "procDurationSec": 3, "cost": 6 }
-    ]
+      { "level": 1, "stats": { "flat_arcane_skill_damage": 1600 }, "procChance": 8, "procDurationSec": 3, "cost": 0 },
+      { "level": 2, "stats": { "flat_arcane_skill_damage": 2450 }, "procChance": 8, "procDurationSec": 3, "cost": 1 },
+      { "level": 3, "stats": { "flat_arcane_skill_damage": 3300 }, "procChance": 8, "procDurationSec": 3, "cost": 2 },
+      { "level": 4, "stats": { "flat_arcane_skill_damage": 4150 }, "procChance": 8, "procDurationSec": 3, "cost": 3 },
+      { "level": 5, "stats": { "flat_arcane_skill_damage": 5000 }, "procChance": 8, "procDurationSec": 3, "cost": 4 },
+      { "level": 6, "stats": { "flat_arcane_skill_damage": 5850 }, "procChance": 8, "procDurationSec": 3, "cost": 5 },
+      { "level": 7, "stats": { "flat_arcane_skill_damage": 6700 }, "procChance": 8, "procDurationSec": 3, "cost": 6 }
+    ],
+    "calc": "proc"
   },
   {
     "id": "shadow_barrage",
@@ -721,15 +774,17 @@
     "trigger": "on_cast",
     "triggerNote": "OnCast (15%)",
     "primaryStats": ["flat_arcane_skill_damage"],
+    "synergyPerLevel": 110.0,
     "levels": [
-      { "level": 1, "stats": { "flat_arcane_skill_damage": 2610 }, "procChance": 15, "cost": 0, "meta": { "projectiles": 2 } },
-      { "level": 2, "stats": { "flat_arcane_skill_damage": 6339 }, "procChance": 15, "cost": 1, "meta": { "projectiles": 3 } },
-      { "level": 3, "stats": { "flat_arcane_skill_damage": 11939 }, "procChance": 15, "cost": 2, "meta": { "projectiles": 4 } },
-      { "level": 4, "stats": { "flat_arcane_skill_damage": 19408 }, "procChance": 15, "cost": 3, "meta": { "projectiles": 5 } },
-      { "level": 5, "stats": { "flat_arcane_skill_damage": 28747 }, "procChance": 15, "cost": 4, "meta": { "projectiles": 6 } },
-      { "level": 6, "stats": { "flat_arcane_skill_damage": 39957 }, "procChance": 15, "cost": 5, "meta": { "projectiles": 7 } },
-      { "level": 7, "stats": { "flat_arcane_skill_damage": 53036 }, "procChance": 15, "cost": 6, "meta": { "projectiles": 8 } }
-    ]
+      { "level": 1, "stats": { "flat_arcane_skill_damage": 1600 }, "procChance": 15, "cost": 0, "meta": { "projectiles": 2 } },
+      { "level": 2, "stats": { "flat_arcane_skill_damage": 2450 }, "procChance": 15, "cost": 1, "meta": { "projectiles": 3 } },
+      { "level": 3, "stats": { "flat_arcane_skill_damage": 3300 }, "procChance": 15, "cost": 2, "meta": { "projectiles": 4 } },
+      { "level": 4, "stats": { "flat_arcane_skill_damage": 4150 }, "procChance": 15, "cost": 3, "meta": { "projectiles": 5 } },
+      { "level": 5, "stats": { "flat_arcane_skill_damage": 5000 }, "procChance": 15, "cost": 4, "meta": { "projectiles": 6 } },
+      { "level": 6, "stats": { "flat_arcane_skill_damage": 5850 }, "procChance": 15, "cost": 5, "meta": { "projectiles": 7 } },
+      { "level": 7, "stats": { "flat_arcane_skill_damage": 6700 }, "procChance": 15, "cost": 6, "meta": { "projectiles": 8 } }
+    ],
+    "calc": "proc"
   },
   {
     "id": "shadows_grasp",
@@ -738,15 +793,17 @@
     "trigger": "on_cast",
     "triggerNote": "OnCast (18%)",
     "primaryStats": ["flat_arcane_skill_damage"],
+    "synergyPerLevel": 100.0,
     "levels": [
-      { "level": 1, "stats": { "flat_arcane_skill_damage": 2479 }, "procChance": 18, "cost": 0 },
-      { "level": 2, "stats": { "flat_arcane_skill_damage": 6158 }, "procChance": 18, "cost": 1 },
-      { "level": 3, "stats": { "flat_arcane_skill_damage": 11508 }, "procChance": 18, "cost": 2 },
-      { "level": 4, "stats": { "flat_arcane_skill_damage": 18729 }, "procChance": 18, "cost": 3 },
-      { "level": 5, "stats": { "flat_arcane_skill_damage": 27821 }, "procChance": 18, "cost": 4 },
-      { "level": 6, "stats": { "flat_arcane_skill_damage": 38784 }, "procChance": 18, "cost": 5 },
-      { "level": 7, "stats": { "flat_arcane_skill_damage": 51618 }, "procChance": 18, "cost": 6 }
-    ]
+      { "level": 1, "stats": { "flat_arcane_skill_damage": 1500 }, "procChance": 18, "cost": 0 },
+      { "level": 2, "stats": { "flat_arcane_skill_damage": 2400 }, "procChance": 18, "cost": 1 },
+      { "level": 3, "stats": { "flat_arcane_skill_damage": 3300 }, "procChance": 18, "cost": 2 },
+      { "level": 4, "stats": { "flat_arcane_skill_damage": 4200 }, "procChance": 18, "cost": 3 },
+      { "level": 5, "stats": { "flat_arcane_skill_damage": 5100 }, "procChance": 18, "cost": 4 },
+      { "level": 6, "stats": { "flat_arcane_skill_damage": 6000 }, "procChance": 18, "cost": 5 },
+      { "level": 7, "stats": { "flat_arcane_skill_damage": 6900 }, "procChance": 18, "cost": 6 }
+    ],
+    "calc": "proc"
   },
   {
     "id": "shroom_of_doom",
@@ -755,15 +812,17 @@
     "trigger": "on_cast",
     "triggerNote": "OnCast (15%)",
     "primaryStats": ["flat_poison_skill_damage", "extra_damage_poisoned"],
+    "synergyPerLevel": 110.0,
     "levels": [
-      { "level": 1, "stats": { "flat_poison_skill_damage": 3235, "extra_damage_poisoned": 50 }, "procChance": 15, "cost": 0 },
-      { "level": 2, "stats": { "flat_poison_skill_damage": 8719, "extra_damage_poisoned": 55 }, "procChance": 15, "cost": 1 },
-      { "level": 3, "stats": { "flat_poison_skill_damage": 16954, "extra_damage_poisoned": 60 }, "procChance": 15, "cost": 2 },
-      { "level": 4, "stats": { "flat_poison_skill_damage": 27938, "extra_damage_poisoned": 65 }, "procChance": 15, "cost": 3 },
-      { "level": 5, "stats": { "flat_poison_skill_damage": 41672, "extra_damage_poisoned": 70 }, "procChance": 15, "cost": 4 },
-      { "level": 6, "stats": { "flat_poison_skill_damage": 58267, "extra_damage_poisoned": 75 }, "procChance": 15, "cost": 5 },
-      { "level": 7, "stats": { "flat_poison_skill_damage": 77723, "extra_damage_poisoned": 80 }, "procChance": 15, "cost": 6 }
-    ]
+      { "level": 1, "stats": { "flat_poison_skill_damage": 1600, "extra_damage_poisoned": 50 }, "procChance": 15, "cost": 0 },
+      { "level": 2, "stats": { "flat_poison_skill_damage": 2450, "extra_damage_poisoned": 55 }, "procChance": 15, "cost": 1 },
+      { "level": 3, "stats": { "flat_poison_skill_damage": 3300, "extra_damage_poisoned": 60 }, "procChance": 15, "cost": 2 },
+      { "level": 4, "stats": { "flat_poison_skill_damage": 4150, "extra_damage_poisoned": 65 }, "procChance": 15, "cost": 3 },
+      { "level": 5, "stats": { "flat_poison_skill_damage": 5000, "extra_damage_poisoned": 70 }, "procChance": 15, "cost": 4 },
+      { "level": 6, "stats": { "flat_poison_skill_damage": 5850, "extra_damage_poisoned": 75 }, "procChance": 15, "cost": 5 },
+      { "level": 7, "stats": { "flat_poison_skill_damage": 6700, "extra_damage_poisoned": 80 }, "procChance": 15, "cost": 6 }
+    ],
+    "calc": "proc"
   },
   {
     "id": "singularity",
@@ -780,7 +839,8 @@
       { "level": 5, "stats": { "area_of_effect": 110 }, "cost": 4 },
       { "level": 6, "stats": { "area_of_effect": 125 }, "cost": 5 },
       { "level": 7, "stats": { "area_of_effect": 140 }, "cost": 6 }
-    ]
+    ],
+    "calc": "toggle"
   },
   {
     "id": "soul_tap",
@@ -797,7 +857,8 @@
       { "level": 5, "stats": { "life_steal": 45 }, "procChance": 8, "procDurationSec": 5.6, "cost": 4 },
       { "level": 6, "stats": { "life_steal": 54 }, "procChance": 8, "procDurationSec": 6, "cost": 5 },
       { "level": 7, "stats": { "life_steal": 63 }, "procChance": 8, "procDurationSec": 6.4, "cost": 6 }
-    ]
+    ],
+    "calc": "toggle"
   },
   {
     "id": "spell_slinger",
@@ -814,7 +875,8 @@
       { "level": 5, "stats": { "magic_skill_damage": 10, "faster_cast_rate": 5 }, "cost": 4 },
       { "level": 6, "stats": { "magic_skill_damage": 12, "faster_cast_rate": 5 }, "cost": 5 },
       { "level": 7, "stats": { "magic_skill_damage": 14, "faster_cast_rate": 5 }, "cost": 6 }
-    ]
+    ],
+    "calc": "stats"
   },
   {
     "id": "spreadshot",
@@ -831,24 +893,27 @@
       { "level": 5, "stats": { "enhanced_damage": 625, "attack_rating": 35 }, "procChance": 12, "cost": 3 },
       { "level": 6, "stats": { "enhanced_damage": 750, "attack_rating": 40 }, "procChance": 12, "cost": 4 },
       { "level": 7, "stats": { "enhanced_damage": 875, "attack_rating": 45 }, "procChance": 12, "cost": 5 }
-    ]
+    ],
+    "calc": "proc"
   },
   {
     "id": "sprouting_ivy",
     "name": "Sprouting Ivy",
     "description": "Unleash a chain of venom dealing poison damage and Poisoning monsters.",
-    "trigger": "on_attack",
-    "triggerNote": "OnAttack (15%)",
+    "trigger": "on_cast",
+    "triggerNote": "OnCast (15%)",
     "primaryStats": ["flat_poison_skill_damage", "extra_damage_poisoned"],
+    "synergyPerLevel": 125.0,
     "levels": [
-      { "level": 1, "stats": { "flat_poison_skill_damage": 1720, "extra_damage_poisoned": 35 }, "procChance": 15, "cost": 0 },
-      { "level": 2, "stats": { "flat_poison_skill_damage": 4864, "extra_damage_poisoned": 70 }, "procChance": 15, "cost": 0 },
-      { "level": 3, "stats": { "flat_poison_skill_damage": 9634, "extra_damage_poisoned": 105 }, "procChance": 15, "cost": 1 },
-      { "level": 4, "stats": { "flat_poison_skill_damage": 15988, "extra_damage_poisoned": 140 }, "procChance": 15, "cost": 2 },
-      { "level": 5, "stats": { "flat_poison_skill_damage": 23922, "extra_damage_poisoned": 175 }, "procChance": 15, "cost": 3 },
-      { "level": 6, "stats": { "flat_poison_skill_damage": 33536, "extra_damage_poisoned": 210 }, "procChance": 15, "cost": 4 },
-      { "level": 7, "stats": { "flat_poison_skill_damage": 44830, "extra_damage_poisoned": 245 }, "procChance": 15, "cost": 5 }
-    ]
+      { "level": 1, "stats": { "flat_poison_skill_damage": 850, "extra_damage_poisoned": 35 }, "procChance": 15, "cost": 0 },
+      { "level": 2, "stats": { "flat_poison_skill_damage": 1500, "extra_damage_poisoned": 70 }, "procChance": 15, "cost": 0 },
+      { "level": 3, "stats": { "flat_poison_skill_damage": 2150, "extra_damage_poisoned": 105 }, "procChance": 15, "cost": 1 },
+      { "level": 4, "stats": { "flat_poison_skill_damage": 2800, "extra_damage_poisoned": 140 }, "procChance": 15, "cost": 2 },
+      { "level": 5, "stats": { "flat_poison_skill_damage": 3450, "extra_damage_poisoned": 175 }, "procChance": 15, "cost": 3 },
+      { "level": 6, "stats": { "flat_poison_skill_damage": 4100, "extra_damage_poisoned": 210 }, "procChance": 15, "cost": 4 },
+      { "level": 7, "stats": { "flat_poison_skill_damage": 4750, "extra_damage_poisoned": 245 }, "procChance": 15, "cost": 5 }
+    ],
+    "calc": "proc"
   },
   {
     "id": "staticshot",
@@ -857,15 +922,17 @@
     "trigger": "on_strike",
     "triggerNote": "OnStrike (22%)",
     "primaryStats": ["flat_lightning_skill_damage"],
+    "synergyPerLevel": 100.0,
     "levels": [
-      { "level": 1, "stats": { "flat_lightning_skill_damage": 2816 }, "procChance": 22, "cost": 0 },
-      { "level": 2, "stats": { "flat_lightning_skill_damage": 5882 }, "procChance": 22, "cost": 0 },
-      { "level": 3, "stats": { "flat_lightning_skill_damage": 10447 }, "procChance": 22, "cost": 1 },
-      { "level": 4, "stats": { "flat_lightning_skill_damage": 16513 }, "procChance": 22, "cost": 2 },
-      { "level": 5, "stats": { "flat_lightning_skill_damage": 24079 }, "procChance": 22, "cost": 3 },
-      { "level": 6, "stats": { "flat_lightning_skill_damage": 33144 }, "procChance": 22, "cost": 4 },
-      { "level": 7, "stats": { "flat_lightning_skill_damage": 43710 }, "procChance": 22, "cost": 5 }
-    ]
+      { "level": 1, "stats": { "flat_lightning_skill_damage": 2000 }, "procChance": 22, "cost": 0 },
+      { "level": 2, "stats": { "flat_lightning_skill_damage": 2750 }, "procChance": 22, "cost": 0 },
+      { "level": 3, "stats": { "flat_lightning_skill_damage": 3500 }, "procChance": 22, "cost": 1 },
+      { "level": 4, "stats": { "flat_lightning_skill_damage": 4250 }, "procChance": 22, "cost": 2 },
+      { "level": 5, "stats": { "flat_lightning_skill_damage": 5000 }, "procChance": 22, "cost": 3 },
+      { "level": 6, "stats": { "flat_lightning_skill_damage": 5750 }, "procChance": 22, "cost": 4 },
+      { "level": 7, "stats": { "flat_lightning_skill_damage": 6500 }, "procChance": 22, "cost": 5 }
+    ],
+    "calc": "proc"
   },
   {
     "id": "supershot",
@@ -882,24 +949,26 @@
       { "level": 5, "stats": { "enhanced_damage": 1300 }, "procChance": 33, "cost": 3 },
       { "level": 6, "stats": { "enhanced_damage": 1560 }, "procChance": 33, "cost": 4 },
       { "level": 7, "stats": { "enhanced_damage": 1820 }, "procChance": 33, "cost": 5 }
-    ]
+    ],
+    "calc": "proc"
   },
   {
     "id": "survivors_shield",
-    "name": "Survivors Shield",
+    "name": "Survivor's Shield",
     "description": "When losing 35% of your maximum life become immune to all damage and healing for a short period.",
     "trigger": "on_low_hp",
     "triggerNote": "On 35% HP loss (15s cooldown)",
-    "primaryStats": ["immune_duration"],
+    "primaryStats": ["all_damage_taken_reduced_pct"],
     "levels": [
-      { "level": 1, "stats": { "immune_duration": 0.5 }, "cost": 0 },
-      { "level": 2, "stats": { "immune_duration": 1 }, "cost": 0 },
-      { "level": 3, "stats": { "immune_duration": 1.5 }, "cost": 1 },
-      { "level": 4, "stats": { "immune_duration": 2 }, "cost": 2 },
-      { "level": 5, "stats": { "immune_duration": 2.5 }, "cost": 3 },
-      { "level": 6, "stats": { "immune_duration": 3 }, "cost": 4 },
-      { "level": 7, "stats": { "immune_duration": 3.5 }, "cost": 5 }
-    ]
+      { "level": 1, "stats": { "all_damage_taken_reduced_pct": 3.3333 }, "cost": 0, "meta": { "immune_duration": 0.5 } },
+      { "level": 2, "stats": { "all_damage_taken_reduced_pct": 6.6667 }, "cost": 0, "meta": { "immune_duration": 1.0 } },
+      { "level": 3, "stats": { "all_damage_taken_reduced_pct": 10.0 }, "cost": 1, "meta": { "immune_duration": 1.5 } },
+      { "level": 4, "stats": { "all_damage_taken_reduced_pct": 13.3333 }, "cost": 2, "meta": { "immune_duration": 2.0 } },
+      { "level": 5, "stats": { "all_damage_taken_reduced_pct": 16.6667 }, "cost": 3, "meta": { "immune_duration": 2.5 } },
+      { "level": 6, "stats": { "all_damage_taken_reduced_pct": 20.0 }, "cost": 4, "meta": { "immune_duration": 3.0 } },
+      { "level": 7, "stats": { "all_damage_taken_reduced_pct": 23.3333 }, "cost": 5, "meta": { "immune_duration": 3.5 } }
+    ],
+    "calc": "toggle"
   },
   {
     "id": "tempest_strikes",
@@ -907,16 +976,17 @@
     "description": "Striking monsters grant you a stack of Tempest. Each stack increases attack/movement speed. At max stacks, become empowered doubling the effect for a short period.",
     "trigger": "stacking",
     "triggerNote": "250 stacks, 10s",
-    "primaryStats": ["movement_speed", "increased_attack_speed"],
+    "primaryStats": ["tempest_attack_speed", "tempest_movement_speed"],
     "levels": [
-      { "level": 1, "stats": { "movement_speed": 0.02, "increased_attack_speed": 0.02 }, "procDurationSec": 10, "cost": 0, "meta": { "max_stacks": 250 } },
-      { "level": 2, "stats": { "movement_speed": 0.04, "increased_attack_speed": 0.04 }, "procDurationSec": 10, "cost": 0, "meta": { "max_stacks": 250 } },
-      { "level": 3, "stats": { "movement_speed": 0.06, "increased_attack_speed": 0.06 }, "procDurationSec": 10, "cost": 1, "meta": { "max_stacks": 250 } },
-      { "level": 4, "stats": { "movement_speed": 0.08, "increased_attack_speed": 0.08 }, "procDurationSec": 10, "cost": 2, "meta": { "max_stacks": 250 } },
-      { "level": 5, "stats": { "movement_speed": 0.1, "increased_attack_speed": 0.1 }, "procDurationSec": 10, "cost": 3, "meta": { "max_stacks": 250 } },
-      { "level": 6, "stats": { "movement_speed": 0.12, "increased_attack_speed": 0.12 }, "procDurationSec": 10, "cost": 4, "meta": { "max_stacks": 250 } },
-      { "level": 7, "stats": { "movement_speed": 0.14, "increased_attack_speed": 0.14 }, "procDurationSec": 10, "cost": 5, "meta": { "max_stacks": 250 } }
-    ]
+      { "level": 1, "stats": { "max_tempest_stacks": 250, "tempest_attack_speed": 0.02, "tempest_movement_speed": 0.02 }, "procDurationSec": 10, "cost": 0, "meta": { "max_stacks": 250 } },
+      { "level": 2, "stats": { "max_tempest_stacks": 250, "tempest_attack_speed": 0.04, "tempest_movement_speed": 0.04 }, "procDurationSec": 10, "cost": 0, "meta": { "max_stacks": 250 } },
+      { "level": 3, "stats": { "max_tempest_stacks": 250, "tempest_attack_speed": 0.06, "tempest_movement_speed": 0.06 }, "procDurationSec": 10, "cost": 1, "meta": { "max_stacks": 250 } },
+      { "level": 4, "stats": { "max_tempest_stacks": 250, "tempest_attack_speed": 0.08, "tempest_movement_speed": 0.08 }, "procDurationSec": 10, "cost": 2, "meta": { "max_stacks": 250 } },
+      { "level": 5, "stats": { "max_tempest_stacks": 250, "tempest_attack_speed": 0.1, "tempest_movement_speed": 0.1 }, "procDurationSec": 10, "cost": 3, "meta": { "max_stacks": 250 } },
+      { "level": 6, "stats": { "max_tempest_stacks": 250, "tempest_attack_speed": 0.12, "tempest_movement_speed": 0.12 }, "procDurationSec": 10, "cost": 4, "meta": { "max_stacks": 250 } },
+      { "level": 7, "stats": { "max_tempest_stacks": 250, "tempest_attack_speed": 0.14, "tempest_movement_speed": 0.14 }, "procDurationSec": 10, "cost": 5, "meta": { "max_stacks": 250 } }
+    ],
+    "calc": "stats"
   },
   {
     "id": "tinkerer",
@@ -933,7 +1003,8 @@
       { "level": 5, "stats": { "multicast_chance": 5, "area_of_effect": 25 }, "cost": 3 },
       { "level": 6, "stats": { "multicast_chance": 6, "area_of_effect": 30 }, "cost": 4 },
       { "level": 7, "stats": { "multicast_chance": 7, "area_of_effect": 35 }, "cost": 5 }
-    ]
+    ],
+    "calc": "toggle"
   },
   {
     "id": "titans_power",
@@ -941,16 +1012,18 @@
     "description": "Every 30 seconds your attack for the next two seconds gains increased area of effect, projectile speed and damage. Cooldown reduced by 0.5 seconds per stun.",
     "trigger": "periodic",
     "triggerNote": "Every 30s (2s)",
-    "primaryStats": ["area_of_effect", "projectile_speed", "damage_increase"],
+    "primaryStats": ["damage", "area_of_effect", "projectile_speed"],
+    "period": 30,
     "levels": [
-      { "level": 1, "stats": { "area_of_effect": 8, "projectile_speed": 10, "damage_increase": 30 }, "procDurationSec": 2, "cost": 0 },
-      { "level": 2, "stats": { "area_of_effect": 16, "projectile_speed": 20, "damage_increase": 60 }, "procDurationSec": 2, "cost": 0 },
-      { "level": 3, "stats": { "area_of_effect": 24, "projectile_speed": 30, "damage_increase": 90 }, "procDurationSec": 2, "cost": 1 },
-      { "level": 4, "stats": { "area_of_effect": 32, "projectile_speed": 40, "damage_increase": 120 }, "procDurationSec": 2, "cost": 2 },
-      { "level": 5, "stats": { "area_of_effect": 40, "projectile_speed": 50, "damage_increase": 150 }, "procDurationSec": 2, "cost": 3 },
-      { "level": 6, "stats": { "area_of_effect": 48, "projectile_speed": 60, "damage_increase": 180 }, "procDurationSec": 2, "cost": 4 },
-      { "level": 7, "stats": { "area_of_effect": 56, "projectile_speed": 70, "damage_increase": 210 }, "procDurationSec": 2, "cost": 5 }
-    ]
+      { "level": 1, "stats": { "damage": 30, "area_of_effect": 8, "projectile_speed": 10 }, "procDurationSec": 2, "cost": 0 },
+      { "level": 2, "stats": { "damage": 60, "area_of_effect": 16, "projectile_speed": 20 }, "procDurationSec": 2, "cost": 0 },
+      { "level": 3, "stats": { "damage": 90, "area_of_effect": 24, "projectile_speed": 30 }, "procDurationSec": 2, "cost": 1 },
+      { "level": 4, "stats": { "damage": 120, "area_of_effect": 32, "projectile_speed": 40 }, "procDurationSec": 2, "cost": 2 },
+      { "level": 5, "stats": { "damage": 150, "area_of_effect": 40, "projectile_speed": 50 }, "procDurationSec": 2, "cost": 3 },
+      { "level": 6, "stats": { "damage": 180, "area_of_effect": 48, "projectile_speed": 60 }, "procDurationSec": 2, "cost": 4 },
+      { "level": 7, "stats": { "damage": 210, "area_of_effect": 56, "projectile_speed": 70 }, "procDurationSec": 2, "cost": 5 }
+    ],
+    "calc": "stats"
   },
   {
     "id": "touch_down",
@@ -967,7 +1040,8 @@
       { "level": 5, "stats": { "enhanced_damage": 1020, "stun_duration": 5 }, "procChance": 22, "cost": 5 },
       { "level": 6, "stats": { "enhanced_damage": 1200, "stun_duration": 5.5 }, "procChance": 22, "cost": 6 },
       { "level": 7, "stats": { "enhanced_damage": 1380, "stun_duration": 6 }, "procChance": 22, "cost": 7 }
-    ]
+    ],
+    "calc": "proc"
   },
   {
     "id": "touch_of_death",
@@ -976,15 +1050,17 @@
     "trigger": "on_spell_hit",
     "triggerNote": "OnSpellHit (15%)",
     "primaryStats": ["flat_poison_skill_damage"],
+    "synergyPerLevel": 100.0,
     "levels": [
-      { "level": 1, "stats": { "flat_poison_skill_damage": 2901 }, "procChance": 15, "cost": 1 },
-      { "level": 2, "stats": { "flat_poison_skill_damage": 7602 }, "procChance": 15, "cost": 2 },
-      { "level": 3, "stats": { "flat_poison_skill_damage": 14253 }, "procChance": 15, "cost": 3 },
-      { "level": 4, "stats": { "flat_poison_skill_damage": 23584 }, "procChance": 15, "cost": 4 },
-      { "level": 5, "stats": { "flat_poison_skill_damage": 35395 }, "procChance": 15, "cost": 5 },
-      { "level": 6, "stats": { "flat_poison_skill_damage": 49586 }, "procChance": 15, "cost": 6 },
-      { "level": 7, "stats": { "flat_poison_skill_damage": 66157 }, "procChance": 15, "cost": 7 }
-    ]
+      { "level": 1, "stats": { "flat_poison_skill_damage": 1650 }, "procChance": 15, "cost": 1 },
+      { "level": 2, "stats": { "flat_poison_skill_damage": 2800 }, "procChance": 15, "cost": 2 },
+      { "level": 3, "stats": { "flat_poison_skill_damage": 3950 }, "procChance": 15, "cost": 3 },
+      { "level": 4, "stats": { "flat_poison_skill_damage": 5100 }, "procChance": 15, "cost": 4 },
+      { "level": 5, "stats": { "flat_poison_skill_damage": 6250 }, "procChance": 15, "cost": 5 },
+      { "level": 6, "stats": { "flat_poison_skill_damage": 7400 }, "procChance": 15, "cost": 6 },
+      { "level": 7, "stats": { "flat_poison_skill_damage": 8550 }, "procChance": 15, "cost": 7 }
+    ],
+    "calc": "proc"
   },
   {
     "id": "vacuuming_strike",
@@ -1001,7 +1077,8 @@
       { "level": 5, "stats": { "enhanced_damage": 425 }, "procChance": 18, "cost": 5, "meta": { "range": 154 } },
       { "level": 6, "stats": { "enhanced_damage": 510 }, "procChance": 18, "cost": 6, "meta": { "range": 180 } },
       { "level": 7, "stats": { "enhanced_damage": 595 }, "procChance": 18, "cost": 7, "meta": { "range": 206 } }
-    ]
+    ],
+    "calc": "proc"
   },
   {
     "id": "warsong",
@@ -1009,33 +1086,36 @@
     "description": "Curse monsters in target location to deal reduced damage.",
     "trigger": "on_strike",
     "triggerNote": "OnStrike (8%)",
-    "primaryStats": ["enemy_damage_reduced"],
+    "primaryStats": ["all_damage_taken_reduced_pct"],
     "levels": [
-      { "level": 1, "stats": { "enemy_damage_reduced": 20 }, "procChance": 8, "procDurationSec": 2, "cost": 1 },
-      { "level": 2, "stats": { "enemy_damage_reduced": 24 }, "procChance": 8, "procDurationSec": 2.4, "cost": 2 },
-      { "level": 3, "stats": { "enemy_damage_reduced": 28 }, "procChance": 8, "procDurationSec": 2.8, "cost": 3 },
-      { "level": 4, "stats": { "enemy_damage_reduced": 32 }, "procChance": 8, "procDurationSec": 3.2, "cost": 4 },
-      { "level": 5, "stats": { "enemy_damage_reduced": 36 }, "procChance": 8, "procDurationSec": 3.6, "cost": 5 },
-      { "level": 6, "stats": { "enemy_damage_reduced": 40 }, "procChance": 8, "procDurationSec": 4, "cost": 6 },
-      { "level": 7, "stats": { "enemy_damage_reduced": 44 }, "procChance": 8, "procDurationSec": 4.4, "cost": 7 }
-    ]
+      { "level": 1, "stats": { "all_damage_taken_reduced_pct": 20 }, "procChance": 8, "procDurationSec": 2, "cost": 1 },
+      { "level": 2, "stats": { "all_damage_taken_reduced_pct": 24 }, "procChance": 8, "procDurationSec": 2.25, "cost": 2 },
+      { "level": 3, "stats": { "all_damage_taken_reduced_pct": 28 }, "procChance": 8, "procDurationSec": 2.5, "cost": 3 },
+      { "level": 4, "stats": { "all_damage_taken_reduced_pct": 32 }, "procChance": 8, "procDurationSec": 2.75, "cost": 4 },
+      { "level": 5, "stats": { "all_damage_taken_reduced_pct": 36 }, "procChance": 8, "procDurationSec": 3, "cost": 5 },
+      { "level": 6, "stats": { "all_damage_taken_reduced_pct": 40 }, "procChance": 8, "procDurationSec": 3.25, "cost": 6 },
+      { "level": 7, "stats": { "all_damage_taken_reduced_pct": 44 }, "procChance": 8, "procDurationSec": 3.5, "cost": 7 }
+    ],
+    "calc": "toggle"
   },
   {
     "id": "weapon_throw",
     "name": "Weapon Throw",
     "description": "Throw your weapon dealing increased damage.",
     "trigger": "on_attack",
-    "triggerNote": "OnAttack (28%)",
+    "triggerNote": "OnAttack (28%, 2s cooldown)",
     "primaryStats": ["enhanced_damage", "attack_rating"],
     "levels": [
-      { "level": 1, "stats": { "enhanced_damage": 175, "attack_rating": 8 }, "procChance": 28, "cost": 1 },
-      { "level": 2, "stats": { "enhanced_damage": 350, "attack_rating": 16 }, "procChance": 28, "cost": 2 },
-      { "level": 3, "stats": { "enhanced_damage": 525, "attack_rating": 24 }, "procChance": 28, "cost": 3 },
-      { "level": 4, "stats": { "enhanced_damage": 700, "attack_rating": 32 }, "procChance": 28, "cost": 4 },
-      { "level": 5, "stats": { "enhanced_damage": 875, "attack_rating": 40 }, "procChance": 28, "cost": 5 },
-      { "level": 6, "stats": { "enhanced_damage": 1050, "attack_rating": 48 }, "procChance": 28, "cost": 6 },
-      { "level": 7, "stats": { "enhanced_damage": 1225, "attack_rating": 56 }, "procChance": 28, "cost": 7 }
-    ]
+      { "level": 1, "stats": { "enhanced_damage": 200, "attack_rating": 15 }, "procChance": 28, "cost": 1 },
+      { "level": 2, "stats": { "enhanced_damage": 400, "attack_rating": 30 }, "procChance": 28, "cost": 2 },
+      { "level": 3, "stats": { "enhanced_damage": 600, "attack_rating": 45 }, "procChance": 28, "cost": 3 },
+      { "level": 4, "stats": { "enhanced_damage": 800, "attack_rating": 60 }, "procChance": 28, "cost": 4 },
+      { "level": 5, "stats": { "enhanced_damage": 1000, "attack_rating": 75 }, "procChance": 28, "cost": 5 },
+      { "level": 6, "stats": { "enhanced_damage": 1200, "attack_rating": 90 }, "procChance": 28, "cost": 6 },
+      { "level": 7, "stats": { "enhanced_damage": 1400, "attack_rating": 105 }, "procChance": 28, "cost": 7 }
+    ],
+    "procCooldown": 2,
+    "calc": "proc"
   },
   {
     "id": "wizards_wrath",
@@ -1052,7 +1132,8 @@
       { "level": 5, "stats": { "faster_cast_rate": 31, "arcane_skill_damage": 22 }, "procChance": 8, "procDurationSec": 3, "cost": 5 },
       { "level": 6, "stats": { "faster_cast_rate": 35, "arcane_skill_damage": 25 }, "procChance": 8, "procDurationSec": 3, "cost": 6 },
       { "level": 7, "stats": { "faster_cast_rate": 39, "arcane_skill_damage": 28 }, "procChance": 8, "procDurationSec": 3, "cost": 7 }
-    ]
+    ],
+    "calc": "toggle"
   },
   {
     "id": "zapper",
@@ -1060,15 +1141,16 @@
     "description": "Dealing lightning damage to monsters has a chance to electrocute them causing them to discharge a chain lightning at nearby monsters whenever they are struck dealing a portion of incoming damage as lightning damage.",
     "trigger": "on_strike",
     "triggerNote": "OnStrike (8%)",
-    "primaryStats": ["lightning_skill_damage"],
+    "primaryStats": ["incoming_damage_as_lightning_pct"],
     "levels": [
-      { "level": 1, "stats": { "lightning_skill_damage": 10 }, "procChance": 8, "cost": 1 },
-      { "level": 2, "stats": { "lightning_skill_damage": 20 }, "procChance": 8, "cost": 2 },
-      { "level": 3, "stats": { "lightning_skill_damage": 30 }, "procChance": 8, "cost": 3 },
-      { "level": 4, "stats": { "lightning_skill_damage": 40 }, "procChance": 8, "cost": 4 },
-      { "level": 5, "stats": { "lightning_skill_damage": 50 }, "procChance": 8, "cost": 5 },
-      { "level": 6, "stats": { "lightning_skill_damage": 60 }, "procChance": 8, "cost": 6 },
-      { "level": 7, "stats": { "lightning_skill_damage": 70 }, "procChance": 8, "cost": 7 }
-    ]
+      { "level": 1, "stats": { "incoming_damage_as_lightning_pct": 10 }, "procChance": 8, "cost": 1 },
+      { "level": 2, "stats": { "incoming_damage_as_lightning_pct": 20 }, "procChance": 8, "cost": 2 },
+      { "level": 3, "stats": { "incoming_damage_as_lightning_pct": 30 }, "procChance": 8, "cost": 3 },
+      { "level": 4, "stats": { "incoming_damage_as_lightning_pct": 40 }, "procChance": 8, "cost": 4 },
+      { "level": 5, "stats": { "incoming_damage_as_lightning_pct": 50 }, "procChance": 8, "cost": 5 },
+      { "level": 6, "stats": { "incoming_damage_as_lightning_pct": 60 }, "procChance": 8, "cost": 6 },
+      { "level": 7, "stats": { "incoming_damage_as_lightning_pct": 70 }, "procChance": 8, "cost": 7 }
+    ],
+    "calc": "proc"
   }
 ]

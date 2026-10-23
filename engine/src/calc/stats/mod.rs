@@ -238,6 +238,18 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
 
     // 2. Inventory loop (implicits + affixes + sockets + runeword + augment)
     let weapon_has_aps = apply_inventory(input.inventory, &mut attr_sources, &mut stat_sources);
+    apply_toggled_augments(
+        input.inventory,
+        input.player_conditions,
+        &mut attr_sources,
+        &mut stat_sources,
+    );
+    apply_per_active_buff_stats(
+        input.active_buffs,
+        input.player_conditions,
+        &mut attr_sources,
+        &mut stat_sources,
+    );
 
     // 3. Tree contributions (returns deferred conversions + disables);
     //    the incarnation tree's node set is season-patched data.
@@ -718,8 +730,15 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     // 20c. "per point in Light Radius" lines read the finalized light radius.
     let touched_light = apply_per_light_radius_stats(&stats, &mut stat_sources);
 
+    // 20d. "per attack per second" lines read the finalized attack rate.
+    let touched_aps = apply_per_attack_rate_stats(&stats, &mut stat_sources);
+
     // 21. Re-sum the remaining late contributions.
-    for k in touched_mana.iter().chain(touched_light.iter()) {
+    for k in touched_mana
+        .iter()
+        .chain(touched_light.iter())
+        .chain(touched_aps.iter())
+    {
         if let Some(list) = stat_sources.get(k) {
             stats.insert(k.clone(), sum_contributions(list));
         }

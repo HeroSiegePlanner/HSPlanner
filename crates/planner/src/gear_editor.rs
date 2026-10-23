@@ -1849,10 +1849,16 @@ impl GearView {
             (p.accent_hot, p.accent, p.border, p.muted, p.text);
         let id = row.id.clone();
         let description = format!("{}\n{}", row.label, row.detail);
+        let augment = (self.picker == Picker::Augment)
+            .then(|| data::get_augment(&row.id))
+            .flatten();
         div()
             .id(SharedString::from(format!("choice-{}", row.id)))
-            .cursor_tooltip_view(move |window, cx| {
-                gpui_kit::component::tooltip::Tooltip::new(description.clone()).build(window, cx)
+            .map(|view| match augment {
+                Some(augment) => view.cursor_tooltip_view(crate::item_tooltip::augment_tooltip(augment)),
+                None => view.cursor_tooltip_view(move |window, cx| {
+                    gpui_kit::component::tooltip::Tooltip::new(description.clone()).build(window, cx)
+                }),
             })
             .relative()
             .w_full()

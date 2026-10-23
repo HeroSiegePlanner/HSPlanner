@@ -1,4 +1,5 @@
 use super::*;
+use crate::calc::types::{augment_toggle_key, AugmentCalc, AugmentRef};
 use std::borrow::Cow;
 
 const RANDOM_ELEMENT_KEY: &str = "random_skill_element";
@@ -303,27 +304,192 @@ pub fn apply_inventory(
         }
 
         if let Some(aug_ref) = item.augment.as_ref() {
-            if let Some(aug) = data::get_augment(&aug_ref.id) {
-                if !aug.levels.is_empty() {
-                    let lvl = aug_ref.level.clamp(1, aug.levels.len() as u32);
-                    if let Some(tier) = aug.levels.get((lvl - 1) as usize) {
-                        let label = format!("Augment: {} Lv {} ({})", aug.name, lvl, item_name);
-                        for (stat_key, &value) in tier.stats.iter() {
-                            apply_contribution(
-                                attr_sources,
-                                stat_sources,
-                                stat_key,
-                                (value, value),
-                                label.clone(),
-                                SourceType::Item,
-                                None,
-                            );
-                        }
-                    }
-                }
-            }
+            push_augment_stats(
+                aug_ref,
+                &item_name,
+                AugmentCalc::Stats,
+                (1.0, 1.0),
+                attr_sources,
+                stat_sources,
+            );
+            push_augment_burst(aug_ref, &item_name, attr_sources, stat_sources);
         }
     }
 
     weapon_has_attack_speed
+}
+
+thread_local! {
+    static AUGMENT_UPTIMES: std::cell::RefCell<Option<HashMap<String, Ranged>>> =
+        const { std::cell::RefCell::new(None) };
+}
+
+/// RAII guard scaling switched-on proc buffs by their uptime; !Send like SeasonScope.
+pub struct AugmentUptimeScope {
+    _not_send: std::marker::PhantomData<*const ()>,
+}
+
+impl AugmentUptimeScope {
+    #[must_use]
+    pub fn enter(uptimes: HashMap<String, Ranged>) -> Self {
+        AUGMENT_UPTIMES.with(|u| *u.borrow_mut() = Some(uptimes));
+        Self {
+            _not_send: std::marker::PhantomData,
+        }
+    }
+
+    pub fn active() -> bool {
+        AUGMENT_UPTIMES.with(|u| u.borrow().is_some())
+    }
+}
+
+impl Drop for AugmentUptimeScope {
+    fn drop(&mut self) {
+        AUGMENT_UPTIMES.with(|u| *u.borrow_mut() = None);
+    }
+}
+
+/// Timed or conditional augments add their stats only while switched on in Config.
+pub fn apply_toggled_augments(
+    inventory: &Inventory,
+    player_conditions: &HashMap<String, bool>,
+    attr_sources: &mut SourceMap,
+    stat_sources: &mut SourceMap,
+) {
+    for (_, item, _) in data::inventory_entries(inventory) {
+        let Some(aug_ref) = item.augment.as_ref() else {
+            continue;
+        };
+        let on = player_conditions
+            .get(&augment_toggle_key(&aug_ref.id))
+            .copied()
+            .unwrap_or(false);
+        let Some(base) = data::get_item(&item.base_id).filter(|_| on) else {
+            continue;
+        };
+        let uptime = augment_uptime(&aug_ref.id);
+        push_augment_stats(
+            aug_ref,
+            &base.name,
+            AugmentCalc::Toggle,
+            uptime,
+            attr_sources,
+            stat_sources,
+        );
+    }
+}
+
+/// "Each active buff decreases your damage taken" (Drunkard Mayhem): class buffs,
+/// item and potion buffs, and augment buffs that are switched on.
+pub fn apply_per_active_buff_stats(
+    active_buffs: &HashMap<String, bool>,
+    player_conditions: &HashMap<String, bool>,
+    attr_sources: &mut SourceMap,
+    stat_sources: &mut SourceMap,
+) {
+    let rate = stat_sources
+        .get("damage_taken_reduced_per_active_buff")
+        .map(|list| sum_contributions(list))
+        .unwrap_or((0.0, 0.0));
+    if rate == (0.0, 0.0) {
+        return;
+    }
+    let count = active_buffs.values().filter(|on| **on).count()
+        + player_conditions
+            .iter()
+            .filter(|(key, on)| **on && (key.ends_with("_buff") || key.starts_with("augment:")))
+            .count();
+    let count = count as f64;
+    apply_contribution(
+        attr_sources,
+        stat_sources,
+        "all_damage_taken_reduced_pct",
+        (rate.0 * count, rate.1 * count),
+        format!("Damage taken reduced ({count} active buffs)"),
+        SourceType::Item,
+        None,
+    );
+}
+
+/// Uptime-map key for an augment's full-stack burst.
+pub fn augment_burst_key(id: &str) -> String {
+    format!("{id}:burst")
+}
+
+fn augment_uptime(key: &str) -> Ranged {
+    AUGMENT_UPTIMES
+        .with(|u| u.borrow().as_ref().and_then(|map| map.get(key).copied()))
+        .unwrap_or((1.0, 1.0))
+}
+
+fn push_augment_burst(
+    aug_ref: &AugmentRef,
+    item_name: &str,
+    attr_sources: &mut SourceMap,
+    stat_sources: &mut SourceMap,
+) {
+    let Some(aug) = data::get_augment(&aug_ref.id) else {
+        return;
+    };
+    let Some(burst) = aug.tier(aug_ref.level).and_then(|tier| tier.burst.as_ref()) else {
+        return;
+    };
+    let uptime = augment_uptime(&augment_burst_key(&aug.id));
+    let label = format!(
+        "Augment: {} burst ({}), uptime {:.0}%",
+        aug.name,
+        item_name,
+        uptime.1 * 100.0
+    );
+    for (stat_key, &value) in burst.iter() {
+        apply_contribution(
+            attr_sources,
+            stat_sources,
+            stat_key,
+            (value * uptime.0, value * uptime.1),
+            label.clone(),
+            SourceType::Item,
+            None,
+        );
+    }
+}
+
+fn push_augment_stats(
+    aug_ref: &AugmentRef,
+    item_name: &str,
+    kind: AugmentCalc,
+    uptime: Ranged,
+    attr_sources: &mut SourceMap,
+    stat_sources: &mut SourceMap,
+) {
+    let Some(aug) = data::get_augment(&aug_ref.id).filter(|aug| aug.calc == kind) else {
+        return;
+    };
+    let Some(tier) = aug.tier(aug_ref.level) else {
+        return;
+    };
+    // Periodic augments (Titan's Power) hold their stats for duration / period.
+    let uptime = match (aug.period, tier.proc_duration_sec) {
+        (Some(period), Some(duration)) if period > 0.0 => {
+            let share = (duration / period).min(1.0);
+            (uptime.0 * share, uptime.1 * share)
+        }
+        _ => uptime,
+    };
+    let level = aug_ref.level.clamp(1, aug.levels.len() as u32);
+    let mut label = format!("Augment: {} Lv {} ({})", aug.name, level, item_name);
+    if uptime.1 < 1.0 {
+        label = format!("{label}, uptime {:.0}%", uptime.1 * 100.0);
+    }
+    for (stat_key, &value) in tier.stats.iter() {
+        apply_contribution(
+            attr_sources,
+            stat_sources,
+            stat_key,
+            (value * uptime.0, value * uptime.1),
+            label.clone(),
+            SourceType::Item,
+            None,
+        );
+    }
 }
