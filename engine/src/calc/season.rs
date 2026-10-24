@@ -13,15 +13,17 @@ thread_local! {
 }
 
 // RAII guard installing the per-command season; !Send so it never crosses an .await.
+// Dropping restores the outer season, so nested commands keep their caller's data.
 pub struct SeasonScope {
+    previous: Option<String>,
     _not_send: std::marker::PhantomData<*const ()>,
 }
 
 impl SeasonScope {
     #[must_use]
     pub fn enter(season: Option<String>) -> SeasonScope {
-        CURRENT_SEASON.with(|c| *c.borrow_mut() = season);
         SeasonScope {
+            previous: CURRENT_SEASON.with(|c| c.replace(season)),
             _not_send: std::marker::PhantomData,
         }
     }
@@ -29,7 +31,8 @@ impl SeasonScope {
 
 impl Drop for SeasonScope {
     fn drop(&mut self) {
-        CURRENT_SEASON.with(|c| *c.borrow_mut() = None);
+        let previous = self.previous.take();
+        CURRENT_SEASON.with(|c| *c.borrow_mut() = previous);
     }
 }
 
@@ -308,6 +311,13 @@ mod tests {
     use super::*;
 
     const PARITY: &str = include_str!("../../../data/seasons/parity-fixture.json");
+
+    #[test]
+    fn nested_scope_restores_the_outer_season() {
+        let _outer = SeasonScope::enter(Some("s9".into()));
+        drop(SeasonScope::enter(Some("s10".into())));
+        assert_eq!(current_season_id(), "s9");
+    }
 
     #[test]
     fn list_patch_matches_ts_parity_fixture() {

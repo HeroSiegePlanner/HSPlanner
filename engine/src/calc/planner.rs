@@ -149,6 +149,19 @@ pub fn prepare_input(input: &PlannerInput) -> BuildPerformanceInput {
     build
 }
 
+/// The combined DPS midpoint `evaluate` reports, without the stat breakdowns; for searches.
+pub fn combined_dps(input: &PlannerInput) -> f64 {
+    let prepared = prepare_input(input);
+    let _scope = super::season::SeasonScope::enter(prepared.season.clone());
+    super::commands::combined_dps_mid(&input.active_skill_ids, |main| {
+        super::build::compute_build_performance(&super::commands::perf_deps(
+            &prepared,
+            &prepared.inventory,
+            main.or(prepared.main_skill_id.as_deref()),
+        ))
+    })
+}
+
 pub fn evaluate(input: &PlannerInput) -> PlannerPerformance {
     let prepared = prepare_input(input);
     let _scope = super::season::SeasonScope::enter(prepared.season.clone());
@@ -429,6 +442,33 @@ mod tests {
         assert_eq!(result.combined_dps_max, Some(820.));
         assert_eq!(result.hit_dps_min, None);
     }
+    #[test]
+    fn combined_dps_matches_the_reported_dps() {
+        let skills: Vec<String> = data::get_skills_by_class("amazon")
+            .iter()
+            .filter(|s| s.damage_formula.is_some() || s.damage_per_rank.is_some())
+            .take(2)
+            .map(|s| s.id.clone())
+            .collect();
+        let mut input = PlannerInput::default();
+        input.build.class_id = Some("amazon".into());
+        input.build.level = 60;
+        input.build.skill_ranks = skills.iter().map(|id| (id.clone(), 20)).collect();
+        input.build.inventory.insert(
+            "weapon".into(),
+            super::super::types::EquippedItem {
+                base_id: "base_mace_ogre_maul".into(),
+                ..Default::default()
+            },
+        );
+        for count in [1, 2] {
+            input.active_skill_ids = skills[..count].to_vec();
+            let reported = dps_mid(&evaluate(&input));
+            assert!(reported > 0.);
+            assert!((combined_dps(&input) - reported).abs() <= reported * 1e-9);
+        }
+    }
+
     #[test]
     fn preparation_boosts_only_spent_subskills_and_omits_disabled_potions() {
         let mut input = PlannerInput::default();

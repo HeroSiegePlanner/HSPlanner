@@ -6,9 +6,8 @@ use crate::calc::build::compute_build_performance;
 use crate::calc::commands::{combined_dps_mid, perf_deps, BuildPerformanceInput};
 use crate::calc::season::SeasonScope;
 
-// SeasonScope is thread_local and Drop clears it, so the oracle re-enters the
-// scope on every call: rayon workers get the right season, and no outer scope
-// exists for a nested Drop to clobber.
+// SeasonScope is thread_local, so the oracle enters the scope on every call:
+// rayon workers get the right season.
 pub fn run_suggest(input: &SuggestInput, progress: impl Fn(u32, u32) + Sync) -> SuggestResult {
     let season = input.perf.season.clone();
     let oracle = |alloc: &HashSet<u32>| -> f64 {
@@ -35,15 +34,11 @@ pub fn run_suggest(input: &SuggestInput, progress: impl Fn(u32, u32) + Sync) -> 
     result
 }
 
-/// Native searches reserve worker capacity for input and node previews.
-pub fn run_suggest_controlled(
-    input: &SuggestInput,
-    cancellation: &crate::task_control::Cancellation,
-    progress: impl Fn(u32, u32) + Sync,
-) -> Result<SuggestResult, String> {
+/// Workers shared by the native searches; two cores stay free for input and node previews.
+pub fn suggest_pool() -> &'static rayon::ThreadPool {
     use std::sync::OnceLock;
     static POOL: OnceLock<rayon::ThreadPool> = OnceLock::new();
-    let pool = POOL.get_or_init(|| {
+    POOL.get_or_init(|| {
         rayon::ThreadPoolBuilder::new()
             .num_threads(
                 std::thread::available_parallelism()
@@ -52,7 +47,15 @@ pub fn run_suggest_controlled(
             .thread_name(|index| format!("hsplanner-suggest-{index}"))
             .build()
             .expect("start suggestion workers")
-    });
+    })
+}
+
+pub fn run_suggest_controlled(
+    input: &SuggestInput,
+    cancellation: &crate::task_control::Cancellation,
+    progress: impl Fn(u32, u32) + Sync,
+) -> Result<SuggestResult, String> {
+    let pool = suggest_pool();
     cancellation.check()?;
     let season = input.perf.season.clone();
     let oracle = |allocated: &HashSet<u32>| {

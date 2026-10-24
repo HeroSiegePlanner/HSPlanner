@@ -153,7 +153,7 @@ fn apply_order(current: &[u32], sequence: &[SuggestStep]) -> Vec<u32> {
     ordered
 }
 
-fn gain_percent(base: f64, final_dps: f64) -> String {
+pub(crate) fn gain_percent(base: f64, final_dps: f64) -> String {
     if base <= 0. {
         return if final_dps > 0. {
             "+∞%".into()

@@ -26,6 +26,8 @@ pub(crate) mod editor;
 
 #[path = "gear_import.rs"]
 mod import;
+#[path = "gear_suggest.rs"]
+mod suggest;
 #[path = "gear_picker.rs"]
 pub(crate) mod picker;
 #[path = "gear_presentation.rs"]

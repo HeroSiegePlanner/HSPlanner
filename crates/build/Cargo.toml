@@ -6,7 +6,8 @@ publish.workspace = true
 
 [dependencies]
 regex = "1.12.3"
-hsplanner-engine.workspace = true
+hsplanner-engine = { workspace = true, features = ["suggestions"] }
+rayon = "1"
 serde.workspace = true
 serde_json.workspace = true
 lz-str = "=0.2.1"

@@ -1336,6 +1336,20 @@ impl GearView {
                                         )
                                         .child(
                                             hsplanner_ui::controls::command_button(
+                                                "suggest-upgrades",
+                                                tr("gear.suggest_upgrades"),
+                                                hsplanner_ui::controls::ButtonTone::Neutral,
+                                                hsplanner_ui::controls::ButtonSize::Small,
+                                                cx,
+                                            )
+                                            .on_click(
+                                                cx.listener(|this, _, window, cx| {
+                                                    this.open_suggest(window, cx)
+                                                }),
+                                            ),
+                                        )
+                                        .child(
+                                            hsplanner_ui::controls::command_button(
                                                 "import-screenshot",
                                                 tr("gear.import_screenshot"),
                                                 hsplanner_ui::controls::ButtonTone::Neutral,

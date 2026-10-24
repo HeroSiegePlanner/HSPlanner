@@ -2523,7 +2523,7 @@ fn roll_entries(item: &EquippedItem, base: &ItemBase) -> Vec<RollEntry> {
     entries
 }
 
-fn socketable_name(id: &str) -> String {
+pub(crate) fn socketable_name(id: &str) -> String {
     data::get_gem(id)
         .map(|g| g.name.clone())
         .or_else(|| data::get_rune(id).map(|r| r.name.clone()))

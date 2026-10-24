@@ -308,7 +308,7 @@ fn range_token(min: f64, max: f64) -> String {
     }
 }
 
-fn describe_affix_value(affix: &Affix, value: f64) -> Option<String> {
+pub(crate) fn describe_affix_value(affix: &Affix, value: f64) -> Option<String> {
     let (min, max) = affix.value_min.zip(affix.value_max)?;
     let token = range_token(min, max);
     affix

@@ -2988,6 +2988,7 @@ dependencies = [
  "html2md",
  "lz-str",
  "pulldown-cmark",
+ "rayon",
  "regex",
  "serde",
  "serde_json",
