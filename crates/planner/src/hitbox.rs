@@ -36,11 +36,22 @@ pub(crate) struct SkillHitbox {
     /// collision_circle_list radii in game pixels.
     #[serde(default)]
     pub circles: Vec<f32>,
+    /// The game's target rings (AoE indicator, landing flash); fixed at cast, size stats never grow them.
+    #[serde(default)]
+    pub rings: Vec<Ring>,
+}
+
+/// A band `band` px wide centred `radius` px around the target.
+#[derive(Deserialize)]
+pub(crate) struct Ring {
+    pub radius: f32,
+    pub band: f32,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub(crate) struct HitObject {
+    pub name: String,
     pub origin: [f32; 2],
     pub scale: [f64; 2],
     pub mask: Option<String>,
@@ -63,6 +74,12 @@ pub(crate) struct HitObject {
     /// Turns while alive, so it sweeps its reach in every direction.
     #[serde(default)]
     pub spins: bool,
+    /// An explosion: its parent adds Explosion AoE × 0.01 whatever the skill's tags.
+    #[serde(default)]
+    pub explosion: bool,
+    /// A passive's object: the skills whose cast modifiers it carries.
+    #[serde(default)]
+    pub from: Vec<String>,
 }
 
 /// What the object's own Step does with the size bonus.
@@ -182,8 +199,18 @@ fn counted_keys(tags: &[String]) -> Vec<(&'static str, f64)> {
     keys
 }
 
+/// A size stat's total after Spacial Conversion / Concentrated Damage take their share (0–100)
+/// of the AoE and explosion radius.
+fn kept(value: &impl Fn(&str) -> f64, key: &str, converted: [f64; 2]) -> f64 {
+    let (total, share) = match key {
+        "area_of_effect" => (value(key) + value(TOTAL_AREA), converted[0]),
+        "explosion_aoe" => (value(key) + value(TOTAL_AREA), converted[1]),
+        _ => (value(key), 0.),
+    };
+    total * (1. - share.clamp(0., 100.) / 100.)
+}
+
 /// Size terms that reach a skill with these tags, and the size stats it ignores.
-/// `converted` is the share (0–100) of the AoE and explosion radius turned into damage.
 pub(crate) fn size_terms(
     tags: &[String],
     aoe_scale: f64,
@@ -194,14 +221,7 @@ pub(crate) fn size_terms(
         "area_of_effect" | "explosion_aoe" => value(key) + value(TOTAL_AREA),
         _ => value(key),
     };
-    let kept = |key: &str| {
-        let share = match key {
-            "area_of_effect" => converted[0],
-            "explosion_aoe" => converted[1],
-            _ => 0.,
-        };
-        total(key) * (1. - share.clamp(0., 100.) / 100.)
-    };
+    let kept = |key: &str| kept(&value, key, converted);
     let counted = counted_keys(tags);
     let mut terms = Vec::new();
     let mut ignored = Vec::new();
@@ -233,14 +253,20 @@ pub(crate) fn size_terms(
     (terms, ignored)
 }
 
-/// Scale of an object with the skill's own subtree size and the cast's size bonus.
-pub(crate) fn object_scale(object: &HitObject, own: f64, bonus: f64) -> [f64; 2] {
+/// Scale of an object with the skill's own subtree size, the cast's size bonus and, for an
+/// explosion, the Explosion AoE its parent adds.
+pub(crate) fn object_scale(object: &HitObject, own: f64, bonus: f64, explosion: f64) -> [f64; 2] {
     let takes = object.bonus > 0.;
     // ponytail: subtree size is taken to multiply the base scale; the atlas reads
     // objects without sub-talents, so the exact sub-talent formula is unknown.
     let own = if takes { (1. + own / 100.).max(0.) } else { 1. };
     let [bx, by] = [object.scale[0] * own, object.scale[1] * own];
-    let add = object.bonus * bonus;
+    let direct = if object.explosion {
+        explosion.max(0.)
+    } else {
+        0.
+    };
+    let add = object.bonus * bonus + direct;
     if add <= 0. || object.growth == Growth::Lost {
         return [bx, by];
     }
@@ -256,19 +282,34 @@ pub(crate) struct AreaPreview {
     pub skill_name: String,
     pub tags: Vec<String>,
     pub hitbox: Option<&'static SkillHitbox>,
+    /// The skill's objects, then those of allocated passives that carry its modifiers.
+    pub objects: Vec<&'static HitObject>,
+    /// Names of those passives.
+    pub companions: Vec<String>,
     pub terms: Vec<SizeTerm>,
     pub ignored: Vec<SizeTerm>,
     /// The skill's own subtree size, in percent.
     pub own: f64,
     /// Added to the scale of objects that take the size bonus (never negative).
     pub bonus: f64,
+    /// Explosion AoE as the explosions' parent adds it, whatever the skill's tags.
+    pub explosion: Option<SizeTerm>,
 }
 
 impl AreaPreview {
-    /// The object that best stands for the skill's size: the first that grows.
+    pub(crate) fn scale(&self, object: &HitObject) -> [f64; 2] {
+        let explosion = self.explosion.as_ref().map_or(0., |term| term.scale);
+        object_scale(object, self.own, self.bonus, explosion)
+    }
+
+    /// The object that best stands for the skill's size: the first that can grow.
     pub(crate) fn headline(&self) -> Option<&'static HitObject> {
-        let objects = &self.hitbox?.objects;
-        objects.iter().find(|o| o.bonus > 0.).or(objects.first())
+        let grows = |o: &&&'static HitObject| o.bonus > 0. || o.explosion;
+        self.objects
+            .iter()
+            .find(grows)
+            .or(self.objects.first())
+            .copied()
     }
 }
 
@@ -356,10 +397,10 @@ pub(crate) fn preview(
         converted_share(snapshot, "of area of effect radius converted"),
         converted_share(snapshot, "of explosion area of effect radius converted"),
     ];
-    let (terms, ignored) = size_terms(
+    let (terms, mut ignored) = size_terms(
         &tags,
         hitbox.map_or(1., |h| h.aoe_scale),
-        shared_of,
+        &shared_of,
         converted,
     );
     let own = SIZE_KEYS
@@ -372,14 +413,54 @@ pub(crate) fn preview(
     } else {
         terms.iter().map(|t| t.scale).sum::<f64>().max(0.)
     };
+    // Allocated passives whose objects this skill creates carry its modifiers (InheritModifiers).
+    let mut objects: Vec<&'static HitObject> = hitbox
+        .map(|h| h.objects.iter().collect())
+        .unwrap_or_default();
+    let mut companions = Vec::new();
+    for passive in data::get_skills_by_class(class) {
+        let allocated = snapshot
+            .skill_ranks
+            .get(&passive.id)
+            .is_some_and(|r| *r > 0);
+        if passive.id == skill_id || !allocated {
+            continue;
+        }
+        let carried: Vec<&'static HitObject> = self::skill(&passive.id)
+            .into_iter()
+            .flat_map(|h| &h.objects)
+            .filter(|o| o.from.iter().any(|id| id == skill_id))
+            .filter(|o| objects.iter().all(|known| known.name != o.name))
+            .collect();
+        if !carried.is_empty() {
+            companions.push(passive.name.clone());
+            objects.extend(carried);
+        }
+    }
+    let explosion = objects
+        .iter()
+        .any(|o| o.explosion)
+        .then(|| kept(&shared_of, "explosion_aoe", converted))
+        .filter(|percent| *percent != 0.)
+        .map(|percent| SizeTerm {
+            key: "explosion_aoe",
+            percent,
+            scale: percent.max(0.) / 100.,
+        });
+    if explosion.is_some() {
+        ignored.retain(|term| term.key != "explosion_aoe");
+    }
     Some(AreaPreview {
         skill_name: skill.name.clone(),
         tags,
         hitbox,
+        objects,
+        companions,
         terms,
         ignored,
         own,
         bonus,
+        explosion,
     })
 }
 
@@ -412,6 +493,18 @@ mod tests {
             }
         }
         assert_eq!(skill("fire_nova").map(|s| s.aoe_scale), Some(0.4));
+        let skills: Vec<&str> = data::data()
+            .skills_by_class
+            .values()
+            .flatten()
+            .map(|s| s.id.as_str())
+            .collect();
+        for (id, skill) in &HITBOXES.skills {
+            for source in skill.objects.iter().flat_map(|o| &o.from) {
+                assert!(skills.contains(&source.as_str()), "{id} names {source}");
+            }
+            assert!(skill.rings.iter().all(|r| r.radius > 0. && r.band > 0.));
+        }
     }
 
     #[test]
@@ -493,13 +586,56 @@ mod tests {
         assert_eq!(preview.ignored[0].key, "area_of_effect");
         assert_eq!(preview.ignored[0].percent, 30.);
         let blade = preview.headline().expect("blender hitbox");
-        let [scale, _] = object_scale(blade, preview.own, preview.bonus);
+        let [scale, _] = preview.scale(blade);
         assert!((scale - (0.66 * 2.05 + 0.075)).abs() < 1e-9);
+    }
+
+    // Explosions take Explosion AoE from their parent even when the skill lacks the tag.
+    #[test]
+    fn explosions_grow_with_explosion_aoe_whatever_the_tags() {
+        let snapshot = BuildSnapshot {
+            class_id: Some("pirate".into()),
+            active_skill_ids: vec!["buckshot".into()],
+            ..Default::default()
+        };
+        let computed = ComputedStats {
+            stats: HashMap::from([("explosion_aoe".into(), (40., 40.))]),
+            ..Default::default()
+        };
+        let preview = preview(&snapshot, &computed, "buckshot").expect("buckshot preview");
+        assert!(!preview.tags.iter().any(|t| t == "Explosion"));
+        assert_eq!(preview.explosion.as_ref().map(|t| t.scale), Some(0.4));
+        assert!(preview.ignored.iter().all(|t| t.key != "explosion_aoe"));
+        let blast = preview
+            .objects
+            .iter()
+            .find(|o| o.explosion)
+            .expect("an explosion");
+        assert_eq!(preview.scale(blast)[0], blast.scale[0] + 0.4);
+    }
+
+    #[test]
+    fn allocated_passives_add_the_objects_that_carry_the_skills_modifiers() {
+        let mut snapshot = BuildSnapshot {
+            class_id: Some("marauder".into()),
+            active_skill_ids: vec!["crazy_grapple".into()],
+            ..Default::default()
+        };
+        let computed = ComputedStats::default();
+        let names = |p: &AreaPreview| p.objects.iter().map(|o| o.name.clone()).collect::<Vec<_>>();
+        let alone = preview(&snapshot, &computed, "crazy_grapple").expect("grapple preview");
+        assert!(alone.companions.is_empty());
+        assert!(!names(&alone).contains(&"Marauder_Unstable_Bomb_obj".to_owned()));
+        snapshot.skill_ranks.insert("unstable_bomb".into(), 1);
+        let with = preview(&snapshot, &computed, "crazy_grapple").expect("grapple preview");
+        assert_eq!(with.companions, ["Unstable Bomb"]);
+        assert!(names(&with).contains(&"Marauder_Unstable_Bomb_obj".to_owned()));
     }
 
     #[test]
     fn object_growth_follows_the_objects_own_step() {
         let object = |growth, bonus, start, cap| HitObject {
+            name: String::new(),
             origin: [0., 0.],
             scale: [1., 1.],
             mask: None,
@@ -511,15 +647,23 @@ mod tests {
             cap,
             reach: 1.,
             spins: false,
+            explosion: false,
+            from: Vec::new(),
         };
         let add = object(Growth::Add, 1., None, None);
-        assert_eq!(object_scale(&add, 0., 0.5), [1.5, 1.5]);
-        assert_eq!(object_scale(&add, 100., 0.5), [2.5, 2.5]);
+        assert_eq!(object_scale(&add, 0., 0.5, 0.), [1.5, 1.5]);
+        assert_eq!(object_scale(&add, 100., 0.5, 0.), [2.5, 2.5]);
         let lost = object(Growth::Lost, 1., None, None);
-        assert_eq!(object_scale(&lost, 0., 0.5), [1., 1.]);
+        assert_eq!(object_scale(&lost, 0., 0.5, 0.), [1., 1.]);
         let fixed = object(Growth::Add, 0., None, None);
-        assert_eq!(object_scale(&fixed, 100., 0.5), [1., 1.]);
+        assert_eq!(object_scale(&fixed, 100., 0.5, 0.4), [1., 1.]);
         let capped = object(Growth::Cap, 1., Some(0.2), Some(1.2));
-        assert_eq!(object_scale(&capped, 0., 0.5), [1.2, 1.2]);
+        assert_eq!(object_scale(&capped, 0., 0.5, 0.), [1.2, 1.2]);
+        let blast = HitObject {
+            explosion: true,
+            ..object(Growth::Add, 0., None, None)
+        };
+        assert_eq!(object_scale(&blast, 0., 0.5, 0.25), [1.25, 1.25]);
+        assert_eq!(object_scale(&blast, 0., 0.5, -0.25), [1., 1.]);
     }
 }

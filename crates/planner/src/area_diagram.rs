@@ -1,5 +1,5 @@
 //! Path of Building style area preview: the skill's hitboxes to scale on the game view.
-use crate::hitbox::{self, AreaPreview, HitObject, Mask, SkillHitbox};
+use crate::hitbox::{self, AreaPreview, HitObject, Mask, Ring, SkillHitbox};
 use crate::source_breakdown::{format_total, value_row};
 use gpui_kit::{prelude::*, *};
 use hsplanner_ui::i18n::{tr, trf};
@@ -47,6 +47,7 @@ struct Colors {
     base: Hsla,
     reach: Hsla,
     check: Hsla,
+    target: Hsla,
     player: Hsla,
 }
 
@@ -62,6 +63,7 @@ impl Colors {
             base: p.text.opacity(0.22),
             reach: p.positive.opacity(0.8),
             check: p.accent.opacity(0.8),
+            target: p.stat_orange.opacity(0.45),
             player: p.stat_blue.opacity(0.9),
         }
     }
@@ -104,10 +106,7 @@ fn scale_text(scale: f64) -> String {
 pub(crate) fn headline(preview: &AreaPreview) -> Option<String> {
     let object = preview.headline()?;
     let base = reach(object, object.scale);
-    let now = reach(
-        object,
-        hitbox::object_scale(object, preview.own, preview.bonus),
-    );
+    let now = reach(object, preview.scale(object));
     Some(if (now - base).abs() < 0.5 {
         format!("{base:.0} px")
     } else {
@@ -145,7 +144,7 @@ pub(crate) fn body(preview: &AreaPreview, cx: &App) -> Div {
         Some(hitbox) => {
             content = content
                 .child(diagram(preview, hitbox, colors))
-                .child(legend(hitbox, colors, cx));
+                .child(legend(preview, hitbox, colors, cx));
         }
         None => {
             content = content.child(note(
@@ -199,8 +198,24 @@ fn rows(preview: &AreaPreview, cx: &App) -> Div {
             cx,
         ));
     }
+    if let Some(term) = &preview.explosion {
+        let name = crate::stat_labels::stat_name(term.key, term.key);
+        rows = rows.child(value_row(
+            &trf(
+                "planner.sources.area_explosions",
+                &[("0", name.to_string())],
+            ),
+            format!(
+                "{} → {:+.2}",
+                format_total((term.percent, term.percent), true),
+                hundredths(term.scale)
+            ),
+            false,
+            cx,
+        ));
+    }
     if let Some(object) = preview.headline() {
-        let now = hitbox::object_scale(object, preview.own, preview.bonus);
+        let now = preview.scale(object);
         let value = if now == object.scale {
             scale_text(now[0])
         } else {
@@ -229,13 +244,22 @@ fn rows(preview: &AreaPreview, cx: &App) -> Div {
             cx,
         ));
     }
+    if !preview.companions.is_empty() {
+        rows = rows.child(note(
+            trf(
+                "planner.sources.area_companions",
+                &[("0", preview.companions.join(", "))],
+            ),
+            cx,
+        ));
+    }
     if preview.hitbox.is_some_and(|h| h.triggered) {
         rows = rows.child(note(tr("planner.sources.area_triggered").to_owned(), cx));
     }
     rows
 }
 
-fn legend(hitbox: &SkillHitbox, colors: Colors, cx: &App) -> Div {
+fn legend(preview: &AreaPreview, hitbox: &SkillHitbox, colors: Colors, cx: &App) -> Div {
     let p = cx.global::<TooltipTheme>();
     let swatch = |color: Hsla| div().flex_shrink_0().size(units(8.)).bg(color);
     let ring = |color: Hsla| {
@@ -269,11 +293,20 @@ fn legend(hitbox: &SkillHitbox, colors: Colors, cx: &App) -> Div {
                 .gap_y_1()
                 .child(item(swatch(colors.grown), tr("planner.sources.area_now")))
                 .child(item(swatch(colors.base), tr("planner.sources.area_base")))
-                .when(hitbox.objects.iter().any(|o| o.spins), |v| {
+                .when(preview.objects.iter().any(|o| o.spins), |v| {
                     v.child(item(ring(colors.reach), tr("planner.sources.area_reach")))
                 })
                 .when(!hitbox.circles.is_empty(), |v| {
                     v.child(item(ring(colors.check), tr("planner.sources.area_radius")))
+                })
+                .when(!hitbox.rings.is_empty(), |v| {
+                    let band = div()
+                        .flex_shrink_0()
+                        .size(units(8.))
+                        .rounded_full()
+                        .border_2()
+                        .border_color(colors.target);
+                    v.child(item(band, tr("planner.sources.area_ring")))
                 })
                 .child(item(
                     swatch(colors.player).rounded_full(),
@@ -293,13 +326,13 @@ fn diagram(
     hitbox: &'static SkillHitbox,
     colors: Colors,
 ) -> impl IntoElement {
-    let shapes: Vec<Shape> = hitbox
+    let shapes: Vec<Shape> = preview
         .objects
         .iter()
-        .map(|object| Shape {
+        .map(|&object| Shape {
             object,
             base: object.scale,
-            now: hitbox::object_scale(object, preview.own, preview.bonus),
+            now: preview.scale(object),
         })
         .collect();
     div()
@@ -342,6 +375,9 @@ fn paint(
     window.with_content_mask(Some(ContentMask { bounds }), |window| {
         window.paint_quad(fill(bounds, colors.dim));
         paint_grid(window, bounds, &view, colors);
+        for ring in &hitbox.rings {
+            paint_band(window, &view, ring, colors.target);
+        }
         for shape in shapes {
             paint_object(window, &view, shape.object, shape.now, colors.grown);
         }
@@ -443,6 +479,23 @@ fn paint_mask(
             );
         }
     }
+}
+
+/// The game's target ring: a band `band` px wide centred on its radius.
+fn paint_band(window: &mut Window, view: &View, ring: &Ring, color: Hsla) {
+    let outer = (ring.radius + ring.band / 2.) * view.zoom;
+    let [cx, cy] = view.center;
+    window.paint_quad(quad(
+        Bounds::from_corners(
+            point(px(cx - outer), px(cy - outer)),
+            point(px(cx + outer), px(cy + outer)),
+        ),
+        px(outer),
+        transparent_black(),
+        px(ring.band * view.zoom),
+        color,
+        BorderStyle::Solid,
+    ));
 }
 
 fn paint_ring(window: &mut Window, view: &View, radius: f32, color: Hsla) {
