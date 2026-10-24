@@ -206,6 +206,16 @@ pub fn evaluate(input: &PlannerInput) -> PlannerPerformance {
         ),
         computed.clone(),
     );
+    // Crushing Blow stacks follow the main skill's contacts, known only after its pass.
+    for key in ["crushing_blow_stacks", "crushing_blow_armor_break"] {
+        if let Some(value) = primary.stats.get(key) {
+            computed.stats.insert(key.into(), *value);
+            let sources = primary.calculation_sources().get(key).cloned();
+            computed
+                .stat_sources
+                .insert(key.into(), sources.unwrap_or_default());
+        }
+    }
     let mut per_skill = Vec::with_capacity(input.active_skill_ids.len());
     for (index, id) in input.active_skill_ids.iter().enumerate() {
         let mut build = prepared.clone();

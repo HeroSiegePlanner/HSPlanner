@@ -2055,6 +2055,15 @@ fn number_text(
             .copied()
             .unwrap_or(1.)
             .to_string(),
+        // Unset Crushing Blow shows the stacks its proc rate keeps up, not the cap.
+        NumberField::Stack(key)
+            if key == "crushing_blow" && !snapshot.stack_counts.contains_key(key) =>
+        {
+            performance
+                .and_then(|result| result.stats.get("crushing_blow_stacks"))
+                .map(|value| ((value.1 * 10.).round() / 10.).to_string())
+                .unwrap_or_default()
+        }
         NumberField::Stack(key) => snapshot
             .stack_counts
             .get(key)
@@ -2375,6 +2384,22 @@ mod tests {
         assert!(skills.number_changed(&class, &NumberField::Projectile("charged_bolts".into())));
         assert!(skills.number_changed(&class, &NumberField::BuffCastCount("fuel_to_fire".into())));
         assert!(!skills.number_changed(&class, &NumberField::Level));
+    }
+
+    #[::core::prelude::v1::test]
+    fn crushing_blow_count_defaults_to_the_estimated_stacks() {
+        let field = NumberField::Stack("crushing_blow".into());
+        let mut performance = hsplanner_engine::calc::build::BuildPerformance::default();
+        performance
+            .stats
+            .insert("crushing_blow_stacks".into(), (4.31, 4.31));
+        performance
+            .stats
+            .insert("max_crushing_blow_stacks".into(), (5., 5.));
+        let mut snapshot = BuildSnapshot::default();
+        assert_eq!(number_text(&snapshot, &field, Some(&performance)), "4.3");
+        snapshot.stack_counts.insert("crushing_blow".into(), 2);
+        assert_eq!(number_text(&snapshot, &field, Some(&performance)), "2");
     }
 
     #[::core::prelude::v1::test]

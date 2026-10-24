@@ -198,7 +198,7 @@ mod sourced_damage_dto_tests {
             "weapon": { "name": "Test", "damageMin": 100, "damageMax": 100 }
         });
         let out = compute_attack_skill_damage(serde_json::from_value(input).unwrap()).unwrap();
-        assert_eq!((out.physical_hit_min, out.physical_hit_max), (450, 675));
+        assert_eq!((out.physical_hit_min, out.physical_hit_max), (300, 450));
     }
 
     #[test]
@@ -222,8 +222,8 @@ mod sourced_damage_dto_tests {
         assert_eq!(out.crit_chance, 70.);
         assert!((out.crit_multiplier_avg - 2.33).abs() < 1e-12);
         assert_eq!(out.crit_damage_pct, 190.);
-        assert_eq!(out.physical_hit_max, 150);
-        assert_eq!(out.physical_avg_max, 349);
+        assert_eq!(out.physical_hit_max, 100);
+        assert_eq!(out.physical_avg_max, 233);
     }
 
     fn staged_input() -> serde_json::Value {
@@ -268,10 +268,10 @@ mod sourced_damage_dto_tests {
         });
         input["stats"]["attacks_per_second"] = serde_json::json!(1.0);
         let out = compute_attack_skill_damage(serde_json::from_value(input).unwrap()).unwrap();
-        // Physical: 100 weapon * (1.5 crushing + 1 own armor break).
-        assert_eq!((out.physical_hit_min, out.physical_hit_max), (250, 250));
+        // Physical: 100 weapon * (1 + 100% own armor break / 100).
+        assert_eq!((out.physical_hit_min, out.physical_hit_max), (200, 200));
         assert_eq!((out.poison_hit_min, out.poison_hit_max), (114, 152));
-        assert_eq!((out.combined_hit_min, out.combined_hit_max), (364, 402));
+        assert_eq!((out.combined_hit_min, out.combined_hit_max), (314, 352));
     }
 }
 

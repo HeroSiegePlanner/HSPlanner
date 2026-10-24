@@ -38,7 +38,6 @@ pub(crate) fn damage_bound_bonuses(stats: &StatMap) -> (Ranged, Ranged) {
 
 pub const ELEMENTS: [&str; 5] = ["fire", "cold", "lightning", "poison", "arcane"];
 
-pub(crate) const CRUSHING_BLOW_DEFAULT: f64 = 1.5;
 // S8: a deadly blow hits for 1.35x (was 1.5x), scaled by deadly blow effectiveness.
 pub(crate) const DEADLY_BLOW_ON_PROC_MULT: f64 = 1.35;
 
@@ -304,7 +303,6 @@ pub struct AttackSkillDamageBreakdown {
     pub additive_physical_max: f64,
     pub attack_damage_min_pct: f64,
     pub attack_damage_max_pct: f64,
-    pub crushing_blow_modifier: f64,
     pub armor_break_pct: f64,
     pub deadly_blow_chance: f64,
     pub crit_chance: f64,
@@ -347,7 +345,6 @@ pub struct WeaponDamageBreakdown {
     pub attack_damage_max_pct: f64,
     pub extra_damage_pct: f64,
     pub extra_damage_sources: Vec<ExtraSource>,
-    pub crushing_blow_modifier: f64,
     pub armor_break_pct: f64,
     pub deadly_blow_chance: f64,
     pub hit_chance: f64,

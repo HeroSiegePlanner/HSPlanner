@@ -462,6 +462,29 @@ fn perf_with_stats(
     compute_build_performance(&deps)
 }
 
+#[test]
+fn crushing_blow_stacks_follow_the_main_skill_contacts_and_skip_elemental_hits() {
+    let chance = [("crushing_blow_chance", "100")];
+    let plain = perf_with_stats("viking", "zeal", 10, &[], &[], 1.0);
+    let crushed = perf_with_stats("viking", "zeal", 10, &[], &chance, 1.0);
+    let contacts = crushed
+        .calculation()
+        .iter()
+        .find(|step| step.label() == "Proc trigger contacts per second")
+        .unwrap()
+        .value();
+    let stacks = crushed.stats["crushing_blow_stacks"];
+    let expected = super::super::stats::crushing_blow_expected_stacks(contacts.1, 100.0, 5.0);
+    assert!(stacks.1 > 0.0 && (stacks.1 - expected).abs() < 1e-9);
+    assert!((crushed.stats["crushing_blow_armor_break"].1 - stacks.1 * 10.0).abs() < 1e-9);
+    assert!(crushed.avg_hit_dps_max.unwrap() > plain.avg_hit_dps_max.unwrap());
+
+    let fire = perf_with_stats("pyromancer", "fireball", 10, &[], &[], 1.0);
+    let fire_crushed = perf_with_stats("pyromancer", "fireball", 10, &[], &chance, 1.0);
+    assert!(fire_crushed.stats["crushing_blow_armor_break"].1 > 0.0);
+    assert_eq!(fire_crushed.avg_hit_dps_max, fire.avg_hit_dps_max);
+}
+
 // Multicast re-casts a spell; sentries, summons and guardians are spawned, not
 // multicast, so the stat must not reach their damage.
 #[test]
@@ -2315,7 +2338,8 @@ fn unholy_form_stats_and_damage_follow_rank_and_activation() {
             assert_eq!(on.stats.get(key), high.stats.get(key));
         }
         let ratio = on.avg_hit_dps_max.unwrap() / off.avg_hit_dps_max.unwrap();
-        assert!((ratio - 1.2).abs() < 0.01, "{skill}: {ratio}");
+        // Floored hits near 30 move the ratio by up to 1/30.
+        assert!((ratio - 1.2).abs() < 0.04, "{skill}: {ratio}");
         assert!(high.avg_hit_dps_max > on.avg_hit_dps_max);
         assert_eq!(off.avg_hit_dps_max, unlearned.avg_hit_dps_max);
         assert!((on.proc_dps_min / off.proc_dps_min - 1.2).abs() < 1e-9);

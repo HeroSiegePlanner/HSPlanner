@@ -43,6 +43,8 @@ impl<'a> Fixture<'a> {
             (self.target.into(), self.target_rank),
         ]);
         let empty_ranks = HashMap::new();
+        // A standalone proc has no rerun, so pin Crushing Blow for both sides.
+        let pinned_stacks = HashMap::from([(CRUSHING_BLOW_KEY.to_string(), 0)]);
         let inventory = self
             .weapon
             .map(|id| {
@@ -115,7 +117,7 @@ impl<'a> Fixture<'a> {
             proc_toggles: &toggles,
             kills_per_sec: 0.0,
             entity_rates: &numbers,
-            stack_counts: &empty_ranks,
+            stack_counts: &pinned_stacks,
             granted_skill_ranks: None,
             difficulty: None,
         };

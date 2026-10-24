@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use super::{
     collect_extra_damage, deadly_blow_mult, r_max, r_min, rg, ConditionMap, ExtraSource, StatMap,
-    Weapon, WeaponDamageBreakdown, CRUSHING_BLOW_DEFAULT, ELEMENTS,
+    Weapon, WeaponDamageBreakdown, ELEMENTS,
 };
 
 const OPEN_WOUNDS_FRACTION: f64 = 0.2;
@@ -97,14 +97,9 @@ pub fn compute_weapon_damage(
     let phys_crit_min = base_phys_min * crit_mult;
     let phys_crit_max = base_phys_max * crit_mult;
 
-    let crushing_raw = r_max(rg(stats, "crushing_blow_modifier"));
-    let crushing_blow_modifier = if crushing_raw == 0.0 {
-        CRUSHING_BLOW_DEFAULT
-    } else {
-        crushing_raw
-    };
     let armor_break_pct = r_max(rg(stats, "armor_break"));
-    let crush_armor_mult = crushing_blow_modifier + armor_break_pct / 100.0;
+    let crush_armor_mult =
+        1.0 + (armor_break_pct + r_max(rg(stats, "crushing_blow_armor_break"))) / 100.0;
 
     let deadly_blow_chance =
         (r_max(rg(stats, "deadly_blow_chance")) + r_max(rg(stats, "deadly_blow"))).min(100.0);
@@ -175,7 +170,6 @@ pub fn compute_weapon_damage(
         attack_damage_max_pct: skill_max,
         extra_damage_pct: extra_pct,
         extra_damage_sources: extra_sources,
-        crushing_blow_modifier,
         armor_break_pct,
         deadly_blow_chance,
         hit_chance,
@@ -236,7 +230,6 @@ mod tests {
             ("maximum_damage_flat", 32.0),
             ("minimum_damage_pct", 50.0),
             ("maximum_damage_pct", 100.0),
-            ("crushing_blow_modifier", 1.0),
         ]);
         let d = compute_weapon_damage(
             Some(&weapon(100.0, 100.0)),
@@ -262,40 +255,40 @@ mod tests {
     }
 
     #[test]
-    fn unarmed_no_buffs_yields_base_2_to_6_with_crushing_default() {
+    fn unarmed_no_buffs_yields_base_2_to_6() {
         let s = stats(&[]);
         let r = compute_weapon_damage(None, &s, &ConditionMap::new(), &no_res(), None);
-        // base_phys = (2..6 - 0 - 0) * 1 + 0 = 2..6; phys_eff = 2..6 * 1.5 * 1 = 3..9
-        assert_eq!(r.hit_min, 3);
-        assert_eq!(r.hit_max, 9);
-        // ow_min = 2 * 1.5 * 1.5 * 1 * 1 * 0.2 = 0.9 → 0
+        // base_phys = (2..6 - 0 - 0) * 1 + 0 = 2..6; no break, so phys_eff = 2..6
+        assert_eq!(r.hit_min, 2);
+        assert_eq!(r.hit_max, 6);
+        // ow_min = 2 * 1.5 * 1 * 1 * 1 * 0.2 = 0.6 → 0
         assert_eq!(r.open_wounds_min, 0);
-        // ow_max = 6 * 1.5 * 1.5 * 1 * 1 * 0.2 = 2.7 → 2
-        assert_eq!(r.open_wounds_max, 2);
+        // ow_max = 6 * 1.5 * 1 * 1 * 1 * 0.2 = 1.8 → 1
+        assert_eq!(r.open_wounds_max, 1);
         assert!(!r.has_weapon);
     }
 
     #[test]
     fn weapon_with_crit_chance_uses_averaged_multiplier() {
         // crit% = 100, chance = 50 → crit_mult = 1 + 100*50/10000 = 1.5
-        // base = 100, phys_eff = 100 * 1.5 * 1.5 = 225
+        // base = 100, phys_eff = 100 * 1.5 = 150
         let w = weapon(100.0, 100.0);
         let s = stats(&[("crit_damage", 100.0), ("crit_chance", 50.0)]);
         let r = compute_weapon_damage(Some(&w), &s, &ConditionMap::new(), &no_res(), None);
-        assert_eq!(r.hit_min, 225);
-        assert_eq!(r.hit_max, 225);
+        assert_eq!(r.hit_min, 150);
+        assert_eq!(r.hit_max, 150);
     }
 
     #[test]
     fn additive_elemental_added_outside_skill_and_crit() {
         // weapon=100, AddElem fire=50, Skill%=100
-        //   base_phys = 100 * 2 + 0 = 200; phys_eff = 200 * 1.5 = 300
-        //   hit = 300 + 50 = 350 (AddElem joins outside Skill% and crushing)
+        //   base_phys = 100 * 2 + 0 = 200; phys_eff = 200
+        //   hit = 200 + 50 = 250 (AddElem joins outside Skill% and the physical break)
         let w = weapon(100.0, 100.0);
         let s = stats(&[("attack_damage", 100.0), ("additive_fire_damage", 50.0)]);
         let r = compute_weapon_damage(Some(&w), &s, &ConditionMap::new(), &no_res(), None);
-        assert_eq!(r.hit_min, 350);
-        assert_eq!(r.hit_max, 350);
+        assert_eq!(r.hit_min, 250);
+        assert_eq!(r.hit_max, 250);
         assert_eq!(r.additive_elemental_min, 50.0);
         assert_eq!(r.additive_elemental_breakdown.len(), 1);
     }
@@ -303,17 +296,17 @@ mod tests {
     #[test]
     fn deadly_blow_chance_averages_the_s8_proc() {
         // weapon 100, Deadly% = 100 → deadly_mult = 1.35
-        // phys_eff = 100 * 1.5 * 1.35 = 202.5, floored
+        // phys_eff = 100 * 1.35 = 135
         let w = weapon(100.0, 100.0);
         let s = stats(&[("deadly_blow_chance", 100.0)]);
         let r = compute_weapon_damage(Some(&w), &s, &ConditionMap::new(), &no_res(), None);
-        assert_eq!(r.hit_min, 202);
+        assert_eq!(r.hit_min, 135);
     }
 
     #[test]
     fn ailments_stack_additively_in_hit() {
         // S8: bleeding +20% and burning +30% → status_mult = 1 + 0.5 = 1.5
-        // base = 100, phys_eff = 150, hit = 150 * 1.5 = 225
+        // base = 100, phys_eff = 100, hit = 100 * 1.5 = 150
         let w = weapon(100.0, 100.0);
         let s = stats(&[
             ("extra_damage_bleeding", 20.0),
@@ -321,37 +314,37 @@ mod tests {
         ]);
         let c = conds(&["bleeding", "burning"]);
         let r = compute_weapon_damage(Some(&w), &s, &c, &no_res(), None);
-        assert_eq!(r.hit_min, 225);
+        assert_eq!(r.hit_min, 150);
     }
 
     #[test]
     fn enemy_phys_res_reduces_dps_with_ignore_factor() {
         // res = 50, ignore = 50 → eff_res = 25 → res_mult = 0.75
-        // base = 100, hit = 150, APS = 1, ow = 45 → dps = (150 + 45) * 0.75 = 146.25
+        // base = 100, hit = 100, APS = 1, ow = 30 → dps = (100 + 30) * 0.75 = 97.5
         let w = weapon(100.0, 100.0);
         let s = stats(&[("attacks_per_second", 1.0), ("ignore_physical_res", 50.0)]);
         let mut res = HashMap::new();
         res.insert("physical".into(), 50.0);
         let r = compute_weapon_damage(Some(&w), &s, &ConditionMap::new(), &res, None);
-        assert_eq!(r.dps_min, 146);
+        assert_eq!(r.dps_min, 97);
         assert_eq!(r.enemy_phys_res_pct, 50.0);
         assert_eq!(r.phys_resistance_ignored_pct, 50.0);
     }
 
     #[test]
     fn projectile_count_scales_hit_and_open_wounds() {
-        // Proj = 3 → hit = 450, ow = 135
+        // Proj = 3 → hit = 300, ow = 90
         let w = weapon(100.0, 100.0);
         let s = stats(&[]);
         let r = compute_weapon_damage(Some(&w), &s, &ConditionMap::new(), &no_res(), Some(3));
-        assert_eq!(r.hit_min, 450);
-        assert_eq!(r.open_wounds_min, 135);
+        assert_eq!(r.hit_min, 300);
+        assert_eq!(r.open_wounds_min, 90);
         assert_eq!(r.projectile_count, 3);
     }
 
     #[test]
     fn open_wounds_unaffected_by_crit_and_deadly() {
-        // Even with full crit/deadly, ow stays at 100 * 1.5 * 1.5 * 1 * 1 * 0.2 = 45
+        // Even with full crit/deadly, ow stays at 100 * 1.5 * 1 * 1 * 1 * 0.2 = 30
         let w = weapon(100.0, 100.0);
         let s = stats(&[
             ("crit_damage", 100.0),
@@ -359,7 +352,7 @@ mod tests {
             ("deadly_blow_chance", 100.0),
         ]);
         let r = compute_weapon_damage(Some(&w), &s, &ConditionMap::new(), &no_res(), None);
-        assert_eq!(r.open_wounds_min, 45);
+        assert_eq!(r.open_wounds_min, 30);
     }
 
     #[test]
@@ -386,49 +379,49 @@ mod tests {
         assert_eq!(r.additive_elemental_min, 50.0);
         assert_eq!(r.additive_elemental_max, 50.0);
         assert_eq!(r.additive_elemental_breakdown.len(), 2);
-        // base_phys=100, phys_eff=150, hit=150+50=200
-        assert_eq!(r.hit_min, 200);
+        // base_phys=100, phys_eff=100, hit=100+50=150
+        assert_eq!(r.hit_min, 150);
     }
 
     #[test]
     fn crit_min_max_reflect_full_proc_multiplier_not_averaged() {
         // crit% = 100, chance = 50 → averaged crit_mult = 1.5,
-        // on-proc crit_mult = 2.0 → crit_min = base*2.0*crush*deadly = 100*2*1.5*1 = 300
+        // on-proc crit_mult = 2.0 → crit_min = base*2.0*break*deadly = 100*2*1*1 = 200
         let w = weapon(100.0, 100.0);
         let s = stats(&[("crit_damage", 100.0), ("crit_chance", 50.0)]);
         let r = compute_weapon_damage(Some(&w), &s, &ConditionMap::new(), &no_res(), None);
-        assert_eq!(r.hit_min, 225); // averaged
-        assert_eq!(r.crit_min, 300); // full proc
+        assert_eq!(r.hit_min, 150); // averaged
+        assert_eq!(r.crit_min, 200); // full proc
     }
 
     #[test]
     fn hit_chance_below_default_scales_hit_raw_proportionally() {
-        // hit_chance = 50 → hit = 150 * 0.5 = 75 (per PRD §4.1; arkusz I6 inputs)
+        // hit_chance = 50 → hit = 100 * 0.5 = 50 (per PRD §4.1; arkusz I6 inputs)
         let w = weapon(100.0, 100.0);
         let s = stats(&[("hit_chance", 50.0)]);
         let r = compute_weapon_damage(Some(&w), &s, &ConditionMap::new(), &no_res(), None);
-        assert_eq!(r.hit_min, 75);
+        assert_eq!(r.hit_min, 50);
         assert_eq!(r.hit_chance, 50.0);
     }
 
     #[test]
     fn enhanced_damage_scales_weapon_but_not_additive_phys() {
         // weapon=100, enhanced=100% → weapon_eff=200; additive_phys=50 added after.
-        // base_phys=(250-50-0)*1+50=250, phys_eff=250*1.5=375.
+        // base_phys=(250-50-0)*1+50=250, phys_eff=250.
         let w = weapon(100.0, 100.0);
         let s = stats(&[
             ("enhanced_damage", 100.0),
             ("additive_physical_damage", 50.0),
         ]);
         let r = compute_weapon_damage(Some(&w), &s, &ConditionMap::new(), &no_res(), None);
-        assert_eq!(r.hit_min, 375);
+        assert_eq!(r.hit_min, 250);
     }
 
     #[test]
     fn skill_pct_scales_base_only_not_additive_phys_or_elem() {
         // weapon=100, additive_phys=20, additive_elem fire=30, skill%=100.
         // base_no_flats = 150-20-30 = 100; base_phys = 100*2 + 20 = 220
-        // phys_eff = 220*1.5 = 330; hit = 330 + 30 = 360
+        // phys_eff = 220; hit = 220 + 30 = 250
         let w = weapon(100.0, 100.0);
         let s = stats(&[
             ("attack_damage", 100.0),
@@ -436,7 +429,7 @@ mod tests {
             ("additive_fire_damage", 30.0),
         ]);
         let r = compute_weapon_damage(Some(&w), &s, &ConditionMap::new(), &no_res(), None);
-        assert_eq!(r.hit_min, 360);
+        assert_eq!(r.hit_min, 250);
     }
 
     #[test]
@@ -445,7 +438,7 @@ mod tests {
         //   weapon = 100, attack_damage = 50%, additive_phys = 10, fire = 20
         //   crit% = 100, crit_chance = 100 capped to 95 → crit_mult = 1.95
         //   deadly = 100 → deadly_mult = 1.35 (S8)
-        //   crushing default 1.5, armor_break = 0
+        //   armor_break = 0 → physical break ×1
         //   bleeding = 30% (active), burning = 20% (active) → status = 1 + 0.5 = 1.5
         //   proj = 2, hit_chance = 100 (default)
         //   enemy_phys_res = 40%, ignore = 50% → eff_res = 20%, res_mult = 0.8
@@ -468,13 +461,13 @@ mod tests {
         res.insert("physical".into(), 40.0);
         // base_phys = 100 * 1.5 + 10 = 160
         // phys_crit = 160 * 1.95 = 312
-        // phys_eff  = 312 * 1.5 * 1.35 = 631.8
-        // hit_raw   = (631.8 + 20) * 1.5 * 1 * 2 = 1955.4
-        // ow (no crit/deadly) = 160 * 1.5 * 1.5 * 1.5 * 2 * 0.2 = 216
-        // dps       = (1955.4 + 216) * 0.8 = 1737.12
+        // phys_eff  = 312 * 1 * 1.35 = 421.2
+        // hit_raw   = (421.2 + 20) * 1.5 * 1 * 2 = 1323.6
+        // ow (no crit/deadly) = 160 * 1.5 * 1 * 1.5 * 2 * 0.2 = 144
+        // dps       = (1323.6 + 144) * 0.8 = 1174.08
         let r = compute_weapon_damage(Some(&w), &s, &c, &res, Some(2));
-        assert_eq!(r.hit_min, 1955);
-        assert_eq!(r.open_wounds_min, 216);
-        assert_eq!(r.dps_min, 1737);
+        assert_eq!(r.hit_min, 1323);
+        assert_eq!(r.open_wounds_min, 144);
+        assert_eq!(r.dps_min, 1174);
     }
 }

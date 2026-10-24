@@ -17,6 +17,7 @@ use super::skills::{
 };
 use super::stats::{
     augment_burst_key, compute_build_stats, AugmentUptimeScope, BuildStatsInput, ComputedStats,
+    CrushingBlowScope, CRUSHING_BLOW_KEY,
 };
 use super::subskill::subskill_key;
 use super::types::{
@@ -1620,6 +1621,26 @@ pub(crate) fn performance_from_stats(
             return performance_from_stats(deps, compute_stats_for_skill(deps, deps.main_skill_id));
         }
     }
+    // Crushing Blow stacks follow these contacts: rerun once, unless Config sets the count.
+    if !CrushingBlowScope::active()
+        && !deps.stack_counts.contains_key(CRUSHING_BLOW_KEY)
+        && stat("crushing_blow_chance").1 > 0.0
+        && proc_contacts.1 > 0.0
+    {
+        let _scope = CrushingBlowScope::enter(proc_contacts);
+        return performance_from_stats(deps, compute_stats_for_skill(deps, deps.main_skill_id));
+    }
+    stat_inputs(
+        &mut calculation,
+        &computed.stats,
+        [
+            "crushing_blow_chance",
+            "crushing_blow_effectiveness",
+            "max_crushing_blow_stacks",
+            "crushing_blow_stacks",
+            "crushing_blow_armor_break",
+        ],
+    );
     for proc_skill in all_class_skills.iter() {
         let Some(proc) = proc_skill.proc.as_ref() else {
             continue;

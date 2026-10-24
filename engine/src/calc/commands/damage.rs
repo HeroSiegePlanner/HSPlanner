@@ -125,7 +125,6 @@ pub struct WeaponDamageOutput {
     pub attack_damage_max_pct: f64,
     pub extra_damage_pct: f64,
     pub extra_damage_sources: Vec<ExtraSourceOut>,
-    pub crushing_blow_modifier: f64,
     pub armor_break_pct: f64,
     pub deadly_blow_chance: f64,
     pub hit_chance: f64,
@@ -174,7 +173,6 @@ impl From<calc::WeaponDamageBreakdown> for WeaponDamageOutput {
             attack_damage_max_pct: v.attack_damage_max_pct,
             extra_damage_pct: v.extra_damage_pct,
             extra_damage_sources: map_sources(v.extra_damage_sources),
-            crushing_blow_modifier: v.crushing_blow_modifier,
             armor_break_pct: v.armor_break_pct,
             deadly_blow_chance: v.deadly_blow_chance,
             hit_chance: v.hit_chance,
@@ -263,7 +261,6 @@ pub struct AttackSkillDamageOutput {
     pub additive_physical_max: f64,
     pub attack_damage_min_pct: f64,
     pub attack_damage_max_pct: f64,
-    pub crushing_blow_modifier: f64,
     pub armor_break_pct: f64,
     pub deadly_blow_chance: f64,
     pub crit_chance: f64,
@@ -310,7 +307,6 @@ impl From<calc::AttackSkillDamageBreakdown> for AttackSkillDamageOutput {
             additive_physical_max: v.additive_physical_max,
             attack_damage_min_pct: v.attack_damage_min_pct,
             attack_damage_max_pct: v.attack_damage_max_pct,
-            crushing_blow_modifier: v.crushing_blow_modifier,
             armor_break_pct: v.armor_break_pct,
             deadly_blow_chance: v.deadly_blow_chance,
             crit_chance: v.crit_chance,
@@ -425,12 +421,11 @@ mod attack_preview_tests {
         .unwrap();
 
         let out = compute_attack_skill_damage(input).expect("attack breakdown");
-        // 100 weapon dmg * 100% skill pct * 1.5 default crushing blow -> 150
-        // per hit, 2 APS -> 300 dps.
-        assert_eq!(out.combined_hit_min, 150);
-        assert_eq!(out.combined_hit_max, 150);
+        // 100 weapon dmg * 100% skill pct, no break -> 100 per hit, 2 APS -> 200 dps.
+        assert_eq!(out.combined_hit_min, 100);
+        assert_eq!(out.combined_hit_max, 100);
         assert!((out.attacks_per_second_min - 2.0).abs() < 1e-9);
-        assert!((out.dps_min - 300.0).abs() < 1e-6);
+        assert!((out.dps_min - 200.0).abs() < 1e-6);
     }
 
     #[test]

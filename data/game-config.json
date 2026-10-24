@@ -120,7 +120,8 @@
     {
       "key": "avarice", "name": "Avarice", "maxStat": "max_avarice_stacks",
       "perStack": {}, "perStackStats": { "avarice_magic_find": "magic_find", "avarice_gold_find": "gold_find" }
-    }
+    },
+    { "key": "crushing_blow", "name": "Crushing Blow", "maxStat": "max_crushing_blow_stacks" }
   ],
   "attributes": [
     { "key": "strength", "name": "Strength" },
@@ -637,6 +638,18 @@
     {
       "key": "crushing_blow_chance",
       "name": "Crushing Blow",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "max_crushing_blow_stacks",
+      "name": "Maximum Crushing Blow Stacks",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "crushing_blow_armor_break",
+      "name": "Crushing Blow Armor Break",
       "category": "offense",
       "format": "percent"
     },

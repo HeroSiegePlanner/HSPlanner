@@ -687,6 +687,9 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     // 16b. Damage from Resistances → enhanced_damage (needs fanned-out resists).
     apply_damage_per_resist(&mut stat_sources);
 
+    // 16c. Crushing Blow stacks on the target, once every chance source is in.
+    apply_crushing_blow(input.stack_counts, &mut attr_sources, &mut stat_sources);
+
     // 17. Compute stat totals from sources
     let mut stats = compute_final_stats(&stat_sources);
 
