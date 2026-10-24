@@ -1,13 +1,14 @@
 //! Gear upgrade search: other items plus sockets, runewords, crystals, augments, random affixes
-//! and stars, each kept only when the real combined-DPS calculation says it helps.
+//! and stars, each kept only when the real calculation says it raises the ranked DPS.
 use std::collections::{HashMap, HashSet};
 use std::sync::atomic::{AtomicU32, Ordering};
 
 use hsplanner_engine::calc::{
     affix::rolled_affix_value,
     data,
-    planner::combined_dps,
+    planner::{DpsSummary, PlannerInput, combined_dps, dps_summary, hit_dps},
     season::SeasonScope,
+    skills::Ranged,
     star_scaling,
     types::{
         Affix, AngelicAugment, AugmentCalc, CustomStat, EquippedAffix, EquippedItem, ItemBase,
@@ -45,6 +46,7 @@ pub struct SuggestOptions {
     pub augments: bool,
     pub affixes: bool,
     pub stars: bool,
+    pub rank_by: RankBy,
 }
 
 impl Default for SuggestOptions {
@@ -56,6 +58,34 @@ impl Default for SuggestOptions {
             augments: true,
             affixes: true,
             stars: true,
+            rank_by: RankBy::CombinedDps,
+        }
+    }
+}
+
+/// The stat panel number the search raises.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub enum RankBy {
+    #[default]
+    CombinedDps,
+    /// The main skill's hits only, so other skills and ailments can't outweigh it.
+    HitDps,
+}
+
+impl RankBy {
+    /// The number's midpoint, as the search compares it.
+    fn measure(self, input: &PlannerInput) -> f64 {
+        match self {
+            Self::CombinedDps => combined_dps(input),
+            Self::HitDps => hit_dps(input),
+        }
+    }
+
+    /// The number among the stat panel's.
+    pub fn of(self, summary: &DpsSummary) -> Option<Ranged> {
+        match self {
+            Self::CombinedDps => summary.combined_dps,
+            Self::HitDps => summary.hit_dps,
         }
     }
 }
@@ -69,14 +99,20 @@ pub struct GearStep {
     pub item: EquippedItem,
     pub augment_on: bool,
     pub cleared: Vec<String>,
+    /// Midpoints of the ranked DPS the search compares.
     pub dps_before: f64,
     pub dps_after: f64,
+    /// The stat panel's numbers once this step is applied.
+    pub after: DpsSummary,
 }
 
 #[derive(Debug, Clone, Default)]
 pub struct GearSuggestion {
     pub base_dps: f64,
     pub final_dps: f64,
+    pub rank_by: RankBy,
+    /// The stat panel's numbers before any step.
+    pub before: DpsSummary,
     pub steps: Vec<GearStep>,
     pub evaluations: u32,
 }
@@ -311,6 +347,7 @@ impl Search<'_> {
                         cleared,
                         dps_before: dps,
                         dps_after: pick.dps,
+                        after: dps_summary(&next.planner_input()),
                     });
                     snapshot = next;
                     dps = pick.dps;
@@ -329,6 +366,8 @@ impl Search<'_> {
         Ok(GearSuggestion {
             base_dps,
             final_dps: dps,
+            rank_by: self.options.rank_by,
+            before: dps_summary(&self.start.planner_input()),
             steps,
             evaluations: self.evaluations.load(Ordering::Relaxed),
         })
@@ -343,7 +382,7 @@ impl Search<'_> {
             return 0.;
         }
         self.evaluations.fetch_add(1, Ordering::Relaxed);
-        combined_dps(&snapshot.planner_input())
+        self.options.rank_by.measure(&snapshot.planner_input())
     }
 
     fn try_item(

@@ -2265,6 +2265,17 @@ pub(crate) fn performance_from_stats(
 mod tests;
 
 impl BuildPerformance {
+    /// One hit as the stat panel shows it: an attack's combined hit, else the skill's final damage.
+    pub fn hit_damage(&self) -> Option<Ranged> {
+        self.attack_damage
+            .as_ref()
+            .map(|d| (d.combined_hit_min as f64, d.combined_hit_max as f64))
+            .or_else(|| {
+                self.damage
+                    .as_ref()
+                    .map(|d| (d.final_min as f64, d.final_max as f64))
+            })
+    }
     pub fn calculation(&self) -> &[CalculationStep] {
         &self.calculation
     }

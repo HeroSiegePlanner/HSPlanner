@@ -42,6 +42,7 @@ fn only(enable: impl FnOnce(&mut SuggestOptions)) -> SuggestOptions {
         augments: false,
         affixes: false,
         stars: false,
+        rank_by: RankBy::CombinedDps,
     };
     enable(&mut options);
     options
@@ -57,6 +58,7 @@ fn step(slot: &str, before: Option<EquippedItem>, item: EquippedItem) -> GearSte
         cleared: Vec::new(),
         dps_before: 0.,
         dps_after: 0.,
+        after: DpsSummary::default(),
     }
 }
 
@@ -65,20 +67,27 @@ fn assert_replays(start: &BuildSnapshot, result: &GearSuggestion) -> BuildSnapsh
     let _scope = SeasonScope::enter(Some(start.season.clone()));
     let close = |a: f64, b: f64| (a - b).abs() <= b.abs().max(1.) * 1e-9;
     let mut snapshot = start.clone();
-    assert!(close(
-        combined_dps(&snapshot.planner_input()),
-        result.base_dps
-    ));
+    let measure = |snapshot: &BuildSnapshot| result.rank_by.measure(&snapshot.planner_input());
+    assert!(close(measure(&snapshot), result.base_dps));
     let mut dps = result.base_dps;
     for step in &result.steps {
         assert_eq!(step.dps_before, dps);
+        let (low, high) = result
+            .rank_by
+            .of(&step.after)
+            .expect("ranked DPS after the step");
+        assert!(
+            close((low + high) / 2., step.dps_after),
+            "{} panel numbers",
+            step.slot
+        );
         assert!(
             step.dps_after > step.dps_before,
             "{} gains nothing",
             step.slot
         );
         step.apply(&mut snapshot).unwrap();
-        let replayed = combined_dps(&snapshot.planner_input());
+        let replayed = measure(&snapshot);
         assert!(
             close(replayed, step.dps_after),
             "{}: {replayed} vs {}",
@@ -135,6 +144,25 @@ fn full_search_steps_replay_to_their_reported_dps() {
         let crystal = data::get_crystal_mod(&forged.affix_id).unwrap();
         assert_eq!(forged.custom_value, Some(rolled_affix_value(crystal, 1.)));
     }
+}
+
+#[test]
+fn ranking_by_hit_dps_measures_the_main_skill_hits() {
+    let start = starter();
+    let result = suggest(
+        &start,
+        only(|o| {
+            o.other_items = true;
+            o.sockets = true;
+            o.rank_by = RankBy::HitDps;
+        }),
+        &Cancellation::default(),
+        |_, _| {},
+    )
+    .unwrap();
+    assert_eq!(result.rank_by, RankBy::HitDps);
+    assert!(result.final_dps > result.base_dps);
+    assert_replays(&start, &result);
 }
 
 #[test]

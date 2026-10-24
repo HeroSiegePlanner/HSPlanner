@@ -149,6 +149,23 @@ pub fn prepare_input(input: &PlannerInput) -> BuildPerformanceInput {
     build
 }
 
+/// The stat panel's leading numbers, as min–max ranges.
+#[derive(Debug, Clone, Copy, Default, PartialEq)]
+pub struct DpsSummary {
+    pub hit_damage: Option<Ranged>,
+    pub hit_dps: Option<Ranged>,
+    pub combined_dps: Option<Ranged>,
+}
+
+pub fn dps_summary(input: &PlannerInput) -> DpsSummary {
+    let current = evaluate(input).current;
+    DpsSummary {
+        hit_damage: current.hit_damage(),
+        hit_dps: current.hit_dps_min.zip(current.hit_dps_max),
+        combined_dps: current.combined_dps_min.zip(current.combined_dps_max),
+    }
+}
+
 /// The combined DPS midpoint `evaluate` reports, without the stat breakdowns; for searches.
 pub fn combined_dps(input: &PlannerInput) -> f64 {
     let prepared = prepare_input(input);
@@ -160,6 +177,21 @@ pub fn combined_dps(input: &PlannerInput) -> f64 {
             main.or(prepared.main_skill_id.as_deref()),
         ))
     })
+}
+
+/// The main skill's Hit DPS midpoint `evaluate` reports, without the stat breakdowns; for searches.
+pub fn hit_dps(input: &PlannerInput) -> f64 {
+    let prepared = prepare_input(input);
+    let _scope = super::season::SeasonScope::enter(prepared.season.clone());
+    let performance = super::build::compute_build_performance(&super::commands::perf_deps(
+        &prepared,
+        &prepared.inventory,
+        prepared.main_skill_id.as_deref(),
+    ));
+    performance
+        .hit_dps_min
+        .zip(performance.hit_dps_max)
+        .map_or(0., |(low, high)| (low + high) / 2.)
 }
 
 pub fn evaluate(input: &PlannerInput) -> PlannerPerformance {
@@ -443,7 +475,7 @@ mod tests {
         assert_eq!(result.hit_dps_min, None);
     }
     #[test]
-    fn combined_dps_matches_the_reported_dps() {
+    fn search_measures_match_the_reported_dps() {
         let skills: Vec<String> = data::get_skills_by_class("amazon")
             .iter()
             .filter(|s| s.damage_formula.is_some() || s.damage_per_rank.is_some())
@@ -466,6 +498,13 @@ mod tests {
             let reported = dps_mid(&evaluate(&input));
             assert!(reported > 0.);
             assert!((combined_dps(&input) - reported).abs() <= reported * 1e-9);
+            let summary = dps_summary(&input);
+            let (low, high) = summary.combined_dps.expect("combined DPS");
+            assert!(((low + high) / 2. - reported).abs() <= reported * 1e-9);
+            assert!(summary.hit_damage.is_some());
+            let (low, high) = summary.hit_dps.expect("hit DPS");
+            let hit = (low + high) / 2.;
+            assert!(hit > 0. && (hit_dps(&input) - hit).abs() <= hit * 1e-9);
         }
     }
 

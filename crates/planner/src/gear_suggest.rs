@@ -2,16 +2,17 @@
 use super::*;
 use crate::item_tooltip::{describe_affix_value, equipped_ids, with_item_tooltip};
 use hsplanner_build::gear_suggest::{
-    self, Choice, GearChange, GearStep, GearSuggestion, SuggestOptions,
+    self, Choice, GearChange, GearStep, GearSuggestion, RankBy, SuggestOptions,
 };
 use hsplanner_engine::calc::affix::rolled_affix_value;
+use hsplanner_engine::calc::skills::Ranged;
 use hsplanner_engine::task_control::Cancellation;
 use hsplanner_ui::components::{
     ModalSize, PlannerDialogExt, modal_body, modal_eyebrow, modal_footer, modal_header,
     modal_label, modal_layout, modal_status,
 };
 use hsplanner_ui::controls::{ButtonSize, ButtonTone, command_button, modal_button, segment};
-use hsplanner_ui::numbers::compact;
+use hsplanner_ui::numbers::{compact, compact_range};
 use std::sync::atomic::{AtomicU32, Ordering};
 use std::time::Duration;
 
@@ -23,6 +24,10 @@ const OPTIONS: [&str; 6] = [
     "gear.suggest.augments",
     "gear.suggest.affixes",
     "gear.suggest.stars",
+];
+const RANKINGS: [(RankBy, &str); 2] = [
+    (RankBy::CombinedDps, "planner.sidebar.combined_dps"),
+    (RankBy::HitDps, "planner.sidebar.hit_dps"),
 ];
 
 fn flag(options: &mut SuggestOptions, index: usize) -> &mut bool {
@@ -203,6 +208,22 @@ impl SuggestView {
                 })),
             );
         }
+        let rankings = RANKINGS
+            .into_iter()
+            .enumerate()
+            .map(|(index, (rank_by, key))| {
+                segment(
+                    SharedString::from(format!("gear-suggest-rank-{index}")),
+                    tr(key),
+                    self.options.rank_by == rank_by,
+                    cx,
+                )
+                .disabled(running)
+                .on_click(cx.listener(move |this, _, _, cx| {
+                    this.options.rank_by = rank_by;
+                    cx.notify();
+                }))
+            });
         div()
             .flex()
             .flex_col()
@@ -213,6 +234,12 @@ impl SuggestView {
                 cx,
             ))
             .child(chips)
+            .child(div().mt_1().child(modal_label(
+                "gear-suggest-rank-by",
+                tr("gear.suggest.rank_by"),
+                cx,
+            )))
+            .child(div().flex().gap_2().children(rankings))
             .child(
                 div()
                     .text_size(rems(11. / 13.))
@@ -272,59 +299,107 @@ impl SuggestView {
             )
     }
 
+    /// The stat panel's three numbers now and with every change, as the panel shows them.
     fn summary(&self, result: &GearSuggestion, scale: &str, cx: &Context<Self>) -> Div {
         let p = cx.global::<TooltipTheme>();
-        let stat = |id: &'static str, label: &str, value: String, color| {
-            div()
-                .flex_1()
-                .flex()
-                .flex_col()
-                .gap_0p5()
-                .child(modal_label(id, label.to_owned(), cx))
-                .child(
-                    div()
-                        .font_family(theme::MONO_FONT_FAMILY)
-                        .font_weight(FontWeight::SEMIBOLD)
-                        .text_color(color)
-                        .child(value),
-                )
-        };
-        let current = self
+        let now = self
             .applied
             .checked_sub(1)
             .and_then(|index| result.steps.get(index))
-            .map_or(result.base_dps, |step| step.dps_after);
-        let gained = result.final_dps > current;
+            .map_or(result.before, |step| step.after);
+        let end = result.steps.last().map_or(result.before, |step| step.after);
+        let range =
+            |value: Option<Ranged>| value.map_or_else(|| "—".into(), |v| compact_range(v, scale));
+        let mid = |value: Option<Ranged>| value.map(|(low, high)| (low + high) / 2.);
+        let label_width = rems(7.);
+        let cell = |content: String, color: Hsla| {
+            div()
+                .flex_1()
+                .min_w_0()
+                .truncate()
+                .font_family(theme::MONO_FONT_FAMILY)
+                .text_color(color)
+                .child(content)
+        };
+        let header = div()
+            .flex()
+            .gap_3()
+            .child(div().w(label_width).flex_none())
+            .children(
+                [
+                    ("gear-suggest-now", tr("gear.suggest.base_dps")),
+                    ("gear-suggest-final", tr("gear.suggest.final_dps")),
+                    ("gear-suggest-gain", tr("gear.suggest.gain")),
+                ]
+                .map(|(id, label)| div().flex_1().min_w_0().child(modal_label(id, label, cx))),
+            );
+        let rows = [
+            (
+                tr("planner.common.hit_damage"),
+                now.hit_damage,
+                end.hit_damage,
+                false,
+            ),
+            (
+                tr("planner.sidebar.hit_dps"),
+                now.hit_dps,
+                end.hit_dps,
+                result.rank_by == RankBy::HitDps,
+            ),
+            (
+                tr("planner.sidebar.combined_dps"),
+                now.combined_dps,
+                end.combined_dps,
+                result.rank_by == RankBy::CombinedDps,
+            ),
+        ]
+        .map(|(label, before, after, is_ranked)| {
+            let (gain, color) = match mid(before).zip(mid(after)) {
+                Some((from, to)) => (
+                    crate::tree_suggest::gain_percent(from, to),
+                    if to > from { p.positive } else { p.muted },
+                ),
+                None => ("—".into(), p.muted),
+            };
+            div()
+                .flex()
+                .items_baseline()
+                .gap_3()
+                .when(is_ranked, |row| row.font_weight(FontWeight::SEMIBOLD))
+                .child(
+                    div()
+                        .w(label_width)
+                        .flex_none()
+                        .text_color(p.muted)
+                        .child(label),
+                )
+                .child(cell(range(before), p.text))
+                .child(cell(range(after), p.accent_hot))
+                .child(cell(gain, color))
+        });
         div()
             .flex()
-            .gap_4()
+            .flex_col()
+            .gap_1p5()
             .px_4()
             .py_3()
             .rounded_sm()
             .border_1()
             .border_color(p.border)
             .bg(p.panel_secondary)
-            .child(stat(
-                "gear-suggest-base",
-                tr("gear.suggest.base_dps"),
-                compact(current, scale),
-                p.text,
-            ))
-            .child(stat(
-                "gear-suggest-final",
-                tr("gear.suggest.final_dps"),
-                compact(result.final_dps, scale),
-                p.accent_hot,
-            ))
-            .child(stat(
-                "gear-suggest-gain",
-                tr("gear.suggest.gain"),
-                crate::tree_suggest::gain_percent(current, result.final_dps),
-                if gained { p.positive } else { p.muted },
-            ))
+            .text_size(rems(12. / 13.))
+            .child(header)
+            .children(rows)
     }
 
-    fn step_row(&self, index: usize, step: &GearStep, scale: &str, cx: &Context<Self>) -> Div {
+    fn step_row(
+        &self,
+        index: usize,
+        step: &GearStep,
+        rank_by: RankBy,
+        scale: &str,
+        cx: &Context<Self>,
+    ) -> Div {
         let p = cx.global::<TooltipTheme>();
         let base = data::get_item(&step.item.base_id);
         let name = base.map_or_else(|| step.item.base_id.clone(), |base| base.name.clone());
@@ -440,8 +515,17 @@ impl SuggestView {
                             .text_size(rems(10. / 13.))
                             .text_color(p.faint)
                             .child(trf(
-                                "gear.suggest.dps",
-                                &[("dps", compact(step.dps_after, scale))],
+                                match rank_by {
+                                    RankBy::CombinedDps => "gear.suggest.dps",
+                                    RankBy::HitDps => "gear.suggest.hit_dps",
+                                },
+                                &[(
+                                    "dps",
+                                    rank_by.of(&step.after).map_or_else(
+                                        || compact(step.dps_after, scale),
+                                        |range| compact_range(range, scale),
+                                    ),
+                                )],
                             )),
                     )
                     .child(action),
@@ -625,7 +709,7 @@ impl Render for SuggestView {
                                         cx,
                                     ))
                                 })
-                                .child(self.step_row(index, step, &scale, cx))
+                                .child(self.step_row(index, step, result.rank_by, &scale, cx))
                         }),
                     ))
                 };
