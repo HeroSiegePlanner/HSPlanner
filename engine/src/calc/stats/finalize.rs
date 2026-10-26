@@ -115,7 +115,7 @@ pub fn apply_multipliers_pass(stats: &mut HashMap<String, Ranged>) {
     apply_multiplier(
         stats,
         "life_replenish",
-        None,
+        Some("life_replenish_increased"),
         Some("life_replenish_more"),
         false,
     );
@@ -129,7 +129,7 @@ pub fn apply_multipliers_pass(stats: &mut HashMap<String, Ranged>) {
     apply_multiplier(
         stats,
         "life_replenish_pct",
-        None,
+        Some("life_replenish_increased"),
         Some("life_replenish_more"),
         false,
     );

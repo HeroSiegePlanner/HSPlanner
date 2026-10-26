@@ -1414,6 +1414,7 @@
   "planner.stat.life_replenish": "Восстановление здоровья",
   "planner.stat.life_replenish_flask": "Увеличение восстановления здоровья при действии флакона",
   "planner.stat.life_replenish_flat_strength": "Здоровье за каждые 5 единиц силы",
+  "planner.stat.life_replenish_increased": "Увеличение восстановления здоровья",
   "planner.stat.life_replenish_mana_on_ranged_hit": "Шанс восстановить здоровье и ману при дальнем попадании",
   "planner.stat.life_replenish_more": "Итоговое восстановление здоровья",
   "planner.stat.life_replenish_pct": "Восстановление здоровья от максимального запаса",

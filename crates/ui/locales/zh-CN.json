@@ -1414,6 +1414,7 @@
   "planner.stat.life_replenish": "生命回复",
   "planner.stat.life_replenish_flask": "药剂效果期间生命回复提高",
   "planner.stat.life_replenish_flat_strength": "每5点力量提供的生命",
+  "planner.stat.life_replenish_increased": "生命回复提高",
   "planner.stat.life_replenish_mana_on_ranged_hit": "远程命中时恢复生命与魔力的几率",
   "planner.stat.life_replenish_more": "总生命回复",
   "planner.stat.life_replenish_pct": "按最大生命回复生命",

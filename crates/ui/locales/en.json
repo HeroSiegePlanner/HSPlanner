@@ -1414,6 +1414,7 @@
   "planner.stat.life_replenish": "Life Replenish",
   "planner.stat.life_replenish_flask": "Increased Life Replenish while a Flask Effect is Active",
   "planner.stat.life_replenish_flat_strength": "Life per 5 Points in Strength",
+  "planner.stat.life_replenish_increased": "Increased Life Replenish",
   "planner.stat.life_replenish_mana_on_ranged_hit": "Chance to Replenish Life and Mana on Ranged Hit",
   "planner.stat.life_replenish_more": "Total Life Replenish",
   "planner.stat.life_replenish_pct": "Life Replenished based on Maximum Life",

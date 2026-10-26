@@ -1414,6 +1414,7 @@
   "planner.stat.life_replenish": "생명력 회복",
   "planner.stat.life_replenish_flask": "물약 효과 중 생명력 회복 증가",
   "planner.stat.life_replenish_flat_strength": "힘 5당 생명력",
+  "planner.stat.life_replenish_increased": "생명력 회복 증가",
   "planner.stat.life_replenish_mana_on_ranged_hit": "원거리 적중 시 생명력 및 마나 회복 확률",
   "planner.stat.life_replenish_more": "총 생명력 회복",
   "planner.stat.life_replenish_pct": "최대 생명력에 따른 생명력 회복",

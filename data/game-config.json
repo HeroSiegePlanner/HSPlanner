@@ -4792,6 +4792,7 @@
     {"key": "charging_damage", "name": "Charge Skill Damage", "category": "offense", "format": "percent"},
     {"key": "quillboar_chance", "name": "Chance to Release Quillboar Spikes when Struck", "category": "offense", "format": "percent"},
     {"key": "mana_replenish_increased", "name": "Increased Mana Replenish", "category": "defense", "format": "percent"},
+    {"key": "life_replenish_increased", "name": "Increased Life Replenish", "category": "defense", "format": "percent"},
     {"key": "life_replenish_interval", "name": "Life Replenish Interval (seconds)", "category": "defense", "format": "flat"},
     {"key": "mana_replenish_interval", "name": "Mana Replenish Interval (seconds)", "category": "defense", "format": "flat"},
     {"key": "melee_damage", "name": "Melee Damage", "category": "offense", "format": "percent"},

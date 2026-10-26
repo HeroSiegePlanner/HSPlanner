@@ -1497,13 +1497,13 @@
     "passiveStats": {
       "base": {
         "all_resistances": 5,
-        "life_replenish": 45,
-        "mana_replenish": 45
+        "life_replenish_increased": 45,
+        "mana_replenish_increased": 45
       },
       "perRank": {
         "all_resistances": 2,
-        "life_replenish": 8,
-        "mana_replenish": 8
+        "life_replenish_increased": 8,
+        "mana_replenish_increased": 8
       }
     }
   },

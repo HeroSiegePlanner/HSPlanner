@@ -558,6 +558,17 @@ mod tests {
     }
 
     #[test]
+    fn angels_vibrance_raises_replenish_by_percent() {
+        let aura = get_item_granted_skill_by_name("Angel\u{2019}s Vibrance Aura").unwrap();
+        let spec = aura.passive_stats.as_ref().unwrap();
+        for stats in [spec.base.as_ref().unwrap(), spec.per_rank.as_ref().unwrap()] {
+            assert!(stats.contains_key("life_replenish_increased"));
+            assert!(stats.contains_key("mana_replenish_increased"));
+            assert!(!stats.contains_key("life_replenish") && !stats.contains_key("mana_replenish"));
+        }
+    }
+
+    #[test]
     fn known_gear_slots() {
         for slot in [
             "weapon", "offhand", "helmet", "armor", "gloves", "boots", "belt", "amulet", "ring_1",

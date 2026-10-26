@@ -285,6 +285,20 @@ fn multipliers_pass_scales_ailment_durations() {
 }
 
 #[test]
+fn multipliers_pass_scales_life_replenish_by_increased_life_replenish() {
+    let mut stats: HashMap<String, Ranged> = HashMap::new();
+    stats.insert("life_replenish".to_string(), (100.0, 100.0));
+    stats.insert("life_replenish_pct".to_string(), (2.0, 2.0));
+    stats.insert("life_replenish_increased".to_string(), (205.0, 285.0));
+    apply_multipliers_pass(&mut stats);
+    // 100 × (1 + 205%) = 305 and 100 × (1 + 285%) = 385; the % of max life scales too.
+    let flat = stats["life_replenish"];
+    assert!((flat.0 - 305.0).abs() < 1e-9 && (flat.1 - 385.0).abs() < 1e-9);
+    let pct = stats["life_replenish_pct"];
+    assert!((pct.0 - 6.1).abs() < 1e-9 && (pct.1 - 7.7).abs() < 1e-9);
+}
+
+#[test]
 fn multipliers_pass_scales_light_radius_to_whole_points() {
     let mut stats: HashMap<String, Ranged> = HashMap::new();
     stats.insert("light_radius".to_string(), (12.0, 12.0));
