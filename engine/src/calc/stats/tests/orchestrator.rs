@@ -3,6 +3,29 @@ use super::empty_input;
 use crate::calc::types::EquippedItem;
 
 #[test]
+fn item_stat_conversions_reach_the_final_stats() {
+    let allocated = HashMap::from([("intelligence".to_string(), 100)]);
+    let inventory = HashMap::new();
+    let ranks = HashMap::new();
+    let flags = HashMap::new();
+    let tree = HashSet::new();
+    let sockets = HashMap::new();
+    let custom = vec![CustomStat {
+        stat_key: "intelligence_converted_to_magic_skill_dmg".into(),
+        value: "10".into(),
+    }];
+    let input = empty_input(
+        &allocated, &inventory, &ranks, &flags, &custom, &tree, &sockets, &flags, &ranks, &flags,
+    );
+    let result = compute_build_stats(&input);
+    let intelligence = result.attributes["intelligence"];
+    assert!(intelligence.0 >= 100.0);
+    let magic = result.stats["magic_skill_damage"];
+    let close = |a: f64, b: f64| (a - b).abs() < 1e-9;
+    assert!(close(magic.0, intelligence.0 / 10.0) && close(magic.1, intelligence.1 / 10.0));
+}
+
+#[test]
 fn fuel_count_reaches_the_pipeline_and_mania_keeps_area_conversions_unchanged() {
     let allocated = HashMap::new();
     let inventory = HashMap::new();

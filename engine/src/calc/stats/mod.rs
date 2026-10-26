@@ -717,9 +717,16 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         &mut stat_sources,
     );
 
+    // 20a. Item "X% of A converted to B" stats read the converted attributes.
+    let touched_stats = apply_item_stat_conversions(&attributes, &stats, &mut stat_sources);
+
     // Converted life/mana percentages and flats must reach the final totals
     // before "per Mana" notes read them.
-    for k in touched_item.iter().chain(touched_tree.iter()) {
+    for k in touched_item
+        .iter()
+        .chain(touched_tree.iter())
+        .chain(touched_stats.iter())
+    {
         if let Some(list) = stat_sources.get(k) {
             stats.insert(k.clone(), sum_contributions(list));
         }

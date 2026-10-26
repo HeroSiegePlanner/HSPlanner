@@ -299,6 +299,37 @@ fn multipliers_pass_scales_life_replenish_by_increased_life_replenish() {
 }
 
 #[test]
+fn item_stat_conversions_add_shares_of_attributes_and_stats() {
+    let attributes = HashMap::from([("intelligence".to_string(), (500.0, 500.0))]);
+    let stats = HashMap::from([
+        (
+            "intelligence_converted_to_magic_skill_dmg".to_string(),
+            (6.0, 10.0),
+        ),
+        ("movement_speed".to_string(), (40.0, 40.0)),
+        ("movement_speed_to_total_damage".to_string(), (25.0, 25.0)),
+        ("cold_resistance".to_string(), (80.0, 80.0)),
+        (
+            "cold_resistance_converted_to_cold_damage".to_string(),
+            (25.0, 25.0),
+        ),
+    ]);
+    let mut sources = SourceMap::new();
+    let touched = apply_item_stat_conversions(&attributes, &stats, &mut sources);
+    assert_eq!(
+        sum_contributions(&sources["magic_skill_damage"]),
+        (30.0, 50.0)
+    );
+    assert_eq!(sum_contributions(&sources["damage"]), (10.0, 10.0));
+    assert_eq!(
+        sum_contributions(&sources["cold_skill_damage"]),
+        (20.0, 20.0)
+    );
+    let expected = ["magic_skill_damage", "damage", "cold_skill_damage"];
+    assert_eq!(touched, expected.map(String::from).into_iter().collect());
+}
+
+#[test]
 fn multipliers_pass_scales_light_radius_to_whole_points() {
     let mut stats: HashMap<String, Ranged> = HashMap::new();
     stats.insert("light_radius".to_string(), (12.0, 12.0));
