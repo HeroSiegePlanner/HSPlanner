@@ -1007,6 +1007,7 @@
   "planner.sources.multiplicative_symbol": "Multiplicative (×)",
   "planner.sources.multiplicative_total": "Multiplicative (Total)",
   "planner.sources.node": "Node #{0}",
+  "planner.sources.overcap": "Overcap",
   "planner.sources.percent_formula": "(1 + add/100) × (1 + more/100) − 1",
   "planner.sources.pin_hint": "RIGHT-CLICK TO PIN",
   "planner.sources.preview_hint": "HOVER OR SELECT ITEM / TREE SOURCES TO PREVIEW · ESC CLOSE",

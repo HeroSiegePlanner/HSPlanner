@@ -548,8 +548,8 @@ fn compute_skill_damage_with_rank(
             r_max(rg(input.stats, k.ignore_res)) + implicit
         })
         .unwrap_or(0.0);
-    // LoadMonsterResistance: Res·(1 − Pen) with no clamp on either side.
-    let ignore_res_pct = raw_ignore;
+    // Res·(1 − Pen); ignore stops at 100% like attacks and the weapon panel (#205).
+    let ignore_res_pct = raw_ignore.min(100.0);
     let eff_res_pct = enemy_res_pct * (1.0 - ignore_res_pct / 100.0);
     let resistance_mult = 1.0 - eff_res_pct / 100.0;
 
@@ -1022,7 +1022,7 @@ fn compute_skill_damage_with_rank(
     calculation.push(CalculationStep::new(
         "Effective enemy resistance %",
         format!(
-            "{}% configured resistance × (1 − {}% ignored / 100); ignore clamped to 0–100%",
+            "{}% configured resistance × (1 − {}% ignored / 100); ignore stops at 100%",
             number(enemy_res_pct),
             number(ignore_res_pct)
         ),
@@ -1888,7 +1888,7 @@ mod tests {
     }
 
     #[test]
-    fn aggregated_ignore_all_counts_once_in_elemental_damage_without_cap() {
+    fn aggregated_ignore_all_counts_once_in_elemental_damage_up_to_100() {
         use crate::calc::stats::{
             apply_stat_fan_outs, compute_final_stats, push_source, SourceContribution, SourceMap,
             SourceType,
@@ -1917,9 +1917,8 @@ mod tests {
                 });
                 let expected = match damage_type {
                     "physical" => 0.,
-                    // LoadMonsterResistance does not clamp penetration.
-                    "cold" => all + 20.,
-                    _ => all,
+                    "cold" => (all + 20.).min(100.),
+                    _ => all.min(100.),
                 };
                 assert_eq!(result.resistance_ignored_pct, expected, "{damage_type}");
             }

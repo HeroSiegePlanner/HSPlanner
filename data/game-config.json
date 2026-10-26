@@ -19,7 +19,13 @@
     "increased_attack_speed": { "threshold": 400, "power": 0.85 },
     "faster_cast_rate": { "threshold": 350, "power": 0.75 },
     "deadly_blow": { "threshold": 50, "power": 0.75, "cap": 100 },
-    "skill_haste": { "threshold": 100, "power": 0.75, "cap": 200 }
+    "skill_haste": { "threshold": 100, "power": 0.75, "cap": 200 },
+    "ignore_all_res": { "threshold": 100, "power": 1, "cap": 100 },
+    "ignore_fire_res": { "threshold": 100, "power": 1, "cap": 100 },
+    "ignore_cold_res": { "threshold": 100, "power": 1, "cap": 100 },
+    "ignore_lightning_res": { "threshold": 100, "power": 1, "cap": 100 },
+    "ignore_poison_res": { "threshold": 100, "power": 1, "cap": 100 },
+    "ignore_arcane_res": { "threshold": 100, "power": 1, "cap": 100 }
   },
   "defaultBaseStats": {
     "attacks_per_second": 1.5,

@@ -660,7 +660,7 @@ fn apply_diminishing_returns_skips_unconfigured_and_absent_keys() {
     assert!(!stats.contains_key("gold_find"));
 }
 
-// S10 config carries the four original curves plus FCR, deadly blow and skill haste.
+// S10 config: four original curves, FCR, deadly blow, skill haste, six Ignore Resistance caps.
 #[test]
 fn diminishing_returns_config_has_s10_curves() {
     let s10 = crate::calc::data::data_for("s10")
@@ -668,7 +668,25 @@ fn diminishing_returns_config_has_s10_curves() {
         .diminishing_returns
         .as_ref()
         .unwrap();
-    assert_eq!(s10.len(), 7);
+    assert_eq!(s10.len(), 13);
     let db = &s10["deadly_blow"];
     assert_eq!((db.threshold, db.power, db.cap), (50.0, 0.75, Some(100.0)));
+}
+
+#[test]
+fn ignore_resistance_stops_at_100_and_keeps_its_raw_total() {
+    let defs = crate::calc::data::data_for("s10")
+        .game_config
+        .diminishing_returns
+        .as_ref()
+        .unwrap();
+    let mut stats: HashMap<String, Ranged> = HashMap::from([
+        ("ignore_fire_res".to_string(), (80.0, 150.0)),
+        ("ignore_all_res".to_string(), (99999.0, 99999.0)),
+    ]);
+    let raw = apply_diminishing_returns(&mut stats, defs);
+    assert_eq!(stats["ignore_fire_res"], (80.0, 100.0));
+    assert_eq!(stats["ignore_all_res"], (100.0, 100.0));
+    assert_eq!(raw["ignore_fire_res"], (80.0, 150.0));
+    assert_eq!(raw["ignore_all_res"], (99999.0, 99999.0));
 }

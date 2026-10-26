@@ -1007,6 +1007,7 @@
   "planner.sources.multiplicative_symbol": "곱연산 (×)",
   "planner.sources.multiplicative_total": "곱연산 (총합)",
   "planner.sources.node": "노드 #{0}",
+  "planner.sources.overcap": "상한 초과",
   "planner.sources.percent_formula": "(1 + 가산/100) × (1 + 증폭/100) − 1",
   "planner.sources.pin_hint": "오른쪽 클릭으로 고정",
   "planner.sources.preview_hint": "아이템 / 트리 출처를 가리키거나 선택하여 미리보기 · ESC 닫기",

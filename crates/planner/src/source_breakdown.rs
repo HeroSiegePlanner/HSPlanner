@@ -202,6 +202,15 @@ pub(crate) fn value_row(label: &str, value: String, combined: bool, cx: &App) ->
                 .child(value),
         )
 }
+/// A curve that changes nothing below its cap is a plain cap, so its raw total reads as overcap.
+fn is_hard_cap(key: &str) -> bool {
+    hsplanner_engine::calc::data::game_config()
+        .diminishing_returns
+        .as_ref()
+        .and_then(|defs| defs.get(key))
+        .is_some_and(|def| def.cap == Some(def.threshold))
+}
+
 fn calculation(b: &StatBreakdown, cx: &App) -> Div {
     let p = cx.global::<TooltipTheme>();
     let mut rows = div().px_3().py_2().flex().flex_col().gap_1();
@@ -269,8 +278,13 @@ fn calculation(b: &StatBreakdown, cx: &App) -> Div {
             );
     }
     if let Some(raw) = b.pre_diminish {
+        let label = if is_hard_cap(&b.stat_key) {
+            "planner.sources.overcap"
+        } else {
+            "planner.sources.before_returns"
+        };
         rows = rows.child(value_row(
-            tr("planner.sources.before_returns"),
+            tr(label),
             format_total(raw, b.is_percent),
             false,
             cx,
@@ -698,6 +712,13 @@ mod tests {
         assert_eq!(multiplier((-5., 10.)), "×0.95–1.1");
         assert_eq!(format_total((0., 0.), false), "+0");
         assert_eq!(format_total((-1.25, 2.5), true), "-1.25–2.5%");
+    }
+    #[::core::prelude::v1::test]
+    fn plain_caps_read_as_overcap_and_curves_as_diminishing_returns() {
+        assert!(is_hard_cap("ignore_fire_res"));
+        assert!(is_hard_cap("ignore_all_res"));
+        assert!(!is_hard_cap("faster_cast_rate"));
+        assert!(!is_hard_cap("deadly_blow"));
     }
     #[::core::prelude::v1::test]
     fn ordering_retains_duplicates_and_keeps_forge_below_parent() {

@@ -1007,6 +1007,7 @@
   "planner.sources.multiplicative_symbol": "Умножение (×)",
   "planner.sources.multiplicative_total": "Умножение (итог)",
   "planner.sources.node": "Узел #{0}",
+  "planner.sources.overcap": "Сверх предела",
   "planner.sources.percent_formula": "(1 + добавление/100) × (1 + больше/100) − 1",
   "planner.sources.pin_hint": "ПКМ ДЛЯ ЗАКРЕПЛЕНИЯ",
   "planner.sources.preview_hint": "НАВЕДИТЕ ИЛИ ВЫБЕРИТЕ ПРЕДМЕТ / УЗЕЛ ДЛЯ ПРОСМОТРА · ESC ЗАКРЫТЬ",

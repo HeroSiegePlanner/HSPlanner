@@ -1007,6 +1007,7 @@
   "planner.sources.multiplicative_symbol": "乘算（×）",
   "planner.sources.multiplicative_total": "乘算（总计）",
   "planner.sources.node": "节点 #{0}",
+  "planner.sources.overcap": "超过上限",
   "planner.sources.percent_formula": "（1 + 加算/100）×（1 + 更多/100）− 1",
   "planner.sources.pin_hint": "右键固定",
   "planner.sources.preview_hint": "悬停或选择物品 / 天赋来源以预览 · ESC 关闭",
