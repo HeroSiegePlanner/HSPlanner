@@ -197,7 +197,7 @@
       "key": "projectile_speed",
       "name": "Projectile Speed",
       "category": "offense",
-      "format": "percent"
+      "format": "flat"
     },
     {
       "key": "area_of_effect",

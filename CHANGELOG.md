@@ -76,6 +76,7 @@
 - Ignore Target Defense no longer scales with stars, Increased Defense uses 3% per star, Defense vs Missiles stays separate, and the Increased Defense crystal targets the right stat.
 - Rainbow sockets floor each amplified stat (six Ist runes give 132% Magic Find). Star upgrades follow the game's order, add flat ranks and counts for Summon Skills, Sentry Skills and maximum Sentries, and reach random elemental skill bonuses in calculations, tooltips and item text export.
 - Pinned implicit rolls match calculations and tooltips, resetting a roll clears it, and starred affix values, item skill rank ranges and mercenary aura ranks can be edited correctly.
+- Grimwalkers matches the game: [320-400]% Enhanced Defense, +[30-40] to All Attributes, [30-40]% Magic Skill Damage and +40% Movement Speed instead of fixed or inflated values. Flo's +2% goes to Maximum All Resists, Nju's 3% joins the runeword's -[10-15]% to All Enemy Resistances, Skill Movement Diminish decreased by [40-80]% is added and the stray +64 Defense is gone. Its Demon's Presence proc (level 15-20) appears under Item Blessings in Config. Runewords can now roll ranges, item tooltips list runeword stats in their own Runeword section instead of under Implicit, From Sockets names a runeword's runes without repeating the stats it already includes, and Projectile Speed shows as a flat value (#204).
 
 ## Under the hood
 

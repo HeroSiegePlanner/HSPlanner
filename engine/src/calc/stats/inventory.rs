@@ -242,12 +242,12 @@ pub fn apply_inventory(
         // Runeword XOR per-socket contributions.
         if let Some(rw) = runeword {
             let label = format!("{} ({})", rw.name, item_name);
-            for (stat_key, &value) in rw.stats.iter() {
+            for (stat_key, value) in rw.stats.iter() {
                 apply_contribution(
                     attr_sources,
                     stat_sources,
                     stat_key,
-                    (value, value),
+                    value.as_ranged(),
                     label.clone(),
                     SourceType::Item,
                     None,

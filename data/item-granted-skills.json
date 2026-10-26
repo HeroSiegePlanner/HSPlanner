@@ -2189,6 +2189,22 @@
     }
   },
   {
+    "id": "grimwalkers_demons_presence",
+    "name": "Demon's Presence (Grimwalkers)",
+    "description": "[5-10]% chance when casting to cast Demon's Presence, temporarily increasing your attack speed and attack damage.",
+    "condition": "grimwalkers_demons_presence_buff",
+    "passiveStats": {
+      "base": {
+        "increased_attack_speed": 19,
+        "attack_damage": 17
+      },
+      "perRank": {
+        "increased_attack_speed": 1,
+        "attack_damage": 3
+      }
+    }
+  },
+  {
     "id": "shadowflames",
     "name": "Shadowflames",
     "description": "Erupting shadowflames deal arcane damage to nearby monsters.",

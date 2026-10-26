@@ -533,6 +533,31 @@ mod tests {
     }
 
     #[test]
+    fn grimwalkers_matches_the_game() {
+        let rw = data()
+            .runewords
+            .iter()
+            .find(|rw| rw.id == "rw_grimwalkers")
+            .unwrap();
+        let stat = |key: &str| rw.stats.get(key).map(|v| v.as_ranged());
+        assert_eq!(stat("enhanced_defense"), Some((320., 400.)));
+        assert_eq!(stat("all_attributes"), Some((30., 40.)));
+        assert_eq!(stat("magic_skill_damage"), Some((30., 40.)));
+        assert_eq!(stat("movement_speed"), Some((40., 40.)));
+        // Flo's +2% Maximum All Resists and Nju's 3% on top of the word's own [10-15]%.
+        assert_eq!(stat("max_all_resistances"), Some((2., 2.)));
+        assert_eq!(stat("ignore_all_res"), Some((13., 18.)));
+        assert_eq!(stat("reduced_movement_diminish"), Some((40., 80.)));
+        assert_eq!(stat("defense"), None);
+        assert_eq!(stat("all_resistances"), None);
+        // Its own name, so a Demon Slayer's Demon's Presence gains no ranks from the proc.
+        let ranks = rw.skill_bonuses.as_ref().unwrap()["Demon's Presence (Grimwalkers)"];
+        assert_eq!(ranks.as_ranged(), (15., 20.));
+        let proc = get_item_granted_skill_by_name("Demon's Presence (Grimwalkers)").unwrap();
+        assert!(proc.condition.is_some() && proc.passive_stats.is_some());
+    }
+
+    #[test]
     fn known_gear_slots() {
         for slot in [
             "weapon", "offhand", "helmet", "armor", "gloves", "boots", "belt", "amulet", "ring_1",

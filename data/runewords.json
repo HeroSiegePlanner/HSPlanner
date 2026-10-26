@@ -2467,17 +2467,39 @@
     "allowedBaseTypes": [
       "Boots"
     ],
+    "skillBonuses": {
+      "Demon's Presence (Grimwalkers)": [
+        15,
+        20
+      ]
+    },
     "stats": {
-      "defense": 64,
-      "enhanced_defense": 375,
+      "enhanced_defense": [
+        320,
+        400
+      ],
       "all_skills": 4,
-      "movement_speed": 74,
+      "movement_speed": 40,
       "projectile_speed": 1,
-      "all_attributes": 40,
-      "magic_skill_damage": 40,
+      "all_attributes": [
+        30,
+        40
+      ],
+      "magic_skill_damage": [
+        30,
+        40
+      ],
       "mana_per_kill": 25,
       "increased_mana": 10,
-      "all_resistances": 2
+      "max_all_resistances": 2,
+      "ignore_all_res": [
+        13,
+        18
+      ],
+      "reduced_movement_diminish": [
+        40,
+        80
+      ]
     },
     "requiresLevel": 100,
     "requiresItemLevel": 1

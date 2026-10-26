@@ -637,7 +637,11 @@ fn match_runeword_stat(rw: &Runeword, line: &str) -> Option<StatMatch> {
     if phrase.is_empty() {
         return None;
     }
-    let mut stats: Vec<(&String, &f64)> = rw.stats.iter().collect();
+    let mut stats: Vec<(&String, f64)> = rw
+        .stats
+        .iter()
+        .map(|(key, value)| (key, value.as_ranged().1))
+        .collect();
     stats.sort_by(|a, b| a.0.cmp(b.0));
     let mut best: Option<(&String, f64)> = None;
     for (key, expected) in stats {

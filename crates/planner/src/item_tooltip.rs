@@ -618,14 +618,26 @@ pub(crate) fn build_model(
             });
         }
     }
+
+    if !implicit_lines.is_empty() {
+        sections.push(Section::titled(
+            tr("item.implicit"),
+            HeaderTone::Gold,
+            implicit_lines,
+        ));
+    }
     if let Some(runeword) = runeword {
-        let mut stats: Vec<(&String, &f64)> =
-            runeword.stats.iter().filter(|(_, v)| **v != 0.).collect();
+        let mut stats: Vec<(&String, Ranged)> = runeword
+            .stats
+            .iter()
+            .map(|(key, value)| (key, value.as_ranged()))
+            .filter(|(_, value)| !is_zero(*value))
+            .collect();
         stats.sort_by(|a, b| a.0.cmp(b.0));
         let lines: Vec<Line> = stats
             .into_iter()
             .map(|(key, value)| Line::Text {
-                text: stat_line(key, (*value, *value)),
+                text: stat_line(key, value),
                 style: LineStyle::Runeword,
                 custom: false,
             })
@@ -636,16 +648,12 @@ pub(crate) fn build_model(
             }))
             .collect();
         if !lines.is_empty() {
-            implicit_lines.extend(lines);
+            sections.push(Section::titled(
+                tr("item.runeword"),
+                HeaderTone::Gold,
+                lines,
+            ));
         }
-    }
-
-    if !implicit_lines.is_empty() {
-        sections.push(Section::titled(
-            tr("item.implicit"),
-            HeaderTone::Gold,
-            implicit_lines,
-        ));
     }
 
     if !granted.is_empty() {
@@ -745,8 +753,10 @@ pub(crate) fn build_model(
                         suffix: None,
                         desc: None,
                         icon: socketable_icon(&name),
+                        // A runeword's stats already include its runes.
                         lines: stats
                             .into_iter()
+                            .filter(|_| runeword.is_none())
                             .map(|(key, value)| stat_line(&key, (value, value)))
                             .collect(),
                     })
@@ -2436,11 +2446,11 @@ mod tests {
                 })
                 .unwrap()
         };
-        let implicit = section_index("Implicit");
+        let runeword = section_index("Runeword");
         let granted = section_index("Granted Skill Effects");
         let sockets = section_index("From Sockets");
-        assert!(implicit < granted && granted < sockets);
-        assert!(model.sections[implicit].lines.iter().any(|line| {
+        assert!(runeword < granted && granted < sockets);
+        assert!(model.sections[runeword].lines.iter().any(|line| {
             matches!(line, Line::Text { text, .. } if text == "+225% Enhanced Defense")
         }));
         assert!(model.sections[granted].lines.iter().any(|line| {
@@ -2448,6 +2458,70 @@ mod tests {
                 if title == "Angel’s Vibrance Aura"
                     && suffix.as_deref() == Some("rank 2-6") && !lines.is_empty() && desc.is_none())
         }));
+    }
+
+    #[::core::prelude::v1::test]
+    fn runeword_stats_show_their_ranges_apart_from_the_implicit() {
+        let base = data::get_item("boots_normal_boots").unwrap();
+        let item = EquippedItem {
+            base_id: base.id.clone(),
+            socketed: ["rune_flo", "rune_jol", "rune_nju", "rune_sur"]
+                .map(|rune| Some(rune.into()))
+                .to_vec(),
+            ..Default::default()
+        };
+        let model = build_model(base, Some(&item), &[]);
+        let texts = |title: &str| -> Vec<&str> {
+            model
+                .sections
+                .iter()
+                .filter(|section| section.header.as_ref().is_some_and(|(t, _, _)| t == title))
+                .flat_map(|section| &section.lines)
+                .filter_map(|line| match line {
+                    Line::Text { text, .. } => Some(text.as_str()),
+                    _ => None,
+                })
+                .collect()
+        };
+        let runeword = texts("Runeword");
+        assert!(
+            runeword.contains(&"+[320-400]% Enhanced Defense"),
+            "{runeword:?}"
+        );
+        assert!(runeword.contains(&"+1 Projectile Speed"), "{runeword:?}");
+        assert_eq!(texts("Implicit"), ["+[5-15]% Movement Speed"]);
+    }
+
+    #[::core::prelude::v1::test]
+    fn complete_runeword_lists_its_runes_without_their_stats() {
+        let base = data::get_item("boots_normal_boots").unwrap();
+        let mut item = EquippedItem {
+            base_id: base.id.clone(),
+            socketed: ["rune_flo", "rune_jol", "rune_nju", "rune_sur"]
+                .map(|rune| Some(rune.into()))
+                .to_vec(),
+            ..Default::default()
+        };
+        let socket_stat_counts = |item: &EquippedItem| -> Vec<usize> {
+            build_model(base, Some(item), &[])
+                .sections
+                .into_iter()
+                .filter(|section| {
+                    section
+                        .header
+                        .as_ref()
+                        .is_some_and(|(title, _, _)| title == "From Sockets")
+                })
+                .flat_map(|section| section.lines)
+                .filter_map(|line| match line {
+                    Line::Entry { lines, .. } => Some(lines.len()),
+                    _ => None,
+                })
+                .collect()
+        };
+        assert_eq!(socket_stat_counts(&item), [0, 0, 0, 0]);
+        item.socketed[3] = None;
+        assert_eq!(socket_stat_counts(&item), [1, 1, 1]);
     }
 
     #[::core::prelude::v1::test]

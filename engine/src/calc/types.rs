@@ -128,7 +128,7 @@ pub struct Runeword {
     #[serde(default)]
     pub allowed_base_types: Vec<String>,
     #[serde(default)]
-    pub stats: StatMap,
+    pub stats: RangedStatMap,
     #[serde(default)]
     pub requires_level: Option<u32>,
     #[serde(default)]
