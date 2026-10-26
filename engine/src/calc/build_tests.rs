@@ -2579,16 +2579,27 @@ fn mechanical_engineering_blocks_player_hits_but_preserves_sentries() {
 }
 
 #[test]
-fn incarnation_conversion_reaches_attack_dps_but_never_flat_spell_damage() {
+fn incarnation_impacts_convert_part_of_the_physical_hit_to_one_element() {
     let base = perf("viking", "zeal", 10, &[], &[]);
+    // Fire Impact and Cold Impact tie at 50%: cold wins and fire does nothing.
     let converted = perf_with_tree("viking", "zeal", 10, &[], &[], &[1097, 1091]);
     let physical = base.attack_damage.as_ref().unwrap();
     let mixed = converted.attack_damage.as_ref().unwrap();
-    assert_eq!(mixed.physical_hit_max, physical.physical_hit_max);
-    assert_eq!(mixed.converted_elements.len(), 2);
-    assert!(mixed.combined_hit_max > physical.combined_hit_max);
-    assert!(converted.hit_dps_max.unwrap() > base.hit_dps_max.unwrap());
-    assert!(converted.avg_hit_dps_max.unwrap() > base.avg_hit_dps_max.unwrap());
+    assert_eq!(mixed.converted_elements.len(), 1);
+    let cold = &mixed.converted_elements[0];
+    assert_eq!(
+        (cold.element.as_str(), cold.conversion_pct),
+        ("cold", (50.0, 50.0))
+    );
+    let half = physical.physical_hit_max as f64 / 2.0;
+    assert!((mixed.physical_hit_max as f64 - half).abs() <= 1.0);
+    let cold_bonus = 1.0
+        + converted
+            .stats
+            .get("cold_skill_damage")
+            .map_or(0.0, |v| v.1)
+            / 100.0;
+    assert!((cold.hit_max as f64 - half * cold_bonus).abs() <= 1.0);
     let spell = perf_with_tree("pyromancer", "fireball", 10, &[], &[], &[1097, 1091]);
     assert_eq!(
         spell.avg_hit_dps_max,
@@ -2604,7 +2615,6 @@ fn incarnation_conversion_reaches_attack_dps_but_never_flat_spell_damage() {
         hybrid.attack_damage.as_ref().unwrap().poison_hit_max,
         hybrid_base.attack_damage.as_ref().unwrap().poison_hit_max
     );
-    assert!(hybrid.avg_hit_dps_max.unwrap() > hybrid_base.avg_hit_dps_max.unwrap());
     let blocked = perf_with_tree("viking", "zeal", 10, &[], &[], &[1097, 328]);
     assert_eq!(blocked.avg_hit_dps_max, Some(0.0));
     assert!(blocked
