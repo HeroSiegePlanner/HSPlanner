@@ -71,6 +71,7 @@
 - Shield minimum and maximum damage nodes (1504–1513) stay flat and separate, and shield-gated bonuses reach spells and weapon damage in their own type.
 - Many more nodes were corrected: resistance conversions and the 50% cap, full and low life, phasing, regeneration, unarmed, dual axe, shield and staff bonuses, ranged damage from Energy, Charge attribute scaling, Defense, melee and ranged Enhanced Damage, Mind Over Matter, Wizard's Wrath, area radius, bleeding execution and Mechanical Engineering. The Ripper's note lists its dagger requirement.
 - Hercules Grip allows two-handed dual wielding only for Swords, Maces and Axes.
+- Feast of the Elements and Vital Resistance turn resistances into Increased Life instead of flat Life, and their Life breakdown names the resistances they read (#209).
 
 ## Items
 

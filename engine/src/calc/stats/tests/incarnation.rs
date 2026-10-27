@@ -534,8 +534,9 @@ fn resistance_conversions_sum_elements_and_respect_sign_and_caps() {
         ("poison_resistance", -20.0),
         ("arcane_resistance", 10.0),
     ];
+    // Vital Resistance and Feast of the Elements raise life by a percentage in game.
     for (node, target, expected) in [
-        (1152, "life", 15.6),
+        (1152, "increased_life", 15.6),
         (641, "increased_life", 14.0),
         (643, "damage", 2.8),
     ] {
@@ -552,6 +553,7 @@ fn resistance_conversions_sum_elements_and_respect_sign_and_caps() {
             "{node}: {:?}",
             source.value
         );
+        assert!(!source.label.contains("_resistances"), "{}", source.label);
     }
     // Feast also lowers Total All Resistances: derive its source from the
     // actual final resistances, then compare only the positive cap excess.
@@ -569,10 +571,15 @@ fn resistance_conversions_sum_elements_and_respect_sign_and_caps() {
             (feast.stats_combined[&key].0 - cap).max(0.0)
         })
         .sum();
-    let source = feast.stat_sources["life"]
+    let source = feast.stat_sources["increased_life"]
         .iter()
         .find(|s| s.label.contains("#175:"))
         .unwrap();
+    assert!(
+        source.label.ends_with("20% of Resistances over the cap"),
+        "{}",
+        source.label
+    );
     assert!((source.value.0 - sum * 0.2).abs() < 1e-9);
     for node in [641, 643] {
         let positive = audit_build(&[node], &[], &[("all_resistances", 100.0)]);
@@ -1002,7 +1009,7 @@ fn resistance_limiter_sets_fifty_percent_even_with_extra_maximum_resistances() {
         .iter()
         .map(|element| (combined[&format!("{element}_resistance")].0 - 50.0).max(0.0))
         .sum();
-    let from_feast = feast.stat_sources["life"]
+    let from_feast = feast.stat_sources["increased_life"]
         .iter()
         .find(|s| s.label.contains("#175:"))
         .unwrap();

@@ -492,11 +492,13 @@ pub fn apply_tree_conversions(
         if add_min == 0.0 && add_max == 0.0 {
             continue;
         }
-        let label = format!(
-            "{source_label}: {}% of {}",
-            conv.pct,
-            stat_name(&conv.from_key)
-        );
+        let source_name = match conv.from_key.as_str() {
+            "sum_resistances" => "Resistances".to_string(),
+            "overcapped_resistances" => "Resistances over the cap".to_string(),
+            "negative_resistances" => "Negative Resistances".to_string(),
+            key => stat_name(key),
+        };
+        let label = format!("{source_label}: {}% of {source_name}", conv.pct);
         let contrib = SourceContribution {
             label,
             source_type: SourceType::Tree,
