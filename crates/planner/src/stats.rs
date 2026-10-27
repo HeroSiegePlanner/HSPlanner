@@ -520,13 +520,19 @@ impl StatsView {
         };
         let mut breakdown = compute_stat_breakdown(&computed.stat_sources, key, Some(value));
         breakdown.stat_name = label.to_owned();
-        let area = crate::hitbox::is_size_stat(key)
-            .then(|| {
-                let snapshot = self.session.read(cx).snapshot();
-                main_skill_id(snapshot)
-                    .and_then(|id| crate::hitbox::preview(snapshot, computed, id))
+        let diagram = {
+            use crate::source_breakdown::Diagram;
+            let snapshot = self.session.read(cx).snapshot();
+            main_skill_id(snapshot).and_then(|id| {
+                if crate::hitbox::is_size_stat(key) {
+                    crate::hitbox::preview(snapshot, computed, id).map(Diagram::Area)
+                } else if crate::projectile::is_speed_stat(key) {
+                    crate::projectile::preview(snapshot, computed, id).map(Diagram::Flight)
+                } else {
+                    None
+                }
             })
-            .flatten();
+        };
         let button = Button::new(SharedString::from(format!("stat-{key}")))
             .ghost()
             .w_full()
@@ -594,7 +600,7 @@ impl StatsView {
                         )),
                         button,
                         breakdown,
-                        area,
+                        diagram,
                         self.session.clone(),
                     )),
             )

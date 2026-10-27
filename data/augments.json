@@ -663,16 +663,16 @@
     "description": "When using a ranged weapon your attacks gain increased projectile speed and critical strike damage.",
     "trigger": "passive",
     "triggerNote": "Passive (ranged only)",
-    "primaryStats": ["projectile_speed", "crit_damage"],
+    "primaryStats": ["projectile_speed_pct", "crit_damage"],
     "rangedOnly": true,
     "levels": [
-      { "level": 1, "stats": { "projectile_speed": 5, "crit_damage": 15 }, "cost": 0 },
-      { "level": 2, "stats": { "projectile_speed": 10, "crit_damage": 30 }, "cost": 1 },
-      { "level": 3, "stats": { "projectile_speed": 15, "crit_damage": 45 }, "cost": 2 },
-      { "level": 4, "stats": { "projectile_speed": 20, "crit_damage": 60 }, "cost": 3 },
-      { "level": 5, "stats": { "projectile_speed": 25, "crit_damage": 75 }, "cost": 4 },
-      { "level": 6, "stats": { "projectile_speed": 30, "crit_damage": 90 }, "cost": 5 },
-      { "level": 7, "stats": { "projectile_speed": 35, "crit_damage": 105 }, "cost": 6 }
+      { "level": 1, "stats": { "projectile_speed_pct": 5, "crit_damage": 15 }, "cost": 0 },
+      { "level": 2, "stats": { "projectile_speed_pct": 10, "crit_damage": 30 }, "cost": 1 },
+      { "level": 3, "stats": { "projectile_speed_pct": 15, "crit_damage": 45 }, "cost": 2 },
+      { "level": 4, "stats": { "projectile_speed_pct": 20, "crit_damage": 60 }, "cost": 3 },
+      { "level": 5, "stats": { "projectile_speed_pct": 25, "crit_damage": 75 }, "cost": 4 },
+      { "level": 6, "stats": { "projectile_speed_pct": 30, "crit_damage": 90 }, "cost": 5 },
+      { "level": 7, "stats": { "projectile_speed_pct": 35, "crit_damage": 105 }, "cost": 6 }
     ],
     "calc": "toggle"
   },
@@ -1012,16 +1012,16 @@
     "description": "Every 30 seconds your attack for the next two seconds gains increased area of effect, projectile speed and damage. Cooldown reduced by 0.5 seconds per stun.",
     "trigger": "periodic",
     "triggerNote": "Every 30s (2s)",
-    "primaryStats": ["damage", "area_of_effect", "projectile_speed"],
+    "primaryStats": ["damage", "area_of_effect", "projectile_speed_more"],
     "period": 30,
     "levels": [
-      { "level": 1, "stats": { "damage": 30, "area_of_effect": 8, "projectile_speed": 10 }, "procDurationSec": 2, "cost": 0 },
-      { "level": 2, "stats": { "damage": 60, "area_of_effect": 16, "projectile_speed": 20 }, "procDurationSec": 2, "cost": 0 },
-      { "level": 3, "stats": { "damage": 90, "area_of_effect": 24, "projectile_speed": 30 }, "procDurationSec": 2, "cost": 1 },
-      { "level": 4, "stats": { "damage": 120, "area_of_effect": 32, "projectile_speed": 40 }, "procDurationSec": 2, "cost": 2 },
-      { "level": 5, "stats": { "damage": 150, "area_of_effect": 40, "projectile_speed": 50 }, "procDurationSec": 2, "cost": 3 },
-      { "level": 6, "stats": { "damage": 180, "area_of_effect": 48, "projectile_speed": 60 }, "procDurationSec": 2, "cost": 4 },
-      { "level": 7, "stats": { "damage": 210, "area_of_effect": 56, "projectile_speed": 70 }, "procDurationSec": 2, "cost": 5 }
+      { "level": 1, "stats": { "damage": 30, "area_of_effect": 8, "projectile_speed_more": 10 }, "procDurationSec": 2, "cost": 0 },
+      { "level": 2, "stats": { "damage": 60, "area_of_effect": 16, "projectile_speed_more": 20 }, "procDurationSec": 2, "cost": 0 },
+      { "level": 3, "stats": { "damage": 90, "area_of_effect": 24, "projectile_speed_more": 30 }, "procDurationSec": 2, "cost": 1 },
+      { "level": 4, "stats": { "damage": 120, "area_of_effect": 32, "projectile_speed_more": 40 }, "procDurationSec": 2, "cost": 2 },
+      { "level": 5, "stats": { "damage": 150, "area_of_effect": 40, "projectile_speed_more": 50 }, "procDurationSec": 2, "cost": 3 },
+      { "level": 6, "stats": { "damage": 180, "area_of_effect": 48, "projectile_speed_more": 60 }, "procDurationSec": 2, "cost": 4 },
+      { "level": 7, "stats": { "damage": 210, "area_of_effect": 56, "projectile_speed_more": 70 }, "procDurationSec": 2, "cost": 5 }
     ],
     "calc": "stats"
   },

@@ -519,7 +519,7 @@
         12
       ],
       "to_strength": 50,
-      "projectile_speed": 15,
+      "projectile_speed_pct": 15,
       "enhanced_damage_based_on_level": 275,
       "ranged_skills": [
         6,
@@ -4181,7 +4181,7 @@
         6,
         12
       ],
-      "projectile_speed": 15,
+      "projectile_speed_pct": 15,
       "to_strength": 50,
       "increased_dexterity": 6,
       "enhanced_damage_based_on_level": 275

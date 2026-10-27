@@ -139,11 +139,19 @@ pub(super) fn rules() -> Vec<ParseRule> {
             "melee_projectile_size"
         ),
         mod_rule!(
-            r"(?i)^([+\-\d.]+)%?\s+Increased\s+Melee\s+Projectile\s+Speed$",
+            r"(?i)^([+\-\d.]+)%\s+Increased\s+Melee\s+Projectile\s+Speed$",
+            "melee_projectile_speed_pct"
+        ),
+        mod_rule!(
+            r"(?i)^([+\-\d.]+)\s+Increased\s+Melee\s+Projectile\s+Speed$",
             "melee_projectile_speed"
         ),
         mod_rule!(
-            r"(?i)^([+\-\d.]+)%?\s+Increased\s+Ranged\s+Projectile\s+Speed$",
+            r"(?i)^([+\-\d.]+)%\s+Increased\s+Ranged\s+Projectile\s+Speed$",
+            "ranged_projectile_speed_pct"
+        ),
+        mod_rule!(
+            r"(?i)^([+\-\d.]+)\s+Increased\s+Ranged\s+Projectile\s+Speed$",
             "ranged_projectile_speed"
         ),
         // Ailments tick once per second, so duration == tick count. "+#s" lines add

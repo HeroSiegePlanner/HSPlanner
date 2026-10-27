@@ -1,5 +1,6 @@
 //! SourceTooltip.tsx presentation over the existing engine breakdown contract.
 use crate::hitbox::AreaPreview;
+use crate::projectile::FlightPreview;
 use gpui_kit::{
     base::Disableable,
     component::{WindowExt, button::Button},
@@ -452,23 +453,41 @@ fn source_rows(
             }
         }))
 }
+/// The main skill drawn beside a stat's sources.
+pub(crate) enum Diagram {
+    Area(AreaPreview),
+    Flight(FlightPreview),
+}
+
+fn diagram(diagram: &Diagram, cx: &App) -> Div {
+    match diagram {
+        Diagram::Area(area) => div()
+            .child(section(
+                "planner.sources.area",
+                crate::area_diagram::headline(area),
+                cx,
+            ))
+            .child(crate::area_diagram::body(area, cx)),
+        Diagram::Flight(flight) => div()
+            .child(section(
+                "planner.sources.flight",
+                crate::flight_diagram::headline(flight),
+                cx,
+            ))
+            .child(crate::flight_diagram::body(flight, cx)),
+    }
+}
+
 fn body(
     b: &StatBreakdown,
     extended: bool,
     snapshot: Option<&hsplanner_build::BuildSnapshot>,
-    area: Option<&AreaPreview>,
+    preview: Option<&Diagram>,
     cx: &App,
 ) -> Div {
     let mut content = div().when(extended, |v| {
         v.child(calculation(b, cx))
-            .when_some(area, |v, area| {
-                v.child(section(
-                    "planner.sources.area",
-                    crate::area_diagram::headline(area),
-                    cx,
-                ))
-                .child(crate::area_diagram::body(area, cx))
-            })
+            .when_some(preview, |v, preview| v.child(diagram(preview, cx)))
             .child(by_source(b, cx))
     });
     let grouped = b.has_more || b.has_increased;
@@ -580,7 +599,7 @@ impl Render for SourcesTooltip {
 struct SourceDialog {
     snapshot: hsplanner_build::BuildSnapshot,
     breakdown: Arc<StatBreakdown>,
-    area: Option<Arc<AreaPreview>>,
+    diagram: Option<Arc<Diagram>>,
     scroll: ScrollHandle,
     _subscription: Subscription,
 }
@@ -606,7 +625,7 @@ impl Render for SourceDialog {
                         &self.breakdown,
                         true,
                         Some(&self.snapshot),
-                        self.area.as_deref(),
+                        self.diagram.as_deref(),
                         cx,
                     )),
             )
@@ -617,7 +636,7 @@ impl Render for SourceDialog {
 }
 fn open(
     breakdown: Arc<StatBreakdown>,
-    area: Option<Arc<AreaPreview>>,
+    diagram: Option<Arc<Diagram>>,
     session: Entity<Session>,
     window: &mut Window,
     cx: &mut App,
@@ -632,7 +651,7 @@ fn open(
         SourceDialog {
             snapshot: session.read(cx).snapshot().clone(),
             breakdown,
-            area,
+            diagram,
             scroll: ScrollHandle::new(),
             _subscription: subscription,
         }
@@ -646,15 +665,15 @@ pub(crate) fn trigger(
     id: impl Into<ElementId>,
     button: Button,
     breakdown: StatBreakdown,
-    area: Option<AreaPreview>,
+    diagram: Option<Diagram>,
     session: Entity<Session>,
 ) -> Stateful<Div> {
     let available =
         !breakdown.additive_sources.is_empty() || breakdown.has_increased || breakdown.has_more;
     let breakdown = Arc::new(breakdown);
-    let area = area.map(Arc::new);
+    let diagram = diagram.map(Arc::new);
     let click_data = breakdown.clone();
-    let click_area = area.clone();
+    let click_diagram = diagram.clone();
     let click_session = session.clone();
     div()
         .id(id)
@@ -666,14 +685,20 @@ pub(crate) fn trigger(
             })
             .on_mouse_down(MouseButton::Right, move |_, window, cx| {
                 cx.stop_propagation();
-                open(breakdown.clone(), area.clone(), session.clone(), window, cx);
+                open(
+                    breakdown.clone(),
+                    diagram.clone(),
+                    session.clone(),
+                    window,
+                    cx,
+                );
             })
         })
         .child(button.disabled(!available).on_click(move |_, window, cx| {
             if available {
                 open(
                     click_data.clone(),
-                    click_area.clone(),
+                    click_diagram.clone(),
                     click_session.clone(),
                     window,
                     cx,

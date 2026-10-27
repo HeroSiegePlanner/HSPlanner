@@ -322,8 +322,8 @@
         "description": "Increases the projectile speed of surgical blood letting.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {
@@ -461,8 +461,8 @@
         "description": "Throw a knife with increased projectile speed exploding into multiple piercing knives to all directions on hit.",
         "maxRank": 3,
         "effects": {
-          "base": {"projectile_speed": 0, "projectile_count": 0},
-          "perRank": {"projectile_speed": 25, "projectile_count": 4}
+          "base": {"projectile_speed_pct": 0, "projectile_count": 0},
+          "perRank": {"projectile_speed_pct": 25, "projectile_count": 4}
         }
       },
       {
@@ -717,8 +717,8 @@
         "description": "Toxic flasks home into the nearest monster with increased projectile speed after reaching the highest altitude.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {
@@ -1045,8 +1045,8 @@
         "description": "Increases the projectile speed, size and damage dealt by crematus.",
         "maxRank": 3,
         "effects": {
-          "base": {"projectile_speed": 0, "projectile_size": 0, "subtree_damage": 0},
-          "perRank": {"projectile_speed": 30, "projectile_size": 25, "subtree_damage": 40}
+          "base": {"projectile_speed_pct": 0, "projectile_size": 0, "subtree_damage": 0},
+          "perRank": {"projectile_speed_pct": 30, "projectile_size": 25, "subtree_damage": 40}
         }
       },
       {
@@ -1241,8 +1241,8 @@
         "description": "Increases the projectile speed of plague of rats.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {
@@ -1640,8 +1640,8 @@
         "description": "Increases the projectile speed of jar of leeches.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {

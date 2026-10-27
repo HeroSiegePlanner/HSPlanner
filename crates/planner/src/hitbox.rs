@@ -333,8 +333,71 @@ fn converted_share(snapshot: &BuildSnapshot, phrase: &str) -> f64 {
         .clamp(0., 100.)
 }
 
-/// Preview for `skill_id` from the stats it was calculated with. The engine adds the
-/// main skill's subtree to the shared stats; other skills carry it in their overrides.
+/// A skill's stats split into its own subtree and the rest. The engine adds the main
+/// skill's subtree to the shared stats; other skills carry it in their overrides.
+pub(crate) struct SkillStats<'a> {
+    computed: &'a ComputedStats,
+    skill_id: &'a str,
+    is_main: bool,
+}
+
+impl<'a> SkillStats<'a> {
+    pub(crate) fn new(
+        snapshot: &BuildSnapshot,
+        computed: &'a ComputedStats,
+        skill_id: &'a str,
+    ) -> Self {
+        let is_main = snapshot.active_skill_ids.first().map(String::as_str) == Some(skill_id);
+        Self {
+            computed,
+            skill_id,
+            is_main,
+        }
+    }
+
+    pub(crate) fn total(&self, key: &str) -> f64 {
+        self.computed.stats.get(key).map_or(0., |v| v.1)
+    }
+
+    pub(crate) fn sources(&self, key: &str, kind: SourceType) -> f64 {
+        self.computed.stat_sources.get(key).map_or(0., |sources| {
+            sources
+                .iter()
+                .filter(|s| s.source_type == kind)
+                .map(|s| s.value.1)
+                .sum()
+        })
+    }
+
+    pub(crate) fn own(&self, key: &str) -> f64 {
+        let scoped = self
+            .computed
+            .skill_scoped
+            .get(self.skill_id)
+            .and_then(|m| m.get(key))
+            .map_or(0., |v| v.1);
+        let shared = if self.is_main {
+            self.sources(key, SourceType::Subskill)
+        } else {
+            self.computed
+                .skill_stat_overrides
+                .get(self.skill_id)
+                .and_then(|m| m.get(key))
+                .map_or(0., |v| v.1 - self.total(key))
+        };
+        scoped + shared
+    }
+
+    pub(crate) fn shared(&self, key: &str) -> f64 {
+        if self.is_main {
+            self.total(key) - self.own(key)
+        } else {
+            self.total(key)
+        }
+    }
+}
+
+/// Preview for `skill_id` from the stats it was calculated with.
 pub(crate) fn preview(
     snapshot: &BuildSnapshot,
     computed: &ComputedStats,
@@ -349,43 +412,13 @@ pub(crate) fn preview(
         skill.tags.as_deref().unwrap_or_default(),
         &snapshot.subskill_ranks,
     );
-    let is_main = snapshot.active_skill_ids.first().map(String::as_str) == Some(skill_id);
-    let stat = |key: &str| computed.stats.get(key).map_or(0., |v| v.1);
-    let sources_of = |key: &str, kind: SourceType| -> f64 {
-        computed.stat_sources.get(key).map_or(0., |sources| {
-            sources
-                .iter()
-                .filter(|s| s.source_type == kind)
-                .map(|s| s.value.1)
-                .sum()
-        })
-    };
-    let own_of = |key: &str| -> f64 {
-        let scoped = computed
-            .skill_scoped
-            .get(skill_id)
-            .and_then(|m| m.get(key))
-            .map_or(0., |v| v.1);
-        let shared = if is_main {
-            sources_of(key, SourceType::Subskill)
-        } else {
-            computed
-                .skill_stat_overrides
-                .get(skill_id)
-                .and_then(|m| m.get(key))
-                .map_or(0., |v| v.1 - stat(key))
-        };
-        scoped + shared
-    };
+    let split = SkillStats::new(snapshot, computed, skill_id);
+    let own_of = |key: &str| split.own(key);
     // The tree's "Attack Radius" (Far Reaching Carnage, Swinging Axes) is the game's melee
     // attack range; only items carry the Attack Area of Effect radius.
-    let tree_attack_radius = sources_of("attack_radius", SourceType::Tree);
+    let tree_attack_radius = split.sources("attack_radius", SourceType::Tree);
     let shared_of = |key: &str| {
-        let shared = if is_main {
-            stat(key) - own_of(key)
-        } else {
-            stat(key)
-        };
+        let shared = split.shared(key);
         match key {
             "melee_range" => shared + tree_attack_radius,
             "attack_radius" => shared - tree_attack_radius,

@@ -61,6 +61,41 @@ fn light_radius_lines_split_flat_and_percent_keys() {
     }
 }
 
+// Flying Debris and Slug Slinger add flat speed; the plain nodes add percent.
+#[test]
+fn projectile_speed_lines_split_flat_and_percent_keys() {
+    for (line, key, value) in [
+        (
+            "+1 Increased Melee Projectile Speed",
+            "melee_projectile_speed",
+            1.0,
+        ),
+        (
+            "+8% Increased Melee Projectile Speed",
+            "melee_projectile_speed_pct",
+            8.0,
+        ),
+        (
+            "+1 Increased Ranged Projectile Speed",
+            "ranged_projectile_speed",
+            1.0,
+        ),
+        (
+            "+6% Increased Ranged Projectile Speed",
+            "ranged_projectile_speed_pct",
+            6.0,
+        ),
+    ] {
+        match classify_tree_node_line(line) {
+            TreeLineClass::Stat(m) => {
+                assert_eq!(m.key, key, "line: {line}");
+                assert_eq!(m.value, value, "line: {line}");
+            }
+            _ => panic!("expected Stat for {line}"),
+        }
+    }
+}
+
 #[test]
 fn classify_null_rule_line_is_recognized_no_stat() {
     assert!(matches!(

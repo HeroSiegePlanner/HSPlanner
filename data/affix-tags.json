@@ -23,7 +23,12 @@
 
   "projectile_skills": { "tags": ["Projectile"], "effect": "rank" },
   "projectile_damage_increase": { "tags": ["Projectile"], "effect": "damage" },
-  "projectile_speed": { "tags": ["Projectile"], "effect": "none" },
+  "projectile_speed": { "tags": [], "effect": "none" },
+  "projectile_speed_pct": { "tags": [], "effect": "none" },
+  "melee_projectile_speed": { "tags": ["Melee", "Projectile"], "effect": "none" },
+  "melee_projectile_speed_pct": { "tags": ["Melee", "Projectile"], "effect": "none" },
+  "ranged_projectile_speed": { "tags": ["Ranged", "Projectile"], "effect": "none" },
+  "ranged_projectile_speed_pct": { "tags": ["Ranged", "Projectile"], "effect": "none" },
 
   "explosion_skills": { "tags": ["Explosion"], "effect": "rank" },
   "explosion_damage": { "tags": ["Explosion"], "effect": "damage" },

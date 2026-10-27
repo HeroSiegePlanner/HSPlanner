@@ -1187,8 +1187,8 @@
         "description": "Increases the projectile speed and cast rate of fireball.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0, "faster_cast_rate": 0},
-          "perRank": {"projectile_speed": 15, "faster_cast_rate": 6}
+          "base": {"projectile_speed_pct": 0, "faster_cast_rate": 0},
+          "perRank": {"projectile_speed_pct": 15, "faster_cast_rate": 6}
         }
       },
       {
@@ -2160,8 +2160,8 @@
         "description": "Now unleash piercing fireballs in all directions instead of a nova.",
         "maxRank": 3,
         "effects": {
-          "base": {"projectile_speed": 0, "projectile_count": 0, "single_target_hit_cap": 2, "subtree_damage": 0},
-          "perRank": {"projectile_speed": 25, "projectile_count": 5, "single_target_hit_cap": 0, "subtree_damage": 15}
+          "base": {"projectile_speed_pct": 0, "projectile_count": 0, "single_target_hit_cap": 2, "subtree_damage": 0},
+          "perRank": {"projectile_speed_pct": 25, "projectile_count": 5, "single_target_hit_cap": 0, "subtree_damage": 15}
         }
       },
       {
@@ -2645,8 +2645,8 @@
         "description": "Armageddon projectiles now fly horizontally through terrain exploding on hit.",
         "maxRank": 3,
         "effects": {
-          "base": {"fire_skill_damage": 0, "projectile_speed": 0},
-          "perRank": {"fire_skill_damage": 70, "projectile_speed": 20}
+          "base": {"fire_skill_damage": 0, "projectile_speed_pct": 0},
+          "perRank": {"fire_skill_damage": 70, "projectile_speed_pct": 20}
         }
       }
     ]

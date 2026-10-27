@@ -152,8 +152,8 @@
         "description": "Increases the projectile speed of sand thrown.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 20}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 20}
         }
       },
       {
@@ -352,8 +352,8 @@
         "description": "Increases the projectile speed of cloud of sand.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 10}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 10}
         }
       },
       {
@@ -831,8 +831,8 @@
         "description": "Increases the speed of sand tornados.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {
@@ -934,8 +934,8 @@
         "description": "Unleash small dust devils bouncing off of walls and unleashing a pulse of sand on hit.",
         "maxRank": 3,
         "effects": {
-          "base": {"projectile_speed": 0, "projectile_count": 0, "subtree_damage": 0},
-          "perRank": {"projectile_speed": 10, "projectile_count": 2, "subtree_damage": 65}
+          "base": {"projectile_speed_pct": 0, "projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_speed_pct": 10, "projectile_count": 2, "subtree_damage": 65}
         }
       }
     ]
@@ -1743,8 +1743,8 @@
         "description": "Increases the projectile speed of flying scimitar.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 7}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 7}
         }
       },
       {
@@ -1883,8 +1883,8 @@
         "description": "Scimitars are now spawned in a circle around the nomad with increased projectile speed and pulled back dealing increased damage. Scimitar Throw now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": {"of_total_damage": 0, "projectile_speed": 0, "projectile_count": 0, "cooldown_added": 2},
-          "perRank": {"of_total_damage": 50, "projectile_speed": 10, "projectile_count": 4, "cooldown_added": 0}
+          "base": {"of_total_damage": 0, "projectile_speed_pct": 0, "projectile_count": 0, "cooldown_added": 2},
+          "perRank": {"of_total_damage": 50, "projectile_speed_pct": 10, "projectile_count": 4, "cooldown_added": 0}
         }
       }
     ]
@@ -2011,8 +2011,8 @@
         "description": "Increases the projectile speed of chainslice.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {

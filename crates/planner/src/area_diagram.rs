@@ -7,11 +7,11 @@ use hsplanner_ui::theme::{self, TooltipTheme};
 use std::sync::{Arc, LazyLock};
 
 /// Game pixels across the camera view at field of view 1.0 (1024 + 256 × FOV).
-const VIEW_WIDTH: f32 = 1280.;
-const VIEW_ASPECT: f32 = 16. / 9.;
+pub(crate) const VIEW_WIDTH: f32 = 1280.;
+pub(crate) const VIEW_ASPECT: f32 = 16. / 9.;
 /// Act 1 town at field of view 1.0 and 1920 px wide (1.5 screen pixels per game pixel), with the
 /// player at the centre: the same 1280×720 view the hitboxes are drawn on.
-static TOWN: LazyLock<Arc<Image>> = LazyLock::new(|| {
+pub(crate) static TOWN: LazyLock<Arc<Image>> = LazyLock::new(|| {
     Arc::new(Image::from_bytes(
         ImageFormat::Webp,
         include_bytes!("../../../assets/hit-area/town.webp").to_vec(),
@@ -37,22 +37,22 @@ fn units(value: f32) -> Rems {
 }
 
 #[derive(Clone, Copy)]
-struct Colors {
-    view: Hsla,
-    dim: Hsla,
+pub(crate) struct Colors {
+    pub view: Hsla,
+    pub dim: Hsla,
     grid: Hsla,
     axis: Hsla,
-    frame: Hsla,
+    pub frame: Hsla,
     grown: Hsla,
     base: Hsla,
     reach: Hsla,
     check: Hsla,
     target: Hsla,
-    player: Hsla,
+    pub player: Hsla,
 }
 
 impl Colors {
-    fn new(p: &TooltipTheme) -> Self {
+    pub(crate) fn new(p: &TooltipTheme) -> Self {
         Self {
             view: p.background,
             dim: p.background.opacity(0.35),
@@ -76,10 +76,10 @@ struct Shape {
 }
 
 /// Game pixels to screen pixels around the skill's spawn point.
-struct View {
-    center: [f32; 2],
-    zoom: f32,
-    device: f32,
+pub(crate) struct View {
+    pub center: [f32; 2],
+    pub zoom: f32,
+    pub device: f32,
 }
 
 impl View {
@@ -411,14 +411,14 @@ fn paint(
     window.paint_quad(outline(bounds, colors.frame, BorderStyle::Solid));
 }
 
-fn paint_rect(window: &mut Window, [x0, y0, x1, y1]: [f32; 4], color: Hsla) {
+pub(crate) fn paint_rect(window: &mut Window, [x0, y0, x1, y1]: [f32; 4], color: Hsla) {
     window.paint_quad(fill(
         Bounds::from_corners(point(px(x0), px(y0)), point(px(x1), px(y1))),
         color,
     ));
 }
 
-fn paint_grid(window: &mut Window, bounds: Bounds<Pixels>, view: &View, colors: Colors) {
+pub(crate) fn paint_grid(window: &mut Window, bounds: Bounds<Pixels>, view: &View, colors: Colors) {
     let step = GRID_STEP * view.zoom;
     let hairline = 1. / view.device;
     let [left, top] = [f32::from(bounds.origin.x), f32::from(bounds.origin.y)];
@@ -455,7 +455,7 @@ fn paint_object(
 }
 
 /// Mask rows as runs of quads; objects face the aim, drawn here aiming right.
-fn paint_mask(
+pub(crate) fn paint_mask(
     window: &mut Window,
     view: &View,
     mask: &Mask,

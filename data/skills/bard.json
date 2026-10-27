@@ -103,8 +103,8 @@
         "description": "Increases the projectile speed of slaying riffs.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {

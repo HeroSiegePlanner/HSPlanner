@@ -241,8 +241,8 @@
         "description": "Increases the projectile speed of shadow bolt.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {
@@ -477,8 +477,8 @@
         "description": "Increases the speed of ripped souls.",
         "maxRank": 3,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 30}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 30}
         }
       },
       {
@@ -803,8 +803,8 @@
         "description": "Increases the projectile speed of restless spirits.",
         "maxRank": 2,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 30}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 30}
         }
       },
       {
@@ -2388,8 +2388,8 @@
         "description": "Increases the projectile speed of chain of holy light.",
         "maxRank": 3,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 25}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 25}
         }
       },
       {

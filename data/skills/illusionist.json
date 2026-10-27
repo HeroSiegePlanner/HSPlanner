@@ -1052,8 +1052,8 @@
         "description": "Knock monsters back from the center of impact with force unleashing homing void souls seeking nearby monsters.",
         "maxRank": 3,
         "effects": {
-          "base": {"arcane_skill_damage": 0, "projectile_speed": 0},
-          "perRank": {"arcane_skill_damage": 80, "projectile_speed": 25}
+          "base": {"arcane_skill_damage": 0, "projectile_speed_pct": 0},
+          "perRank": {"arcane_skill_damage": 80, "projectile_speed_pct": 25}
         }
       }
     ]

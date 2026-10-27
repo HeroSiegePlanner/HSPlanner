@@ -761,7 +761,7 @@
         15,
         30
       ],
-      "projectile_speed": [
+      "projectile_speed_pct": [
         -150,
         -90
       ]

@@ -79,8 +79,8 @@
         "description": "Increases projectile speed of the bone shreds.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {
@@ -357,8 +357,8 @@
         "description": "Increases meat bombs traveling speed.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 10}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 10}
         }
       },
       {
@@ -776,8 +776,8 @@
         "description": "Increases the projectile speed of bone spear.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 12}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 12}
         }
       },
       {
@@ -1477,8 +1477,8 @@
         "description": "Increases the projectile speed of poison nova.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 10}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 10}
         }
       },
       {

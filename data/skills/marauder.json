@@ -55,8 +55,8 @@
         "description": "Increased the projecile speed of bouncing grenade.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {
@@ -289,8 +289,8 @@
         "description": "Increased projectile speed for heavy ball.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 10}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 10}
         }
       },
       {
@@ -584,8 +584,8 @@
         "description": "Increased projectile speed for the big bo-om.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 20}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 20}
         }
       },
       {
@@ -731,8 +731,8 @@
         "description": "Increases the projectile speed of crazy grapple.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {
@@ -1092,8 +1092,8 @@
         "description": "Increases the projectile speed of bombardment.",
         "maxRank": 4,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {
@@ -1586,8 +1586,8 @@
         "description": "Increases the projectile speed of retiarius net.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {
@@ -1686,8 +1686,8 @@
         "description": "Throw retiarius net towards the nearest monsters with increased speed dealing increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": {"projectile_speed": 0, "subtree_damage": 0},
-          "perRank": {"projectile_speed": 20, "subtree_damage": 50}
+          "base": {"projectile_speed_pct": 0, "subtree_damage": 0},
+          "perRank": {"projectile_speed_pct": 20, "subtree_damage": 50}
         }
       },
       {
@@ -1890,8 +1890,8 @@
         "description": "Increases the hooking speed of chain trap.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {
@@ -2075,8 +2075,8 @@
         "description": "Annihilation pulls monsters towards you with increased force.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {
@@ -2373,8 +2373,8 @@
         "description": "Increases the hooking speed of madness control.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {

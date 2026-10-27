@@ -350,8 +350,8 @@
         "description": "Increases the projectile speed of pipe bombs.",
         "maxRank": 3,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 20}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 20}
         }
       },
       {
@@ -604,8 +604,8 @@
         "description": "Increases the projectile speed of tire fire.",
         "maxRank": 3,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 20}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 20}
         }
       },
       {

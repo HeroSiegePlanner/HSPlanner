@@ -206,6 +206,18 @@
       "format": "flat"
     },
     {
+      "key": "projectile_speed_pct",
+      "name": "Increased Projectile Speed",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "projectile_speed_more",
+      "name": "Total Projectile Speed",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
       "key": "area_of_effect",
       "name": "Area of Effect",
       "category": "offense",
@@ -1774,11 +1786,23 @@
       "key": "melee_projectile_speed",
       "name": "Melee Projectile Speed",
       "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "melee_projectile_speed_pct",
+      "name": "Increased Melee Projectile Speed",
+      "category": "offense",
       "format": "percent"
     },
     {
       "key": "ranged_projectile_speed",
       "name": "Ranged Projectile Speed",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "ranged_projectile_speed_pct",
+      "name": "Increased Ranged Projectile Speed",
       "category": "offense",
       "format": "percent"
     },
