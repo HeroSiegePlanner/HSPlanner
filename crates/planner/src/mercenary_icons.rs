@@ -9,10 +9,6 @@ const MERC_ICONS: &[(&str, &[u8])] = &[
         include_bytes!("../../../assets/skills/merc_archer/artillery_command.png"),
     ),
     (
-        "merc_archer/aura_expert",
-        include_bytes!("../../../assets/skills/merc_archer/aura_expert.png"),
-    ),
-    (
         "merc_archer/brainfreeze",
         include_bytes!("../../../assets/skills/merc_archer/brainfreeze.png"),
     ),
@@ -71,10 +67,6 @@ const MERC_ICONS: &[(&str, &[u8])] = &[
     (
         "merc_archer/trigger_power",
         include_bytes!("../../../assets/skills/merc_archer/trigger_power.png"),
-    ),
-    (
-        "merc_knight/aura_expert",
-        include_bytes!("../../../assets/skills/merc_knight/aura_expert.png"),
     ),
     (
         "merc_knight/backlash",
@@ -175,10 +167,6 @@ const MERC_ICONS: &[(&str, &[u8])] = &[
     (
         "merc_magister/arcanes_blessing",
         include_bytes!("../../../assets/skills/merc_magister/arcanes_blessing.png"),
-    ),
-    (
-        "merc_magister/aura_expert",
-        include_bytes!("../../../assets/skills/merc_magister/aura_expert.png"),
     ),
     (
         "merc_magister/cosmic_bolt",

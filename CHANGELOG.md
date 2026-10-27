@@ -50,6 +50,7 @@
 
 ## Skills
 
+- Mercenaries no longer have Aura Expert, a Hero Siege 1 skill the current game removed, and points a saved build put into it no longer count as spent (#210).
 - Butcher: the eight primary attacks use the game's weapon coefficients without invented flat damage, and twenty subtree bonuses enter their own pool at the right stage. Blade Uppercut changes Furious Strike's weapon bonus on a successful attack roll; Meet Daisy adds its damage and critical bonus on every third Brutalizing Slash; Precision Equals Power scales Brutalizing Slash's weapon bonus from Dexterity.
 - Butcher buffs and forms: Hellsent, Killing Spree, Rage Trance, Prey on the Weak, Awakening Fury and Ending Fate apply only while their temporary buff is active, with toggles in Config that saves, build codes and loadouts keep. Hunger for Blood needs a bleeding target. Holy Form scales regeneration and life per hit; Insatiable Hunger uses the game's form values. Sacrilegious Scorn and Spiritual Duality need the matching form.
 - Butcher critical and attack rating: One Swift Strike, Skullsplitter, Obsidian Blades, Immaculate Butcher and Entry Frenzy add critical bonuses only to their own attack. Bucthering Skill and Sharp Edges multiply only their own skill's attack rating. With 2 Hands is a separate repeat chance; Concussive Blow, Hookstorm and The Real Monster no longer inflate Hook, Chain Swing or passive regeneration.
