@@ -14,7 +14,7 @@ use hsplanner_engine::calc::{
     stats::socket_stat_value,
     types::{
         Affix, AffixFormat, AffixSign, AngelicAugment, AugmentCalc, AugmentLevel, EquippedAffix,
-        EquippedItem, ItemBase, SocketType, StatMap,
+        EquippedItem, ItemBase, ItemProcSpec, SocketType, StatMap,
     },
 };
 use hsplanner_ui::i18n::{tr, trf};
@@ -393,10 +393,65 @@ fn trigger_label(trigger: &str) -> Option<&'static str> {
         "on_kill" => tr("item.on_kill"),
         "on_cast" => tr("item.on_cast"),
         "on_block" => tr("item.on_block"),
+        "on_spell_hit" => tr("item.on_spell_hit"),
         "on_death" => tr("item.on_death"),
         "aura" => tr("item.aura"),
         _ => return None,
     })
+}
+
+fn proc_line(proc: &ItemProcSpec) -> Line {
+    let mut title = match trigger_label(&proc.trigger) {
+        Some(label) => trf(
+            "item.proc_chance",
+            &[
+                ("arg0", (num(proc.chance)).to_string()),
+                ("label", (label).to_string()),
+            ],
+        ),
+        None => format!("{}% {}", num(proc.chance), proc.trigger.replace('_', " ")),
+    };
+    if let Some(description) = &proc.description {
+        title = match trigger_label(&proc.trigger) {
+            Some(label) => trf(
+                "item.proc_description",
+                &[
+                    ("arg0", (num(proc.chance)).to_string()),
+                    ("label", (label).to_string()),
+                    ("description", (description).to_string()),
+                ],
+            ),
+            None => format!("{}% {description}", num(proc.chance)),
+        };
+    } else {
+        match (&proc.target, proc.cast_level) {
+            (Some(target), Some(level)) => {
+                title = trf(
+                    "item.proc_cast_level",
+                    &[
+                        ("trigger", title),
+                        ("level", level.to_string()),
+                        ("target", target.to_owned()),
+                    ],
+                )
+            }
+            (Some(target), None) => {
+                title = trf(
+                    "item.proc_cast",
+                    &[("trigger", title), ("target", target.to_owned())],
+                )
+            }
+            _ => {}
+        }
+    }
+    Line::Entry {
+        title,
+        style: LineStyle::Proc,
+        suffix: None,
+        desc: proc.details.clone(),
+        icon: None,
+        lines: Vec::new(),
+    }
 }
 
 fn stars_for(base: &ItemBase, equipped: Option<&EquippedItem>) -> Option<u32> {
@@ -646,6 +701,7 @@ pub(crate) fn build_model(
                 style: LineStyle::Runeword,
                 custom: false,
             }))
+            .chain(runeword.procs.iter().flatten().map(proc_line))
             .collect();
         if !lines.is_empty() {
             sections.push(Section::titled(
@@ -879,64 +935,7 @@ pub(crate) fn build_model(
         .as_ref()
         .filter(|p| base.rarity != "relic" && !p.is_empty())
     {
-        sections.push(Section::plain(
-            procs
-                .iter()
-                .map(|proc| {
-                    let mut title = match trigger_label(&proc.trigger) {
-                        Some(label) => trf(
-                            "item.proc_chance",
-                            &[
-                                ("arg0", (num(proc.chance)).to_string()),
-                                ("label", (label).to_string()),
-                            ],
-                        ),
-                        None => format!("{}% {}", num(proc.chance), proc.trigger.replace('_', " ")),
-                    };
-                    if let Some(description) = &proc.description {
-                        title = match trigger_label(&proc.trigger) {
-                            Some(label) => trf(
-                                "item.proc_description",
-                                &[
-                                    ("arg0", (num(proc.chance)).to_string()),
-                                    ("label", (label).to_string()),
-                                    ("description", (description).to_string()),
-                                ],
-                            ),
-                            None => format!("{}% {description}", num(proc.chance)),
-                        };
-                    } else {
-                        match (&proc.target, proc.cast_level) {
-                            (Some(target), Some(level)) => {
-                                title = trf(
-                                    "item.proc_cast_level",
-                                    &[
-                                        ("trigger", title),
-                                        ("level", level.to_string()),
-                                        ("target", target.to_owned()),
-                                    ],
-                                )
-                            }
-                            (Some(target), None) => {
-                                title = trf(
-                                    "item.proc_cast",
-                                    &[("trigger", title), ("target", target.to_owned())],
-                                )
-                            }
-                            _ => {}
-                        }
-                    }
-                    Line::Entry {
-                        title,
-                        style: LineStyle::Proc,
-                        suffix: None,
-                        desc: proc.details.clone(),
-                        icon: None,
-                        lines: Vec::new(),
-                    }
-                })
-                .collect(),
-        ));
+        sections.push(Section::plain(procs.iter().map(proc_line).collect()));
     }
 
     let effects: Vec<&String> = base
@@ -2451,7 +2450,7 @@ mod tests {
         let sockets = section_index("From Sockets");
         assert!(runeword < granted && granted < sockets);
         assert!(model.sections[runeword].lines.iter().any(|line| {
-            matches!(line, Line::Text { text, .. } if text == "+225% Enhanced Defense")
+            matches!(line, Line::Text { text, .. } if text == "+[170-225]% Enhanced Defense")
         }));
         assert!(model.sections[granted].lines.iter().any(|line| {
             matches!(line, Line::Entry { title, suffix, lines, desc, .. }
@@ -2522,6 +2521,33 @@ mod tests {
         assert_eq!(socket_stat_counts(&item), [0, 0, 0, 0]);
         item.socketed[3] = None;
         assert_eq!(socket_stat_counts(&item), [1, 1, 1]);
+    }
+
+    #[::core::prelude::v1::test]
+    fn runeword_procs_show_in_the_runeword_section() {
+        let base = data::get_item("boots_normal_boots").unwrap();
+        let item = EquippedItem {
+            base_id: base.id.clone(),
+            socketed: ["rune_pul", "rune_uth", "rune_sur"]
+                .map(|rune| Some(rune.into()))
+                .to_vec(),
+            ..Default::default()
+        };
+        let model = build_model(base, Some(&item), &[]);
+        let runeword = model
+            .sections
+            .iter()
+            .find(|section| {
+                section
+                    .header
+                    .as_ref()
+                    .is_some_and(|(title, _, _)| title == "Runeword")
+            })
+            .unwrap();
+        assert!(runeword.lines.iter().any(|line| matches!(
+            line,
+            Line::Entry { title, .. } if title == "3% Chance on Cast to cast Mana Devour Level [12-22]"
+        )));
     }
 
     #[::core::prelude::v1::test]

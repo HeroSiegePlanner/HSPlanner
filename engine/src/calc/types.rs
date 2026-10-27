@@ -127,6 +127,9 @@ pub struct Runeword {
     pub runes: Vec<String>,
     #[serde(default)]
     pub allowed_base_types: Vec<String>,
+    /// Weapon runewords roll different stats on one- and two-handed bases.
+    #[serde(default)]
+    pub two_handed: Option<bool>,
     #[serde(default)]
     pub stats: RangedStatMap,
     #[serde(default)]
@@ -137,6 +140,8 @@ pub struct Runeword {
     pub description: Option<String>,
     #[serde(default)]
     pub skill_bonuses: Option<HashMap<String, RangedValue>>,
+    #[serde(default)]
+    pub procs: Option<Vec<ItemProcSpec>>,
 }
 
 // ---------- item base ----------

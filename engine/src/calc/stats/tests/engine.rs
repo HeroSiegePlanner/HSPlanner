@@ -920,11 +920,11 @@ fn auroras_might_grants_lunar_aura_and_preserves_rune_bonuses() {
     assert_eq!(sum_ranged_from_map(&stats, "all_resistances"), (24., 56.));
     assert_eq!(
         sum_ranged_from_map(&stats, "additive_arcane_damage"),
-        (440., 600.)
+        (370., 600.)
     );
     assert_eq!(
         sum_ranged_from_map(&stats, "additive_cold_damage"),
-        (280., 280.)
+        (230., 280.)
     );
     assert_eq!(sum_ranged_from_map(&stats, "life_steal"), (7., 7.));
     assert_eq!(sum_ranged_from_map(&stats, "attack_damage"), (20., 20.));

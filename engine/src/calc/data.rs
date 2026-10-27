@@ -447,6 +447,14 @@ pub fn get_socketable_by_id(id: &str) -> Option<Socketable<'static>> {
     None
 }
 
+/// Whether the runeword can form on this base, including its one- or two-handed variant.
+pub fn runeword_fits_base(rw: &Runeword, base: &ItemBase) -> bool {
+    rw.allowed_base_types.iter().any(|t| t == &base.base_type)
+        && rw
+            .two_handed
+            .is_none_or(|two_handed| two_handed == (base.two_handed == Some(true)))
+}
+
 /// Returns the runeword that exactly matches every socket in order, or None.
 pub fn detect_runeword(base: &ItemBase, socketed: &[Option<&str>]) -> Option<&'static Runeword> {
     if base.rarity != "common" {
@@ -459,7 +467,7 @@ pub fn detect_runeword(base: &ItemBase, socketed: &[Option<&str>]) -> Option<&'s
         if rw.runes.len() != socketed.len() {
             continue;
         }
-        if !rw.allowed_base_types.iter().any(|t| t == &base.base_type) {
+        if !runeword_fits_base(rw, base) {
             continue;
         }
         let mut all_match = true;
@@ -694,6 +702,44 @@ mod tests {
         assert!(get_affix("definitely_not_an_affix").is_none());
         assert!(get_item("definitely_not_an_item").is_none());
         assert!(get_class("definitely_not_a_class").is_none());
+    }
+
+    #[test]
+    fn etherwalk_matches_the_game() {
+        let rw = data()
+            .runewords
+            .iter()
+            .find(|rw| rw.id == "rw_etherwalk")
+            .unwrap();
+        let stat = |key: &str| rw.stats.get(key).map(|v| v.as_ranged());
+        assert_eq!(stat("enhanced_defense"), Some((220., 300.)));
+        assert_eq!(stat("all_skills"), Some((1., 2.)));
+        assert_eq!(stat("movement_speed"), Some((20., 30.)));
+        assert_eq!(stat("ignore_all_res"), Some((3., 10.)));
+        // Uth adds 5% recouped as mana, and the boots' own defense is not a runeword stat.
+        assert_eq!(stat("damage_recouped_as_mana"), Some((5., 5.)));
+        assert_eq!(stat("defense"), None);
+        let proc = &rw.procs.as_ref().unwrap()[0];
+        assert_eq!(
+            proc.description.as_deref(),
+            Some("cast Mana Devour Level [12-22]")
+        );
+    }
+
+    #[test]
+    fn weapon_runewords_roll_their_two_handed_stats_on_two_handed_bases() {
+        let runes = ["rune_um", "rune_gul", "rune_qi", "rune_vex", "rune_old"].map(Some);
+        let all_skills = |two_handed: bool| {
+            let sword = data()
+                .items
+                .values()
+                .filter(|b| b.rarity == "common" && b.base_type == "Sword")
+                .find(|b| (b.two_handed == Some(true)) == two_handed)
+                .unwrap();
+            detect_runeword(sword, &runes).unwrap().stats["all_skills"].as_ranged()
+        };
+        assert_eq!(all_skills(false), (2., 2.));
+        assert_eq!(all_skills(true), (4., 4.));
     }
 
     #[test]

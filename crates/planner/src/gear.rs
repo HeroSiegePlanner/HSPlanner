@@ -478,7 +478,7 @@ impl GearView {
                 .iter()
                 .filter(|rw| {
                     base.is_some_and(|base| {
-                        base.rarity == "common" && rw.allowed_base_types.contains(&base.base_type)
+                        base.rarity == "common" && data::runeword_fits_base(rw, base)
                     }) && self
                         .candidate
                         .as_ref()

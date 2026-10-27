@@ -4828,7 +4828,10 @@
     {"key": "struck_skill_effectiveness", "name": "Struck Skill Effectiveness", "category": "offense", "format": "percent"},
     {"key": "phasing", "name": "Phasing", "category": "defense", "format": "flat"},
     {"key": "skill_life_recovery_from_max_life_pct", "name": "Skill Life Recovery from Maximum Life", "category": "defense", "format": "percent", "skillScoped": true},
-    {"key": "skill_mana_recovery_from_max_mana_pct", "name": "Skill Mana Recovery from Maximum Mana", "category": "defense", "format": "percent", "skillScoped": true}
+    {"key": "skill_mana_recovery_from_max_mana_pct", "name": "Skill Mana Recovery from Maximum Mana", "category": "defense", "format": "percent", "skillScoped": true},
+    {"key": "attacks_hit_multiple_enemies", "name": "Attacks Can Hit Multiple Enemies", "category": "offense", "format": "flat"},
+    {"key": "cannot_be_frozen", "name": "Cannot Be Frozen", "category": "defense", "format": "flat"},
+    {"key": "increased_stasis_frequency", "name": "Increased Stasis Frequency", "category": "offense", "format": "percent"}
   ],
   "slots": [
     { "key": "helmet", "name": "Helmet", "group": "armor" },

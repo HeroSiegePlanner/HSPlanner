@@ -576,13 +576,15 @@ fn detect_runeword(lines: &[String]) -> Option<RunewordHeader> {
         .captures(&base_text)
         .is_some_and(|m| matches!(m[1].to_lowercase().as_str(), "2" | "two"));
     let type_text = canon_phrase(&HANDEDNESS.replace_all(&base_text, " "));
+    let variants: Vec<&Runeword> = words.iter().filter(|w| w.name == rw.name).collect();
     let bases = sorted_by_id(data::data().items.values(), |i: &ItemBase| &i.id);
     let base = bases
         .iter()
         .filter(|item| item.rarity == "common")
         .filter(|item| {
-            rw.allowed_base_types
+            variants
                 .iter()
+                .flat_map(|w| &w.allowed_base_types)
                 .any(|t| t.eq_ignore_ascii_case(&item.base_type))
         })
         .filter(|item| item.two_handed.unwrap_or(false) == two_handed)
@@ -593,6 +595,10 @@ fn detect_runeword(lines: &[String]) -> Option<RunewordHeader> {
             _ => Some(next),
         })
         .map(|(item, _)| *item)?;
+    let rw = variants
+        .into_iter()
+        .find(|w| data::runeword_fits_base(w, base))
+        .unwrap_or(rw);
     let name_end = runes_ix.unwrap_or(header_ix);
     let details = (0..=name_end)
         .map(|i| {

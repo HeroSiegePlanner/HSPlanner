@@ -207,7 +207,7 @@ pub fn apply_runeword(item: &mut EquippedItem, id: &str) -> Result<(), String> {
         ..Default::default()
     };
     if base.rarity != "common"
-        || !rw.allowed_base_types.contains(&base.base_type)
+        || !data::runeword_fits_base(rw, base)
         || rw.runes.len() > max_sockets(&bare) as usize
     {
         return Err("This runeword does not fit the selected base.".into());

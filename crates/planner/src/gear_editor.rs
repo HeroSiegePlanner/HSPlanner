@@ -2537,8 +2537,7 @@ fn compatible_runeword_count(base: &ItemBase, max_sockets: u32) -> usize {
     data::runewords()
         .iter()
         .filter(|runeword| {
-            runeword.allowed_base_types.contains(&base.base_type)
-                && runeword.runes.len() <= max_sockets as usize
+            data::runeword_fits_base(runeword, base) && runeword.runes.len() <= max_sockets as usize
         })
         .count()
 }
