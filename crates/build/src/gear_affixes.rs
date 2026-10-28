@@ -139,14 +139,10 @@ mod tests {
     }
 
     #[test]
-    fn signet_of_shadows_rolls_its_own_unholy_pool() {
+    fn signet_of_shadows_rolls_the_common_unholy_list() {
         let mut item = make_item("ring_heroic_signet_of_shadows_arcane").unwrap();
-        assert!(add_affix(&mut item, "random_unholy_to_strength").is_err());
-        add_affix(
-            &mut item,
-            "random_unholy_signet_of_shadows_intelligence_converted_to_magic_skill_dmg",
-        )
-        .unwrap();
+        assert!(add_affix(&mut item, "1_increased_experience_gain_t5_warlegend").is_err());
+        add_affix(&mut item, "random_unholy_movement_speed").unwrap();
         assert!(is_unholy_group(
             &data::get_affix(&item.affixes[0].affix_id).unwrap().group_id
         ));

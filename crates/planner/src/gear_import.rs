@@ -123,8 +123,13 @@ impl ImportView {
             preview_format(&bytes).map(|format| Arc::new(Image::from_bytes(format, bytes.clone())));
         cx.notify();
         let task = cx.background_spawn(async move {
-            hsplanner_engine::ocr::ocr_image_bytes(&bytes)
-                .map(|lines| tooltip_parse::parse_tooltip_lines(lines))
+            hsplanner_engine::ocr::ocr_image_lines(&bytes).map(|lines| {
+                let lines: Vec<_> = lines
+                    .into_iter()
+                    .map(|line| (line.text, Some(line.color)))
+                    .collect();
+                tooltip_parse::parse_tooltip_colored(&lines)
+            })
         });
         cx.spawn(async move |this, cx| {
             let outcome = task.await;

@@ -704,11 +704,12 @@
     "requiresLevel": 100,
     "implicit": {
       "arcane_skills": 4,
+      "ailment_damage_all": 15,
       "flat_arcane_skill_damage": 33,
       "arcane_skill_damage": 15
     },
     "maxAffixes": 3,
-    "randomAffixGroupId": "random_unholy_signet_of_shadows",
+    "randomAffixGroupId": "random_unholy",
     "sockets": 0,
     "maxSockets": 0,
     "uniqueEffects": [
@@ -727,11 +728,12 @@
     "requiresLevel": 100,
     "implicit": {
       "cold_skills": 4,
+      "ailment_damage_all": 15,
       "flat_cold_skill_damage": 33,
       "cold_skill_damage": 15
     },
     "maxAffixes": 3,
-    "randomAffixGroupId": "random_unholy_signet_of_shadows",
+    "randomAffixGroupId": "random_unholy",
     "sockets": 0,
     "maxSockets": 0,
     "uniqueEffects": [
@@ -750,11 +752,12 @@
     "requiresLevel": 100,
     "implicit": {
       "fire_skills": 4,
+      "ailment_damage_all": 15,
       "flat_fire_skill_damage": 33,
       "fire_skill_damage": 15
     },
     "maxAffixes": 3,
-    "randomAffixGroupId": "random_unholy_signet_of_shadows",
+    "randomAffixGroupId": "random_unholy",
     "sockets": 0,
     "maxSockets": 0,
     "uniqueEffects": [
@@ -773,11 +776,12 @@
     "requiresLevel": 100,
     "implicit": {
       "lightning_skills": 4,
+      "ailment_damage_all": 15,
       "flat_lightning_skill_damage": 33,
       "lightning_skill_damage": 15
     },
     "maxAffixes": 3,
-    "randomAffixGroupId": "random_unholy_signet_of_shadows",
+    "randomAffixGroupId": "random_unholy",
     "sockets": 0,
     "maxSockets": 0,
     "uniqueEffects": [
@@ -796,11 +800,12 @@
     "requiresLevel": 100,
     "implicit": {
       "physical_skills": 4,
+      "ailment_damage_all": 15,
       "additive_physical_damage": 33,
       "attack_damage": 15
     },
     "maxAffixes": 3,
-    "randomAffixGroupId": "random_unholy_signet_of_shadows",
+    "randomAffixGroupId": "random_unholy",
     "sockets": 0,
     "maxSockets": 0,
     "uniqueEffects": [
@@ -819,11 +824,12 @@
     "requiresLevel": 100,
     "implicit": {
       "poison_skills": 4,
+      "ailment_damage_all": 15,
       "flat_poison_skill_damage": 33,
       "poison_skill_damage": 15
     },
     "maxAffixes": 3,
-    "randomAffixGroupId": "random_unholy_signet_of_shadows",
+    "randomAffixGroupId": "random_unholy",
     "sockets": 0,
     "maxSockets": 0,
     "uniqueEffects": [

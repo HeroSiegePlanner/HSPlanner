@@ -12,10 +12,11 @@ fn main() {
             panic!("cannot read {path}: {e}\n(run from the engine/ directory)")
         });
         println!("=== {path} ===");
-        match app_lib::ocr::ocr_image_bytes(&bytes) {
+        match app_lib::ocr::ocr_image_lines(&bytes) {
             Ok(lines) => {
                 for line in lines {
-                    println!("{line}");
+                    let [r, g, b] = line.color;
+                    println!("#{r:02x}{g:02x}{b:02x}  {}", line.text);
                 }
             }
             Err(e) => println!("!! OCR error: {e}"),
