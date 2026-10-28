@@ -5,7 +5,7 @@ default-members = ["crates/app"]
 exclude = ["legacy/src-tauri", "prototypes/gpui-tree", "tree-renderer"]
 
 [workspace.package]
-version = "1.2.1"
+version = "1.2.2-beta.1"
 edition = "2024"
 publish = false
 
