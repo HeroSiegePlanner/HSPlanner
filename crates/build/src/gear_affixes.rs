@@ -1,12 +1,11 @@
 //! Reference Gear affix-pool restrictions, shared by the picker and edit validation.
 use hsplanner_engine::calc::{
-    data, season,
+    data,
     types::{Affix, ItemBase},
 };
 use std::{
-    cell::RefCell,
     collections::{HashMap, HashSet},
-    sync::{LazyLock, Mutex},
+    sync::LazyLock,
 };
 
 struct Pools {
@@ -14,30 +13,18 @@ struct Pools {
     random: HashSet<String>,
 }
 
-static POOLS: LazyLock<Mutex<HashMap<String, &'static Pools>>> = LazyLock::new(Default::default);
-thread_local! { static CURRENT: RefCell<Option<(String, &'static Pools)>> = const { RefCell::new(None) }; }
+static POOLS: LazyLock<Pools> = LazyLock::new(|| Pools {
+    groups: serde_json::from_str(include_str!("../../../data/affix-pools.json"))
+        .expect("valid affix pools"),
+    random: data::data()
+        .items
+        .values()
+        .filter_map(|base| base.random_affix_group_id.clone())
+        .collect(),
+});
 
 fn pools() -> &'static Pools {
-    season::memoized_current_season(&CURRENT, |id| {
-        season::cached_per_season(&POOLS, id, |id| {
-            let base = serde_json::from_str(include_str!("../../../data/affix-pools.json"))
-                .expect("valid affix pools");
-            let value = season::patches_for(id)
-                .get("affix-pools")
-                .and_then(|patch| {
-                    season::apply_record_patch(&base, patch, "affix-pools", false).ok()
-                })
-                .unwrap_or(base);
-            Pools {
-                groups: serde_json::from_value(value).expect("valid affix pool types"),
-                random: data::data_for(id)
-                    .items
-                    .values()
-                    .filter_map(|base| base.random_affix_group_id.clone())
-                    .collect(),
-            }
-        })
-    })
+    &POOLS
 }
 
 pub fn jewel_affix_allowed(affix: &Affix) -> bool {

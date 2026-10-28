@@ -291,7 +291,6 @@ impl Session {
         build.notes = draft.notes.to_html();
         build.stash = draft.stash.clone();
         build.class_id = draft.snapshot.class_id.clone();
-        build.season = draft.snapshot.season.clone();
         if serde_json::to_value(&*build).map_err(|error| error.to_string())? != previous {
             build.updated_at = now();
             self.changed();

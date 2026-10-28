@@ -161,9 +161,7 @@ pub fn display_values_impl(input: &DisplayValuesInput) -> DisplayValuesOutput {
     }
 }
 
-// Star scaling reads per-season config, so the season rides as a command param.
-pub fn display_values(input: DisplayValuesInput, season: Option<String>) -> DisplayValuesOutput {
-    let _scope = crate::calc::season::SeasonScope::enter(season);
+pub fn display_values(input: DisplayValuesInput) -> DisplayValuesOutput {
     display_values_impl(&input)
 }
 
@@ -198,8 +196,7 @@ pub fn classify_tree_nodes_impl() -> HashMap<String, NodeLineClassification> {
         .collect()
 }
 
-pub fn classify_tree_nodes(season: Option<String>) -> HashMap<String, NodeLineClassification> {
-    let _scope = crate::calc::season::SeasonScope::enter(season);
+pub fn classify_tree_nodes() -> HashMap<String, NodeLineClassification> {
     classify_tree_nodes_impl()
 }
 
@@ -216,8 +213,6 @@ pub struct SubskillAggregationInput {
     pub subskill_ranks: HashMap<String, u32>,
     #[serde(default)]
     pub enemy_conditions: HashMap<String, bool>,
-    #[serde(default)]
-    pub season: Option<String>,
 }
 
 #[derive(Serialize)]
@@ -269,7 +264,6 @@ pub(crate) fn subskill_aggregation_impl(
 }
 
 pub fn subskill_aggregation(input: SubskillAggregationInput) -> SubskillAggregationOutput {
-    let _scope = crate::calc::season::SeasonScope::enter(input.season.clone());
     subskill_aggregation_impl(&input)
 }
 

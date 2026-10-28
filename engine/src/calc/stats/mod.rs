@@ -251,8 +251,7 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         &mut stat_sources,
     );
 
-    // 3. Tree contributions (returns deferred conversions + disables);
-    //    the incarnation tree's node set is season-patched data.
+    // 3. Tree contributions (returns deferred conversions + disables).
     let tree_agg = apply_tree_contributions(
         input.allocated_tree_nodes,
         input.player_conditions,
@@ -757,7 +756,7 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     // 22. Tree disables (zero out life_replenish if flagged)
     apply_tree_disables(&tree_agg.disables, &mut stats);
 
-    // 22b. Diminishing returns on final totals (config-driven, season-aware).
+    // 22b. Diminishing returns on final totals (config-driven).
     let diminished_raw = match data::game_config().diminishing_returns.as_ref() {
         Some(defs) => apply_diminishing_returns(&mut stats, defs),
         None => HashMap::new(),

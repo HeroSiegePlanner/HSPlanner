@@ -745,12 +745,6 @@ impl Render for LibraryView {
                             .child(label(format!("{level}/{points}"), muted)),
                     )
                     .child(
-                        div()
-                            .w(rems(76. / 13.))
-                            .flex_none()
-                            .child(label(build.season.clone(), muted)),
-                    )
-                    .child(
                         div().w(rems(140. / 13.)).flex_none().child(label(
                             build
                                 .updated_at
@@ -1146,12 +1140,6 @@ impl Render for LibraryView {
                 tr("library.level"),
                 cx,
             )))
-            .child(
-                div()
-                    .w(rems(76. / 13.))
-                    .flex_none()
-                    .child(label(tr("library.season"), palette.faint)),
-            )
             .child(
                 div()
                     .w(rems(140. / 13.))

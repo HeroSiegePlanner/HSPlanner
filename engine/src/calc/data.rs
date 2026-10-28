@@ -1,13 +1,10 @@
 // JSON blobs from src/data/ are inlined at compile time via build.rs into
-// `$OUT_DIR/data_includes.rs`, then lazily parsed into per-season GameData (patches applied) on first access.
+// `$OUT_DIR/data_includes.rs`, then lazily parsed into GameData on first access.
 
-use std::cell::RefCell;
 use std::collections::{BTreeMap, HashMap, HashSet};
-use std::sync::Mutex;
 
 use std::sync::LazyLock;
 
-use super::season;
 use super::types::{
     Affix, AffixTag, AngelicAugment, CharacterClass, DifficultyDef, EquippedItem, GameConfig, Gem,
     Inventory, ItemBase, ItemGrantedSkill, ItemSet, Rune, Runeword, SkillSpec, SubskillTagChange,
@@ -18,8 +15,6 @@ use super::types::{
 mod includes {
     include!(concat!(env!("OUT_DIR"), "/data_includes.rs"));
 }
-
-pub(crate) use includes::SEASON_PATCHES;
 
 const GEAR_SLOTS: &[&str] = &[
     "weapon", "offhand", "helmet", "armor", "gloves", "boots", "belt", "amulet", "ring_1", "ring_2",
@@ -103,8 +98,7 @@ pub struct GameData {
     pub tree_jewelry_ids: HashSet<u32>,
 }
 
-static GAME_DATA_BY_SEASON: LazyLock<Mutex<HashMap<String, &'static GameData>>> =
-    LazyLock::new(|| Mutex::new(HashMap::new()));
+static GAME_DATA: LazyLock<GameData> = LazyLock::new(load);
 
 fn index_by_id<T, F: Fn(&T) -> String>(list: Vec<T>, key: F) -> HashMap<String, T> {
     let mut out: HashMap<String, T> = HashMap::with_capacity(list.len());
@@ -114,55 +108,16 @@ fn index_by_id<T, F: Fn(&T) -> String>(list: Vec<T>, key: F) -> HashMap<String, 
     out
 }
 
-pub(crate) enum PatchKind {
-    List(&'static str),
-    RecordMerge,
-    GameConfig,
-}
-
-// All-or-nothing per collection: on patch error, log loudly and fall back to base.
-pub(crate) fn patched_value(
-    base: serde_json::Value,
-    patches: &HashMap<String, serde_json::Value>,
-    name: &str,
-    kind: PatchKind,
-) -> serde_json::Value {
-    let Some(patch) = patches.get(name) else {
-        return base;
-    };
-    let result = match kind {
-        PatchKind::List(key) => season::apply_list_patch(&base, patch, name, key),
-        PatchKind::RecordMerge => season::apply_record_patch(&base, patch, name, true),
-        PatchKind::GameConfig => season::apply_game_config_patch(&base, patch, name),
-    };
-    match result {
-        Ok(v) => v,
-        Err(errs) => {
-            for e in errs {
-                log::error!("season patch error: {e}");
-            }
-            base
-        }
-    }
-}
-
 fn parse_value(json: &str, ctx: &str) -> serde_json::Value {
     serde_json::from_str(json).unwrap_or_else(|e| panic!("failed to parse {ctx}: {e}"))
 }
 
 fn from_value<T: serde::de::DeserializeOwned>(value: serde_json::Value, ctx: &str) -> T {
-    serde_json::from_value(value).unwrap_or_else(|e| panic!("invalid {ctx} shape after patch: {e}"))
+    serde_json::from_value(value).unwrap_or_else(|e| panic!("invalid {ctx} shape: {e}"))
 }
 
-fn load_patched<T: serde::de::DeserializeOwned>(
-    json: &str,
-    patches: &HashMap<String, serde_json::Value>,
-    name: &str,
-    kind: PatchKind,
-    ctx: &str,
-) -> T {
-    let value = patched_value(parse_value(json, ctx), patches, name, kind);
-    from_value(value, name)
+fn load_json<T: serde::de::DeserializeOwned>(json: &str, ctx: &str) -> T {
+    from_value(parse_value(json, ctx), ctx)
 }
 
 // Array files contribute their elements; scalar files contribute themselves.
@@ -177,98 +132,26 @@ fn concat_values(blobs: &[&str], ctx: &str) -> serde_json::Value {
     serde_json::Value::Array(all)
 }
 
-fn load_patched_many<T: serde::de::DeserializeOwned>(
-    blobs: &[&str],
-    patches: &HashMap<String, serde_json::Value>,
-    name: &str,
-    ctx: &str,
-) -> Vec<T> {
-    let value = patched_value(
-        concat_values(blobs, ctx),
-        patches,
-        name,
-        PatchKind::List("id"),
-    );
-    from_value(value, name)
+fn load_json_many<T: serde::de::DeserializeOwned>(blobs: &[&str], ctx: &str) -> Vec<T> {
+    from_value(concat_values(blobs, ctx), ctx)
 }
 
-fn load_for(season_id: &str) -> GameData {
+fn load() -> GameData {
     use includes::*;
 
-    let patches = season::patches_for(season_id);
-
-    let affixes_vec: Vec<Affix> = load_patched(
-        AFFIXES_JSON,
-        &patches,
-        "affixes",
-        PatchKind::List("id"),
-        "affixes.json",
-    );
-    let crystals_vec: Vec<Affix> = load_patched(
-        CRYSTALS_JSON,
-        &patches,
-        "crystals",
-        PatchKind::List("id"),
-        "crystals.json",
-    );
-    let runewords_vec: Vec<Runeword> = load_patched(
-        RUNEWORDS_JSON,
-        &patches,
-        "runewords",
-        PatchKind::List("id"),
-        "runewords.json",
-    );
-    let sets_vec: Vec<ItemSet> = load_patched(
-        SETS_JSON,
-        &patches,
-        "sets",
-        PatchKind::List("id"),
-        "sets.json",
-    );
-    let augments_vec: Vec<AngelicAugment> = load_patched(
-        AUGMENTS_JSON,
-        &patches,
-        "augments",
-        PatchKind::List("id"),
-        "augments.json",
-    );
-    let item_granted_vec: Vec<ItemGrantedSkill> = load_patched(
-        ITEM_GRANTED_SKILLS_JSON,
-        &patches,
-        "item-granted-skills",
-        PatchKind::List("name"),
-        "item-granted-skills.json",
-    );
-    let game_config: GameConfig = load_patched(
-        GAME_CONFIG_JSON,
-        &patches,
-        "game-config",
-        PatchKind::GameConfig,
-        "game-config.json",
-    );
-    let affix_tags: BTreeMap<String, AffixTag> = load_patched(
-        AFFIX_TAGS_JSON,
-        &patches,
-        "affix-tags",
-        PatchKind::RecordMerge,
-        "affix-tags.json",
-    );
-    let subskill_tags: HashMap<String, HashMap<String, SubskillTagChange>> = load_patched(
-        SUBSKILL_TAGS_JSON,
-        &patches,
-        "subskill-tags",
-        PatchKind::RecordMerge,
-        "subskill-tags.json",
-    );
-    // Drzewo incarnation (zakładka Tree): jedna kolekcja, sezony podmieniają
-    // zawartość patchem.
-    let tree_nodes: HashMap<String, TreeNodeInfo> = load_patched(
-        INCARNATION_NODES_JSON,
-        &patches,
-        "incarnation-nodes",
-        PatchKind::RecordMerge,
-        "incarnation-nodes.json",
-    );
+    let affixes_vec: Vec<Affix> = load_json(AFFIXES_JSON, "affixes.json");
+    let crystals_vec: Vec<Affix> = load_json(CRYSTALS_JSON, "crystals.json");
+    let runewords_vec: Vec<Runeword> = load_json(RUNEWORDS_JSON, "runewords.json");
+    let sets_vec: Vec<ItemSet> = load_json(SETS_JSON, "sets.json");
+    let augments_vec: Vec<AngelicAugment> = load_json(AUGMENTS_JSON, "augments.json");
+    let item_granted_vec: Vec<ItemGrantedSkill> =
+        load_json(ITEM_GRANTED_SKILLS_JSON, "item-granted-skills.json");
+    let game_config: GameConfig = load_json(GAME_CONFIG_JSON, "game-config.json");
+    let affix_tags: BTreeMap<String, AffixTag> = load_json(AFFIX_TAGS_JSON, "affix-tags.json");
+    let subskill_tags: HashMap<String, HashMap<String, SubskillTagChange>> =
+        load_json(SUBSKILL_TAGS_JSON, "subskill-tags.json");
+    let tree_nodes: HashMap<String, TreeNodeInfo> =
+        load_json(INCARNATION_NODES_JSON, "incarnation-nodes.json");
 
     let mut tree_warp_ids: HashSet<u32> = HashSet::new();
     let mut tree_jewelry_ids: HashSet<u32> = HashSet::new();
@@ -286,13 +169,11 @@ fn load_for(season_id: &str) -> GameData {
         }
     }
 
-    let items_all: Vec<ItemBase> = load_patched_many(ITEMS_JSON, &patches, "items", "items/*.json");
-    let gems_all: Vec<Gem> = load_patched_many(GEMS_JSON, &patches, "gems", "gems/*.json");
-    let runes_all: Vec<Rune> = load_patched_many(RUNES_JSON, &patches, "runes", "runes/*.json");
-    let classes_all: Vec<CharacterClass> =
-        load_patched_many(CLASSES_JSON, &patches, "classes", "classes/*.json");
-    let skills_all: Vec<SkillSpec> =
-        load_patched_many(SKILLS_JSON, &patches, "skills", "skills/*.json");
+    let items_all: Vec<ItemBase> = load_json_many(ITEMS_JSON, "items/*.json");
+    let gems_all: Vec<Gem> = load_json_many(GEMS_JSON, "gems/*.json");
+    let runes_all: Vec<Rune> = load_json_many(RUNES_JSON, "runes/*.json");
+    let classes_all: Vec<CharacterClass> = load_json_many(CLASSES_JSON, "classes/*.json");
+    let skills_all: Vec<SkillSpec> = load_json_many(SKILLS_JSON, "skills/*.json");
 
     let mut skills_by_class: HashMap<String, Vec<SkillSpec>> = HashMap::new();
     for skill in skills_all {
@@ -323,17 +204,8 @@ fn load_for(season_id: &str) -> GameData {
     }
 }
 
-pub fn data_for(season_id: &str) -> &'static GameData {
-    season::cached_per_season(&GAME_DATA_BY_SEASON, season_id, load_for)
-}
-
-thread_local! {
-    static LAST_DATA: RefCell<Option<(String, &'static GameData)>> = const { RefCell::new(None) };
-}
-
-/// Reads the SeasonScope thread-local; without a scope, serves DEFAULT_SEASON_ID data.
 pub fn data() -> &'static GameData {
-    season::memoized_current_season(&LAST_DATA, data_for)
+    &GAME_DATA
 }
 
 // ---------- lookup helpers ----------
@@ -484,7 +356,6 @@ pub fn detect_runeword(base: &ItemBase, socketed: &[Option<&str>]) -> Option<&'s
     None
 }
 
-// Linear scan stays season-correct; a process-wide index would pin one season's data.
 /// Skill bonuses granted by the item base plus the runeword completed in its sockets.
 pub fn skill_bonus_entries<'a>(
     base: &'a ItemBase,
@@ -609,39 +480,6 @@ mod tests {
 
     // Accessing data() forces every JSON file to deserialise, so a schema mismatch
     // panics here with a precise file/error instead of surfacing later.
-
-    #[test]
-    fn data_for_patchless_season_serves_base_data() {
-        let a = super::data_for("definitely-unknown") as *const GameData;
-        let b = super::data_for("also-unknown") as *const GameData;
-        assert_eq!(a, b, "patchless ids must share one base cache entry");
-    }
-
-    // Every embedded season patch dir must deserialize into GameData without panicking.
-    #[test]
-    fn sweep_embedded_season_patch_dirs_load() {
-        let mut dirs: HashSet<&str> = HashSet::new();
-        for (rel, _) in SEASON_PATCHES {
-            if let Some((dir, _)) = rel.split_once('/') {
-                dirs.insert(dir);
-            }
-        }
-        for dir in dirs {
-            let d = super::data_for(dir);
-            assert!(!d.affixes.is_empty(), "season {dir} lost all affixes");
-        }
-    }
-
-    #[test]
-    fn data_reads_thread_local_season_scope() {
-        let default_ptr = super::data() as *const GameData;
-        {
-            let _scope = crate::calc::season::SeasonScope::enter(Some(
-                crate::calc::season::DEFAULT_SEASON_ID.to_string(),
-            ));
-            assert_eq!(default_ptr, super::data() as *const GameData);
-        }
-    }
 
     #[test]
     fn game_data_loads_without_panic() {

@@ -389,7 +389,6 @@ fn pinned_entity_rate_ignores_config_knob_and_sentry_speed() {
 // The S10 node carries the pin; without it the drone stays on the config knob.
 #[test]
 fn cyclops_pins_the_drone_to_four_ticks_a_second() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let laser: &[(&str, u32)] = &[("c_y_c_l_o_p_s", 1)];
     let at_one = perf_with_stats("marksman", "gunner_drone", 10, laser, &[], 1.0);
     let at_three = perf_with_stats("marksman", "gunner_drone", 10, laser, &[], 3.0);
@@ -841,7 +840,6 @@ fn attack_speed_skill_rates_off_attacks_per_second() {
 
 #[test]
 fn scorching_whip_deals_spell_damage_at_every_learned_rank() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     for rank in 1..=20 {
         let p = perf("exo", "scorching_whip", rank, &[], &[]);
         let damage = p.damage.as_ref().expect("Scorching Whip damage");
@@ -862,7 +860,6 @@ fn scorching_whip_deals_spell_damage_at_every_learned_rank() {
 
 #[test]
 fn scorching_whip_rate_and_dps_scale_with_attack_speed_not_cast_rate() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let base = perf("exo", "scorching_whip", 20, &[], &[]);
     let base_dps = base.hit_dps_max.expect("Scorching Whip DPS");
     let base_mana = base.skill_costs["scorching_whip"].mana_per_sec_max.unwrap();
@@ -912,7 +909,6 @@ fn scorching_whip_uses_equipped_weapon_speed_and_its_subtree_bonus() {
                         ..Default::default()
                     },
                 )]),
-                season: Some("s10".into()),
                 ..Default::default()
             };
             let p = calc_build_performance(input);
@@ -1618,7 +1614,6 @@ fn skill_duration_buys_extra_ticks() {
 // physical hit, so its worth must not decay as flat physical is stacked.
 #[test]
 fn axe_damage_node_is_independent_of_flat_physical() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let dps = |nodes: &HashSet<u32>, add_phys: f64| -> f64 {
         let allocated = HashMap::new();
         let mut inventory: Inventory = HashMap::new();
@@ -1705,7 +1700,6 @@ fn frost_sunder_starts_at_four_projectiles() {
 // so a build already stacking cold damage gets the same multiplier out of it.
 #[test]
 fn frost_sunder_onslaught_lands_on_top_of_the_cold_pool() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let cold_avg = |rank: u32, cold_pool: f64| -> f64 {
         let allocated = HashMap::new();
         let inventory = HashMap::new();

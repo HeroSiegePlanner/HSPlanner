@@ -59,7 +59,6 @@ pub fn prepare_input(input: &PlannerInput) -> BuildPerformanceInput {
     build
         .inventory
         .retain(|slot, _| !input.disabled_potions.get(slot).copied().unwrap_or(false));
-    let _scope = super::season::SeasonScope::enter(build.season.clone());
     // An enabled potion is drunk: its granted buff is on.
     for (slot, item) in &build.inventory {
         if !slot.starts_with("potion_") {
@@ -169,7 +168,6 @@ pub fn dps_summary(input: &PlannerInput) -> DpsSummary {
 /// The combined DPS midpoint `evaluate` reports, without the stat breakdowns; for searches.
 pub fn combined_dps(input: &PlannerInput) -> f64 {
     let prepared = prepare_input(input);
-    let _scope = super::season::SeasonScope::enter(prepared.season.clone());
     super::commands::combined_dps_mid(&input.active_skill_ids, |main| {
         super::build::compute_build_performance(&super::commands::perf_deps(
             &prepared,
@@ -182,7 +180,6 @@ pub fn combined_dps(input: &PlannerInput) -> f64 {
 /// The main skill's Hit DPS midpoint `evaluate` reports, without the stat breakdowns; for searches.
 pub fn hit_dps(input: &PlannerInput) -> f64 {
     let prepared = prepare_input(input);
-    let _scope = super::season::SeasonScope::enter(prepared.season.clone());
     let performance = super::build::compute_build_performance(&super::commands::perf_deps(
         &prepared,
         &prepared.inventory,
@@ -196,7 +193,6 @@ pub fn hit_dps(input: &PlannerInput) -> f64 {
 
 pub fn evaluate(input: &PlannerInput) -> PlannerPerformance {
     let prepared = prepare_input(input);
-    let _scope = super::season::SeasonScope::enter(prepared.season.clone());
     let mut computed = calc_build_stats(prepared.clone());
     let primary = super::build::performance_from_stats(
         &super::commands::perf_deps(
@@ -240,7 +236,6 @@ pub fn evaluate(input: &PlannerInput) -> PlannerPerformance {
         level: 1,
         inventory: input.merc_inventory.clone(),
         kills_per_sec: 1.,
-        season: prepared.season,
         ..Default::default()
     });
     let ether = summarize_ether(&input.allocated_ether_nodes);

@@ -7,7 +7,6 @@ use hsplanner_engine::calc::{
     affix::rolled_affix_value,
     data,
     planner::{DpsSummary, PlannerInput, combined_dps, dps_summary, hit_dps},
-    season::SeasonScope,
     skills::Ranged,
     star_scaling,
     types::{
@@ -311,7 +310,6 @@ enum Probe<'a> {
 impl Search<'_> {
     /// Steps stay in the order they were found, so each one holds in the state it was measured in.
     fn run(&self, progress: &(impl Fn(u32, u32) + Sync)) -> Result<GearSuggestion, String> {
-        let _scope = self.scope();
         let total = 1 + (PASSES * SLOTS.len()) as u32;
         progress(0, total);
         let base_dps = self.dps(self.start);
@@ -373,10 +371,6 @@ impl Search<'_> {
         })
     }
 
-    fn scope(&self) -> SeasonScope {
-        SeasonScope::enter(Some(self.start.season.clone()))
-    }
-
     fn dps(&self, snapshot: &BuildSnapshot) -> f64 {
         if self.cancellation.is_cancelled() {
             return 0.;
@@ -412,7 +406,6 @@ impl Search<'_> {
         let picks: Vec<Option<Pick>> = variants
             .par_iter()
             .map(|variant| {
-                let _scope = self.scope();
                 let (item, augment_on) = make(variant)?;
                 self.try_item(snapshot, slot, item, augment_on)
             })
@@ -467,7 +460,6 @@ impl Search<'_> {
                 if stats.is_empty() {
                     return 0.;
                 }
-                let _scope = self.scope();
                 let mut next = snapshot.clone();
                 next.custom_stats
                     .extend(stats.iter().map(|(stat_key, value)| CustomStat {
@@ -523,10 +515,7 @@ impl Search<'_> {
         let picks: Vec<Option<Pick>> = self
             .candidates(snapshot, slot, scores)
             .into_par_iter()
-            .map(|item| {
-                let _scope = self.scope();
-                self.configure(snapshot, slot, item, scores)
-            })
+            .map(|item| self.configure(snapshot, slot, item, scores))
             .collect();
         picks.into_iter().flatten().reduce(|best, pick| {
             if gains(pick.dps, best.dps) {
@@ -566,7 +555,6 @@ impl Search<'_> {
         let mut ranked: Vec<(f64, EquippedItem)> = bases
             .par_iter()
             .filter_map(|base| {
-                let _scope = self.scope();
                 let pick = self.template(snapshot, slot, base)?;
                 Some((
                     pick.dps + self.potential(&pick.item, base, scores),

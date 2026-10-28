@@ -31,7 +31,6 @@ const FIELDS: &[(&str, &str)] = &[
     ("ms", "mercSkillRanks"),
     ("mi", "mercInventory"),
     ("mda", "mercDisabledAuras"),
-    ("se", "season"),
 ];
 
 pub fn encode(snapshot: &BuildSnapshot, notes: &Notes) -> Result<String, String> {
@@ -187,13 +186,9 @@ fn decode_loadout_value(wire: &Value) -> Result<(BuildSnapshot, Notes, Loadouts)
     }
     let mut snapshot: BuildSnapshot = serde_json::from_value(snapshot)
         .map_err(|error| format!("Invalid build fields: {error}"))?;
-    let mut loadouts: Loadouts =
+    let loadouts: Loadouts =
         serde_json::from_value(loadouts).map_err(|error| format!("Invalid loadouts: {error}"))?;
     loadouts.validate()?;
-    if snapshot.season != "s10" {
-        loadouts.clear_trees();
-        snapshot.season = "s10".into();
-    }
     loadouts.apply_active(&mut snapshot);
     Ok((
         snapshot,
@@ -293,13 +288,6 @@ pub fn decode_value(wire: &Value) -> Result<(BuildSnapshot, Notes), String> {
         nodes.extend(wire["it"].as_array().into_iter().flatten().cloned());
         let mut seen = std::collections::HashSet::new();
         nodes.retain(|v| v.as_u64().is_some_and(|id| seen.insert(id)));
-    }
-    if wire["se"].as_str() != Some("s10") {
-        for key in ["allocatedTreeNodes", "allocatedEtherNodes"] {
-            snapshot.insert(key.into(), json!([]));
-        }
-        snapshot.insert("treeSocketed".into(), json!({}));
-        snapshot.insert("season".into(), json!("s10"));
     }
     let mut decoded: BuildSnapshot = serde_json::from_value(Value::Object(snapshot))
         .map_err(|e| format!("Invalid build fields: {e}"))?;
@@ -447,18 +435,7 @@ mod tests {
         );
     }
     #[test]
-    fn unknown_versions_fail_and_unknown_seasons_clear_only_season_allocations() {
-        let snapshot = BuildSnapshot {
-            allocated_tree_nodes: vec![5],
-            allocated_ether_nodes: vec![8],
-            season: "s9".into(),
-            ..Default::default()
-        };
-        let code = encode(&snapshot, &Notes::default()).unwrap();
-        let (decoded, _) = decode(&code).unwrap();
-        assert!(decoded.allocated_tree_nodes.is_empty());
-        assert!(decoded.allocated_ether_nodes.is_empty());
-        assert_eq!(decoded.class_id, snapshot.class_id);
+    fn unknown_versions_fail() {
         assert!(decode_value(&json!({"v": 999})).is_err());
     }
 }

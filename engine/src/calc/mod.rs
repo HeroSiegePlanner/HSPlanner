@@ -15,7 +15,6 @@ pub mod performance_diff;
 pub mod planner;
 pub mod rank;
 pub mod resistance;
-pub mod season;
 pub mod skill_cost;
 pub mod star_scaling;
 pub mod stats;

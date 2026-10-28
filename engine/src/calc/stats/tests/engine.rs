@@ -1386,7 +1386,6 @@ fn trampling_force_converts_movement_speed_into_both_damage_stats() {
 
 #[test]
 fn celestial_might_moves_every_elemental_increase_into_arcane() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let mut ranks: HashMap<String, Ranged> = HashMap::new();
     ranks.insert(normalize_skill_name("Celestial Might"), (1.0, 1.0));
     let mut stats: HashMap<String, Ranged> = HashMap::new();
@@ -1432,7 +1431,6 @@ fn celestial_might_moves_every_elemental_increase_into_arcane() {
 fn replaces_conversion_never_drives_its_source_negative() {
     // A school whose only bonus is a `_more` multiplier: the converted figure
     // includes it, so taking it all off the additive key would leave -8%.
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let mut ranks: HashMap<String, Ranged> = HashMap::new();
     ranks.insert(normalize_skill_name("Celestial Might"), (1.0, 1.0));
     let mut stats: HashMap<String, Ranged> = HashMap::new();

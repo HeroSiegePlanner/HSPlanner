@@ -122,10 +122,9 @@ impl ImportView {
         self.image =
             preview_format(&bytes).map(|format| Arc::new(Image::from_bytes(format, bytes.clone())));
         cx.notify();
-        let season = self.session.read(cx).snapshot().season.clone();
         let task = cx.background_spawn(async move {
             hsplanner_engine::ocr::ocr_image_bytes(&bytes)
-                .map(|lines| tooltip_parse::parse_tooltip_lines(lines, Some(season)))
+                .map(|lines| tooltip_parse::parse_tooltip_lines(lines))
         });
         cx.spawn(async move |this, cx| {
             let outcome = task.await;

@@ -390,7 +390,6 @@ impl LibraryView {
                                         ("class", class_name.to_owned()),
                                         ("level", snapshot.map_or(1, |s| s.level).to_string()),
                                         ("hero", nodes.to_string()),
-                                        ("season", build.season.clone()),
                                     ],
                                 ))),
                         )

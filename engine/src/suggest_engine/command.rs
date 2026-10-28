@@ -4,14 +4,9 @@ use super::algo::{suggest_with_oracle, SearchInput};
 use super::types::{SuggestInput, SuggestResult};
 use crate::calc::build::compute_build_performance;
 use crate::calc::commands::{combined_dps_mid, perf_deps, BuildPerformanceInput};
-use crate::calc::season::SeasonScope;
 
-// SeasonScope is thread_local, so the oracle enters the scope on every call:
-// rayon workers get the right season.
 pub fn run_suggest(input: &SuggestInput, progress: impl Fn(u32, u32) + Sync) -> SuggestResult {
-    let season = input.perf.season.clone();
     let oracle = |alloc: &HashSet<u32>| -> f64 {
-        let _scope = SeasonScope::enter(season.clone());
         combined_dps_mid(&input.active_skill_ids, |main| {
             let main = main.or(input.perf.main_skill_id.as_deref());
             let mut deps = perf_deps(&input.perf, &input.perf.inventory, main);
@@ -29,7 +24,6 @@ pub fn run_suggest(input: &SuggestInput, progress: impl Fn(u32, u32) + Sync) -> 
         oracle,
         progress,
     );
-    let _scope = SeasonScope::enter(season);
     result.unsupported_lines = unsupported_lines_for(&result.added_nodes, &input.perf);
     result
 }
@@ -57,12 +51,10 @@ pub fn run_suggest_controlled(
 ) -> Result<SuggestResult, String> {
     let pool = suggest_pool();
     cancellation.check()?;
-    let season = input.perf.season.clone();
     let oracle = |allocated: &HashSet<u32>| {
         if cancellation.is_cancelled() {
             return 0.;
         }
-        let _scope = SeasonScope::enter(season.clone());
         combined_dps_mid(&input.active_skill_ids, |main| {
             let mut deps = perf_deps(
                 &input.perf,
@@ -85,7 +77,6 @@ pub fn run_suggest_controlled(
             || cancellation.is_cancelled(),
         )
     })?;
-    let _scope = SeasonScope::enter(season);
     result.unsupported_lines = unsupported_lines_for(&result.added_nodes, &input.perf);
     Ok(result)
 }
@@ -113,7 +104,6 @@ mod tests {
         use crate::calc::types::EquippedItem;
         use std::collections::HashMap;
 
-        let _scope = SeasonScope::enter(None);
         let skills = crate::calc::data::get_skills_by_class("amazon");
         let skill = skills
             .iter()
@@ -190,7 +180,6 @@ mod tests {
         );
 
         let final_alloc: HashSet<u32> = result.added_nodes.iter().copied().collect();
-        let _scope = SeasonScope::enter(None);
         let direct = combined_dps_mid(&input.active_skill_ids, |main| {
             let main = main.or(input.perf.main_skill_id.as_deref());
             let mut deps = perf_deps(&input.perf, &input.perf.inventory, main);

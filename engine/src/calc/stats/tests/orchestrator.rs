@@ -355,7 +355,6 @@ fn side_skill_overrides_swap_the_main_skill_subtree() {
 
 #[test]
 fn class_scoped_all_skills_only_pays_out_for_that_class() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let allocated = HashMap::new();
     let mut inventory: Inventory = HashMap::new();
     inventory.insert(
@@ -417,7 +416,6 @@ fn class_scoped_all_skills_only_pays_out_for_that_class() {
 
 #[test]
 fn class_labelled_set_bonus_only_pays_out_for_that_class() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let allocated = HashMap::new();
     let mut inventory: Inventory = HashMap::new();
     for (slot, base_id) in [
@@ -528,7 +526,6 @@ fn hell_difficulty_drops_every_elemental_resistance() {
 fn incarnation_nodes_contribute_to_build_stats() {
     // S10: patch sezonu podmienia całe drzewo — nody liczą się przez to
     // samo allocated_tree_nodes.
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let allocated = HashMap::new();
     let inventory = HashMap::new();
     let skill_ranks = HashMap::new();
@@ -616,7 +613,6 @@ fn incarnation_nodes_contribute_to_build_stats() {
 // physical damage only while a Dagger occupies the weapon slot.
 #[test]
 fn light_radius_nodes_feed_magic_skill_damage() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let allocated = HashMap::new();
     let inventory = HashMap::new();
     let skill_ranks = HashMap::new();
@@ -664,7 +660,6 @@ fn light_radius_nodes_feed_magic_skill_damage() {
 
 #[test]
 fn light_in_the_dark_turns_light_radius_into_attributes() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let allocated = HashMap::new();
     let inventory = HashMap::new();
     let skill_ranks = HashMap::new();
@@ -706,7 +701,6 @@ fn light_in_the_dark_turns_light_radius_into_attributes() {
 #[test]
 fn dagger_conditional_lines_require_dagger_weapon() {
     // Node 2083 istnieje w danych S10 (patch sezonu podmienia drzewo).
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let allocated = HashMap::new();
     let skill_ranks = HashMap::new();
     let active_buffs = HashMap::new();
@@ -775,7 +769,6 @@ fn dagger_conditional_lines_require_dagger_weapon() {
 // matching weapon kind is equipped; base-tier wands are typed "Spell" in data.
 #[test]
 fn weapon_conditional_nodes_require_matching_weapon() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let allocated = HashMap::new();
     let skill_ranks = HashMap::new();
     let active_buffs = HashMap::new();
@@ -1055,7 +1048,6 @@ fn compute_build_stats_custom_stat_appears_in_output() {
 // hit -- enhanced_damage would only scale the weapon roll.
 #[test]
 fn accurate_cleaver_folds_both_lines_only_with_an_axe() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let allocated = HashMap::new();
     let skill_ranks = HashMap::new();
     let active_buffs = HashMap::new();
@@ -1125,7 +1117,6 @@ fn accurate_cleaver_folds_both_lines_only_with_an_axe() {
 // in Mana. Reads the finalized mana total, so it runs after the multiplier pass.
 #[test]
 fn soulburn_essence_scales_magic_skill_damage_with_mana() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let allocated = HashMap::new();
     let inventory = HashMap::new();
     let skill_ranks = HashMap::new();
@@ -1176,7 +1167,6 @@ fn soulburn_essence_scales_magic_skill_damage_with_mana() {
 
 #[test]
 fn set_sail_blessing_adds_cold_skill_damage_when_toggled() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let allocated = HashMap::new();
     let mut inventory: Inventory = HashMap::new();
     inventory.insert(

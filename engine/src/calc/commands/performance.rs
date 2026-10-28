@@ -46,8 +46,6 @@ pub struct BuildPerformanceInput {
     #[serde(default)]
     pub stack_counts: HashMap<String, u32>,
     #[serde(default)]
-    pub season: Option<String>,
-    #[serde(default)]
     pub granted_skill_ranks: HashMap<String, calc::Ranged>,
     #[serde(default)]
     pub difficulty: Option<String>,
@@ -119,7 +117,6 @@ where
 }
 
 pub fn calc_build_performance(input: BuildPerformanceInput) -> BuildPerformance {
-    let _scope = crate::calc::season::SeasonScope::enter(input.season.clone());
     compute_build_performance(&perf_deps(
         &input,
         &input.inventory,
@@ -140,7 +137,6 @@ pub struct RankSlotItemsInput {
 // Ranks candidate bases for one slot by combined-DPS midpoint; multi-skill sums
 // avg-hit DPS per active skill and counts proc DPS once (mirrors the frontend).
 pub fn rank_slot_items(input: RankSlotItemsInput) -> HashMap<String, f64> {
-    let _scope = crate::calc::season::SeasonScope::enter(input.perf.season.clone());
     let mut out: HashMap<String, f64> = HashMap::with_capacity(input.base_ids.len());
     for base_id in &input.base_ids {
         let mut inventory = input.perf.inventory.clone();
@@ -187,7 +183,6 @@ pub fn run_warmup<F: FnMut(u32, u32)>(mut on_progress: F) -> bool {
 /// Returns full stats plus per-stat source breakdown rendered by StatsView and
 /// the tooltips. Reuses `BuildPerformanceInput`; damage/proc fields are unused here.
 pub fn calc_build_stats(input: BuildPerformanceInput) -> ComputedStats {
-    let _scope = crate::calc::season::SeasonScope::enter(input.season.clone());
     let stats_input = BuildStatsInput {
         class_id: input.class_id.as_deref(),
         level: input.level,
@@ -232,7 +227,6 @@ pub enum StatBreakdownKind {
 }
 
 pub fn calc_stat_breakdown(input: StatBreakdownInput) -> StatBreakdown {
-    let _scope = crate::calc::season::SeasonScope::enter(input.deps.season.clone());
     let stats_input = BuildStatsInput {
         class_id: input.deps.class_id.as_deref(),
         level: input.deps.level,

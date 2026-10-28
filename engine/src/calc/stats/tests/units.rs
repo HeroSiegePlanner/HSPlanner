@@ -708,7 +708,7 @@ fn apply_diminishing_returns_skips_unconfigured_and_absent_keys() {
 // S10 config: four original curves, FCR, deadly blow, skill haste, six Ignore Resistance caps.
 #[test]
 fn diminishing_returns_config_has_s10_curves() {
-    let s10 = crate::calc::data::data_for("s10")
+    let s10 = crate::calc::data::data()
         .game_config
         .diminishing_returns
         .as_ref()
@@ -720,7 +720,7 @@ fn diminishing_returns_config_has_s10_curves() {
 
 #[test]
 fn ignore_resistance_stops_at_100_and_keeps_its_raw_total() {
-    let defs = crate::calc::data::data_for("s10")
+    let defs = crate::calc::data::data()
         .game_config
         .diminishing_returns
         .as_ref()

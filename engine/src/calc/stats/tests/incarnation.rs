@@ -3,7 +3,6 @@ use super::empty_input;
 
 #[test]
 fn vital_power_increases_final_life_from_final_strength() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let allocated = HashMap::from([("strength".to_string(), 1000)]);
     let inventory = HashMap::new();
     let skill_ranks = HashMap::new();
@@ -47,7 +46,6 @@ fn vital_power_increases_final_life_from_final_strength() {
 
 #[test]
 fn spiritual_fulfilment_applies_life_multiplier_to_converted_mana() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let allocated = HashMap::new();
     let inventory = HashMap::new();
     let skill_ranks = HashMap::new();
@@ -83,7 +81,6 @@ fn spiritual_fulfilment_applies_life_multiplier_to_converted_mana() {
 
 #[test]
 fn mana_from_life_reaches_mana_threshold_notes() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let allocated = HashMap::new();
     let inventory = HashMap::new();
     let skill_ranks = HashMap::new();
@@ -129,7 +126,6 @@ fn mana_from_life_reaches_mana_threshold_notes() {
 
 #[test]
 fn strength_to_life_uses_final_strength_and_stacks_per_node() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let allocated = HashMap::from([("strength".to_string(), 103)]);
     let inventory = HashMap::new();
     let skill_ranks = HashMap::new();
@@ -175,7 +171,6 @@ fn strength_to_life_uses_final_strength_and_stacks_per_node() {
 
 #[test]
 fn powerfunneled_lifespan_reads_weapon_damage_after_enhanced_damage() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let allocated = HashMap::new();
     let skill_ranks = HashMap::new();
     let active_buffs = HashMap::new();

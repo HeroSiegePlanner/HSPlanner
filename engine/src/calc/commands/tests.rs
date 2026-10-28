@@ -64,7 +64,6 @@ fn subskill_aggregation_unknown_skill_returns_empty() {
         skill_id: "no_such_skill".to_string(),
         subskill_ranks: HashMap::from([("no_such_skill:sub".to_string(), 3)]),
         enemy_conditions: HashMap::new(),
-        season: None,
     };
     let out = subskill_aggregation_impl(&input);
     assert!(out.stats.is_empty());
@@ -97,7 +96,6 @@ fn rank_slot_items_scores_every_base() {
 // list below; a new pattern on either side fails the test.
 #[test]
 fn s10_incarnation_node_lines_parse_coverage() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     // ponytail: unmodeled S10 mechanics — drop an entry once the engine learns it.
     const EXEMPT_PATTERNS: &[&str] = &[
         "+#### Lightning Damage dealt by odin",

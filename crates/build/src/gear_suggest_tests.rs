@@ -64,7 +64,6 @@ fn step(slot: &str, before: Option<EquippedItem>, item: EquippedItem) -> GearSte
 
 // Wiring guard: replaying the steps through the editor's save path gives every reported DPS.
 fn assert_replays(start: &BuildSnapshot, result: &GearSuggestion) -> BuildSnapshot {
-    let _scope = SeasonScope::enter(Some(start.season.clone()));
     let close = |a: f64, b: f64| (a - b).abs() <= b.abs().max(1.) * 1e-9;
     let mut snapshot = start.clone();
     let measure = |snapshot: &BuildSnapshot| result.rank_by.measure(&snapshot.planner_input());
@@ -179,7 +178,6 @@ fn a_later_pass_offers_the_players_own_item_not_a_fresh_copy() {
         cancellation: &cancellation,
         evaluations: AtomicU32::new(0),
     };
-    let _scope = search.scope();
     let mut later = start.clone();
     let other = data::data()
         .items
@@ -393,10 +391,7 @@ fn applying_through_the_session_matches_each_prefix_and_undoes_per_apply() {
     )
     .unwrap();
     assert!(result.steps.len() >= 3);
-    let dps = |session: &Session| {
-        let _scope = SeasonScope::enter(Some(session.snapshot().season.clone()));
-        combined_dps(&session.snapshot().planner_input())
-    };
+    let dps = |session: &Session| combined_dps(&session.snapshot().planner_input());
     let close = |a: f64, b: f64| (a - b).abs() <= b.abs().max(1.) * 1e-9;
     let middle = result.steps.len() / 2;
     apply_steps(&mut session, &result.steps[..middle]).unwrap();

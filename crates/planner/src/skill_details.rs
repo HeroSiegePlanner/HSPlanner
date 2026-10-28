@@ -1235,7 +1235,6 @@ pub(crate) fn subtree_block(details: &DetailsContext, cx: &App) -> Option<Div> {
         skill_id: skill.id.clone(),
         subskill_ranks: details.snapshot.subskill_ranks.clone(),
         enemy_conditions: details.snapshot.enemy_conditions.clone(),
-        season: None,
     });
     let mut stats: Vec<(&String, &f64)> = aggregation
         .stats

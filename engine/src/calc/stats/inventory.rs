@@ -324,7 +324,7 @@ thread_local! {
         const { std::cell::RefCell::new(None) };
 }
 
-/// RAII guard scaling switched-on proc buffs by their uptime; !Send like SeasonScope.
+/// RAII guard scaling switched-on proc buffs by their uptime; !Send.
 pub struct AugmentUptimeScope {
     _not_send: std::marker::PhantomData<*const ()>,
 }

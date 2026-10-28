@@ -7,6 +7,7 @@
 ## Interface
 
 - Dialogs share one layout: a header naming what the dialog is about, a body that scrolls between a header and footer that stay in view, widths by purpose and the close button with Escape as the only way out (footer Cancel, Close and Done buttons are gone). Save as, Rename, New folder, the changelog, keyboard shortcuts, stat sources, skill subtrees and both text editors now match Settings and the update dialog, and dialogs with typing in them no longer close on a stray click outside.
+- The build library no longer shows a Season column or a build's season, and builds no longer store one: saves and build codes from an earlier season load with their trees as they are.
 
 ## Calculations
 

@@ -343,15 +343,6 @@ impl Loadouts {
             entry.value.sockets.clear();
         }
     }
-    pub(crate) fn clear_trees(&mut self) {
-        for entry in &mut self.incarnation.entries {
-            entry.value.nodes.clear();
-            entry.value.sockets.clear();
-        }
-        for entry in &mut self.ether.entries {
-            entry.value.nodes.clear();
-        }
-    }
     pub(crate) fn merge_missing(&mut self, incoming: Self) {
         self.incarnation.merge_missing(incoming.incarnation);
         self.ether.merge_missing(incoming.ether);

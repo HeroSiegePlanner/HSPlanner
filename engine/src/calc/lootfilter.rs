@@ -471,8 +471,7 @@ pub fn lootfilter_encode(filter: LootFilter) -> String {
     encode(&filter)
 }
 
-pub fn lootfilter_build_stats(inventory: Inventory, season: Option<String>) -> BuildFilterStats {
-    let _scope = super::season::SeasonScope::enter(season);
+pub fn lootfilter_build_stats(inventory: Inventory) -> BuildFilterStats {
     let stats = collect_build_stats(&inventory);
     let stat_ids = filter_stat_ids_for(&stats);
     BuildFilterStats {
