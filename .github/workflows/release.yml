@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Release version or tag (e.g. 1.1.0 or v1.1.0)'
+        description: 'Release version or tag (e.g. 1.1.0, v1.1.0 or 1.1.0-beta.1)'
         required: true
         type: string
       prerelease:
-        description: Mark as pre-release
+        description: Mark as pre-release (a version such as 1.1.0-beta.1 always is)
         required: false
         default: false
         type: boolean
@@ -27,6 +27,7 @@ jobs:
       contents: write
     outputs:
       tag: ${{ steps.version.outputs.tag }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
       sha: ${{ steps.commit.outputs.sha }}
     steps:
       - uses: actions/checkout@v7
@@ -37,15 +38,17 @@ jobs:
         id: version
         env:
           RELEASE_TAG: ${{ inputs.tag }}
+          PRERELEASE: ${{ inputs.prerelease }}
         run: |
           set -euo pipefail
           fail() { echo "::error::$1"; exit 1; }
           test "$GITHUB_REF_TYPE" = branch || fail 'Run Release from a branch.'
           version=$(echo "$RELEASE_TAG" | tr -d '[:space:]')
           version=${version#v}
-          [[ $version =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] \
-            || fail 'Enter a version such as 1.1.0 or v1.1.0; use the prerelease checkbox for previews.'
-          for part in ${version//./ }; do
+          [[ $version =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z]+(\.[0-9A-Za-z]+)*)?$ ]] \
+            || fail 'Enter a version such as 1.1.0, v1.1.0 or 1.1.0-beta.1.'
+          core=${version%%-*}
+          for part in ${core//./ }; do
             (( part <= 65535 )) || fail 'Version components must not exceed 65535 (Windows installer limit).'
           done
           grep -q '[^[:space:]]' CHANGELOG.md || fail 'CHANGELOG.md is empty.'
@@ -54,6 +57,8 @@ jobs:
           cargo update --workspace
           actual=$(cargo metadata --locked --no-deps --format-version 1 | jq -r '.packages[] | select(.name == "hsplanner") | .version')
           test "$actual" = "$version" || fail "Cargo.toml still reports $actual."
+          [[ $version == *-* ]] && PRERELEASE=true
+          echo "prerelease=$PRERELEASE" >> "$GITHUB_OUTPUT"
           echo "tag=v$version" >> "$GITHUB_OUTPUT"
       - name: Check that the version is unused
         env:
@@ -142,7 +147,7 @@ jobs:
           GH_REPO: ${{ github.repository }}
           RELEASE_TAG: ${{ needs.prepare.outputs.tag }}
           RELEASE_SHA: ${{ needs.prepare.outputs.sha }}
-          PRERELEASE: ${{ inputs.prerelease }}
+          PRERELEASE: ${{ needs.prepare.outputs.prerelease }}
         run: |
           set -euo pipefail
           fail() { echo "::error::$1"; exit 1; }

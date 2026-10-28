@@ -84,6 +84,8 @@ jobs:
           ' packaging/packager.json > "$out/packager.json"
           cargo-packager --config "$out/packager.json"
           cd "$out"
+          # makepkg rejects a hyphen in pkgver ("1.2.2-beta.1"); Arch uses an underscore instead.
+          [[ ! -f PKGBUILD ]] || sed -i '/^pkgver=/ s/-/_/g' PKGBUILD
           shopt -s nullglob
           packages=(*.dmg *.exe *.deb *.AppImage *.tar.gz)
           (( ${#packages[@]} )) || { echo "::error::No packages were built."; exit 1; }
