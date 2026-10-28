@@ -83,6 +83,9 @@ pub struct Affix {
     pub kind: Option<AffixKind>,
     #[serde(default)]
     pub slots: Option<Vec<SlotKey>>,
+    /// Charms roll one element per item; only their elemental affixes carry it.
+    #[serde(default)]
+    pub element: Option<String>,
 }
 
 // ---------- rune / gem / runeword ----------

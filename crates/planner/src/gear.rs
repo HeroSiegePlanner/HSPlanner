@@ -494,6 +494,11 @@ impl GearView {
                 .values()
                 .filter(|a| {
                     base.is_some_and(|base| gear::affix_allowed(base, a, self.show_all_affixes))
+                        && (self.show_all_affixes
+                            || self
+                                .candidate
+                                .as_ref()
+                                .is_none_or(|item| gear::affix_element_fits(item, a)))
                 })
                 .map(|a| {
                     use hsplanner_engine::calc::types::AffixKind;
