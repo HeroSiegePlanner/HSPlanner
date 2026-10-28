@@ -6,9 +6,7 @@ version = 4
 name = "HSPlanner"
 version = "0.9.1"
 dependencies = [
- "base64 0.23.1",
  "image",
- "log",
  "ocrs",
  "rayon",
  "regex",

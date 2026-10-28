@@ -1,7 +1,6 @@
 use super::skills::Ranged;
 use super::star_scaling::{
-    is_stat_star_immune, stat_star_flat_bonus, stat_star_percent_bonus,
-    stat_star_percent_multiplier,
+    stat_star_flat_bonus, stat_star_percent_bonus, stat_star_percent_multiplier,
 };
 pub use super::types::{Affix, AffixFormat, AffixSign};
 
@@ -40,10 +39,6 @@ pub fn rolled_affix_range(affix: &Affix) -> Ranged {
         AffixSign::Minus => (-hi, -lo),
         AffixSign::Plus => (lo, hi),
     }
-}
-
-pub fn is_affix_star_immune(stat_key: Option<&str>) -> bool {
-    is_stat_star_immune(stat_key)
 }
 
 pub fn affix_star_multiplier(stat_key: Option<&str>, stars: Option<u32>) -> f64 {
@@ -401,8 +396,6 @@ mod tests {
 
     #[test]
     fn wrappers_delegate_to_star_scaling() {
-        assert!(is_affix_star_immune(Some("attacks_per_second")));
-        assert!(!is_affix_star_immune(Some("to_strength")));
         assert!((affix_star_multiplier(Some("to_strength"), Some(5)) - 1.25).abs() < 1e-12);
         assert_eq!(affix_star_multiplier(Some("to_strength"), None), 1.0);
     }

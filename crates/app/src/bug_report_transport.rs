@@ -1,4 +1,4 @@
-//! Wire-compatible with Tauri's bugReport.ts; no automatic retries or live-test submissions.
+//! Keeps the established bug report wire format; no automatic retries or live-test submissions.
 use gpui_kit::http_client::{AsyncBody, HttpClient, HttpRequestExt, RedirectPolicy, Request};
 use hsplanner_ui::i18n::{tr, trf};
 use serde_json::{Value, json};

@@ -1108,7 +1108,6 @@ pub struct EquippedAffix {
     #[serde(default)]
     pub affix_id: String,
     #[serde(default)]
-    #[allow(dead_code)]
     pub tier: u32,
     #[serde(default)]
     pub roll: f64,
@@ -1133,14 +1132,12 @@ pub struct EquippedItem {
     #[serde(default)]
     pub affixes: Vec<EquippedAffix>,
     #[serde(default)]
-    #[allow(dead_code)]
     pub socket_count: u32,
     #[serde(default)]
     pub socketed: Vec<Option<String>>,
     #[serde(default)]
     pub socket_types: Vec<SocketType>,
     #[serde(default)]
-    #[allow(dead_code)]
     pub runeword_id: Option<String>,
     #[serde(default)]
     pub forged_mods: Vec<EquippedAffix>,

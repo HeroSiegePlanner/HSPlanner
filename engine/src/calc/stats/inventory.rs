@@ -91,7 +91,7 @@ pub fn apply_inventory(
 
         if let Some(implicit) = base.implicit.as_ref() {
             for (stat_key, value) in implicit.iter() {
-                // Frontend keys overrides by the raw base key, so check it first —
+                // Overrides are keyed by the raw base key, so check it first —
                 // random_skill_element resolves to {element}_skills below.
                 let raw_key = stat_key.as_str();
                 let Some(stat_key) = resolved_stat_key(

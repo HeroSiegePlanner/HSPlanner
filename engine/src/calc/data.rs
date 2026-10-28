@@ -284,10 +284,6 @@ pub fn get_difficulty(id: Option<&str>) -> Option<&'static DifficultyDef> {
     game_config().difficulties.iter().find(|d| d.id == id)
 }
 
-pub fn difficulty_resist_penalty(id: Option<&str>) -> f64 {
-    get_difficulty(id).map_or(0.0, |d| d.resist_penalty)
-}
-
 pub fn tree_nodes() -> &'static HashMap<String, TreeNodeInfo> {
     &data().tree_nodes
 }
@@ -501,7 +497,7 @@ mod tests {
         let cfg = game_config();
         assert!(!cfg.attributes.is_empty(), "game config has no attributes");
         assert!(!cfg.stats.is_empty(), "game config has no stats");
-        // Six baseline attributes from the TS data file.
+        // Six baseline attributes.
         let attr_keys: Vec<&str> = cfg.attributes.iter().map(|a| a.key.as_str()).collect();
         for must_have in [
             "strength",

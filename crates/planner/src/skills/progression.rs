@@ -7,8 +7,8 @@ use std::collections::HashSet;
 
 const ORDER_EXPLANATION: &str = "planner.progression.help";
 
-/// Tauri's rankPointOrder prerequisite repair, using authored class order in place
-/// of the insertion order lost by the native HashMap. Keep rank blocks compact.
+/// Prerequisite repair for rank point order, using authored class order instead of
+/// HashMap insertion order. Keep rank blocks compact.
 fn rank_order(
     ranks: &HashMap<String, u32>,
     authored: &[String],

@@ -1,4 +1,4 @@
-//! SourceTooltip.tsx presentation over the existing engine breakdown contract.
+//! Stat source tooltip over the engine breakdown contract.
 use crate::hitbox::AreaPreview;
 use crate::projectile::FlightPreview;
 use gpui_kit::{

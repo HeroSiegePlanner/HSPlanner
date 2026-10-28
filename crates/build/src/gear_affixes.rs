@@ -1,4 +1,4 @@
-//! Reference Gear affix-pool restrictions, shared by the picker and edit validation.
+//! Gear affix-pool restrictions, shared by the picker and edit validation.
 use hsplanner_engine::calc::{
     data,
     types::{Affix, ItemBase},

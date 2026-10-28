@@ -394,18 +394,18 @@ pub fn summarize_ether(ids: &[u32]) -> Vec<EtherSummary> {
     out
 }
 
-pub fn dps_mid(performance: &PlannerPerformance) -> f64 {
-    let p = &performance.current;
-    let value: Ranged = (
-        p.combined_dps_min.or(p.hit_dps_min).unwrap_or(0.),
-        p.combined_dps_max.or(p.hit_dps_max).unwrap_or(0.),
-    );
-    (value.0 + value.1) / 2.
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn dps_mid(performance: &PlannerPerformance) -> f64 {
+        let p = &performance.current;
+        let value: Ranged = (
+            p.combined_dps_min.or(p.hit_dps_min).unwrap_or(0.),
+            p.combined_dps_max.or(p.hit_dps_max).unwrap_or(0.),
+        );
+        (value.0 + value.1) / 2.
+    }
 
     #[test]
     fn mercenary_aura_uses_final_pinned_rank_including_zero() {

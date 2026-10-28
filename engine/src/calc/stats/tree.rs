@@ -128,7 +128,7 @@ pub(crate) fn apply_node_line_contributions(
                 {
                     agg.ailments_only = true;
                 }
-                // node_id embedded so TS resolves the exact allocated node
+                // node_id embedded so the UI resolves the exact allocated node
                 // (multiple nodes share the same display title).
                 let label = if parsed.self_condition.is_some() {
                     format!(

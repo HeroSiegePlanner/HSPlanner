@@ -2209,7 +2209,7 @@ fn group_heading(id: &'static str, title: &str, subtitle: &str, cx: &App) -> Div
                 .items_center()
                 .gap_3()
                 .child(
-                    // Tauri's rotated h-1.5 square does not contribute a
+                    // The rotated square does not contribute a
                     // body-font line box to the 11px heading row.
                     canvas(
                         |_, _, _| (),

@@ -71,7 +71,6 @@ pub(super) fn slider_state() -> SliderState {
         .default_value(DEFAULT_BUDGET as f32)
 }
 
-/// Same classification as the Tauri `treeGraph`/`treeSuggest` modules.
 pub(super) fn tree_graph(graph: &tree::Graph) -> TreeGraph {
     let id = |index: usize| graph.nodes[index].id as u32;
     let kind = |index: usize| {

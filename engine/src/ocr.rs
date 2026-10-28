@@ -1,4 +1,3 @@
-use base64::Engine as _;
 use image::RgbImage;
 use ocrs::{ImageSource, OcrEngine, OcrEngineParams};
 use rten::Model;
@@ -97,11 +96,4 @@ pub fn ocr_image_bytes_controlled(
         .map(|l| l.trim().to_string())
         .filter(|l| !l.is_empty())
         .collect())
-}
-
-pub fn ocr_tooltip_lines(image_base64: String) -> Result<Vec<String>, String> {
-    let bytes = base64::engine::general_purpose::STANDARD
-        .decode(image_base64.trim())
-        .map_err(|e| format!("decode base64: {e}"))?;
-    ocr_image_bytes(&bytes)
 }

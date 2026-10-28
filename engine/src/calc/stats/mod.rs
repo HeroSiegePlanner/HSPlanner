@@ -1,5 +1,4 @@
-// Stat aggregation: source-tracking parity with TS computeBuildStats in
-// src/utils/stats.ts.
+// Stat aggregation with per-source tracking.
 
 use std::collections::{HashMap, HashSet};
 

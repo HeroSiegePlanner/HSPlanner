@@ -1,4 +1,4 @@
-//! Carry the existing Tauri report destination into native packages without logging it.
+//! Bake the bug report destination into native packages without logging it.
 use std::{env, fs, path::PathBuf};
 fn main() {
     for key in ["HSPLANNER_BUG_REPORT_URL", "VITE_BUG_REPORT_URL"] {

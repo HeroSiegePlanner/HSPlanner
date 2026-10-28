@@ -1558,7 +1558,7 @@ impl Render for SubtreeView {
             .map(theme::damage_color)
             .unwrap_or(p.accent_hot);
         let rem = window.rem_size();
-        // Tauri caps the OUTER square; p-4 and the border are inside that width.
+        // This caps the OUTER square; padding and border sit inside that width.
         let outer_board = subtree_board_size(window);
         let board = outer_board - 28.;
         let nodes: HashMap<usize, &SubskillNodeSpec> = self
@@ -2286,7 +2286,7 @@ mod tests {
         snapshot.active_skill_ids.push("charged_bolts".into());
         adjust_skill_rank(&mut snapshot, "charged_bolts", false, all);
         assert!(!snapshot.skill_ranks.contains_key("charged_bolts"));
-        // Removing ranks retains the activation preference, as in Tauri.
+        // Removing ranks retains the activation preference.
         assert_eq!(snapshot.active_skill_ids, ["charged_bolts"]);
         adjust_skill_rank(&mut snapshot, "charged_bolts", false, Modifiers::default());
         assert!(snapshot.skill_ranks.is_empty());

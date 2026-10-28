@@ -1,4 +1,4 @@
-//! Repeated presentation from the Tauri reference. Callers retain behavior and state.
+//! Shared presentation blocks; callers keep behavior and state.
 use crate::{
     controls::{ButtonTone, PlannerControl, modal_button},
     theme::{self, TooltipTheme},
@@ -247,35 +247,7 @@ pub fn corner_marks(cx: &App) -> Div {
         )
 }
 
-pub fn stat_row(
-    id: impl Into<ElementId>,
-    label: impl Into<SharedString>,
-    value: impl Into<SharedString>,
-    color: Hsla,
-    cx: &App,
-) -> Stateful<Div> {
-    div()
-        .id(id)
-        .flex()
-        .items_center()
-        .justify_between()
-        .gap_3()
-        .py_1()
-        .text_size(rems(11. / 13.))
-        .child(
-            div()
-                .text_color(cx.global::<TooltipTheme>().muted)
-                .child(label.into()),
-        )
-        .child(
-            div()
-                .font_family(theme::MONO_FONT_FAMILY)
-                .text_color(color)
-                .child(value.into()),
-        )
-}
-
-/// Modal.tsx eyebrow: mono caps with tracking; callers append accent spans.
+/// Modal eyebrow: mono caps with tracking; callers append accent spans.
 pub fn modal_eyebrow(id: impl Into<ElementId>, text: impl Into<SharedString>) -> Div {
     div().flex().items_center().gap_1().child(TooltipText::new(
         id,
@@ -284,7 +256,7 @@ pub fn modal_eyebrow(id: impl Into<ElementId>, text: impl Into<SharedString>) ->
     ))
 }
 
-/// Modal.tsx header: accent dot + eyebrow, 17px title, optional muted subtitle.
+/// Modal header: accent dot + eyebrow, 17px title, optional muted subtitle.
 /// Right padding leaves room for Dialog's built-in close button.
 pub fn modal_header(
     eyebrow: impl IntoElement,

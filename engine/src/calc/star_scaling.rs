@@ -9,7 +9,6 @@ pub enum StarScaleConfig {
     None,
 }
 
-// Single source of truth shared with the TS calc layer (data/star-scaling.json).
 const STAR_SCALING_JSON: &str = include_str!("../../../data/star-scaling.json");
 
 #[derive(Deserialize, Clone, Copy)]

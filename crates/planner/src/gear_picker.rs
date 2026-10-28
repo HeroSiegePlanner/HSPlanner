@@ -1,4 +1,4 @@
-//! Item picker (Change item) after the Tauri ItemListRail: search, sort, rarity groups, tooltips.
+//! Item picker (Change item): search, sort, rarity groups, tooltips.
 use super::*;
 use crate::gear_sections::{chip, ghost_button, icon_button, units};
 use crate::item_tooltip;

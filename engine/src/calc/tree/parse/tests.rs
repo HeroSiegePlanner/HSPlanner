@@ -259,7 +259,6 @@ fn self_condition_key_string_and_label() {
         SelfConditionKey::CritChanceBelow40.label(),
         "Critical Strike Chance is below 40% (auto)"
     );
-    assert_eq!(SELF_CONDITION_KEYS.len(), 5);
 }
 
 // ---- dispatchers ----

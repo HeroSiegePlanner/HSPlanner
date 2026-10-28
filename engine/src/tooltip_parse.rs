@@ -107,7 +107,7 @@ pub struct ParsedAugment {
     pub level: u32,
 }
 
-/// Mirrors the frontend `EquippedItem` shape so the modal can equip it as-is.
+/// Serializes like `EquippedItem`, so the import dialog can equip it as-is.
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ParsedItem {

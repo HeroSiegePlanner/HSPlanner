@@ -1,4 +1,4 @@
-// Exact raster assets used by the Tauri mercenary view.
+// Mercenary skill and class icons.
 const MERC_ICONS: &[(&str, &[u8])] = &[
     (
         "merc_archer/ability_expert",

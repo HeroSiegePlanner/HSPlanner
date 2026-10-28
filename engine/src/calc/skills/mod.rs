@@ -7,12 +7,10 @@ pub mod attack;
 pub mod calculation;
 pub mod conversion;
 pub mod damage;
-pub mod weapon;
 pub mod requirements;
 
 pub use attack::{compute_attack_skill_damage, AttackSkillInput};
 pub use damage::{compute_skill_damage, SkillInput};
-pub use weapon::compute_weapon_damage;
 
 pub type Ranged = (f64, f64);
 pub type StatMap = HashMap<String, Ranged>;
@@ -326,46 +324,6 @@ pub struct AttackSkillDamageBreakdown {
     pub attacks_per_second_max: f64,
     pub dps_min: f64,
     pub dps_max: f64,
-}
-
-#[derive(Debug, Clone, Default)]
-pub struct WeaponDamageBreakdown {
-    pub has_weapon: bool,
-    pub weapon_name: Option<String>,
-    pub weapon_damage_min: f64,
-    pub weapon_damage_max: f64,
-    pub enhanced_damage_min_pct: f64,
-    pub enhanced_damage_max_pct: f64,
-    pub additive_physical_min: f64,
-    pub additive_physical_max: f64,
-    pub additive_elemental_min: f64,
-    pub additive_elemental_max: f64,
-    pub additive_elemental_breakdown: Vec<ExtraSource>,
-    pub attack_damage_min_pct: f64,
-    pub attack_damage_max_pct: f64,
-    pub extra_damage_pct: f64,
-    pub extra_damage_sources: Vec<ExtraSource>,
-    pub armor_break_pct: f64,
-    pub deadly_blow_chance: f64,
-    pub hit_chance: f64,
-    pub crit_chance: f64,
-    pub crit_damage_pct: f64,
-    pub crit_multiplier_avg: f64,
-    pub attacks_per_second_min: f64,
-    pub attacks_per_second_max: f64,
-    pub projectile_count: u32,
-    pub enemy_phys_res_pct: f64,
-    pub phys_resistance_ignored_pct: f64,
-    pub hit_min: i64,
-    pub hit_max: i64,
-    pub crit_min: i64,
-    pub crit_max: i64,
-    pub avg_min: i64,
-    pub avg_max: i64,
-    pub open_wounds_min: i64,
-    pub open_wounds_max: i64,
-    pub dps_min: i64,
-    pub dps_max: i64,
 }
 
 #[inline]

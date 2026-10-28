@@ -334,7 +334,7 @@ pub fn init(cx: &mut App) {
     cx.set_global(palette);
 }
 
-/// Gold command surface used by the Tauri reference header.
+/// Gold command surface used by the header.
 pub fn chrome_gold_surface() -> gpui_kit::Background {
     gpui_kit::linear_gradient(
         180.,
@@ -351,13 +351,6 @@ pub fn library_highlight(cx: &App) -> gpui_kit::Background {
         gpui_kit::linear_color_stop(p.panel_secondary, 0.),
         gpui_kit::linear_color_stop(p.panel, 1.),
     )
-}
-
-pub fn class_color(id: &str) -> Hsla {
-    let hash = id
-        .encode_utf16()
-        .fold(0i32, |hash, c| hash.wrapping_mul(31).wrapping_add(c as i32));
-    gpui_kit::hsla((hash.unsigned_abs() % 360) as f32 / 360., 0.58, 0.58, 1.)
 }
 
 pub fn mana_color() -> Hsla {
@@ -462,7 +455,7 @@ pub fn rarity_surface(rarity: &str, cx: &App) -> Hsla {
     color.opacity(0.1)
 }
 
-/// Attribute, condition and override rows from the Tauri Config panels.
+/// Attribute, condition and override rows in Config.
 pub fn config_tile_surface(selected: bool, cx: &App) -> gpui_kit::Background {
     let p = cx.global::<TooltipTheme>();
     gpui_kit::linear_gradient(

@@ -542,7 +542,7 @@ pub(crate) struct TagView {
     pub removed: Vec<String>,
 }
 
-// Mirrors the frontend tag rewrite: allocated subskills add/remove tags, removes win.
+// Tag rewrite: allocated subskills add or remove tags; removals win.
 pub(crate) fn effective_tags(skill: &SkillSpec, snapshot: &BuildSnapshot) -> TagView {
     let visible = |tags: &[String]| -> Vec<String> {
         tags.iter()

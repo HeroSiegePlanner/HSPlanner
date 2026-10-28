@@ -9,7 +9,6 @@ pub mod conditions;
 pub mod custom_stat;
 pub mod data;
 pub mod defense;
-pub mod lootfilter;
 pub mod passive;
 pub mod performance_diff;
 pub mod planner;

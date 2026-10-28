@@ -46,14 +46,6 @@ impl SelfConditionKey {
     }
 }
 
-pub const SELF_CONDITION_KEYS: &[SelfConditionKey] = &[
-    SelfConditionKey::CritChanceBelow40,
-    SelfConditionKey::LifeBelow40,
-    SelfConditionKey::FullLife,
-    SelfConditionKey::Phasing,
-    SelfConditionKey::FlaskRegeneration,
-];
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum DisableTarget {
     LifeReplenish,

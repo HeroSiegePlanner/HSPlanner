@@ -1,4 +1,4 @@
-//! Item tooltip: the reference `itemTooltipModel.ts` model and `ItemTooltip.tsx` look.
+//! Item tooltip model and rendering.
 use crate::{
     gear::{
         editor::rarity_label,
@@ -31,7 +31,7 @@ use std::{
 type Ranged = (f64, f64);
 
 // The calculation model intentionally uses maps. Keep the authored display order
-// separately: Tauri's Object.entries renders these JSON fields in source order.
+// separately: these JSON fields render in source order.
 #[derive(Default)]
 struct OrderedKeys(Vec<String>);
 

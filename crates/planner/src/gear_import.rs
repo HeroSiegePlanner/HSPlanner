@@ -1,4 +1,4 @@
-//! Import an item from a game tooltip screenshot, after ImportScreenshotModal.tsx.
+//! Import an item from a game tooltip screenshot.
 use super::*;
 use gpui_kit::base::Disableable;
 use gpui_kit::component::WindowExt;
