@@ -180,7 +180,8 @@ impl Shell {
                 cx,
             )
         });
-        let updater = cx.new(crate::update::Updater::new);
+        let beta = session.read(cx).state().settings.beta_updates;
+        let updater = cx.new(|cx| crate::update::Updater::new(beta, cx));
         let subscriptions = vec![
             cx.subscribe(&updater, |this, _, _: &crate::update::Installed, cx| {
                 this.request_close(cx)
@@ -212,6 +213,9 @@ impl Shell {
                 if gpui_kit::component::Theme::global(cx).font_size != px(13. * zoom) {
                     hsplanner_ui::theme::apply_zoom(zoom, cx);
                 }
+                let beta = this.session.read(cx).state().settings.beta_updates;
+                this.updater
+                    .update(cx, |updater, cx| updater.set_beta(beta, cx));
                 this.schedule_save(cx);
                 cx.notify();
             }),

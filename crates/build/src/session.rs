@@ -36,6 +36,8 @@ pub struct Settings {
     pub ui_zoom: f32,
     /// Stat keys shown first on the Stats page, in pin order.
     pub pinned_stats: Vec<String>,
+    /// Update checks also offer pre-releases.
+    pub beta_updates: bool,
 }
 impl Default for Settings {
     fn default() -> Self {
@@ -46,6 +48,7 @@ impl Default for Settings {
             extra_charm_slot: true,
             ui_zoom: 1.,
             pinned_stats: Vec::new(),
+            beta_updates: false,
         }
     }
 }

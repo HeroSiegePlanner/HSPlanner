@@ -216,6 +216,18 @@ impl Render for SettingsView {
                     })),
             )
             .child(hint(tr("settings.zoom_hint").into(), p.faint));
+        let updates = section("settings-updates", tr("settings.updates"), cx)
+            .child(
+                Checkbox::new("settings-beta")
+                    .label(tr("settings.beta"))
+                    .checked(settings.beta_updates)
+                    .on_click(cx.listener(|this, checked: &bool, _, cx| {
+                        let checked = *checked;
+                        this.edit(cx, |settings| settings.beta_updates = checked);
+                    })),
+            )
+            .child(description(tr("settings.beta_hint"), cx))
+            .child(hint(tr("settings.beta_warning").into(), p.negative));
         let credits = section("settings-credits", tr("settings.credits"), cx)
             .child(
                 div()
@@ -291,6 +303,7 @@ impl Render for SettingsView {
                     .child(saving)
                     .child(numbers)
                     .child(display)
+                    .child(updates)
                     .child(credits),
             )
     }
