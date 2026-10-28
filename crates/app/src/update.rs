@@ -269,6 +269,9 @@ fn advance(state: State, step: Step) -> State {
     }
 }
 
+/// A pre-release build such as 1.2.2-beta.3.
+pub const PRE_RELEASE: bool = !env!("CARGO_PKG_VERSION_PRE").is_empty();
+
 pub fn current_version() -> Version {
     Version::parse(env!("CARGO_PKG_VERSION")).expect("valid crate version")
 }

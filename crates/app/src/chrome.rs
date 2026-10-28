@@ -26,6 +26,8 @@ const SAVE_SHORTCUT: &str = if cfg!(target_os = "macos") {
 };
 const BUILD_CHANNEL: &str = if cfg!(debug_assertions) {
     "chrome.dev"
+} else if crate::update::PRE_RELEASE {
+    "chrome.beta"
 } else {
     "chrome.stable"
 };
@@ -597,16 +599,9 @@ impl RenderOnce for BottomBar {
         } else {
             save_label.to_string()
         };
-        let channel_color = if cfg!(debug_assertions) {
-            accent_hot
-        } else {
-            positive
-        };
-        let channel_border = if cfg!(debug_assertions) {
-            accent_deep
-        } else {
-            positive
-        };
+        let stable = BUILD_CHANNEL == "chrome.stable";
+        let channel_color = if stable { positive } else { accent_hot };
+        let channel_border = if stable { positive } else { accent_deep };
         div()
             .flex_none()
             .h_9()

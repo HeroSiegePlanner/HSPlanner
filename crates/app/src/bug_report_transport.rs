@@ -124,7 +124,7 @@ impl Report {
         if let Some((label, _)) = &self.build {
             fields.push(json!({"name":"Build", "value": label.chars().take(120).collect::<String>(), "inline": true}));
         }
-        let mut embed = json!({"author":{"name":(["Bug report","Wrong data","Idea or request"][self.kind])}, "title":self.title.trim(), "description":self.description.trim(), "color":([0xd96b5a,0xe0b864,0x74c98a][self.kind]), "fields":fields, "footer":{"text":format!("HSPlanner v{} · {} · {}", env!("CARGO_PKG_VERSION"), if cfg!(debug_assertions) {"Dev"} else {"Stable"}, std::env::consts::OS)}});
+        let mut embed = json!({"author":{"name":(["Bug report","Wrong data","Idea or request"][self.kind])}, "title":self.title.trim(), "description":self.description.trim(), "color":([0xd96b5a,0xe0b864,0x74c98a][self.kind]), "fields":fields, "footer":{"text":format!("HSPlanner v{} · {} · {}", env!("CARGO_PKG_VERSION"), if cfg!(debug_assertions) {"Dev"} else if crate::update::PRE_RELEASE {"Beta"} else {"Stable"}, std::env::consts::OS)}});
         let mut attachments: Vec<_> = self
             .shots
             .iter()
