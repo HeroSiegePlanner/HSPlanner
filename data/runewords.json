@@ -14,13 +14,55 @@
       "Mace",
       "Axe"
     ],
+    "twoHanded": false,
     "stats": {
-      "enhanced_damage": 220,
-      "attack_rating": 50,
-      "life_steal": 8,
-      "defense_ignored": 30,
+      "enhanced_damage": [
+        150,
+        220
+      ],
       "open_wounds": 100,
-      "damage_recouped_as_mana": 5
+      "defense_ignored": 30,
+      "attacks_hit_multiple_enemies": 1,
+      "life_steal": [
+        5,
+        8
+      ],
+      "damage_recouped_as_mana": 5,
+      "attack_rating": 50
+    },
+    "requiresLevel": 15,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_malice_2h",
+    "name": "Malice",
+    "runes": [
+      "rune_uth",
+      "rune_ol",
+      "rune_eth"
+    ],
+    "allowedBaseTypes": [
+      "Claw",
+      "Dagger",
+      "Sword",
+      "Mace",
+      "Axe"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "enhanced_damage": [
+        180,
+        250
+      ],
+      "open_wounds": 100,
+      "defense_ignored": 45,
+      "attacks_hit_multiple_enemies": 1,
+      "life_steal": [
+        8,
+        12
+      ],
+      "damage_recouped_as_mana": 5,
+      "attack_rating": 50
     },
     "requiresLevel": 15,
     "requiresItemLevel": 1
@@ -36,16 +78,22 @@
       "Armor"
     ],
     "stats": {
-      "enhanced_defense": 75,
+      "enhanced_defense": [
+        50,
+        75
+      ],
       "movement_speed": 25,
-      "faster_cast_rate": 25,
-      "attack_rating": 250,
-      "mana_replenish": 2,
-      "defense_ignored": 10,
+      "faster_hit_recovery": 50,
       "to_dexterity": 10,
-      "poison_skill_damage": 5,
+      "attack_rating": [
+        100,
+        250
+      ],
+      "mana_replenish": 2,
       "mana_replenish_pct": 15,
-      "faster_hit_recovery": 50
+      "faster_cast_rate": 25,
+      "poison_skill_damage": 5,
+      "defense_ignored": 5
     },
     "requiresLevel": 17,
     "requiresItemLevel": 1
@@ -62,17 +110,31 @@
       "Shield"
     ],
     "stats": {
-      "defense": 100,
       "enhanced_defense": 50,
-      "lightning_skill_damage": 5,
-      "poison_skill_damage": 5,
-      "fire_skill_damage": 5,
+      "cold_resistance": [
+        38,
+        48
+      ],
+      "fire_resistance": [
+        38,
+        48
+      ],
+      "lightning_resistance": [
+        38,
+        48
+      ],
+      "poison_resistance": [
+        38,
+        48
+      ],
+      "arcane_resistance": [
+        38,
+        48
+      ],
       "damage_recouped_as_mana": 10,
-      "arcane_resistance": 48,
-      "cold_resistance": 48,
-      "fire_resistance": 48,
-      "poison_resistance": 48,
-      "lightning_resistance": 48
+      "fire_skill_damage": 5,
+      "lightning_skill_damage": 5,
+      "poison_skill_damage": 5
     },
     "requiresLevel": 21,
     "requiresItemLevel": 1
@@ -89,15 +151,27 @@
       "Helmet"
     ],
     "stats": {
-      "defense": 80,
       "enhanced_defense": 75,
+      "defense_vs_missiles": 45,
       "to_energy": 10,
       "to_vitality": 10,
-      "mana": 35,
-      "light_radius": 5,
       "damage_recouped_as_mana": 20,
-      "physical_damage_reduction": 7,
-      "magic_damage_reduction": 5
+      "magic_damage_reduction": [
+        3,
+        5
+      ],
+      "mana": [
+        25,
+        35
+      ],
+      "physical_damage_reduction": [
+        8,
+        11
+      ],
+      "light_radius": [
+        5,
+        10
+      ]
     },
     "requiresLevel": 27,
     "requiresItemLevel": 1
@@ -119,17 +193,85 @@
       "Gun",
       "Bow"
     ],
+    "twoHanded": false,
+    "skillBonuses": {
+      "Manapool Aura": [
+        40,
+        60
+      ]
+    },
     "stats": {
-      "enhanced_damage": 880,
-      "faster_cast_rate": 20,
-      "attack_rating": 350,
-      "to_intelligence": 15,
-      "all_attributes": 25,
-      "poison_skill_damage": 5,
+      "enhanced_damage": [
+        300,
+        480
+      ],
+      "faster_cast_rate": 15,
+      "attack_rating": [
+        180,
+        250
+      ],
+      "all_attributes": [
+        5,
+        10
+      ],
+      "mana_per_kill": 6,
+      "magic_find": [
+        20,
+        30
+      ],
       "fire_skill_damage": 5,
-      "mana_per_kill": 20,
-      "physical_damage_reduction": 7,
-      "magic_find": 50
+      "poison_skill_damage": 5,
+      "physical_damage_reduction": 4
+    },
+    "requiresLevel": 27,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_preacher_2h",
+    "name": "Preacher",
+    "runes": [
+      "rune_rex",
+      "rune_tor",
+      "rune_tul",
+      "rune_sal"
+    ],
+    "allowedBaseTypes": [
+      "Claw",
+      "Polearm",
+      "Cane",
+      "Staff",
+      "Gun",
+      "Bow"
+    ],
+    "twoHanded": true,
+    "skillBonuses": {
+      "Manapool Aura": [
+        50,
+        75
+      ]
+    },
+    "stats": {
+      "enhanced_damage": [
+        600,
+        880
+      ],
+      "faster_cast_rate": 20,
+      "attack_rating": [
+        280,
+        350
+      ],
+      "all_attributes": [
+        10,
+        25
+      ],
+      "mana_per_kill": 8,
+      "magic_find": [
+        30,
+        50
+      ],
+      "fire_skill_damage": 5,
+      "poison_skill_damage": 5,
+      "physical_damage_reduction": 4
     },
     "requiresLevel": 27,
     "requiresItemLevel": 1
@@ -145,13 +287,15 @@
       "Helmet"
     ],
     "stats": {
-      "defense": 80,
       "all_skills": 1,
-      "to_energy": 17,
-      "lightning_skill_damage": 5,
-      "mana_per_kill": 3,
+      "to_energy": 10,
+      "mana_per_kill": [
+        3,
+        5
+      ],
+      "physical_damage_reduction": 11,
       "light_radius": 2,
-      "physical_damage_reduction": 1
+      "lightning_skill_damage": 5
     },
     "requiresLevel": 27,
     "requiresItemLevel": 1
@@ -167,14 +311,22 @@
       "Helmet"
     ],
     "stats": {
-      "defense": 80,
-      "enhanced_defense": 125,
-      "increased_attack_speed": 10,
-      "crit_chance": 15,
-      "life_steal": 7,
+      "enhanced_defense": [
+        75,
+        125
+      ],
       "all_attributes": 5,
-      "life": 35,
-      "all_resistances": 20
+      "crit_chance": 15,
+      "life": [
+        25,
+        35
+      ],
+      "all_resistances": [
+        10,
+        20
+      ],
+      "life_steal": 7,
+      "increased_attack_speed": 4
     },
     "requiresLevel": 29,
     "requiresItemLevel": 1
@@ -194,14 +346,79 @@
       "Polearm",
       "Mace"
     ],
+    "twoHanded": false,
+    "skillBonuses": {
+      "Fire Enchant": [
+        2,
+        5
+      ],
+      "Fiery Presence": [
+        1,
+        2
+      ],
+      "Fire Shield": 2
+    },
     "stats": {
-      "enhanced_damage": 560,
-      "increased_attack_speed": 10,
+      "enhanced_damage": [
+        440,
+        560
+      ],
       "attack_rating": 100,
+      "life": [
+        10,
+        30
+      ],
       "to_strength": 10,
+      "mana_per_kill": 2,
+      "enhanced_defense": 15,
       "fire_skill_damage": 5,
-      "life": 30,
-      "mana_per_kill": 2
+      "increased_attack_speed": 4
+    },
+    "requiresLevel": 29,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_inner_fire_2h",
+    "name": "Inner Fire",
+    "runes": [
+      "rune_tor",
+      "rune_old",
+      "rune_rex",
+      "rune_nut"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace"
+    ],
+    "twoHanded": true,
+    "skillBonuses": {
+      "Fire Enchant": [
+        2,
+        5
+      ],
+      "Fiery Presence": [
+        1,
+        2
+      ],
+      "Fire Shield": 2
+    },
+    "stats": {
+      "enhanced_damage": [
+        500,
+        600
+      ],
+      "attack_rating": 200,
+      "life": [
+        25,
+        50
+      ],
+      "to_strength": 15,
+      "mana_per_kill": 2,
+      "enhanced_defense": 15,
+      "fire_skill_damage": 5,
+      "increased_attack_speed": 4
     },
     "requiresLevel": 29,
     "requiresItemLevel": 1
@@ -216,7 +433,6 @@
       "rune_rex"
     ],
     "allowedBaseTypes": [
-      "Shield",
       "Sword",
       "Claw",
       "Bow",
@@ -225,18 +441,127 @@
       "Book",
       "Spellblade"
     ],
+    "twoHanded": false,
     "stats": {
-      "enhanced_damage": 500,
-      "all_skills": 3,
-      "faster_cast_rate": 35,
-      "increased_attack_speed": 4,
-      "to_vitality": 25,
-      "fire_skill_damage": 5,
-      "magic_skill_damage": 35,
-      "mana": 110,
-      "faster_hit_recovery": 55,
+      "enhanced_damage": [
+        220,
+        360
+      ],
+      "all_skills": 2,
+      "faster_cast_rate": [
+        15,
+        25
+      ],
+      "faster_hit_recovery": 40,
+      "to_vitality": [
+        18,
+        25
+      ],
+      "mana": [
+        80,
+        110
+      ],
+      "magic_skill_damage": [
+        10,
+        20
+      ],
       "damage_recouped_as_mana": 5,
-      "physical_damage_reduction": 4
+      "physical_damage_reduction": 4,
+      "increased_attack_speed": 4,
+      "fire_skill_damage": 5
+    },
+    "requiresLevel": 29,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_skysong_2h",
+    "name": "Skysong",
+    "runes": [
+      "rune_uth",
+      "rune_sal",
+      "rune_nut",
+      "rune_rex"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Claw",
+      "Bow",
+      "Gun",
+      "Staff",
+      "Book",
+      "Spellblade"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "enhanced_damage": [
+        275,
+        400
+      ],
+      "all_skills": 3,
+      "faster_cast_rate": [
+        25,
+        35
+      ],
+      "faster_hit_recovery": 55,
+      "to_vitality": [
+        18,
+        25
+      ],
+      "mana": [
+        80,
+        110
+      ],
+      "magic_skill_damage": [
+        20,
+        35
+      ],
+      "damage_recouped_as_mana": 5,
+      "physical_damage_reduction": 4,
+      "increased_attack_speed": 4,
+      "fire_skill_damage": 5
+    },
+    "requiresLevel": 29,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_skysong_armor",
+    "name": "Skysong",
+    "runes": [
+      "rune_uth",
+      "rune_sal",
+      "rune_nut",
+      "rune_rex"
+    ],
+    "allowedBaseTypes": [
+      "Shield"
+    ],
+    "stats": {
+      "enhanced_defense": [
+        550,
+        780
+      ],
+      "all_skills": 2,
+      "faster_cast_rate": [
+        25,
+        35
+      ],
+      "faster_hit_recovery": 75,
+      "to_vitality": [
+        18,
+        25
+      ],
+      "mana": [
+        80,
+        110
+      ],
+      "damage_return": [
+        35,
+        50
+      ],
+      "damage_recouped_as_mana": 5,
+      "physical_damage_reduction": 4,
+      "increased_attack_speed": 4,
+      "fire_skill_damage": 5
     },
     "requiresLevel": 29,
     "requiresItemLevel": 1
@@ -252,10 +577,19 @@
       "Boots"
     ],
     "stats": {
-      "defense": 64,
       "enhanced_defense": 75,
-      "movement_speed": 70,
-      "increased_attack_speed": 40,
+      "movement_speed": [
+        50,
+        70
+      ],
+      "increased_attack_speed": [
+        20,
+        40
+      ],
+      "defense_vs_missiles": [
+        30,
+        50
+      ],
       "life_steal": 7,
       "arcane_skill_damage": 5
     },
@@ -274,13 +608,31 @@
       "Armor"
     ],
     "stats": {
-      "defense": 240,
-      "all_skills": 2,
+      "all_skills": [
+        1,
+        2
+      ],
+      "life_replenish_pct": 10,
+      "damage_return": [
+        30,
+        40
+      ],
       "skill_haste": 4,
       "life_steal": 7,
-      "life_replenish_pct": 10,
-      "damage_return": 36
+      "defense_vs_missiles": 15
     },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 10,
+        "description": "cast Taunt Level 8"
+      },
+      {
+        "trigger": "when_struck",
+        "chance": 8,
+        "description": "cast Odin's Fury Level 5"
+      }
+    ],
     "requiresLevel": 33,
     "requiresItemLevel": 1
   },
@@ -296,14 +648,26 @@
       "Helmet"
     ],
     "stats": {
-      "defense": 80,
-      "enhanced_defense": 96,
-      "increased_attack_speed": 4,
-      "to_vitality": 10,
-      "all_attributes": 10,
-      "cold_skill_damage": 10,
       "faster_hit_recovery": 20,
-      "cold_resistance": 60
+      "enhanced_defense": [
+        75,
+        100
+      ],
+      "cold_resistance": [
+        40,
+        60
+      ],
+      "all_attributes": [
+        5,
+        10
+      ],
+      "cold_skill_damage": [
+        10,
+        15
+      ],
+      "cannot_be_frozen": 1,
+      "increased_attack_speed": 4,
+      "to_vitality": 10
     },
     "requiresLevel": 35,
     "requiresItemLevel": 1
@@ -321,14 +685,33 @@
       "Book",
       "Spellblade"
     ],
+    "skillBonuses": {
+      "Bone Spear": [
+        2,
+        4
+      ],
+      "Meat Shield": [
+        2,
+        3
+      ],
+      "Summon Mastery": [
+        3,
+        5
+      ]
+    },
     "stats": {
-      "all_skills": 2,
-      "arcane_skills": 3,
       "faster_cast_rate": 20,
-      "to_vitality": 10,
+      "mana": [
+        10,
+        15
+      ],
+      "all_skills_necromancer": [
+        1,
+        2
+      ],
+      "arcane_skills": 3,
       "arcane_skill_damage": 5,
-      "mana_replenish_pct": 26,
-      "mana": 15
+      "to_vitality": 10
     },
     "requiresLevel": 35,
     "requiresItemLevel": 1
@@ -345,16 +728,28 @@
       "Armor"
     ],
     "stats": {
-      "enhanced_defense": 125,
+      "enhanced_defense": [
+        100,
+        125
+      ],
+      "ignore_arcane_res": [
+        1,
+        10
+      ],
       "all_skills": 1,
-      "arcane_skill_damage": 15,
-      "arcane_skills": 3,
-      "skill_haste": 4,
-      "ignore_arcane_res": 10,
-      "to_energy": 10,
-      "faster_cast_rate": 15,
+      "arcane_skills": [
+        1,
+        3
+      ],
+      "arcane_skill_damage": [
+        15,
+        20
+      ],
       "mana_replenish": 2,
-      "mana_replenish_pct": 15
+      "mana_replenish_pct": 15,
+      "faster_cast_rate": 15,
+      "to_energy": 10,
+      "skill_haste": 4
     },
     "requiresLevel": 37,
     "requiresItemLevel": 1
@@ -371,17 +766,28 @@
       "Armor"
     ],
     "stats": {
+      "enhanced_defense": [
+        100,
+        125
+      ],
+      "ignore_lightning_res": [
+        1,
+        10
+      ],
       "all_skills": 1,
-      "skill_haste": 4,
-      "defense": 210,
-      "ignore_lightning_res": 10,
-      "to_energy": 10,
-      "enhanced_defense": 125,
-      "faster_cast_rate": 15,
-      "lightning_skill_damage": 15,
-      "lightning_skills": 3,
+      "lightning_skills": [
+        1,
+        3
+      ],
+      "lightning_skill_damage": [
+        15,
+        20
+      ],
       "mana_replenish": 2,
-      "mana_replenish_pct": 15
+      "mana_replenish_pct": 15,
+      "faster_cast_rate": 15,
+      "to_energy": 10,
+      "skill_haste": 4
     },
     "requiresLevel": 37,
     "requiresItemLevel": 1
@@ -399,13 +805,23 @@
       "Book"
     ],
     "stats": {
+      "faster_cast_rate": 20,
+      "mana": [
+        75,
+        225
+      ],
       "all_skills": 1,
-      "faster_cast_rate": 30,
-      "to_energy": 25,
-      "all_attributes": 10,
-      "mana": 225,
-      "mana_per_kill": 2,
-      "increased_mana": 10
+      "increased_mana": [
+        5,
+        10
+      ],
+      "all_attributes": 15,
+      "magic_skill_damage": [
+        20,
+        30
+      ],
+      "to_energy": 10,
+      "mana_per_kill": 2
     },
     "requiresLevel": 37,
     "requiresItemLevel": 1
@@ -422,17 +838,28 @@
       "Armor"
     ],
     "stats": {
-      "defense": 216,
-      "enhanced_defense": 125,
+      "enhanced_defense": [
+        100,
+        125
+      ],
+      "ignore_cold_res": [
+        1,
+        10
+      ],
       "all_skills": 1,
-      "cold_skills": 3,
-      "faster_cast_rate": 15,
-      "skill_haste": 4,
+      "cold_skills": [
+        1,
+        3
+      ],
+      "cold_skill_damage": [
+        15,
+        20
+      ],
       "mana_replenish": 2,
+      "mana_replenish_pct": 15,
+      "faster_cast_rate": 15,
       "to_energy": 10,
-      "cold_skill_damage": 15,
-      "ignore_cold_res": 10,
-      "mana_replenish_pct": 15
+      "skill_haste": 4
     },
     "requiresLevel": 37,
     "requiresItemLevel": 1
@@ -455,15 +882,80 @@
       "Gun",
       "Chainsaw"
     ],
+    "twoHanded": false,
+    "skillBonuses": {
+      "Thorn’s Aura": [
+        22,
+        38
+      ]
+    },
     "stats": {
-      "enhanced_damage": 480,
-      "increased_attack_speed": 35,
-      "life_steal": 7,
-      "to_energy": 10,
-      "all_attributes": 25,
+      "enhanced_damage": [
+        350,
+        480
+      ],
+      "increased_attack_speed": 18,
+      "attacks_hit_multiple_enemies": 1,
+      "all_attributes": [
+        12,
+        25
+      ],
+      "mana_per_kill": [
+        3,
+        6
+      ],
       "cold_skill_damage": 5,
-      "mana_per_kill": 6,
-      "physical_damage_reduction": 7
+      "physical_damage_reduction": 4,
+      "life_steal": 7,
+      "to_energy": 10
+    },
+    "requiresLevel": 37,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_martyr_2h",
+    "name": "Martyr",
+    "runes": [
+      "rune_thal",
+      "rune_sal",
+      "rune_ymn",
+      "rune_lum"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace",
+      "Bow",
+      "Gun",
+      "Chainsaw"
+    ],
+    "twoHanded": true,
+    "skillBonuses": {
+      "Thorn’s Aura": [
+        22,
+        38
+      ]
+    },
+    "stats": {
+      "enhanced_damage": [
+        550,
+        680
+      ],
+      "increased_attack_speed": 18,
+      "attacks_hit_multiple_enemies": 1,
+      "all_attributes": [
+        18,
+        35
+      ],
+      "mana_per_kill": [
+        6,
+        10
+      ],
+      "cold_skill_damage": 5,
+      "physical_damage_reduction": 4,
+      "life_steal": 7,
+      "to_energy": 10
     },
     "requiresLevel": 37,
     "requiresItemLevel": 1
@@ -480,16 +972,28 @@
       "Armor"
     ],
     "stats": {
-      "enhanced_defense": 370,
+      "enhanced_defense": [
+        100,
+        125
+      ],
+      "ignore_fire_res": [
+        1,
+        10
+      ],
       "all_skills": 1,
-      "fire_skills": 3,
-      "faster_cast_rate": 15,
-      "skill_haste": 4,
+      "fire_skills": [
+        1,
+        3
+      ],
+      "fire_skill_damage": [
+        15,
+        20
+      ],
       "mana_replenish": 2,
+      "mana_replenish_pct": 15,
+      "faster_cast_rate": 15,
       "to_energy": 10,
-      "fire_skill_damage": 18,
-      "ignore_lightning_res": 5,
-      "mana_replenish_pct": 15
+      "skill_haste": 4
     },
     "requiresLevel": 37,
     "requiresItemLevel": 1
@@ -509,16 +1013,56 @@
       "Spellblade",
       "Book"
     ],
+    "twoHanded": false,
+    "skillBonuses": {
+      "Fire Shield": 3,
+      "Phoenix Flight": 2
+    },
     "stats": {
-      "enhanced_defense": 150,
-      "all_skills": 4,
-      "faster_cast_rate": 25,
-      "mana_cost_reduction": 9,
-      "defense_ignored": 5,
+      "faster_cast_rate": 15,
+      "enhanced_defense": 50,
+      "all_skills": 2,
+      "increased_mana": 20,
       "to_energy": 10,
       "to_vitality": 10,
+      "physical_damage_reduction": 4,
+      "defense_ignored": 5
+    },
+    "requiresLevel": 37,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_revelation_2h",
+    "name": "Revelation",
+    "runes": [
+      "rune_lum",
+      "rune_io",
+      "rune_sal",
+      "rune_eth"
+    ],
+    "allowedBaseTypes": [
+      "Staff",
+      "Cane",
+      "Spellblade",
+      "Book"
+    ],
+    "twoHanded": true,
+    "skillBonuses": {
+      "Fire Shield": 5,
+      "Phoenix Flight": 4
+    },
+    "stats": {
+      "faster_cast_rate": 25,
+      "enhanced_defense": 150,
+      "all_skills": [
+        3,
+        4
+      ],
       "increased_mana": 25,
-      "physical_damage_reduction": 4
+      "to_energy": 10,
+      "to_vitality": 10,
+      "physical_damage_reduction": 4,
+      "defense_ignored": 5
     },
     "requiresLevel": 37,
     "requiresItemLevel": 1
@@ -535,16 +1079,28 @@
       "Armor"
     ],
     "stats": {
-      "enhanced_defense": 125,
+      "enhanced_defense": [
+        100,
+        125
+      ],
+      "ignore_poison_res": [
+        1,
+        10
+      ],
       "all_skills": 1,
-      "poison_skills": 3,
-      "faster_cast_rate": 15,
-      "skill_haste": 4,
+      "poison_skills": [
+        1,
+        3
+      ],
+      "poison_skill_damage": [
+        15,
+        20
+      ],
       "mana_replenish": 2,
+      "mana_replenish_pct": 15,
+      "faster_cast_rate": 15,
       "to_energy": 10,
-      "poison_skill_damage": 20,
-      "ignore_poison_res": 10,
-      "mana_replenish_pct": 15
+      "skill_haste": 4
     },
     "requiresLevel": 37,
     "requiresItemLevel": 1
@@ -559,14 +1115,67 @@
     ],
     "allowedBaseTypes": [
       "Flask",
-      "Wand"
+      "Wand",
+      "Mace"
     ],
+    "twoHanded": false,
     "stats": {
-      "all_skills": 1,
-      "to_energy": 20,
-      "poison_skill_damage": 29,
-      "mana_replenish_pct": 25
+      "mana_replenish_pct": 25,
+      "all_skills": [
+        1,
+        2
+      ],
+      "poison_skill_damage": [
+        35,
+        45
+      ],
+      "faster_cast_rate": 15,
+      "to_energy": 20
     },
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 15,
+        "description": "cast Cursed Ground Level [8-12]"
+      }
+    ],
+    "requiresLevel": 37,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_trapped_vessel_2h",
+    "name": "Trapped Vessel",
+    "runes": [
+      "rune_lum",
+      "rune_lum",
+      "rune_tul"
+    ],
+    "allowedBaseTypes": [
+      "Flask",
+      "Wand",
+      "Mace"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "mana_replenish_pct": 25,
+      "all_skills": [
+        3,
+        4
+      ],
+      "poison_skill_damage": [
+        20,
+        30
+      ],
+      "faster_cast_rate": 30,
+      "to_energy": 20
+    },
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 15,
+        "description": "cast Cursed Ground Level [30-40]"
+      }
+    ],
     "requiresLevel": 37,
     "requiresItemLevel": 1
   },
@@ -583,18 +1192,87 @@
       "Bow",
       "Gun"
     ],
+    "twoHanded": false,
+    "skillBonuses": {
+      "Rapid Fire": [
+        6,
+        18
+      ],
+      "Feint": 10
+    },
     "stats": {
-      "enhanced_damage": 675,
-      "additive_physical_damage": 38,
-      "to_dexterity": 10,
-      "additive_lightning_damage": 420,
-      "additive_fire_damage": 420,
-      "additive_cold_damage": 420,
-      "mana_replenish_pct": 50,
+      "enhanced_damage": [
+        300,
+        475
+      ],
+      "additive_lightning_damage": [
+        220,
+        360
+      ],
+      "additive_fire_damage": [
+        220,
+        360
+      ],
+      "additive_cold_damage": [
+        220,
+        360
+      ],
+      "light_radius": 5,
+      "mana_replenish_pct": 30,
+      "increased_attack_speed": 25,
       "mana_per_kill": 2,
+      "damage_recouped_as_mana": 5,
+      "physical_damage_reduction": 4,
+      "to_dexterity": 10
+    },
+    "requiresLevel": 39,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_sleight_2h",
+    "name": "Sleight",
+    "runes": [
+      "rune_tor",
+      "rune_uth",
+      "rune_sal",
+      "rune_co"
+    ],
+    "allowedBaseTypes": [
+      "Bow",
+      "Gun"
+    ],
+    "twoHanded": true,
+    "skillBonuses": {
+      "Rapid Fire": [
+        12,
+        28
+      ],
+      "Feint": 10
+    },
+    "stats": {
+      "enhanced_damage": [
+        400,
+        575
+      ],
+      "additive_lightning_damage": [
+        340,
+        520
+      ],
+      "additive_fire_damage": [
+        340,
+        520
+      ],
+      "additive_cold_damage": [
+        340,
+        520
+      ],
       "light_radius": 10,
-      "damage_recouped_as_mana": 15,
-      "physical_damage_reduction": 7
+      "mana_replenish_pct": 50,
+      "increased_attack_speed": 25,
+      "mana_per_kill": 2,
+      "damage_recouped_as_mana": 5,
+      "physical_damage_reduction": 4,
+      "to_dexterity": 10
     },
     "requiresLevel": 39,
     "requiresItemLevel": 1
@@ -611,15 +1289,26 @@
       "Helmet"
     ],
     "stats": {
-      "defense": 80,
-      "enhanced_defense": 325,
-      "movement_speed": 20,
-      "increased_attack_speed": 40,
-      "crit_chance": 8,
+      "enhanced_defense": [
+        225,
+        325
+      ],
+      "increased_attack_speed": [
+        24,
+        44
+      ],
+      "enhanced_damage_based_on_level": 50,
       "deadly_blow": 15,
+      "movement_speed": [
+        30,
+        40
+      ],
+      "crit_chance": [
+        5,
+        10
+      ],
       "to_strength": 10,
-      "to_dexterity": 10,
-      "enhanced_damage": 50
+      "to_dexterity": 10
     },
     "requiresLevel": 41,
     "requiresItemLevel": 1
@@ -635,13 +1324,21 @@
       "Armor"
     ],
     "stats": {
-      "enhanced_defense": 100,
-      "skill_haste": 4,
-      "to_strength": 10,
+      "enhanced_defense": [
+        70,
+        100
+      ],
+      "all_resistances": [
+        30,
+        40
+      ],
+      "faster_hit_recovery": [
+        40,
+        50
+      ],
       "to_armor": 25,
-      "faster_hit_recovery": 50,
-      "magic_damage_reduction": 10,
-      "all_resistances": 40
+      "skill_haste": 4,
+      "to_strength": 10
     },
     "requiresLevel": 41,
     "requiresItemLevel": 1
@@ -660,15 +1357,65 @@
       "Axe",
       "Mace"
     ],
+    "twoHanded": false,
     "stats": {
-      "enhanced_damage": 350,
+      "enhanced_damage": [
+        275,
+        350
+      ],
       "physical_skills": 2,
-      "increased_attack_speed": 20,
-      "deadly_blow": 20,
-      "life_steal": 7,
-      "to_strength": 10,
-      "magic_skill_damage": 15,
-      "life": 225
+      "increased_attack_speed": [
+        18,
+        28
+      ],
+      "crit_chance": 15,
+      "life": 225,
+      "additive_physical_damage": [
+        15,
+        20
+      ],
+      "gold_find": 5,
+      "life_steal": 7
+    },
+    "requiresLevel": 43,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_brutality_2h",
+    "name": "Brutality",
+    "runes": [
+      "rune_nut",
+      "rune_nut",
+      "rune_lem",
+      "rune_ymn"
+    ],
+    "allowedBaseTypes": [
+      "Claw",
+      "Axe",
+      "Mace"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "enhanced_damage": [
+        375,
+        500
+      ],
+      "physical_skills": [
+        3,
+        4
+      ],
+      "increased_attack_speed": [
+        18,
+        28
+      ],
+      "crit_chance": 20,
+      "life": 440,
+      "additive_physical_damage": [
+        25,
+        30
+      ],
+      "gold_find": 5,
+      "life_steal": 7
     },
     "requiresLevel": 43,
     "requiresItemLevel": 1
@@ -686,19 +1433,98 @@
       "Mace",
       "Polearm"
     ],
+    "twoHanded": false,
     "stats": {
-      "enhanced_damage": 660,
+      "enhanced_damage": [
+        450,
+        560
+      ],
       "attack_rating_pct": 20,
-      "to_dexterity": 61,
-      "to_intelligence": 25,
-      "all_attributes": 15,
-      "additive_arcane_damage": 223,
-      "additive_fire_damage": 200,
-      "damage_recouped_as_mana": 34,
-      "physical_damage_reduction": 7,
-      "all_resistances": 20,
-      "gold_find": 25
+      "arcane_skill_damage": [
+        40,
+        60
+      ],
+      "cold_skill_damage": [
+        40,
+        60
+      ],
+      "increased_attack_speed": 45,
+      "damage_recouped_as_mana": [
+        22,
+        34
+      ],
+      "gold_find": 25,
+      "physical_damage_reduction": 4,
+      "life_steal": 7,
+      "to_dexterity": 10,
+      "all_resistances": 8
     },
+    "procs": [
+      {
+        "trigger": "on_attack",
+        "chance": 16,
+        "description": "cast Orb of Frost Level [35-45]"
+      },
+      {
+        "trigger": "on_hit",
+        "chance": 25,
+        "description": "cast Tornado Level [35-50]"
+      }
+    ],
+    "requiresLevel": 47,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_conquest_2h",
+    "name": "Conquest",
+    "runes": [
+      "rune_sal",
+      "rune_ymn",
+      "rune_co",
+      "rune_um"
+    ],
+    "allowedBaseTypes": [
+      "Mace",
+      "Polearm"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "enhanced_damage": [
+        550,
+        660
+      ],
+      "attack_rating_pct": 20,
+      "arcane_skill_damage": [
+        60,
+        70
+      ],
+      "cold_skill_damage": [
+        60,
+        70
+      ],
+      "increased_attack_speed": 60,
+      "damage_recouped_as_mana": [
+        28,
+        38
+      ],
+      "gold_find": 50,
+      "physical_damage_reduction": 4,
+      "life_steal": 7,
+      "to_dexterity": 10,
+      "all_resistances": 8
+    },
+    "procs": [
+      {
+        "trigger": "on_attack",
+        "chance": 22,
+        "description": "cast Orb of Frost Level [55-60]"
+      },
+      {
+        "trigger": "on_hit",
+        "chance": 25,
+        "description": "cast Tornado Level [55-65]"
+      }
+    ],
     "requiresLevel": 47,
     "requiresItemLevel": 1
   },
@@ -714,12 +1540,31 @@
     "allowedBaseTypes": [
       "Helmet"
     ],
+    "skillBonuses": {
+      "Sand Guardians": [
+        4,
+        6
+      ]
+    },
     "stats": {
-      "defense": 80,
-      "enhanced_damage": 25,
-      "enhanced_defense": 225,
-      "all_skills": 2,
+      "enhanced_defense": [
+        140,
+        240
+      ],
+      "all_skills_illusionist": [
+        1,
+        2
+      ],
+      "guardian_additional_attack": 10,
+      "guardian_attack_range": [
+        20,
+        30
+      ],
       "increased_attack_speed": 29,
+      "guardian_damage": [
+        15,
+        40
+      ],
       "mana_cost_reduction": 3,
       "all_resistances": 8
     },
@@ -739,18 +1584,33 @@
       "Armor"
     ],
     "stats": {
-      "defense": 240,
-      "enhanced_defense": 260,
-      "mana_cost_reduction": 3,
-      "to_strength": 30,
       "faster_hit_recovery": 10,
-      "light_radius": -3,
+      "enhanced_defense": [
+        200,
+        260
+      ],
+      "all_resistances": 53,
+      "magic_find": [
+        15,
+        50
+      ],
+      "experience_gain": [
+        1,
+        5
+      ],
       "damage_recouped_as_mana": 5,
-      "physical_damage_reduction": 3,
-      "all_resistances": 52,
-      "magic_find": 50,
-      "experience_gain": 5
+      "light_radius": -3,
+      "to_strength": 10,
+      "mana_cost_reduction": 3,
+      "physical_damage_reduction": 4
     },
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 15,
+        "description": "cast Oil Spill Level 8"
+      }
+    ],
     "requiresLevel": 47,
     "requiresItemLevel": 1
   },
@@ -766,19 +1626,25 @@
       "Armor"
     ],
     "stats": {
+      "faster_hit_recovery": 40,
       "enhanced_damage": 20,
-      "enhanced_defense": 200,
-      "increased_attack_speed": 4,
+      "additive_cold_damage": [
+        110,
+        140
+      ],
       "crushing_blow_chance": 15,
       "open_wounds": 33,
-      "additive_cold_damage": 140,
-      "cold_skill_damage": 5,
-      "faster_hit_recovery": 40,
-      "all_resistances": 20,
+      "enhanced_defense": [
+        150,
+        200
+      ],
       "cold_resistance": 45,
+      "lightning_resistance": 15,
       "fire_resistance": 15,
       "poison_resistance": 15,
-      "lightning_resistance": 15
+      "increased_attack_speed": 4,
+      "all_resistances": 8,
+      "cold_skill_damage": 5
     },
     "requiresLevel": 47,
     "requiresItemLevel": 1
@@ -796,15 +1662,29 @@
       "Armor"
     ],
     "stats": {
-      "enhanced_defense": 290,
-      "increased_attack_speed": 10,
-      "mana_cost_reduction": 3,
-      "to_strength": 20,
-      "to_energy": 20,
-      "to_vitality": 20,
       "faster_hit_recovery": 60,
-      "all_resistances": 35
+      "enhanced_defense": [
+        250,
+        290
+      ],
+      "defense_vs_missiles": 300,
+      "all_attributes": [
+        20,
+        25
+      ],
+      "all_resistances": 25,
+      "max_all_resistances": 5,
+      "increased_attack_speed": 4,
+      "mana_cost_reduction": 3,
+      "to_energy": 10
     },
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 20,
+        "description": "cast Holy Nova Level 30"
+      }
+    ],
     "requiresLevel": 47,
     "requiresItemLevel": 1
   },
@@ -819,10 +1699,20 @@
       "Boots"
     ],
     "stats": {
-      "defense": 64,
-      "enhanced_defense": 150,
-      "all_skills": 2,
-      "movement_speed": 57,
+      "enhanced_defense": [
+        100,
+        150
+      ],
+      "movement_speed": 40,
+      "all_skills": [
+        1,
+        2
+      ],
+      "defense_vs_missiles": [
+        30,
+        50
+      ],
+      "phasing": 1,
       "physical_damage_reduction": 4,
       "magic_damage_reduction": 4
     },
@@ -841,14 +1731,22 @@
       "Shield"
     ],
     "stats": {
-      "defense": 100,
-      "block_chance": 65,
-      "enhanced_defense": 137,
-      "to_dexterity": 40,
-      "to_intelligence": 7,
+      "enhanced_defense": [
+        130,
+        160
+      ],
       "faster_hit_recovery": 20,
-      "magic_damage_reduction": 14,
-      "all_resistances": 70
+      "block_chance": 20,
+      "defense_vs_missiles": 250,
+      "to_dexterity": 40,
+      "all_resistances": [
+        50,
+        70
+      ],
+      "magic_damage_reduction": [
+        8,
+        11
+      ]
     },
     "requiresLevel": 49,
     "requiresItemLevel": 1
@@ -865,17 +1763,36 @@
       "Boots"
     ],
     "stats": {
-      "defense": 64,
-      "enhanced_damage": 50,
-      "enhanced_defense": 300,
+      "enhanced_defense": [
+        220,
+        300
+      ],
+      "increased_attack_speed": [
+        39,
+        54
+      ],
+      "enhanced_damage": [
+        35,
+        50
+      ],
+      "movement_speed": 30,
       "all_skills": 1,
-      "movement_speed": 50,
-      "increased_attack_speed": 49,
-      "mana_steal": 4,
-      "damage_recouped_as_mana": 15,
-      "magic_damage_reduction": 3,
-      "all_resistances": 15
+      "mana_steal": [
+        3,
+        5
+      ],
+      "all_resistances": 15,
+      "damage_recouped_as_mana": 5,
+      "magic_damage_reduction": 4
     },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 3,
+        "description": "cast Absolute Mayhem Level [15-25]",
+        "details": "Chance: 3-6%."
+      }
+    ],
     "requiresLevel": 49,
     "requiresItemLevel": 1
   },
@@ -892,16 +1809,34 @@
       "Shield"
     ],
     "stats": {
-      "defense": 100,
-      "enhanced_defense": 200,
-      "all_skills": 3,
-      "attack_rating_pct": 15,
+      "enhanced_defense": [
+        150,
+        200
+      ],
+      "defense_vs_missiles": [
+        150,
+        200
+      ],
+      "life": [
+        25,
+        40
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "magic_skill_damage": [
+        8,
+        20
+      ],
+      "all_resistances": [
+        10,
+        30
+      ],
       "to_energy": 10,
+      "attack_rating_pct": 15,
       "lightning_skill_damage": 5,
-      "magic_skill_damage": 20,
-      "life": 40,
-      "physical_damage_reduction": 4,
-      "all_resistances": 30
+      "physical_damage_reduction": 4
     },
     "requiresLevel": 53,
     "requiresItemLevel": 1
@@ -923,14 +1858,74 @@
       "Gun",
       "Chainsaw"
     ],
+    "twoHanded": false,
+    "skillBonuses": {
+      "Overwhelming Power": [
+        10,
+        15
+      ]
+    },
     "stats": {
-      "enhanced_damage": 680,
-      "attack_rating_pct": 15,
-      "to_dexterity": 15,
-      "to_vitality": 10,
-      "additive_arcane_damage": 1440,
-      "arcane_skill_damage": 40,
+      "enhanced_damage": [
+        450,
+        580
+      ],
       "increased_mana": 8,
+      "additive_arcane_damage": [
+        720,
+        840
+      ],
+      "arcane_skill_damage": [
+        15,
+        30
+      ],
+      "to_vitality": 10,
+      "attack_rating_pct": 15,
+      "magic_find": 15
+    },
+    "requiresLevel": 53,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_ascendancy_2h",
+    "name": "Ascendancy",
+    "runes": [
+      "rune_io",
+      "rune_gul",
+      "rune_ist"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace",
+      "Bow",
+      "Gun",
+      "Chainsaw"
+    ],
+    "twoHanded": true,
+    "skillBonuses": {
+      "Overwhelming Power": [
+        15,
+        25
+      ]
+    },
+    "stats": {
+      "enhanced_damage": [
+        550,
+        680
+      ],
+      "increased_mana": 8,
+      "additive_arcane_damage": [
+        1220,
+        1440
+      ],
+      "arcane_skill_damage": [
+        25,
+        40
+      ],
+      "to_vitality": 10,
+      "attack_rating_pct": 15,
       "magic_find": 15
     },
     "requiresLevel": 53,
@@ -946,11 +1941,19 @@
     "allowedBaseTypes": [
       "Helmet"
     ],
+    "skillBonuses": {
+      "Drunken Delirium": 1
+    },
     "stats": {
-      "defense": 80,
-      "enhanced_defense": 325,
-      "all_skills": 8,
-      "mana_steal": 15
+      "enhanced_defense": [
+        225,
+        325
+      ],
+      "all_skills": [
+        5,
+        8
+      ],
+      "mana_steal": 14
     },
     "requiresLevel": 55,
     "requiresItemLevel": 1
@@ -967,12 +1970,68 @@
       "Bow",
       "Gun"
     ],
+    "twoHanded": false,
+    "skillBonuses": {
+      "Fanaticism Aura": [
+        12,
+        22
+      ],
+      "Explosive Bullets": [
+        4,
+        8
+      ]
+    },
     "stats": {
-      "enhanced_damage": 720,
-      "attack_rating_pct": 15,
-      "additive_physical_damage": 50,
+      "enhanced_damage": [
+        460,
+        520
+      ],
+      "additive_physical_damage": [
+        18,
+        38
+      ],
+      "mana_steal": 7,
       "life_steal": 7,
-      "mana_steal": 7
+      "attack_rating_pct": 15
+    },
+    "requiresLevel": 55,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_epilogue_2h",
+    "name": "Epilogue",
+    "runes": [
+      "rune_vex",
+      "rune_ymn",
+      "rune_gul"
+    ],
+    "allowedBaseTypes": [
+      "Bow",
+      "Gun"
+    ],
+    "twoHanded": true,
+    "skillBonuses": {
+      "Fanaticism Aura": [
+        15,
+        35
+      ],
+      "Explosive Bullets": [
+        8,
+        16
+      ]
+    },
+    "stats": {
+      "enhanced_damage": [
+        660,
+        720
+      ],
+      "additive_physical_damage": [
+        22,
+        50
+      ],
+      "mana_steal": 7,
+      "life_steal": 7,
+      "attack_rating_pct": 15
     },
     "requiresLevel": 55,
     "requiresItemLevel": 1
@@ -988,17 +2047,32 @@
       "Boots"
     ],
     "stats": {
-      "defense": 64,
-      "enhanced_defense": 440,
+      "enhanced_defense": [
+        200,
+        250
+      ],
+      "movement_speed": 35,
       "all_skills": 2,
-      "movement_speed": 47,
-      "mana_steal": 7,
-      "magic_skill_damage": 15,
+      "physical_damage_reduction": [
+        5,
+        10
+      ],
+      "magic_skill_damage": [
+        8,
+        15
+      ],
       "life_replenish_pct": 20,
       "mana_replenish_pct": 20,
-      "physical_damage_reduction": 10,
-      "magic_find": 15
+      "magic_find": 15,
+      "mana_steal": 7
     },
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 1,
+        "description": "cast Shitamorphosis Level 1"
+      }
+    ],
     "requiresLevel": 55,
     "requiresItemLevel": 1
   },
@@ -1017,13 +2091,61 @@
       "Spellblade",
       "Sword"
     ],
+    "twoHanded": false,
     "stats": {
-      "all_skills": 1,
-      "sentry_skills": 3,
       "all_attributes": 20,
+      "sentry_max_amount": 1,
+      "all_skills": 1,
       "sentry_attack_speed": 20,
-      "sentry_damage": 25,
-      "sentry_max_amount": 1
+      "sentry_skills": [
+        2,
+        3
+      ],
+      "sentry_damage": [
+        15,
+        25
+      ],
+      "arcane_skill_damage": 5,
+      "skill_haste": 4,
+      "all_resistances": 8,
+      "attack_damage": 20
+    },
+    "requiresLevel": 57,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_lone_mystic_2h",
+    "name": "Lone Mystic",
+    "runes": [
+      "rune_del",
+      "rune_hel",
+      "rune_um",
+      "rune_qi"
+    ],
+    "allowedBaseTypes": [
+      "Wand",
+      "Book",
+      "Spellblade",
+      "Sword"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "all_attributes": 35,
+      "sentry_max_amount": 1,
+      "all_skills": 2,
+      "sentry_attack_speed": 35,
+      "sentry_skills": [
+        4,
+        5
+      ],
+      "sentry_damage": [
+        25,
+        35
+      ],
+      "arcane_skill_damage": 5,
+      "skill_haste": 4,
+      "all_resistances": 8,
+      "attack_damage": 20
     },
     "requiresLevel": 57,
     "requiresItemLevel": 1
@@ -1040,6 +2162,7 @@
       "Sword",
       "Mace"
     ],
+    "twoHanded": false,
     "skillBonuses": {
       "Lunar Aura": [
         12,
@@ -1047,15 +2170,72 @@
       ]
     },
     "stats": {
-      "enhanced_damage": 550,
-      "life_steal": 7,
-      "defense_ignored": 40,
-      "to_dexterity": 10,
-      "additive_arcane_damage": 320,
-      "additive_cold_damage": 280,
-      "attack_damage": 20,
+      "enhanced_damage": [
+        430,
+        550
+      ],
+      "defense_ignored": [
+        30,
+        40
+      ],
+      "additive_arcane_damage": [
+        250,
+        320
+      ],
+      "additive_cold_damage": [
+        230,
+        280
+      ],
+      "gold_find": 15,
       "faster_hit_recovery": 25,
-      "gold_find": 15
+      "life_steal": 7,
+      "to_dexterity": 10,
+      "attack_damage": 20
+    },
+    "requiresLevel": 57,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_aurora_s_might_2h",
+    "name": "Aurora's Might",
+    "runes": [
+      "rune_ymn",
+      "rune_co",
+      "rune_qi"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Mace"
+    ],
+    "twoHanded": true,
+    "skillBonuses": {
+      "Lunar Aura": [
+        12,
+        28
+      ]
+    },
+    "stats": {
+      "enhanced_damage": [
+        530,
+        650
+      ],
+      "defense_ignored": [
+        30,
+        40
+      ],
+      "additive_arcane_damage": [
+        350,
+        420
+      ],
+      "additive_cold_damage": [
+        330,
+        380
+      ],
+      "gold_find": 35,
+      "faster_hit_recovery": 40,
+      "life_steal": 7,
+      "to_dexterity": 10,
+      "attack_damage": 20
     },
     "requiresLevel": 57,
     "requiresItemLevel": 1
@@ -1072,17 +2252,37 @@
     "allowedBaseTypes": [
       "Shield"
     ],
+    "skillBonuses": {
+      "Defiance Aura": [
+        22,
+        28
+      ]
+    },
     "stats": {
-      "defense": 89,
-      "enhanced_defense": 260,
+      "enhanced_defense": [
+        220,
+        260
+      ],
       "all_skills": 3,
-      "to_armor": 80,
+      "to_armor": [
+        50,
+        80
+      ],
+      "max_cold_resistance": 5,
+      "max_fire_resistance": 5,
+      "physical_damage_reduction": 5,
       "mana_steal": 7,
       "attack_damage": 20,
-      "arcane_skill_damage": 5,
-      "physical_damage_reduction": 5,
-      "magic_find": 15
+      "magic_find": 15,
+      "arcane_skill_damage": 5
     },
+    "procs": [
+      {
+        "trigger": "on_attack",
+        "chance": 15,
+        "description": "cast Life Tap Level 18"
+      }
+    ],
     "requiresLevel": 57,
     "requiresItemLevel": 1
   },
@@ -1105,16 +2305,72 @@
       "Gun",
       "Chainsaw"
     ],
+    "twoHanded": false,
     "stats": {
-      "enhanced_damage": 570,
-      "all_skills": 1,
+      "enhanced_damage": [
+        470,
+        570
+      ],
+      "all_skills": 2,
       "crushing_blow_chance": 20,
-      "attack_rating_pct": 15,
       "life_steal": 5,
-      "mana_steal": 7,
+      "all_resistances": 8,
+      "attack_rating_pct": 15,
       "attack_damage": 20,
-      "all_resistances": 20
+      "mana_steal": 7,
+      "enhanced_defense": 15
     },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Explosive Kunai Level [25-35]"
+      }
+    ],
+    "requiresLevel": 57,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_kogarasumaru_2h",
+    "name": "Kogarasumaru",
+    "runes": [
+      "rune_um",
+      "rune_gul",
+      "rune_qi",
+      "rune_vex",
+      "rune_old"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace",
+      "Bow",
+      "Gun",
+      "Chainsaw"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "enhanced_damage": [
+        620,
+        770
+      ],
+      "all_skills": 4,
+      "crushing_blow_chance": 30,
+      "life_steal": 7,
+      "all_resistances": 8,
+      "attack_rating_pct": 15,
+      "attack_damage": 20,
+      "mana_steal": 7,
+      "enhanced_defense": 15
+    },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 20,
+        "description": "cast Explosive Kunai Level [25-35]"
+      }
+    ],
     "requiresLevel": 57,
     "requiresItemLevel": 1
   },
@@ -1137,16 +2393,88 @@
       "Gun",
       "Chainsaw"
     ],
+    "twoHanded": false,
     "stats": {
-      "enhanced_damage": 670,
+      "enhanced_damage": [
+        420,
+        470
+      ],
       "increased_attack_speed": 40,
-      "attack_rating_pct": 15,
-      "to_strength": 10,
-      "additive_lightning_damage": 6180,
+      "additive_lightning_damage": [
+        3800,
+        4820
+      ],
+      "lightning_skill_damage": [
+        25,
+        35
+      ],
+      "ignore_lightning_res": [
+        15,
+        20
+      ],
       "attack_damage": 20,
-      "lightning_skill_damage": 35,
-      "ignore_lightning_res": 25
+      "to_strength": 10,
+      "attack_rating_pct": 15
     },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Lightning Fury Level [50-60]"
+      }
+    ],
+    "requiresLevel": 57,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_mj_lner_2h",
+    "name": "Mjölner",
+    "runes": [
+      "rune_qi",
+      "rune_ert",
+      "rune_fel",
+      "rune_gul"
+    ],
+    "allowedBaseTypes": [
+      "Claw",
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace",
+      "Bow",
+      "Gun",
+      "Chainsaw"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "enhanced_damage": [
+        520,
+        670
+      ],
+      "increased_attack_speed": 40,
+      "additive_lightning_damage": [
+        5140,
+        6180
+      ],
+      "lightning_skill_damage": [
+        30,
+        40
+      ],
+      "ignore_lightning_res": [
+        20,
+        25
+      ],
+      "attack_damage": 20,
+      "to_strength": 10,
+      "attack_rating_pct": 15
+    },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Lightning Fury Level [60-70]"
+      }
+    ],
     "requiresLevel": 57,
     "requiresItemLevel": 1
   },
@@ -1163,15 +2491,69 @@
       "Throwing",
       "Bow"
     ],
+    "twoHanded": false,
+    "skillBonuses": {
+      "Fanaticism Aura": [
+        19,
+        29
+      ]
+    },
     "stats": {
-      "enhanced_damage": 645,
-      "all_skills": 4,
-      "attack_rating": 500,
-      "defense_ignored": 40,
-      "to_strength": 25,
+      "enhanced_damage": 430,
+      "all_skills": [
+        1,
+        2
+      ],
+      "defense_ignored": 30,
+      "attack_rating": 300,
+      "all_resistances": [
+        15,
+        30
+      ],
+      "increased_attack_speed": 30,
       "attack_damage": 20,
-      "all_resistances": 40,
-      "gold_find": 20
+      "gold_find": 5,
+      "enhanced_defense": 15
+    },
+    "requiresLevel": 57,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_valkyrie_2h",
+    "name": "Valkyrie",
+    "runes": [
+      "rune_qi",
+      "rune_lem",
+      "rune_old"
+    ],
+    "allowedBaseTypes": [
+      "Polearm",
+      "Throwing",
+      "Bow"
+    ],
+    "twoHanded": true,
+    "skillBonuses": {
+      "Fanaticism Aura": [
+        25,
+        42
+      ]
+    },
+    "stats": {
+      "enhanced_damage": 620,
+      "all_skills": [
+        2,
+        4
+      ],
+      "defense_ignored": 40,
+      "attack_rating": 500,
+      "all_resistances": [
+        30,
+        40
+      ],
+      "increased_attack_speed": 30,
+      "attack_damage": 20,
+      "gold_find": 5,
+      "enhanced_defense": 15
     },
     "requiresLevel": 57,
     "requiresItemLevel": 1
@@ -1195,17 +2577,93 @@
       "Gun",
       "Bow"
     ],
+    "twoHanded": false,
+    "skillBonuses": {
+      "Combat Orders": [
+        2,
+        6
+      ],
+      "Defensive Shout": [
+        1,
+        6
+      ],
+      "Odin's Fury": [
+        1,
+        4
+      ]
+    },
     "stats": {
-      "enhanced_damage": 590,
       "all_skills": 1,
       "increased_attack_speed": 20,
+      "enhanced_damage": [
+        350,
+        490
+      ],
+      "attacks_hit_multiple_enemies": 1,
+      "life_replenish_pct": [
+        8,
+        16
+      ],
       "life_steal": 7,
-      "to_intelligence": 10,
-      "attack_damage": 20,
       "fire_skill_damage": 5,
-      "life_replenish_pct": 16,
-      "magic_damage_reduction": 3,
-      "magic_find": 15
+      "magic_damage_reduction": 4,
+      "magic_find": 15,
+      "attack_damage": 20
+    },
+    "requiresLevel": 57,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_will_of_thanos_2h",
+    "name": "Will of Thanos",
+    "runes": [
+      "rune_ymn",
+      "rune_rex",
+      "rune_mal",
+      "rune_ist",
+      "rune_qi"
+    ],
+    "allowedBaseTypes": [
+      "Axe",
+      "Mace",
+      "Polearm",
+      "Staff",
+      "Cane",
+      "Gun",
+      "Bow"
+    ],
+    "twoHanded": true,
+    "skillBonuses": {
+      "Combat Orders": [
+        3,
+        8
+      ],
+      "Defensive Shout": [
+        2,
+        8
+      ],
+      "Odin's Fury": [
+        2,
+        6
+      ]
+    },
+    "stats": {
+      "all_skills": 2,
+      "increased_attack_speed": 15,
+      "enhanced_damage": [
+        550,
+        790
+      ],
+      "attacks_hit_multiple_enemies": 1,
+      "life_replenish_pct": [
+        12,
+        20
+      ],
+      "life_steal": 7,
+      "fire_skill_damage": 5,
+      "magic_damage_reduction": 4,
+      "magic_find": 15,
+      "attack_damage": 20
     },
     "requiresLevel": 57,
     "requiresItemLevel": 1
@@ -1225,16 +2683,83 @@
       "Bow",
       "Gun"
     ],
+    "twoHanded": false,
     "stats": {
-      "enhanced_damage": 725,
-      "all_skills": 4,
-      "increased_attack_speed": 60,
-      "skill_haste": 4,
-      "mana_steal": 23,
-      "arcane_skill_damage": 5,
-      "mana_per_kill": 2,
+      "enhanced_damage": [
+        400,
+        500
+      ],
+      "increased_attack_speed": [
+        20,
+        30
+      ],
+      "all_skills": [
+        1,
+        3
+      ],
       "all_resistances": 75,
-      "magic_find": 15
+      "mana_steal": 19,
+      "melee_range": [
+        15,
+        25
+      ],
+      "movement_speed": [
+        30,
+        40
+      ],
+      "arcane_skill_damage": 5,
+      "attack_damage": 20,
+      "skill_haste": 4,
+      "magic_find": 15,
+      "mana_per_kill": 2
+    },
+    "requiresLevel": 57,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_windstride_2h",
+    "name": "Windstride",
+    "runes": [
+      "rune_del",
+      "rune_qi",
+      "rune_hel",
+      "rune_ist",
+      "rune_tor",
+      "rune_vex"
+    ],
+    "allowedBaseTypes": [
+      "Bow",
+      "Gun"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "enhanced_damage": [
+        620,
+        725
+      ],
+      "increased_attack_speed": [
+        40,
+        60
+      ],
+      "all_skills": [
+        2,
+        4
+      ],
+      "all_resistances": 75,
+      "mana_steal": 17,
+      "melee_range": [
+        15,
+        25
+      ],
+      "movement_speed": [
+        50,
+        60
+      ],
+      "arcane_skill_damage": 5,
+      "attack_damage": 20,
+      "skill_haste": 4,
+      "magic_find": 15,
+      "mana_per_kill": 2
     },
     "requiresLevel": 57,
     "requiresItemLevel": 1
@@ -1252,18 +2777,28 @@
       "Helmet"
     ],
     "stats": {
-      "defense": 80,
-      "enhanced_damage": 50,
-      "enhanced_defense": 385,
-      "all_skills": 2,
+      "enhanced_defense": [
+        155,
+        255
+      ],
+      "all_skills": [
+        1,
+        2
+      ],
+      "to_vitality": [
+        10,
+        15
+      ],
+      "to_strength": [
+        10,
+        15
+      ],
+      "all_attributes": 15,
+      "attack_rating_pct": 5,
       "increased_attack_speed": 25,
       "deadly_blow": 10,
-      "attack_rating_pct": 5,
-      "to_strength": 15,
-      "to_intelligence": 15,
-      "all_attributes": 15,
-      "attack_damage": 20,
-      "all_resistances": 8
+      "all_resistances": 8,
+      "attack_damage": 20
     },
     "requiresLevel": 57,
     "requiresItemLevel": 1
@@ -1284,17 +2819,83 @@
       "Mace",
       "Polearm"
     ],
+    "twoHanded": false,
     "stats": {
-      "enhanced_damage": 740,
-      "increased_attack_speed": 40,
-      "skill_haste": 4,
-      "deadly_blow": 50,
-      "attack_rating_pct": 40,
-      "to_strength": 10,
+      "enhanced_damage": [
+        480,
+        540
+      ],
+      "attack_rating_pct": 30,
+      "increased_attack_speed": [
+        30,
+        40
+      ],
+      "additive_physical_damage": [
+        18,
+        28
+      ],
+      "deadly_blow": 35,
       "to_vitality": 10,
-      "additive_fire_damage": 460,
-      "poison_skill_damage": 5
+      "to_strength": 10,
+      "poison_skill_damage": 5,
+      "skill_haste": 4,
+      "defense_vs_missiles": 15
     },
+    "procs": [
+      {
+        "trigger": "on_attack",
+        "chance": 35,
+        "description": "cast Heavy Ball Level [20-30]"
+      }
+    ],
+    "requiresLevel": 59,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_big_joe_2h",
+    "name": "Big Joe",
+    "runes": [
+      "rune_xo",
+      "rune_io",
+      "rune_fel",
+      "rune_tul",
+      "rune_hel",
+      "rune_naf"
+    ],
+    "allowedBaseTypes": [
+      "Chainsaw",
+      "Mace",
+      "Polearm"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "enhanced_damage": [
+        680,
+        740
+      ],
+      "attack_rating_pct": 40,
+      "increased_attack_speed": [
+        25,
+        35
+      ],
+      "additive_physical_damage": [
+        28,
+        38
+      ],
+      "deadly_blow": 40,
+      "to_vitality": 10,
+      "to_strength": 10,
+      "poison_skill_damage": 5,
+      "skill_haste": 4,
+      "defense_vs_missiles": 15
+    },
+    "procs": [
+      {
+        "trigger": "on_attack",
+        "chance": 35,
+        "description": "cast Heavy Ball Level [20-30]"
+      }
+    ],
     "requiresLevel": 59,
     "requiresItemLevel": 1
   },
@@ -1308,7 +2909,6 @@
       "rune_xo"
     ],
     "allowedBaseTypes": [
-      "Armor",
       "Axe",
       "Mace",
       "Sword",
@@ -1317,18 +2917,115 @@
       "Gun",
       "Polearm"
     ],
+    "twoHanded": false,
     "stats": {
-      "defense": 240,
-      "enhanced_damage": 250,
-      "enhanced_defense": 850,
+      "enhanced_damage": 500,
       "faster_cast_rate": 15,
-      "deadly_blow": 25,
+      "life_based_on_level": 150,
+      "all_resistances": [
+        25,
+        30
+      ],
       "attack_rating": 50,
+      "physical_damage_reduction": 4,
       "arcane_skill_damage": 5,
-      "damage_reduced": 20,
-      "physical_damage_reduction": 7,
-      "all_resistances": 40
+      "deadly_blow": 25
     },
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 20,
+        "description": "cast Frozen Hide Level 15"
+      }
+    ],
+    "requiresLevel": 59,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_fortress_2h",
+    "name": "Fortress",
+    "runes": [
+      "rune_ol",
+      "rune_sal",
+      "rune_del",
+      "rune_xo"
+    ],
+    "allowedBaseTypes": [
+      "Axe",
+      "Mace",
+      "Sword",
+      "Staff",
+      "Bow",
+      "Gun",
+      "Polearm"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "enhanced_damage": 750,
+      "faster_cast_rate": 15,
+      "life_based_on_level": 150,
+      "all_resistances": [
+        25,
+        30
+      ],
+      "attack_rating": 50,
+      "physical_damage_reduction": 4,
+      "arcane_skill_damage": 5,
+      "deadly_blow": 25
+    },
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 20,
+        "description": "cast Frozen Hide Level 15"
+      }
+    ],
+    "requiresLevel": 59,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_fortress_armor",
+    "name": "Fortress",
+    "runes": [
+      "rune_ol",
+      "rune_sal",
+      "rune_del",
+      "rune_xo"
+    ],
+    "allowedBaseTypes": [
+      "Armor"
+    ],
+    "stats": {
+      "enhanced_defense": [
+        800,
+        1000
+      ],
+      "enhanced_damage": [
+        290,
+        350
+      ],
+      "faster_cast_rate": 15,
+      "life_based_on_level": 150,
+      "damage_reduced": [
+        100,
+        125
+      ],
+      "all_resistances": [
+        30,
+        40
+      ],
+      "attack_rating": 50,
+      "physical_damage_reduction": 4,
+      "arcane_skill_damage": 5,
+      "deadly_blow": 25
+    },
+    "procs": [
+      {
+        "trigger": "when_struck",
+        "chance": 20,
+        "description": "cast Frozen Hide Level 65"
+      }
+    ],
     "requiresLevel": 59,
     "requiresItemLevel": 1
   },
@@ -1344,18 +3041,27 @@
     "allowedBaseTypes": [
       "Armor"
     ],
+    "skillBonuses": {
+      "Thorn’s Aura": [
+        15,
+        22
+      ]
+    },
     "stats": {
-      "defense": 525,
-      "defense_ignored": 5,
-      "attack_damage": 20,
-      "poison_skill_damage": 50,
-      "fire_skill_damage": 5,
-      "mana_replenish_pct": 15,
       "faster_hit_recovery": 50,
-      "life_per_kill": 15,
+      "poison_skill_damage": [
+        25,
+        50
+      ],
+      "defense": 300,
       "increased_mana": 15,
+      "mana_replenish_pct": 15,
       "fire_resistance": 30,
-      "poison_resistance": 100
+      "poison_resistance": 100,
+      "life_per_kill": 15,
+      "fire_skill_damage": 5,
+      "attack_damage": 20,
+      "defense_ignored": 5
     },
     "requiresLevel": 61,
     "requiresItemLevel": 1
@@ -1377,17 +3083,45 @@
       "Flask"
     ],
     "stats": {
-      "arcane_skills": 5,
-      "skill_haste": 25,
-      "mana_replenish": 6,
-      "to_intelligence": 20,
-      "flat_arcane_skill_damage": 38,
-      "increased_mana": 25,
-      "life": 350,
+      "arcane_skills": [
+        3,
+        5
+      ],
+      "flat_arcane_skill_damage": [
+        12,
+        26
+      ],
+      "skill_haste": [
+        19,
+        29
+      ],
       "arcane_resistance": 40,
-      "fire_resistance": 26,
-      "lightning_resistance": 37
+      "lightning_resistance": [
+        20,
+        40
+      ],
+      "fire_resistance": [
+        20,
+        40
+      ],
+      "to_intelligence": [
+        15,
+        20
+      ],
+      "mana_replenish": [
+        3,
+        6
+      ],
+      "increased_mana": 25,
+      "life_based_on_level": 350
     },
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 25,
+        "description": "cast Flash Heal Level [20-30]"
+      }
+    ],
     "requiresLevel": 61,
     "requiresItemLevel": 1
   },
@@ -1402,13 +3136,31 @@
     "allowedBaseTypes": [
       "Helmet"
     ],
+    "skillBonuses": {
+      "Digest Souls": [
+        8,
+        15
+      ]
+    },
     "stats": {
-      "defense": 80,
-      "enhanced_defense": 325,
-      "magic_skill_damage": 40,
+      "enhanced_defense": [
+        225,
+        325
+      ],
+      "random_skill_element": [
+        3,
+        6
+      ],
+      "magic_skill_damage": [
+        20,
+        40
+      ],
+      "all_resistances": [
+        18,
+        23
+      ],
       "increased_mana": 10,
-      "magic_damage_reduction": 4,
-      "all_resistances": 10
+      "magic_damage_reduction": 4
     },
     "requiresLevel": 61,
     "requiresItemLevel": 1
@@ -1425,15 +3177,42 @@
       "Boots"
     ],
     "stats": {
-      "defense": 64,
-      "enhanced_defense": 300,
-      "all_skills": 2,
-      "movement_speed": 30,
+      "enhanced_defense": [
+        220,
+        300
+      ],
+      "random_skill_element": [
+        2,
+        3
+      ],
+      "movement_speed": [
+        20,
+        30
+      ],
+      "all_skills": [
+        1,
+        2
+      ],
+      "magic_skill_damage": [
+        15,
+        30
+      ],
+      "ignore_all_res": [
+        3,
+        10
+      ],
       "mana_cost_reduction": 3,
-      "magic_skill_damage": 30,
-      "increased_mana": 10,
-      "damage_recouped_as_mana": 5
+      "damage_recouped_as_mana": 5,
+      "increased_mana": 10
     },
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 3,
+        "description": "cast Mana Devour Level [12-22]",
+        "details": "Chance: 3-6%."
+      }
+    ],
     "requiresLevel": 61,
     "requiresItemLevel": 1
   },
@@ -1452,14 +3231,83 @@
       "Staff",
       "Cane"
     ],
+    "twoHanded": false,
+    "skillBonuses": {
+      "Sand Guardians": [
+        4,
+        6
+      ],
+      "Circle of Guardians": [
+        2,
+        3
+      ],
+      "Link of Sand": [
+        2,
+        3
+      ],
+      "Call For War": [
+        2,
+        4
+      ]
+    },
     "stats": {
-      "all_skills": 4,
-      "skill_haste": 50,
-      "mana_cost_reduction": 3,
+      "skill_haste": 39,
+      "all_skills": [
+        5,
+        8
+      ],
+      "flat_magic_skill_damage": [
+        22,
+        44
+      ],
       "mana_steal": 7,
-      "arcane_skill_damage": 5,
       "mana_per_kill": 2,
-      "increased_mana": 10
+      "mana_cost_reduction": 3,
+      "increased_mana": 20
+    },
+    "requiresLevel": 61,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_flowing_sands_2h",
+    "name": "Flowing Sands",
+    "runes": [
+      "rune_vex",
+      "rune_tor",
+      "rune_pul",
+      "rune_sur",
+      "rune_hel",
+      "rune_sur"
+    ],
+    "allowedBaseTypes": [
+      "Staff",
+      "Cane"
+    ],
+    "twoHanded": true,
+    "skillBonuses": {
+      "Sand Guardians": [
+        12,
+        18
+      ],
+      "Call For War": [
+        10,
+        16
+      ]
+    },
+    "stats": {
+      "skill_haste": 54,
+      "all_skills": [
+        6,
+        8
+      ],
+      "flat_magic_skill_damage": [
+        22,
+        44
+      ],
+      "mana_steal": 7,
+      "mana_per_kill": 2,
+      "mana_cost_reduction": 3,
+      "increased_mana": 20
     },
     "requiresLevel": 61,
     "requiresItemLevel": 1
@@ -1482,17 +3330,72 @@
       "Gun",
       "Chainsaw"
     ],
+    "twoHanded": false,
+    "skillBonuses": {
+      "Vengeance": [
+        15,
+        25
+      ]
+    },
     "stats": {
-      "enhanced_damage": 570,
-      "increased_attack_speed": 20,
-      "crushing_blow_chance": 33,
-      "attack_rating_pct": 15,
+      "enhanced_damage": [
+        430,
+        570
+      ],
+      "increased_attack_speed": 25,
       "defense_ignored": 25,
+      "crushing_blow_chance": 33,
       "open_wounds": 50,
-      "to_strength": 30,
+      "attacks_hit_multiple_enemies": 1,
+      "gold_find": 25,
       "magic_damage_reduction": 4,
       "all_resistances": 8,
-      "gold_find": 25
+      "attack_rating_pct": 15,
+      "increased_mana": 10
+    },
+    "requiresLevel": 61,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_ravager_2h",
+    "name": "Ravager",
+    "runes": [
+      "rune_mal",
+      "rune_um",
+      "rune_gul",
+      "rune_sur"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace",
+      "Bow",
+      "Gun",
+      "Chainsaw"
+    ],
+    "twoHanded": true,
+    "skillBonuses": {
+      "Vengeance": [
+        25,
+        35
+      ]
+    },
+    "stats": {
+      "enhanced_damage": [
+        530,
+        670
+      ],
+      "increased_attack_speed": 25,
+      "defense_ignored": 25,
+      "crushing_blow_chance": 33,
+      "open_wounds": 50,
+      "attacks_hit_multiple_enemies": 1,
+      "gold_find": 40,
+      "magic_damage_reduction": 4,
+      "all_resistances": 8,
+      "attack_rating_pct": 15,
+      "increased_mana": 10
     },
     "requiresLevel": 61,
     "requiresItemLevel": 1
@@ -1507,18 +3410,68 @@
     ],
     "allowedBaseTypes": [
       "Flask",
-      "Wand"
+      "Wand",
+      "Throwing"
     ],
+    "twoHanded": false,
     "stats": {
-      "all_skills": 1,
-      "mana_replenish": 6,
-      "to_energy": 30,
-      "flat_poison_skill_damage": 38,
-      "poison_skill_damage": 35,
-      "ignore_poison_res": 20,
-      "mana_replenish_pct": 15,
+      "to_energy": [
+        15,
+        30
+      ],
       "increased_mana": 25,
-      "physical_damage_reduction": 7
+      "faster_cast_rate": 30,
+      "mana_replenish_pct": 15,
+      "all_skills": 1,
+      "poison_skills": 2,
+      "flat_poison_skill_damage": [
+        25,
+        40
+      ],
+      "poison_skill_damage": [
+        25,
+        40
+      ],
+      "ignore_poison_res": 30,
+      "physical_damage_reduction": 4
+    },
+    "requiresLevel": 61,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_virulence_2h",
+    "name": "Virulence",
+    "runes": [
+      "rune_tul",
+      "rune_sur",
+      "rune_sal"
+    ],
+    "allowedBaseTypes": [
+      "Flask",
+      "Wand",
+      "Throwing"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "to_energy": [
+        30,
+        45
+      ],
+      "increased_mana": 30,
+      "faster_cast_rate": 30,
+      "mana_replenish_pct": 18,
+      "all_skills": 3,
+      "poison_skills": 4,
+      "flat_poison_skill_damage": [
+        40,
+        60
+      ],
+      "poison_skill_damage": [
+        40,
+        55
+      ],
+      "ignore_poison_res": 50,
+      "physical_damage_reduction": 4
     },
     "requiresLevel": 61,
     "requiresItemLevel": 1
@@ -1538,18 +3491,78 @@
       "Bow",
       "Gun"
     ],
+    "twoHanded": false,
     "stats": {
-      "all_skills": 4,
-      "enhanced_damage": 940,
-      "increased_attack_speed": 30,
-      "crushing_blow_chance": 8,
-      "attack_rating_pct": 15,
-      "to_energy": 10,
-      "to_intelligence": 25,
+      "enhanced_damage": [
+        560,
+        640
+      ],
+      "increased_attack_speed": 25,
+      "melee_range": 15,
+      "all_skills": [
+        1,
+        2
+      ],
       "increased_mana": 10,
-      "physical_damage_reduction": 7,
-      "magic_find": 15
+      "deadly_blow": 1,
+      "deadly_blow_effectiveness": 8,
+      "attack_rating_pct": 15,
+      "physical_damage_reduction": 4,
+      "magic_find": 15,
+      "to_energy": 10
     },
+    "procs": [
+      {
+        "trigger": "on_attack",
+        "chance": 100,
+        "description": "cast Multishot Level [10-20]"
+      }
+    ],
+    "requiresLevel": 63,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_arcanum_2h",
+    "name": "Arcanum",
+    "runes": [
+      "rune_sur",
+      "rune_ber",
+      "rune_gul",
+      "rune_sal",
+      "rune_ist",
+      "rune_lum"
+    ],
+    "allowedBaseTypes": [
+      "Bow",
+      "Gun"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "enhanced_damage": [
+        760,
+        940
+      ],
+      "increased_attack_speed": 30,
+      "melee_range": 15,
+      "all_skills": [
+        2,
+        4
+      ],
+      "increased_mana": 10,
+      "deadly_blow": 1,
+      "deadly_blow_effectiveness": 8,
+      "attack_rating_pct": 15,
+      "physical_damage_reduction": 4,
+      "magic_find": 15,
+      "to_energy": 10
+    },
+    "procs": [
+      {
+        "trigger": "on_attack",
+        "chance": 100,
+        "description": "cast Multishot Level [15-30]"
+      }
+    ],
     "requiresLevel": 63,
     "requiresItemLevel": 1
   },
@@ -1567,17 +3580,89 @@
       "Bow",
       "Gun"
     ],
+    "twoHanded": false,
     "stats": {
-      "enhanced_damage": 940,
+      "enhanced_damage": [
+        580,
+        640
+      ],
+      "attack_rating": 180,
+      "all_attributes": [
+        8,
+        15
+      ],
+      "additive_lightning_damage": [
+        320,
+        360
+      ],
+      "additive_arcane_damage": [
+        320,
+        360
+      ],
+      "crushing_blow_chance": 25,
       "mana_cost_reduction": 3,
-      "crushing_blow_chance": 38,
-      "attack_rating": 250,
       "to_energy": 10,
-      "all_attributes": 15,
-      "additive_arcane_damage": 460,
-      "additive_lightning_damage": 460,
+      "deadly_blow": 1,
+      "deadly_blow_effectiveness": 8,
       "magic_damage_reduction": 4
     },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 10,
+        "description": "cast Life Tap Level 10"
+      }
+    ],
+    "requiresLevel": 63,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_carnage_2h",
+    "name": "Carnage",
+    "runes": [
+      "rune_pul",
+      "rune_lum",
+      "rune_ber",
+      "rune_mal"
+    ],
+    "allowedBaseTypes": [
+      "Claw",
+      "Bow",
+      "Gun"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "enhanced_damage": [
+        780,
+        940
+      ],
+      "attack_rating": 250,
+      "all_attributes": [
+        8,
+        15
+      ],
+      "additive_lightning_damage": [
+        420,
+        460
+      ],
+      "additive_arcane_damage": [
+        420,
+        460
+      ],
+      "crushing_blow_chance": 35,
+      "mana_cost_reduction": 3,
+      "to_energy": 10,
+      "deadly_blow": 1,
+      "deadly_blow_effectiveness": 8,
+      "magic_damage_reduction": 4
+    },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 10,
+        "description": "cast Life Tap Level 10"
+      }
+    ],
     "requiresLevel": 63,
     "requiresItemLevel": 1
   },
@@ -1599,16 +3684,97 @@
       "Sword",
       "Mace"
     ],
-    "stats": {
-      "mana_cost_reduction": 3,
-      "crushing_blow_chance": 10,
-      "to_energy": 24,
-      "fire_skill_damage": 50,
-      "mana_per_kill": 12,
-      "mana": 15,
-      "all_resistances": 20,
-      "magic_find": 40
+    "twoHanded": false,
+    "skillBonuses": {
+      "Scorching Aura": [
+        30,
+        58
+      ]
     },
+    "stats": {
+      "fire_skill_damage": [
+        25,
+        35
+      ],
+      "magic_find": [
+        15,
+        30
+      ],
+      "fire_skills": [
+        2,
+        3
+      ],
+      "faster_cast_rate": 25,
+      "mana_cost_reduction": 3,
+      "all_resistances": 8,
+      "increased_mana": 10,
+      "deadly_blow": 1,
+      "deadly_blow_effectiveness": 8,
+      "to_energy": 10
+    },
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 25,
+        "description": "cast Comet Level [40-50]"
+      }
+    ],
+    "requiresLevel": 63,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_catastrophe_2h",
+    "name": "Catastrophe",
+    "runes": [
+      "rune_pul",
+      "rune_um",
+      "rune_sur",
+      "rune_ber",
+      "rune_lum"
+    ],
+    "allowedBaseTypes": [
+      "Staff",
+      "Cane",
+      "Spellblade",
+      "Book",
+      "Sword",
+      "Mace"
+    ],
+    "twoHanded": true,
+    "skillBonuses": {
+      "Scorching Aura": [
+        52,
+        82
+      ]
+    },
+    "stats": {
+      "fire_skill_damage": [
+        30,
+        50
+      ],
+      "magic_find": [
+        20,
+        40
+      ],
+      "fire_skills": [
+        3,
+        5
+      ],
+      "faster_cast_rate": 45,
+      "mana_cost_reduction": 3,
+      "all_resistances": 8,
+      "increased_mana": 10,
+      "deadly_blow": 1,
+      "deadly_blow_effectiveness": 8,
+      "to_energy": 10
+    },
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 30,
+        "description": "cast Comet Level [60-80]"
+      }
+    ],
     "requiresLevel": 63,
     "requiresItemLevel": 1
   },
@@ -1624,17 +3790,39 @@
       "Boots"
     ],
     "stats": {
-      "defense": 64,
-      "enhanced_defense": 226,
-      "all_skills": 3,
-      "physical_skills": 3,
-      "movement_speed": 59,
-      "deadly_blow": 25,
-      "crushing_blow_chance": 14,
-      "mana_steal": 15,
+      "enhanced_defense": [
+        220,
+        300
+      ],
+      "physical_skills": [
+        2,
+        3
+      ],
       "defense_ignored": 25,
-      "faster_hit_recovery": 150
+      "movement_speed": 35,
+      "all_skills": [
+        1,
+        3
+      ],
+      "mana_steal": [
+        7,
+        15
+      ],
+      "crushing_blow_chance": [
+        4,
+        14
+      ],
+      "deadly_blow": 27,
+      "deadly_blow_effectiveness": 16
     },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 3,
+        "description": "cast Agility Level [12-22]",
+        "details": "Chance: 3-10%."
+      }
+    ],
     "requiresLevel": 63,
     "requiresItemLevel": 1
   },
@@ -1651,17 +3839,17 @@
       "Armor"
     ],
     "stats": {
-      "defense": 240,
-      "enhanced_defense": 75,
       "all_skills": 2,
-      "crushing_blow_chance": 8,
       "life_steal": 8,
+      "enhanced_defense": 75,
       "to_strength": 30,
-      "arcane_skill_damage": 5,
       "life_replenish_pct": 7,
-      "physical_damage_reduction": 8,
       "all_resistances": 73,
-      "magic_find": 30
+      "physical_damage_reduction": 8,
+      "magic_find": 30,
+      "arcane_skill_damage": 5,
+      "deadly_blow": 1,
+      "deadly_blow_effectiveness": 8
     },
     "requiresLevel": 63,
     "requiresItemLevel": 1
@@ -1685,18 +3873,113 @@
       "Gun",
       "Chainsaw"
     ],
+    "twoHanded": false,
+    "skillBonuses": {
+      "Master Poisoner": [
+        14,
+        24
+      ]
+    },
     "stats": {
-      "enhanced_damage": 720,
-      "poison_skills": 3,
-      "increased_attack_speed": 25,
-      "deadly_blow": 25,
-      "crushing_blow_chance": 8,
-      "additive_physical_damage": 75,
+      "enhanced_damage": [
+        700,
+        820
+      ],
+      "increased_attack_speed": [
+        28,
+        35
+      ],
+      "poison_skills": [
+        3,
+        4
+      ],
+      "all_skills": 2,
+      "flat_poison_skill_damage": [
+        25,
+        55
+      ],
+      "increased_poisoned_frequency": [
+        10,
+        20
+      ],
+      "ignore_poison_res": [
+        20,
+        25
+      ],
+      "extra_damage_poisoned": [
+        35,
+        45
+      ],
       "defense_ignored": 5,
-      "extra_damage_poisoned": 30,
-      "ignore_poison_res": 25,
       "mana_per_kill": 2,
-      "magic_damage_reduction": 4
+      "deadly_blow": 26,
+      "magic_damage_reduction": 4,
+      "deadly_blow_effectiveness": 8
+    },
+    "requiresLevel": 63,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_grief_2h",
+    "name": "Grief",
+    "runes": [
+      "rune_eth",
+      "rune_tor",
+      "rune_xo",
+      "rune_mal",
+      "rune_ber"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace",
+      "Bow",
+      "Gun",
+      "Chainsaw"
+    ],
+    "twoHanded": true,
+    "skillBonuses": {
+      "Master Poisoner": [
+        18,
+        30
+      ]
+    },
+    "stats": {
+      "enhanced_damage": [
+        850,
+        1000
+      ],
+      "increased_attack_speed": [
+        28,
+        35
+      ],
+      "poison_skills": [
+        4,
+        6
+      ],
+      "all_skills": 3,
+      "additive_physical_damage": [
+        100,
+        125
+      ],
+      "increased_poisoned_frequency": [
+        15,
+        25
+      ],
+      "ignore_poison_res": [
+        30,
+        35
+      ],
+      "extra_damage_poisoned": [
+        40,
+        60
+      ],
+      "defense_ignored": 5,
+      "mana_per_kill": 2,
+      "deadly_blow": 26,
+      "magic_damage_reduction": 4,
+      "deadly_blow_effectiveness": 8
     },
     "requiresLevel": 63,
     "requiresItemLevel": 1
@@ -1720,19 +4003,90 @@
       "Gun",
       "Chainsaw"
     ],
+    "twoHanded": false,
     "stats": {
       "enhanced_damage": 550,
-      "increased_attack_speed": 30,
-      "deadly_blow": 25,
-      "crushing_blow_chance": 8,
-      "mana_steal": 7,
       "defense_ignored": 30,
-      "to_strength": 30,
-      "to_dexterity": 10,
-      "arcane_skill_damage": 45,
-      "fire_skill_damage": 45,
-      "increased_life": 10
+      "fire_skill_damage": [
+        35,
+        45
+      ],
+      "arcane_skill_damage": [
+        35,
+        45
+      ],
+      "increased_attack_speed": 30,
+      "mana_steal": 7,
+      "deadly_blow": 26,
+      "deadly_blow_effectiveness": 8,
+      "increased_life": 10,
+      "to_dexterity": 10
     },
+    "procs": [
+      {
+        "trigger": "on_attack",
+        "chance": 25,
+        "description": "cast Fire Nova Level [45-75]"
+      },
+      {
+        "trigger": "on_hit",
+        "chance": 30,
+        "description": "cast Tectonic Boulder Level [80-125]"
+      }
+    ],
+    "requiresLevel": 65,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_atonement_2h",
+    "name": "Atonement",
+    "runes": [
+      "rune_vex",
+      "rune_xo",
+      "rune_ber",
+      "rune_jah",
+      "rune_co"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace",
+      "Bow",
+      "Gun",
+      "Chainsaw"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "enhanced_damage": 700,
+      "defense_ignored": 40,
+      "fire_skill_damage": [
+        70,
+        90
+      ],
+      "arcane_skill_damage": [
+        70,
+        90
+      ],
+      "increased_attack_speed": 40,
+      "mana_steal": 7,
+      "deadly_blow": 26,
+      "deadly_blow_effectiveness": 8,
+      "increased_life": 10,
+      "to_dexterity": 10
+    },
+    "procs": [
+      {
+        "trigger": "on_attack",
+        "chance": 25,
+        "description": "cast Fire Nova Level [65-100]"
+      },
+      {
+        "trigger": "on_hit",
+        "chance": 30,
+        "description": "cast Tectonic Boulder Level [100-150]"
+      }
+    ],
     "requiresLevel": 65,
     "requiresItemLevel": 1
   },
@@ -1750,19 +4104,34 @@
       "Shield"
     ],
     "stats": {
-      "defense": 100,
-      "enhanced_defense": 50,
-      "all_skills": 2,
-      "crushing_blow_chance": 8,
-      "mana_steal": 7,
-      "extra_damage_burning": 60,
-      "fire_skill_damage": 50,
-      "ignore_fire_res": 30,
-      "increased_life": 10,
-      "increased_mana": 20,
+      "enhanced_defense": 350,
+      "ignore_fire_res": [
+        22,
+        30
+      ],
+      "fire_skill_damage": [
+        30,
+        50
+      ],
+      "extra_damage_burning": [
+        35,
+        60
+      ],
+      "fire_resistance": [
+        50,
+        75
+      ],
+      "all_skills": [
+        1,
+        2
+      ],
       "fire_absorption": 5,
       "all_resistances": 20,
-      "fire_resistance": 75
+      "mana_steal": 7,
+      "increased_mana": 20,
+      "increased_life": 10,
+      "deadly_blow": 1,
+      "deadly_blow_effectiveness": 8
     },
     "requiresLevel": 65,
     "requiresItemLevel": 1
@@ -1779,14 +4148,71 @@
       "Bow",
       "Gun"
     ],
+    "twoHanded": false,
     "stats": {
-      "enhanced_damage": 860,
-      "all_skills": 4,
-      "all_attributes": 60,
+      "enhanced_damage": [
+        620,
+        760
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "all_attributes": [
+        30,
+        45
+      ],
+      "increased_life": 10,
       "attack_damage": 20,
-      "mana_per_kill": 2,
-      "increased_life": 10
+      "mana_per_kill": 2
     },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 30,
+        "description": "cast Trigger Finger Level [50-65]"
+      }
+    ],
+    "requiresLevel": 65,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_deus_ex_machina_2h",
+    "name": "Deus Ex Machina",
+    "runes": [
+      "rune_jah",
+      "rune_qi",
+      "rune_tor"
+    ],
+    "allowedBaseTypes": [
+      "Bow",
+      "Gun"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "enhanced_damage": [
+        760,
+        860
+      ],
+      "all_skills": [
+        3,
+        4
+      ],
+      "all_attributes": [
+        40,
+        60
+      ],
+      "increased_life": 10,
+      "attack_damage": 20,
+      "mana_per_kill": 2
+    },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 30,
+        "description": "cast Trigger Finger Level [50-65]"
+      }
+    ],
     "requiresLevel": 65,
     "requiresItemLevel": 1
   },
@@ -1804,16 +4230,52 @@
       "Staff",
       "Cane"
     ],
+    "twoHanded": false,
     "stats": {
       "all_skills": 3,
       "faster_cast_rate": 40,
-      "mana_cost_reduction": 3,
-      "mana_steal": 7,
-      "to_dexterity": 10,
       "life_replenish_pct": 20,
-      "increased_life": 10,
       "increased_mana": 15,
-      "all_resistances": 30
+      "all_resistances": [
+        20,
+        30
+      ],
+      "to_dexterity": 10,
+      "mana_steal": 7,
+      "mana_cost_reduction": 3,
+      "increased_life": 10
+    },
+    "requiresLevel": 65,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_divinity_2h",
+    "name": "Divinity",
+    "runes": [
+      "rune_co",
+      "rune_vex",
+      "rune_pul",
+      "rune_jah"
+    ],
+    "allowedBaseTypes": [
+      "Mace",
+      "Staff",
+      "Cane"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "all_skills": 4,
+      "faster_cast_rate": 50,
+      "life_replenish_pct": 20,
+      "increased_mana": 15,
+      "all_resistances": [
+        30,
+        40
+      ],
+      "to_dexterity": 10,
+      "mana_steal": 7,
+      "mana_cost_reduction": 3,
+      "increased_life": 10
     },
     "requiresLevel": 65,
     "requiresItemLevel": 1
@@ -1835,18 +4297,89 @@
       "Mace",
       "Polearm"
     ],
+    "twoHanded": false,
     "stats": {
-      "enhanced_damage": 660,
-      "increased_attack_speed": 35,
-      "additive_physical_damage": 38,
-      "mana_steal": 7,
+      "enhanced_damage": [
+        550,
+        660
+      ],
+      "additive_physical_damage": [
+        18,
+        38
+      ],
+      "ignore_fire_res": [
+        20,
+        25
+      ],
+      "increased_attack_speed": [
+        20,
+        35
+      ],
       "defense_ignored": 40,
+      "attacks_hit_multiple_enemies": 1,
       "open_wounds": 20,
-      "ignore_lightning_res": 25,
-      "increased_life": 10,
+      "mana_steal": 7,
       "increased_mana": 10,
-      "physical_damage_reduction": 4
+      "physical_damage_reduction": 4,
+      "increased_life": 10
     },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Fire Enchant Level [20-25]"
+      }
+    ],
+    "requiresLevel": 65,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_harvester_2h",
+    "name": "Harvester",
+    "runes": [
+      "rune_vex",
+      "rune_sur",
+      "rune_eth",
+      "rune_sal",
+      "rune_jah"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Axe",
+      "Chainsaw",
+      "Mace",
+      "Polearm"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "enhanced_damage": [
+        750,
+        960
+      ],
+      "additive_physical_damage": [
+        22,
+        50
+      ],
+      "ignore_fire_res": [
+        25,
+        40
+      ],
+      "increased_attack_speed": 25,
+      "defense_ignored": 40,
+      "attacks_hit_multiple_enemies": 1,
+      "open_wounds": 20,
+      "mana_steal": 7,
+      "increased_mana": 10,
+      "physical_damage_reduction": 4,
+      "increased_life": 10
+    },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Fire Enchant Level [20-25]"
+      }
+    ],
     "requiresLevel": 65,
     "requiresItemLevel": 1
   },
@@ -1869,16 +4402,94 @@
       "Gun",
       "Chainsaw"
     ],
+    "twoHanded": false,
     "stats": {
-      "enhanced_damage": 670,
+      "enhanced_damage": [
+        320,
+        370
+      ],
       "increased_attack_speed": 30,
-      "life_steal": 12,
       "defense_ignored": 30,
+      "additive_arcane_damage": [
+        1250,
+        1600
+      ],
+      "additive_fire_damage": [
+        1250,
+        1600
+      ],
+      "additive_lightning_damage": [
+        1250,
+        1600
+      ],
+      "additive_cold_damage": [
+        1250,
+        1600
+      ],
+      "additive_poison_damage": [
+        1250,
+        1600
+      ],
+      "life_steal": 12,
+      "attacks_hit_multiple_enemies": 1,
       "to_strength": 10,
-      "additive_arcane_damage": 200,
-      "additive_lightning_damage": 200,
-      "additive_fire_damage": 200,
-      "additive_cold_damage": 200,
+      "attack_damage": 20,
+      "lightning_skill_damage": 5,
+      "increased_life": 10
+    },
+    "requiresLevel": 65,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_judge_2h",
+    "name": "Judge",
+    "runes": [
+      "rune_fel",
+      "rune_qi",
+      "rune_ert",
+      "rune_jah"
+    ],
+    "allowedBaseTypes": [
+      "Claw",
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace",
+      "Bow",
+      "Gun",
+      "Chainsaw"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "enhanced_damage": [
+        420,
+        570
+      ],
+      "increased_attack_speed": 40,
+      "defense_ignored": 40,
+      "additive_arcane_damage": [
+        1350,
+        2000
+      ],
+      "additive_fire_damage": [
+        1350,
+        2000
+      ],
+      "additive_lightning_damage": [
+        1350,
+        2000
+      ],
+      "additive_cold_damage": [
+        1350,
+        2000
+      ],
+      "additive_poison_damage": [
+        1350,
+        2000
+      ],
+      "life_steal": 12,
+      "attacks_hit_multiple_enemies": 1,
+      "to_strength": 10,
       "attack_damage": 20,
       "lightning_skill_damage": 5,
       "increased_life": 10
@@ -1898,18 +4509,41 @@
     "allowedBaseTypes": [
       "Shield"
     ],
-    "stats": {
-      "defense": 100,
-      "block_chance": 65,
-      "enhanced_damage": 90,
-      "fire_skills": 4,
-      "deadly_blow": 25,
-      "mana_steal": 14,
-      "ignore_lightning_res": 30,
-      "life": 50,
-      "increased_life": 10,
-      "max_lightning_resistance": 5
+    "skillBonuses": {
+      "Redemption Aura": [
+        10,
+        15
+      ]
     },
+    "stats": {
+      "random_skill_element": [
+        2,
+        3
+      ],
+      "enhanced_damage": [
+        80,
+        120
+      ],
+      "life": [
+        50,
+        80
+      ],
+      "all_resistances": [
+        20,
+        30
+      ],
+      "max_all_resistances": 5,
+      "mana_steal": 14,
+      "deadly_blow": 25,
+      "increased_life": 10
+    },
+    "procs": [
+      {
+        "trigger": "on_block",
+        "chance": 20,
+        "description": "cast Blazing Trail Level [20-30]"
+      }
+    ],
     "requiresLevel": 65,
     "requiresItemLevel": 1
   },
@@ -1927,15 +4561,89 @@
       "Bow",
       "Gun"
     ],
-    "stats": {
-      "enhanced_damage": 820,
-      "increased_attack_speed": 30,
-      "deadly_blow": 25,
-      "life_steal": 7,
-      "cold_skill_damage": 45,
-      "ignore_cold_res": 50,
-      "increased_life": 10
+    "twoHanded": false,
+    "skillBonuses": {
+      "Holy Freeze Aura": [
+        30,
+        48
+      ]
     },
+    "stats": {
+      "enhanced_damage": [
+        440,
+        520
+      ],
+      "increased_attack_speed": 29,
+      "cold_skill_damage": [
+        25,
+        35
+      ],
+      "ignore_cold_res": 35,
+      "additive_cold_damage": [
+        4000,
+        6000
+      ],
+      "life_steal": 7,
+      "increased_life": 10,
+      "deadly_blow": 25
+    },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 8,
+        "description": "cast Torrent Level 30"
+      }
+    ],
+    "requiresLevel": 65,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_potency_2h",
+    "name": "Potency",
+    "runes": [
+      "rune_ymn",
+      "rune_nut",
+      "rune_jah",
+      "rune_xo"
+    ],
+    "allowedBaseTypes": [
+      "Claw",
+      "Bow",
+      "Gun"
+    ],
+    "twoHanded": true,
+    "skillBonuses": {
+      "Holy Freeze Aura": [
+        40,
+        58
+      ]
+    },
+    "stats": {
+      "enhanced_damage": [
+        640,
+        820
+      ],
+      "increased_attack_speed": 29,
+      "cold_skill_damage": [
+        35,
+        45
+      ],
+      "ignore_cold_res": 50,
+      "additive_cold_damage": [
+        6000,
+        8000
+      ],
+      "life_steal": 7,
+      "increased_life": 10,
+      "deadly_blow": 25
+    },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 15,
+        "description": "cast Torrent Level 30"
+      }
+    ],
     "requiresLevel": 65,
     "requiresItemLevel": 1
   },
@@ -1950,15 +4658,49 @@
     "allowedBaseTypes": [
       "Helmet"
     ],
-    "stats": {
-      "enhanced_defense": 30,
-      "mana_cost_reduction": 3,
-      "to_vitality": 10,
-      "faster_hit_recovery": 30,
-      "increased_life": 16,
-      "all_resistances": 20,
-      "magic_find": 25
+    "skillBonuses": {
+      "High Voltage Aura": [
+        28,
+        40
+      ]
     },
+    "stats": {
+      "defense": [
+        150,
+        220
+      ],
+      "enhanced_defense": [
+        425,
+        550
+      ],
+      "faster_hit_recovery": [
+        35,
+        50
+      ],
+      "increased_stasis_damage": [
+        45,
+        60
+      ],
+      "increased_stasis_frequency": [
+        5,
+        15
+      ],
+      "all_skills": [
+        3,
+        4
+      ],
+      "magic_find": 50,
+      "mana_steal": 7,
+      "increased_life": 10,
+      "increased_mana": 10
+    },
+    "procs": [
+      {
+        "trigger": "on_spell_hit",
+        "chance": 5,
+        "description": "cast Lightning Surge Level [45-75]"
+      }
+    ],
     "requiresLevel": 65,
     "requiresItemLevel": 1
   },
@@ -1973,16 +4715,43 @@
     "allowedBaseTypes": [
       "Armor"
     ],
+    "skillBonuses": {
+      "Teleport": 1
+    },
     "stats": {
-      "all_skills": 3,
-      "movement_speed": 58,
-      "crushing_blow_chance": 8,
-      "to_armor": 8,
-      "life_per_kill": 19,
-      "increased_life": 17,
-      "damage_recouped_as_mana": 15,
-      "physical_damage_reduction": 7,
-      "magic_find": 34
+      "all_skills": [
+        2,
+        3
+      ],
+      "movement_speed": [
+        40,
+        60
+      ],
+      "defense": [
+        740,
+        780
+      ],
+      "strength_based_on_level": 75,
+      "increased_life": [
+        14,
+        19
+      ],
+      "physical_damage_reduction": [
+        6,
+        9
+      ],
+      "life_per_kill": [
+        12,
+        20
+      ],
+      "vitality_based_on_level": 50,
+      "magic_find": [
+        15,
+        50
+      ],
+      "damage_recouped_as_mana": 5,
+      "deadly_blow": 1,
+      "deadly_blow_effectiveness": 8
     },
     "requiresLevel": 65,
     "requiresItemLevel": 1
@@ -2000,14 +4769,76 @@
       "Bow",
       "Gun"
     ],
+    "twoHanded": false,
     "stats": {
-      "enhanced_damage": 940,
-      "deadly_blow": 25,
-      "attack_rating_pct": 45,
-      "additive_physical_damage": 38,
+      "enhanced_damage": [
+        560,
+        640
+      ],
+      "attack_rating_pct": 35,
+      "all_skills": [
+        3,
+        5
+      ],
       "increased_life": 10,
-      "magic_damage_reduction": 3
+      "deadly_blow": 25,
+      "magic_damage_reduction": 4
     },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 25,
+        "description": "cast Amplify Damage Level [30-45]"
+      },
+      {
+        "trigger": "when_struck",
+        "chance": 35,
+        "description": "cast Meat Shield Level 30"
+      }
+    ],
+    "requiresLevel": 65,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_true_aim_2h",
+    "name": "True Aim",
+    "runes": [
+      "rune_jah",
+      "rune_xo",
+      "rune_mal",
+      "rune_gul"
+    ],
+    "allowedBaseTypes": [
+      "Bow",
+      "Gun"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "enhanced_damage": [
+        760,
+        940
+      ],
+      "attack_rating_pct": 45,
+      "all_skills": [
+        5,
+        7
+      ],
+      "increased_life": 10,
+      "deadly_blow": 25,
+      "magic_damage_reduction": 4
+    },
+    "procs": [
+      {
+        "trigger": "on_attack",
+        "chance": 25,
+        "description": "cast Amplify Damage Level [55-80]"
+      },
+      {
+        "trigger": "when_struck",
+        "chance": 35,
+        "description": "cast Meat Shield Level 30"
+      }
+    ],
     "requiresLevel": 65,
     "requiresItemLevel": 1
   },
@@ -2023,16 +4854,38 @@
       "Helmet"
     ],
     "stats": {
-      "defense": 80,
-      "enhanced_damage": 20,
-      "enhanced_defense": 125,
-      "physical_skills": 5,
-      "deadly_blow": 25,
+      "enhanced_defense": [
+        75,
+        125
+      ],
+      "physical_skills": [
+        3,
+        5
+      ],
+      "to_strength": [
+        28,
+        35
+      ],
       "life_steal": 7,
-      "mana_steal": 8,
-      "to_strength": 35,
-      "attack_damage": 20
+      "mana_steal": [
+        5,
+        8
+      ],
+      "enhanced_damage": [
+        15,
+        20
+      ],
+      "deadly_blow": 25,
+      "attack_damage": 20,
+      "maximum_damage_pct": 3
     },
+    "procs": [
+      {
+        "trigger": "on_attack",
+        "chance": 4,
+        "description": "cast Live by the Sword Level [12-20]"
+      }
+    ],
     "requiresLevel": 67,
     "requiresItemLevel": 1
   },
@@ -2048,15 +4901,30 @@
       "Helmet"
     ],
     "stats": {
-      "defense": 80,
-      "enhanced_defense": 123,
-      "all_skills": 4,
-      "to_energy": 40,
-      "to_intelligence": 15,
-      "magic_skill_damage": 15,
+      "enhanced_defense": [
+        75,
+        125
+      ],
+      "all_skills": [
+        2,
+        4
+      ],
+      "to_energy": [
+        30,
+        40
+      ],
       "mana_replenish_pct": 40,
-      "mana": 20
+      "magic_skill_damage": 15,
+      "increased_mana": 20,
+      "maximum_damage_pct": 3
     },
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 5,
+        "description": "cast Glory Level [12-20]"
+      }
+    ],
     "requiresLevel": 67,
     "requiresItemLevel": 1
   },
@@ -2079,16 +4947,101 @@
       "Gun",
       "Chainsaw"
     ],
-    "stats": {
-      "enhanced_damage": 670,
-      "increased_attack_speed": 45,
-      "skill_haste": 4,
-      "deadly_blow": 25,
-      "open_wounds": 25,
-      "attack_damage": 20,
-      "ignore_cold_res": 60,
-      "all_resistances": 20
+    "twoHanded": false,
+    "skillBonuses": {
+      "Holy Freeze Aura": [
+        10,
+        18
+      ]
     },
+    "stats": {
+      "enhanced_damage": [
+        530,
+        670
+      ],
+      "increased_attack_speed": 25,
+      "all_skills": 2,
+      "ignore_cold_res": [
+        40,
+        60
+      ],
+      "cold_skill_damage": [
+        15,
+        25
+      ],
+      "skill_haste": 4,
+      "attack_damage": 20,
+      "all_resistances": 8,
+      "deadly_blow": 25,
+      "maximum_damage_pct": 3
+    },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 20,
+        "description": "cast Breath of Ice Level [45-55]"
+      }
+    ],
+    "requiresLevel": 67,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_perdition_2h",
+    "name": "Perdition",
+    "runes": [
+      "rune_hel",
+      "rune_qi",
+      "rune_um",
+      "rune_xo",
+      "rune_drax"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace",
+      "Bow",
+      "Gun",
+      "Chainsaw"
+    ],
+    "twoHanded": true,
+    "skillBonuses": {
+      "Holy Freeze Aura": [
+        10,
+        18
+      ]
+    },
+    "stats": {
+      "enhanced_damage": [
+        630,
+        770
+      ],
+      "increased_attack_speed": 25,
+      "all_skills": [
+        3,
+        4
+      ],
+      "ignore_cold_res": [
+        40,
+        60
+      ],
+      "cold_skill_damage": [
+        35,
+        45
+      ],
+      "skill_haste": 4,
+      "attack_damage": 20,
+      "all_resistances": 8,
+      "deadly_blow": 25,
+      "maximum_damage_pct": 3
+    },
+    "procs": [
+      {
+        "trigger": "on_hit",
+        "chance": 20,
+        "description": "cast Breath of Ice Level [55-65]"
+      }
+    ],
     "requiresLevel": 67,
     "requiresItemLevel": 1
   },
@@ -2107,14 +5060,84 @@
       "Spellblade",
       "Book"
     ],
+    "twoHanded": false,
     "stats": {
-      "all_skills": 5,
+      "arcane_skill_damage": [
+        15,
+        25
+      ],
+      "ignore_arcane_res": [
+        10,
+        25
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "faster_cast_rate": [
+        15,
+        25
+      ],
+      "maximum_damage_pct": 3,
+      "to_energy": 10,
       "mana_cost_reduction": 3,
-      "attack_rating": 50,
-      "to_energy": 15,
-      "arcane_skill_damage": 45,
-      "ignore_arcane_res": 30
+      "attack_rating": 50
     },
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 15,
+        "description": "cast Shadow Bolt Level [40-65]"
+      }
+    ],
+    "requiresLevel": 67,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_sovereignty_2h",
+    "name": "Sovereignty",
+    "runes": [
+      "rune_drax",
+      "rune_lum",
+      "rune_pul",
+      "rune_ol"
+    ],
+    "allowedBaseTypes": [
+      "Staff",
+      "Cane",
+      "Spellblade",
+      "Book"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "arcane_skill_damage": [
+        25,
+        45
+      ],
+      "ignore_arcane_res": [
+        15,
+        30
+      ],
+      "all_skills": [
+        3,
+        5
+      ],
+      "faster_cast_rate": [
+        30,
+        40
+      ],
+      "maximum_damage_pct": 3,
+      "to_energy": 10,
+      "mana_cost_reduction": 3,
+      "attack_rating": 50
+    },
+    "procs": [
+      {
+        "trigger": "on_cast",
+        "chance": 20,
+        "description": "cast Shadow Bolt Level [50-80]"
+      }
+    ],
     "requiresLevel": 67,
     "requiresItemLevel": 1
   },
@@ -2138,18 +5161,91 @@
       "Gun",
       "Chainsaw"
     ],
+    "twoHanded": false,
     "stats": {
-      "enhanced_damage": 800,
-      "all_skills": 4,
-      "increased_attack_speed": 20,
-      "skill_haste": 4,
-      "attack_rating": 50,
-      "life_steal": 15,
+      "enhanced_damage": [
+        730,
+        880
+      ],
+      "increased_attack_speed": 50,
+      "poison_skill_damage": 45,
+      "all_skills": 3,
+      "all_attributes": [
+        25,
+        45
+      ],
+      "life_steal": [
+        6,
+        12
+      ],
       "mana_steal": 7,
-      "defense_ignored": 5,
-      "all_attributes": 60,
-      "magic_skill_damage": 8
+      "skill_haste": 4,
+      "attack_damage": 20,
+      "enhanced_defense": 15,
+      "magic_skill_damage": 13,
+      "deadly_blow": 25
     },
+    "procs": [
+      {
+        "trigger": "on_kill",
+        "chance": 40,
+        "description": "cast Poison Nova Level 80"
+      }
+    ],
+    "requiresLevel": 69,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_breath_of_the_damned_2h",
+    "name": "Breath of the Damned",
+    "runes": [
+      "rune_vex",
+      "rune_hel",
+      "rune_qi",
+      "rune_old",
+      "rune_zed",
+      "rune_xo"
+    ],
+    "allowedBaseTypes": [
+      "Sword",
+      "Axe",
+      "Polearm",
+      "Mace",
+      "Bow",
+      "Gun",
+      "Chainsaw"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "enhanced_damage": [
+        975,
+        1100
+      ],
+      "increased_attack_speed": 50,
+      "poison_skill_damage": 60,
+      "all_skills": 4,
+      "all_attributes": [
+        40,
+        60
+      ],
+      "life_steal": [
+        8,
+        15
+      ],
+      "mana_steal": 7,
+      "skill_haste": 4,
+      "attack_damage": 20,
+      "enhanced_defense": 15,
+      "magic_skill_damage": 13,
+      "deadly_blow": 25
+    },
+    "procs": [
+      {
+        "trigger": "on_kill",
+        "chance": 40,
+        "description": "cast Poison Nova Level 100"
+      }
+    ],
     "requiresLevel": 69,
     "requiresItemLevel": 1
   },
@@ -2167,19 +5263,32 @@
       "Shield"
     ],
     "stats": {
-      "defense": 100,
       "enhanced_defense": 350,
-      "all_skills": 2,
-      "attack_rating_pct": 30,
-      "extra_damage_poisoned": 60,
-      "to_intelligence": 30,
-      "poison_skill_damage": 50,
-      "ignore_poison_res": 30,
-      "magic_skill_damage": 13,
-      "increased_life": 20,
+      "ignore_poison_res": [
+        22,
+        30
+      ],
+      "poison_skill_damage": [
+        30,
+        50
+      ],
+      "extra_damage_poisoned": [
+        35,
+        60
+      ],
+      "poison_resistance": [
+        50,
+        75
+      ],
+      "all_skills": [
+        1,
+        2
+      ],
       "poison_absorption": 5,
       "all_resistances": 20,
-      "poison_resistance": 75
+      "attack_rating_pct": 30,
+      "magic_skill_damage": 13,
+      "increased_life": 20
     },
     "requiresLevel": 69,
     "requiresItemLevel": 1
@@ -2200,18 +5309,112 @@
       "Polearm",
       "Axe"
     ],
+    "twoHanded": false,
+    "skillBonuses": {
+      "Tire Fire": [
+        7,
+        12
+      ],
+      "Pickup Raid": [
+        8,
+        12
+      ],
+      "Hillbilly Rage": [
+        3,
+        6
+      ]
+    },
     "stats": {
-      "enhanced_damage": 475,
-      "all_skills": 8,
-      "movement_speed": 45,
-      "faster_cast_rate": 80,
-      "skill_haste": 35,
-      "all_attributes": 25,
-      "magic_skill_damage": 13,
+      "enhanced_damage": [
+        380,
+        475
+      ],
+      "all_skills_redneck": [
+        5,
+        8
+      ],
+      "all_attributes": 10,
+      "movement_speed": 20,
+      "faster_cast_rate": [
+        30,
+        40
+      ],
+      "extra_fire_dmg_to_burning": [
+        20,
+        30
+      ],
+      "skill_haste": 15,
+      "all_resistances": [
+        18,
+        28
+      ],
       "increased_life": 20,
       "increased_mana": 10,
-      "all_resistances": 30,
-      "magic_find": 15
+      "magic_find": 15,
+      "magic_skill_damage": 13
+    },
+    "requiresLevel": 69,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_disaster_2h",
+    "name": "Disaster",
+    "runes": [
+      "rune_jah",
+      "rune_um",
+      "rune_jah",
+      "rune_sur",
+      "rune_ist",
+      "rune_zed"
+    ],
+    "allowedBaseTypes": [
+      "Chainsaw",
+      "Polearm",
+      "Axe"
+    ],
+    "twoHanded": true,
+    "skillBonuses": {
+      "Tire Fire": [
+        7,
+        12
+      ],
+      "Pickup Raid": [
+        16,
+        25
+      ],
+      "Hillbilly Rage": [
+        3,
+        6
+      ]
+    },
+    "stats": {
+      "enhanced_damage": [
+        380,
+        475
+      ],
+      "all_skills": [
+        5,
+        8
+      ],
+      "all_attributes": 25,
+      "movement_speed": 45,
+      "faster_cast_rate": [
+        65,
+        80
+      ],
+      "extra_fire_dmg_to_burning": [
+        35,
+        65
+      ],
+      "skill_haste": 35,
+      "all_resistances": [
+        23,
+        38
+      ],
+      "increased_life": 20,
+      "increased_mana": 10,
+      "magic_find": 15,
+      "magic_skill_damage": 13
     },
     "requiresLevel": 69,
     "requiresItemLevel": 1
@@ -2230,18 +5433,72 @@
       "Throwing",
       "Mace"
     ],
+    "twoHanded": false,
     "stats": {
-      "all_skills": 3,
-      "poison_skills": 8,
-      "movement_speed": 30,
-      "mana_replenish": 8,
-      "to_energy": 35,
-      "to_vitality": 25,
-      "additive_poison_damage": 2700,
-      "poison_skill_damage": 20,
-      "ignore_poison_res": 35,
-      "magic_skill_damage": 20,
-      "poison_resistance": 60
+      "enhanced_damage": [
+        750,
+        875
+      ],
+      "all_skills_amazon": [
+        4,
+        5
+      ],
+      "increased_poisoned_damage": 50,
+      "extra_damage_poisoned": 15,
+      "increased_attack_speed": 40,
+      "attack_rating_pct": 30,
+      "minimum_damage_flat": [
+        18,
+        25
+      ],
+      "maximum_damage_flat": [
+        18,
+        25
+      ],
+      "magic_skill_damage": 26,
+      "poison_skill_damage": 5
+    },
+    "requiresLevel": 69,
+    "requiresItemLevel": 1
+  },
+  {
+    "id": "rw_hydrangea_2h",
+    "name": "Hydrangea",
+    "runes": [
+      "rune_zed",
+      "rune_tul",
+      "rune_zed"
+    ],
+    "allowedBaseTypes": [
+      "Polearm",
+      "Bow",
+      "Throwing",
+      "Mace"
+    ],
+    "twoHanded": true,
+    "stats": {
+      "enhanced_damage": [
+        850,
+        950
+      ],
+      "all_skills": [
+        5,
+        6
+      ],
+      "increased_poisoned_damage": 65,
+      "extra_damage_poisoned": 25,
+      "increased_attack_speed": 40,
+      "attack_rating_pct": 40,
+      "minimum_damage_flat": [
+        25,
+        36
+      ],
+      "maximum_damage_flat": [
+        25,
+        36
+      ],
+      "magic_skill_damage": 26,
+      "poison_skill_damage": 5
     },
     "requiresLevel": 69,
     "requiresItemLevel": 1
@@ -2257,18 +5514,40 @@
     "allowedBaseTypes": [
       "Shield"
     ],
+    "skillBonuses": {
+      "Holy Hammer": [
+        12,
+        20
+      ]
+    },
     "stats": {
-      "defense": 100,
-      "enhanced_defense": 400,
-      "all_skills": 4,
-      "movement_speed": 40,
+      "enhanced_defense": [
+        350,
+        400
+      ],
+      "block_chance": 15,
+      "all_skills": [
+        2,
+        4
+      ],
+      "all_resistances": [
+        40,
+        80
+      ],
+      "magic_damage_reduction": [
+        8,
+        15
+      ],
+      "movement_speed": [
+        20,
+        40
+      ],
       "to_energy": 35,
       "to_armor": 40,
       "all_attributes": 20,
-      "magic_skill_damage": 10,
       "increased_mana": 30,
-      "magic_damage_reduction": 15,
-      "all_resistances": 80
+      "maximum_damage_pct": 3,
+      "magic_skill_damage": 13
     },
     "requiresLevel": 69,
     "requiresItemLevel": 1
@@ -2286,17 +5565,31 @@
     "allowedBaseTypes": [
       "Shield"
     ],
+    "skillBonuses": {
+      "Mirror Dimension": [
+        10,
+        20
+      ]
+    },
     "stats": {
-      "defense": 100,
-      "enhanced_defense": 350,
-      "all_skills": 3,
-      "faster_cast_rate": 15,
+      "enhanced_defense": [
+        350,
+        400
+      ],
+      "all_skills": [
+        1,
+        3
+      ],
+      "all_resistances": 25,
       "to_armor": 30,
-      "magic_skill_damage": 8,
-      "increased_life": 20,
+      "faster_cast_rate": [
+        10,
+        15
+      ],
       "increased_mana": 20,
-      "all_resistances": 20,
-      "magic_find": 30
+      "magic_find": 30,
+      "magic_skill_damage": 13,
+      "increased_life": 20
     },
     "requiresLevel": 69,
     "requiresItemLevel": 1
@@ -2311,17 +5604,42 @@
     "allowedBaseTypes": [
       "Boots"
     ],
+    "skillBonuses": {
+      "Evasion": [
+        8,
+        18
+      ]
+    },
     "stats": {
-      "defense": 64,
-      "enhanced_defense": 323,
-      "all_skills": 3,
-      "movement_speed": 45,
-      "jumping_power": 125,
-      "crushing_blow_chance": 8,
-      "to_dexterity": 5,
+      "enhanced_defense": [
+        300,
+        350
+      ],
+      "jumping_power": [
+        50,
+        125
+      ],
+      "movement_speed": [
+        40,
+        50
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "physical_damage_reduction": [
+        2,
+        5
+      ],
+      "magic_damage_reduction": [
+        2,
+        5
+      ],
+      "extra_jump_count": 1,
+      "cannot_be_frozen": 1,
       "magic_skill_damage": 13,
-      "physical_damage_reduction": 3,
-      "magic_damage_reduction": 3
+      "deadly_blow": 1,
+      "deadly_blow_effectiveness": 8
     },
     "requiresLevel": 69,
     "requiresItemLevel": 1
@@ -2337,13 +5655,25 @@
     "allowedBaseTypes": [
       "Helmet"
     ],
+    "skillBonuses": {
+      "Random Skill": 35
+    },
     "stats": {
-      "defense": 80,
-      "enhanced_defense": 625,
+      "enhanced_defense": [
+        425,
+        625
+      ],
+      "projectile_speed": 3,
       "all_skills": 3,
-      "projectile_speed": 1,
-      "magic_skill_damage": 13,
-      "all_resistances": 30
+      "ignore_all_res": [
+        18,
+        23
+      ],
+      "all_resistances": [
+        25,
+        30
+      ],
+      "magic_skill_damage": 13
     },
     "requiresLevel": 100,
     "requiresItemLevel": 1
@@ -2361,16 +5691,35 @@
       "Armor"
     ],
     "stats": {
-      "enhanced_defense": 425,
+      "enhanced_defense": [
+        400,
+        425
+      ],
+      "gold_find": [
+        15,
+        25
+      ],
+      "magic_find": [
+        150,
+        200
+      ],
+      "magic_find_based_on_level": 100,
       "all_skills": 4,
-      "crushing_blow_chance": 8,
-      "projectile_speed": 1,
-      "life_replenish_pct": 300,
-      "mana_replenish_pct": 300,
+      "potion_cooldown_recovery": 15,
+      "life_replenish_pct": [
+        250,
+        300
+      ],
+      "mana_replenish_pct": [
+        250,
+        300
+      ],
       "damage_mitigation": 15,
-      "all_resistances": 2,
-      "gold_find": 25,
-      "magic_find": 200
+      "maximum_damage_pct": 3,
+      "projectile_speed": 1,
+      "max_all_resistances": 2,
+      "deadly_blow": 1,
+      "deadly_blow_effectiveness": 8
     },
     "requiresLevel": 100,
     "requiresItemLevel": 1
@@ -2389,16 +5738,38 @@
       "Shield"
     ],
     "stats": {
-      "defense": 100,
-      "enhanced_defense": 600,
-      "all_skills": 4,
+      "enhanced_defense": [
+        550,
+        600
+      ],
+      "all_skills": [
+        3,
+        4
+      ],
+      "all_resistances": 50,
+      "increased_life": [
+        25,
+        60
+      ],
+      "damage_return": [
+        155,
+        230
+      ],
+      "to_vitality": [
+        40,
+        50
+      ],
+      "all_damage_taken_reduced_pct": 6,
       "projectile_speed": 1,
-      "to_vitality": 50,
-      "increased_life": 50,
-      "damage_return": 1500,
-      "damage_mitigation": 6,
-      "all_resistances": 50
+      "maximum_damage_pct": 3
     },
+    "procs": [
+      {
+        "trigger": "on_block",
+        "chance": 4,
+        "description": "cast Last Stand Level [35-45]"
+      }
+    ],
     "requiresLevel": 100,
     "requiresItemLevel": 1
   },
@@ -2413,16 +5784,30 @@
     "allowedBaseTypes": [
       "Boots"
     ],
+    "skillBonuses": {
+      "Random Skill": 10
+    },
     "stats": {
-      "defense": 64,
-      "enhanced_defense": 400,
-      "all_skills": 4,
-      "movement_speed": 95,
-      "faster_cast_rate": 50,
-      "projectile_speed": 1,
-      "to_dexterity": 25,
-      "magic_skill_damage": 50,
-      "damage_mitigation": 3
+      "enhanced_defense": [
+        320,
+        400
+      ],
+      "faster_cast_rate": [
+        42,
+        50
+      ],
+      "magic_skill_damage": [
+        42,
+        50
+      ],
+      "movement_speed": 70,
+      "all_skills": [
+        2,
+        4
+      ],
+      "ignore_all_res": 3,
+      "all_damage_taken_reduced_pct": 3,
+      "projectile_speed": 1
     },
     "requiresLevel": 100,
     "requiresItemLevel": 1
@@ -2440,17 +5825,28 @@
       "Claw"
     ],
     "stats": {
-      "enhanced_damage": 1150,
-      "all_skills": 4,
+      "enhanced_damage": [
+        1000,
+        1150
+      ],
       "physical_skills": 4,
-      "movement_speed": 30,
-      "increased_attack_speed": 35,
-      "crit_chance": 15,
-      "deadly_blow": 25,
-      "crushing_blow_chance": 8,
-      "crit_damage": 50,
+      "all_skills": 4,
+      "extra_physical_dmg_to_bleeding": [
+        85,
+        100
+      ],
       "open_wounds": 25,
-      "extra_damage_bleeding": 100
+      "deadly_blow": 26,
+      "increased_attack_speed": [
+        20,
+        35
+      ],
+      "movement_speed": 30,
+      "crit_chance": 15,
+      "crit_damage": 50,
+      "ignore_all_res": 6,
+      "deadly_blow_effectiveness": 8,
+      "maximum_damage_pct": 3
     },
     "requiresLevel": 100,
     "requiresItemLevel": 1
@@ -2467,17 +5863,39 @@
     "allowedBaseTypes": [
       "Boots"
     ],
+    "skillBonuses": {
+      "Demon's Presence (Grimwalkers)": [
+        15,
+        20
+      ]
+    },
     "stats": {
-      "defense": 64,
-      "enhanced_defense": 375,
+      "enhanced_defense": [
+        320,
+        400
+      ],
       "all_skills": 4,
-      "movement_speed": 74,
-      "projectile_speed": 1,
-      "all_attributes": 40,
-      "magic_skill_damage": 40,
+      "all_attributes": [
+        30,
+        40
+      ],
       "mana_per_kill": 25,
-      "increased_mana": 10,
-      "all_resistances": 2
+      "ignore_all_res": [
+        13,
+        18
+      ],
+      "reduced_movement_diminish": [
+        40,
+        80
+      ],
+      "magic_skill_damage": [
+        30,
+        40
+      ],
+      "movement_speed": 40,
+      "max_all_resistances": 2,
+      "projectile_speed": 1,
+      "increased_mana": 10
     },
     "requiresLevel": 100,
     "requiresItemLevel": 1
@@ -2494,19 +5912,43 @@
     "allowedBaseTypes": [
       "Boots"
     ],
+    "skillBonuses": {
+      "Experienced Logger": [
+        8,
+        16
+      ]
+    },
     "stats": {
-      "defense": 64,
-      "enhanced_defense": 375,
-      "all_skills": 3,
-      "physical_skills": 3,
-      "movement_speed": 56,
+      "enhanced_defense": [
+        300,
+        375
+      ],
+      "all_skills": [
+        2,
+        3
+      ],
+      "physical_skills": [
+        2,
+        3
+      ],
+      "movement_speed": 40,
       "increased_attack_speed": 25,
-      "deadly_blow": 45,
-      "crushing_blow_chance": 8,
-      "mana_steal": 12,
-      "extra_damage_bleeding": 20,
+      "deadly_blow": [
+        36,
+        46
+      ],
+      "extra_damage_bleeding": [
+        15,
+        20
+      ],
+      "mana_steal": [
+        7,
+        12
+      ],
+      "phasing": 1,
+      "all_damage_taken_reduced_pct": 3,
       "projectile_speed": 1,
-      "damage_mitigation": 3
+      "deadly_blow_effectiveness": 8
     },
     "requiresLevel": 100,
     "requiresItemLevel": 1
@@ -2521,20 +5963,36 @@
     "allowedBaseTypes": [
       "Armor"
     ],
-    "stats": {
-      "enhanced_defense": 225,
-      "all_skills": 1,
-      "to_vitality": 20,
-      "life": 300,
-      "faster_hit_recovery": 50,
-      "life_per_kill": 10,
-      "damage_recouped_as_life": 10
-    },
     "skillBonuses": {
       "Angel’s Vibrance Aura": [
         2,
         6
       ]
+    },
+    "stats": {
+      "enhanced_defense": [
+        170,
+        225
+      ],
+      "all_skills": 1,
+      "to_vitality": 30,
+      "faster_hit_recovery": [
+        40,
+        50
+      ],
+      "life_per_kill": [
+        5,
+        10
+      ],
+      "life": [
+        100,
+        300
+      ],
+      "damage_recouped_as_life": [
+        5,
+        10
+      ],
+      "mana_cost_reduction": 3
     },
     "requiresLevel": 47,
     "requiresItemLevel": 1

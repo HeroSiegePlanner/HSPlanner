@@ -218,8 +218,8 @@
         "description": "The initial projectile now pierces with increased range and damage unleashing bouncing arrows to monsters on hit dealing decreased damage.",
         "maxRank": 3,
         "effects": {
-          "base": {"physical_skill_damage": 0, "projectile_speed": 0},
-          "perRank": {"physical_skill_damage": 35, "projectile_speed": 20}
+          "base": {"physical_skill_damage": 0, "projectile_speed_pct": 0},
+          "perRank": {"physical_skill_damage": 35, "projectile_speed_pct": 20}
         }
       }
     ]
@@ -343,8 +343,8 @@
         "description": "Projectiles from vault now pierce and bounce off of terrain with increased damage and speed.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0, "subtree_damage": 0},
-          "perRank": {"projectile_speed": 15, "subtree_damage": 5}
+          "base": {"projectile_speed_pct": 0, "subtree_damage": 0},
+          "perRank": {"projectile_speed_pct": 15, "subtree_damage": 5}
         }
       },
       {
@@ -1796,8 +1796,8 @@
         "description": "Increases the projectile speed of arrow turret.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 20}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 20}
         }
       },
       {
@@ -2847,8 +2847,8 @@
         "description": "Increases the damage, projectile speed and explosion area of effect radius of the rockets.",
         "maxRank": 3,
         "effects": {
-          "base": {"projectile_speed": 0, "area_of_effect": 0, "subtree_damage": 0},
-          "perRank": {"projectile_speed": 100, "area_of_effect": 30, "subtree_damage": 45}
+          "base": {"projectile_speed_pct": 0, "area_of_effect": 0, "subtree_damage": 0},
+          "perRank": {"projectile_speed_pct": 100, "area_of_effect": 30, "subtree_damage": 45}
         }
       },
       {

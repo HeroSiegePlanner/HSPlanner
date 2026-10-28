@@ -62,14 +62,12 @@ pub struct SubtreeAggregation {
     pub applied_states: Vec<AppliedStateInfo>,
 }
 
-/// Public contract: matches src/store/build.ts:subskillKey; share-link encoder
-/// depends on the colon delimiter.
+/// Public contract: saved builds and share codes depend on the colon delimiter.
 pub fn subskill_key(skill_id: &str, subskill_id: &str) -> String {
     format!("{}:{}", skill_id, subskill_id)
 }
 
 /// Effective tags after subskill transmutations (removes win over adds).
-/// Mirrored in frontend utils/skills/skillTags.ts:effectiveSkillTags.
 pub fn effective_skill_tags(
     skill_id: &str,
     base: &[String],
@@ -108,31 +106,6 @@ pub fn effective_skill_tags(
     }
     tags.retain(|t| !removes.contains(&t));
     tags
-}
-
-pub fn sum_subskill_ranks(owner: &SubskillOwner, ranks: &HashMap<String, u32>) -> u32 {
-    owner
-        .subskills
-        .iter()
-        .map(|sub| {
-            ranks
-                .get(&subskill_key(&owner.id, &sub.id))
-                .copied()
-                .unwrap_or(0)
-        })
-        .sum()
-}
-
-pub fn has_allocated_subskill(
-    sub: &SubskillNode,
-    owner: &SubskillOwner,
-    ranks: &HashMap<String, u32>,
-) -> bool {
-    ranks
-        .get(&subskill_key(&owner.id, &sub.id))
-        .copied()
-        .unwrap_or(0)
-        > 0
 }
 
 pub fn aggregate_subskill_stats(
@@ -288,57 +261,9 @@ mod tests {
 
     #[test]
     fn subskill_key_uses_colon_delimiter() {
-        // Must match src/store/build.ts:subskillKey exactly.
+        // Saved builds and share codes rely on this exact key.
         assert_eq!(subskill_key("fireball", "burn"), "fireball:burn");
         assert_eq!(subskill_key("", ""), ":");
-    }
-
-    // ---- sum_subskill_ranks / has_allocated_subskill ----
-
-    #[test]
-    fn sum_subskill_ranks_combines_all_nodes() {
-        let owner = SubskillOwner {
-            id: "fireball".into(),
-            subskills: vec![
-                SubskillNode {
-                    id: "burn".into(),
-                    ..Default::default()
-                },
-                SubskillNode {
-                    id: "linger".into(),
-                    ..Default::default()
-                },
-            ],
-        };
-        let r = ranks(&[("fireball", "burn", 3), ("fireball", "linger", 2)]);
-        assert_eq!(sum_subskill_ranks(&owner, &r), 5);
-    }
-
-    #[test]
-    fn sum_subskill_ranks_returns_zero_when_empty() {
-        let owner = SubskillOwner {
-            id: "x".into(),
-            subskills: vec![],
-        };
-        assert_eq!(sum_subskill_ranks(&owner, &HashMap::new()), 0);
-    }
-
-    #[test]
-    fn has_allocated_subskill_threshold_one() {
-        let owner = SubskillOwner {
-            id: "fireball".into(),
-            subskills: vec![SubskillNode {
-                id: "burn".into(),
-                ..Default::default()
-            }],
-        };
-        let sub = &owner.subskills[0];
-        let r1 = ranks(&[("fireball", "burn", 1)]);
-        assert!(has_allocated_subskill(sub, &owner, &r1));
-        let r0 = ranks(&[("fireball", "burn", 0)]);
-        assert!(!has_allocated_subskill(sub, &owner, &r0));
-        let r_missing = HashMap::new();
-        assert!(!has_allocated_subskill(sub, &owner, &r_missing));
     }
 
     // ---- aggregate_subskill_stats ----

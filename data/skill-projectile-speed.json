@@ -1,0 +1,1707 @@
+{
+  "source": "Projectile Speed Atlas: object speeds, lifetimes and the speed rules read from Hero_Siege.exe (build 2026-08-25), exported 2026-10-26",
+  "skills": {
+    "absolute_mayhem": {
+      "objects": [
+        {
+          "name": "Demon_Slayer_Absolute_Mayhem_obj",
+          "via": "Demon_Slayer_Absolute_Mayhem_Controller_obj",
+          "result": "yes",
+          "speed": 14.0,
+          "lifetime": 120.0,
+          "limited": true,
+          "origin": [28, 13],
+          "scale": 1.0,
+          "box": [0, 0, 70, 26]
+        }
+      ]
+    },
+    "age_proliferation": {
+      "objects": [
+        {
+          "name": "Illusionist_Age_Proliferation_Fire_Ball_obj",
+          "via": "Illusionist_Age_Proliferation_obj",
+          "result": "yes",
+          "speed": 10.0,
+          "lifetime": 75.0,
+          "limited": true,
+          "origin": [60, 16],
+          "scale": 1.0,
+          "box": [0, 0, 71, 31]
+        }
+      ]
+    },
+    "armageddon": {
+      "objects": [
+        {
+          "name": "Pyromancer_Armageddon_Horizontal_obj",
+          "via": "Pyromancer_Armageddon_Warped_Controller_obj",
+          "result": "yes",
+          "speed": 10.0,
+          "lifetime": 180.0,
+          "limited": true,
+          "origin": [60, 16],
+          "scale": 1.0,
+          "box": [0, 0, 71, 31]
+        }
+      ]
+    },
+    "arrow_rampage": {
+      "objects": [
+        {
+          "name": "Marksman_Arrow_Rampage_obj",
+          "via": "Marksman_Arrow_Rampage_Controller_obj",
+          "result": "yes",
+          "speed": 16.0,
+          "lifetime": 120.0,
+          "limited": true,
+          "origin": [12, 16],
+          "scale": 1.0,
+          "box": [0, 0, 40, 32]
+        }
+      ]
+    },
+    "arrow_turret": {
+      "objects": [],
+      "note": "It is not created with the cast modifiers, so the bonus never reaches it."
+    },
+    "black_mass": {
+      "objects": [
+        {
+          "name": "White_Mage_Black_Mass_Cultist_obj",
+          "via": "White_Mage_Black_Mass_Controller_obj",
+          "result": "yes",
+          "speed": 1.5,
+          "lifetime": 300.0,
+          "limited": true,
+          "origin": [12, 45],
+          "scale": 1.0,
+          "box": [0, 0, 23, 54]
+        }
+      ]
+    },
+    "blade_strike": {
+      "objects": [
+        {
+          "name": "Augment_Weapon_Throw_obj",
+          "result": "yes",
+          "speed": 12.0,
+          "limited": true,
+          "origin": [32, 32],
+          "scale": 1.0,
+          "mask": "30428",
+          "at": [0, 0]
+        }
+      ]
+    },
+    "blender": {
+      "objects": [],
+      "note": "Its speed is set in Step_0, after the step that applies the bonus."
+    },
+    "blood_bolts": {
+      "objects": [
+        {
+          "name": "Demonspawn_Blood_Bolt_obj",
+          "via": "Demonspawn_Blood_Bolts_Controller_obj",
+          "result": "yes",
+          "speed": 5.0,
+          "lifetime": 180.0,
+          "limited": true,
+          "origin": [12, 12],
+          "scale": 1.0,
+          "mask": "12797",
+          "at": [0, 0]
+        }
+      ]
+    },
+    "blood_surge": {
+      "objects": [],
+      "note": "It does not move (no deltaSpeed), so speed has nothing to scale."
+    },
+    "bombardment": {
+      "objects": [
+        {
+          "name": "Marauder_The_Big_Boom_obj",
+          "via": "Marauder_Bombardment_Controller_obj",
+          "result": "partly",
+          "speed": 5.0,
+          "why": "The bonus applies at launch, but Alarm_0, Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [29, 29],
+          "scale": 1.0,
+          "box": [7, 5, 50, 52]
+        },
+        {
+          "name": "Marauder_Unstable_Bomb_obj",
+          "via": "Marauder_The_Big_Boom_obj",
+          "result": "partly",
+          "speed": 2.0,
+          "why": "The bonus applies at launch, but Alarm_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [10, 10],
+          "scale": 1.0,
+          "mask": "12592",
+          "at": [0, 0]
+        }
+      ]
+    },
+    "bone_barrage": {
+      "objects": [
+        {
+          "name": "Demonspawn_Bone_Barrage_obj",
+          "via": "Demonspawn_Bone_Barrage_Controller_obj",
+          "result": "yes",
+          "speed": 9.0,
+          "lifetime": 60.0,
+          "limited": true,
+          "origin": [11, 19],
+          "scale": 1.0,
+          "box": [-3, -14, 63, 20]
+        }
+      ]
+    },
+    "bone_fragments": {
+      "objects": [
+        {
+          "name": "Demonspawn_Bone_Fragment_obj",
+          "result": "yes",
+          "speed": 9.0,
+          "lifetime": 120.0,
+          "limited": true,
+          "origin": [16, 14],
+          "scale": 1.0,
+          "mask": "6871",
+          "at": [-3, -4]
+        }
+      ]
+    },
+    "bone_shred": {
+      "objects": [
+        {
+          "name": "Necromancer_Bone_Shred_obj",
+          "result": "yes",
+          "speed": 4.0,
+          "lifetime": 120.0,
+          "limited": true,
+          "origin": [7, 9],
+          "scale": 1.0,
+          "box": [0, 0, 14, 17]
+        }
+      ]
+    },
+    "bone_spear": {
+      "objects": [
+        {
+          "name": "Necromancer_Bone_Spear_obj",
+          "result": "yes",
+          "speed": 12.0,
+          "limited": true,
+          "origin": [0, 6],
+          "scale": 1.0,
+          "mask": "13784",
+          "at": [0, -12]
+        }
+      ]
+    },
+    "bone_spirit": {
+      "objects": [
+        {
+          "name": "Necromancer_Bone_Spirit_obj",
+          "result": "yes",
+          "speed": 4.0,
+          "lifetime": 150.0,
+          "origin": [52, 24],
+          "scale": 0.85,
+          "mask": "13786",
+          "at": [40, 13]
+        },
+        {
+          "name": "Necromancer_Bone_Spirit_Shred_obj",
+          "via": "Necromancer_Bone_Spirit_obj",
+          "result": "yes",
+          "speed": 2.0,
+          "lifetime": 45.0,
+          "limited": true,
+          "origin": [52, 24],
+          "scale": 0.65,
+          "mask": "13786",
+          "at": [40, 13]
+        }
+      ]
+    },
+    "bone_storm": {
+      "objects": [
+        {
+          "name": "Demonspawn_Bone_Storm_Controller_obj",
+          "result": "yes",
+          "speed": 4.0,
+          "lifetime": 120.0,
+          "origin": [16, 16],
+          "scale": 1.0,
+          "mask": "6881",
+          "at": [0, 0]
+        }
+      ]
+    },
+    "bouncing_grenade": {
+      "objects": [
+        {
+          "name": "Marauder_Bouncing_Grenade_obj",
+          "result": "yes",
+          "speed": 4.0,
+          "why": "Later changes scale the current speed, so the bonus stays.",
+          "origin": [10, 10],
+          "scale": 1.0,
+          "mask": "12592",
+          "at": [0, 0]
+        },
+        {
+          "name": "Marauder_Unstable_Bomb_obj",
+          "via": "Marauder_Bouncing_Grenade_obj",
+          "result": "partly",
+          "speed": 2.0,
+          "why": "The bonus applies at launch, but Alarm_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [10, 10],
+          "scale": 1.0,
+          "mask": "12592",
+          "at": [0, 0]
+        },
+        {
+          "name": "Marauder_Bomb_Shrapnel_obj",
+          "via": "Marauder_Bouncing_Grenade_obj",
+          "result": "partly",
+          "speed": 8.0,
+          "limited": true,
+          "why": "The bonus applies at launch, but Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [0, 8],
+          "scale": 1.0,
+          "box": [0, 0, 15, 15]
+        }
+      ]
+    },
+    "breath_of_fire": {
+      "objects": [],
+      "note": "It does not move (no deltaSpeed), so speed has nothing to scale."
+    },
+    "buckshot": {
+      "objects": [
+        {
+          "name": "Pirate_Buckshot_obj",
+          "result": "yes",
+          "speed": 24.0,
+          "lifetime": 12.0,
+          "limited": true,
+          "origin": [32, 11],
+          "scale": 1.0,
+          "mask": "16570",
+          "at": [2, 6]
+        }
+      ]
+    },
+    "bullet_hell": {
+      "objects": [
+        {
+          "name": "Demon_Slayer_Bullet_Hell_obj",
+          "via": "Demon_Slayer_Bullet_Hell_Controller_obj",
+          "result": "yes",
+          "speed": 16.0,
+          "lifetime": 36.0,
+          "limited": true,
+          "origin": [10, 4],
+          "scale": 1.0,
+          "box": [0, 0, 19, 7]
+        }
+      ]
+    },
+    "butchers_hook": {
+      "objects": [
+        {
+          "name": "Butcher_Butchers_Hook_obj",
+          "result": "partly",
+          "speed": 9.0,
+          "why": "The bonus applies at launch, but Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [12, 59],
+          "scale": 1.0,
+          "box": [-37, 43, 127, 73]
+        },
+        {
+          "name": "Butcher_Chain_Swing_obj",
+          "result": "partly",
+          "speed": 12.0,
+          "lifetime": 240.0,
+          "why": "The bonus applies at launch, but Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [26, 25],
+          "scale": 2.0,
+          "box": [3, 18, 51, 31]
+        }
+      ]
+    },
+    "cannonball": {
+      "objects": [
+        {
+          "name": "Pirate_Cannonball_obj",
+          "result": "yes",
+          "speed": 10.0,
+          "limited": true,
+          "origin": [14, 14],
+          "scale": 1.0,
+          "box": [0, 0, 27, 27]
+        }
+      ]
+    },
+    "caustic_spearhead": {
+      "objects": [
+        {
+          "name": "Your weapon attack",
+          "result": "yes",
+          "speed": 12.0,
+          "drops": true,
+          "why": "Strike skill: the cast fires your weapon attack. That projectile copies the cast's modifier array, so it runs the same speed code as any other projectile. Base 12 px per frame for every ranged weapon; how far it goes before it drops depends on your weapon, and a faster throw drops further away.",
+          "origin": [31, 5],
+          "scale": 1.0,
+          "box": [8, -4, 56, 14]
+        }
+      ]
+    },
+    "chain_of_holy_lightning": {
+      "objects": [],
+      "note": "Chain lightning: its speed is multiplied by the percent only; flat speed does not apply."
+    },
+    "chain_rip": {
+      "objects": [],
+      "note": "It does not move (no deltaSpeed), so speed has nothing to scale."
+    },
+    "chaos_totem": {
+      "objects": [
+        {
+          "name": "Shaman_Totem_Earth_Rolling_Stone_obj",
+          "via": "Shaman_Totem_Earth_obj",
+          "result": "yes",
+          "speed": 2.0,
+          "lifetime": 90.0,
+          "limited": true,
+          "origin": [35, 35],
+          "scale": 1.0,
+          "box": [3, 3, 66, 68]
+        },
+        {
+          "name": "Shaman_Totem_Earth_Projectile_obj",
+          "via": "Shaman_Totem_Earth_obj",
+          "result": "yes",
+          "speed": 6.0,
+          "why": "Later changes scale the current speed, so the bonus stays.",
+          "origin": [18, 19],
+          "scale": 0.5,
+          "box": [0, 0, 36, 38]
+        },
+        {
+          "name": "Shaman_Twister_obj",
+          "via": "Shaman_Tornado_obj",
+          "result": "yes",
+          "speed": 5.0,
+          "lifetime": 120.0,
+          "limited": true,
+          "origin": [16, 17],
+          "scale": 1.0,
+          "mask": "19942",
+          "at": [-4, -4]
+        },
+        {
+          "name": "Shaman_Totem_Fire_Projectile_obj",
+          "via": "Shaman_Totem_Fire_obj",
+          "result": "yes",
+          "speed": 5.0,
+          "lifetime": 180.0,
+          "limited": true,
+          "origin": [20, 14],
+          "scale": 1.25,
+          "mask": "19881",
+          "at": [0, 0]
+        },
+        {
+          "name": "Shaman_Totem_Storm_Charged_obj",
+          "via": "Shaman_Totem_Storm_obj",
+          "result": "yes",
+          "speed": 3.25,
+          "lifetime": 150.0,
+          "limited": true,
+          "origin": [40, 40],
+          "scale": 1.0,
+          "box": [27, 28, 51, 52]
+        },
+        {
+          "name": "Shaman_Totem_Chaos_Projectile_obj",
+          "via": "Shaman_Totem_Chaos_obj",
+          "result": "yes",
+          "speed": 12.0,
+          "lifetime": 60.0,
+          "limited": true,
+          "origin": [39, 17],
+          "scale": 1.0,
+          "box": [0, 0, 58, 34]
+        },
+        {
+          "name": "Shaman_Tornado_obj",
+          "via": "Shaman_Totem_Earth_obj",
+          "result": "partly",
+          "speed": 4.75,
+          "lifetime": 141.0,
+          "limited": true,
+          "why": "The bonus applies at launch, but Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [40, 40],
+          "scale": 0.3,
+          "mask": "19941",
+          "at": [0, 0]
+        }
+      ]
+    },
+    "charged_bolts": {
+      "objects": [
+        {
+          "name": "Stormweaver_Charged_Bolts_obj",
+          "result": "yes",
+          "speed": 2.5,
+          "lifetime": 120.0,
+          "limited": true,
+          "origin": [40, 40],
+          "scale": 0.725,
+          "mask": "27015",
+          "at": [27, 28]
+        }
+      ]
+    },
+    "cloud_of_sand": {
+      "objects": [
+        {
+          "name": "Cloud_of_Sand_Aoe_obj",
+          "result": "yes",
+          "speed": 8.0,
+          "lifetime": 6.0,
+          "limited": true,
+          "origin": [70, 99],
+          "scale": 1.0,
+          "mask": "14409",
+          "at": [0, 0]
+        }
+      ]
+    },
+    "crowd_dive": {
+      "objects": [],
+      "note": "It is not created with the cast modifiers, so the bonus never reaches it."
+    },
+    "crushing_lance": {
+      "objects": [],
+      "note": "It does not move (no deltaSpeed), so speed has nothing to scale."
+    },
+    "death_from_above": {
+      "objects": [
+        {
+          "name": "Amazon_Death_From_Above_Delivery_obj",
+          "result": "yes",
+          "speed": 14.0,
+          "limited": true,
+          "origin": [31, 5],
+          "scale": 1.0,
+          "box": [0, 0, 65, 10]
+        },
+        {
+          "name": "Amazon_Death_From_Above_obj",
+          "result": "partly",
+          "speed": 8.0,
+          "why": "The bonus applies at launch, but Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [75, 75],
+          "scale": 0.66,
+          "mask": "451",
+          "at": [0, 0]
+        }
+      ]
+    },
+    "divine_storm": {
+      "objects": [],
+      "note": "Chain lightning: its speed is multiplied by the percent only; flat speed does not apply."
+    },
+    "envenom": {
+      "objects": [
+        {
+          "name": "Amazon_Envenom_Nova_obj",
+          "result": "yes",
+          "speed": 4.0,
+          "lifetime": 90.0,
+          "limited": true,
+          "origin": [13, 5],
+          "scale": 1.0,
+          "box": [1, 1, 25, 9]
+        }
+      ]
+    },
+    "exploding_bolas": {
+      "objects": [
+        {
+          "name": "Samurai_Explosive_Bolas_obj",
+          "result": "yes",
+          "speed": 8.0,
+          "limited": true,
+          "why": "Later changes scale the current speed, so the bonus stays.",
+          "origin": [36, 36],
+          "scale": 1.1111111111111112,
+          "mask": "16583",
+          "at": [0, 0]
+        }
+      ]
+    },
+    "explosive_barrel": {
+      "objects": [
+        {
+          "name": "Pirate_Barrel_Bouncing_obj",
+          "result": "yes",
+          "speed": 5.0,
+          "lifetime": 150.0,
+          "origin": [13, 18],
+          "scale": 1.25,
+          "box": [0, 0, 25, 36]
+        },
+        {
+          "name": "Pirate_Barrel_Shred_obj",
+          "via": "Pirate_Barrel_obj",
+          "result": "partly",
+          "speed": 8.0,
+          "limited": true,
+          "why": "The bonus applies at launch, but Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [0, 8],
+          "scale": 1.0,
+          "box": [0, 0, 15, 15]
+        },
+        {
+          "name": "Marksman_Frag_Grenade_Shrapnel_obj",
+          "via": "Pirate_Barrel_Bouncing_obj",
+          "result": "partly",
+          "speed": 8.0,
+          "limited": true,
+          "why": "The bonus applies at launch, but Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [0, 8],
+          "scale": 1.25,
+          "box": [0, 0, 15, 15]
+        }
+      ]
+    },
+    "explosive_bullets": {
+      "objects": [
+        {
+          "name": "Your weapon attack",
+          "result": "yes",
+          "speed": 12.0,
+          "drops": true,
+          "why": "Strike skill: the cast fires your weapon attack. That projectile copies the cast's modifier array, so it runs the same speed code as any other projectile. Base 12 px per frame for every ranged weapon; how far it goes before it drops depends on your weapon, and a faster throw drops further away.",
+          "origin": [5, 3],
+          "scale": 1.0,
+          "box": [-10, 0, 11, 6]
+        }
+      ]
+    },
+    "explosive_kunai": {
+      "objects": [
+        {
+          "name": "Samurai_Explosive_Kunai_obj",
+          "result": "yes",
+          "speed": 10.0,
+          "limited": true,
+          "origin": [20, 5],
+          "scale": 1.0,
+          "mask": "19241",
+          "at": [0, -5]
+        }
+      ]
+    },
+    "fan_of_knives": {
+      "objects": [],
+      "note": "It does not move (no deltaSpeed), so speed has nothing to scale."
+    },
+    "fire_nova": {
+      "objects": [
+        {
+          "name": "Pyromancer_Fire_Ball_Split_obj",
+          "result": "yes",
+          "speed": 10.0,
+          "lifetime": 180.0,
+          "limited": true,
+          "origin": [60, 16],
+          "scale": 1.0,
+          "box": [0, 0, 71, 31]
+        }
+      ]
+    },
+    "fire_totem": {
+      "objects": [
+        {
+          "name": "Shaman_Totem_Fire_Projectile_obj",
+          "via": "Shaman_Totem_Fire_obj",
+          "result": "yes",
+          "speed": 5.0,
+          "lifetime": 180.0,
+          "limited": true,
+          "origin": [20, 14],
+          "scale": 1.25,
+          "mask": "19881",
+          "at": [0, 0]
+        }
+      ]
+    },
+    "fireball": {
+      "objects": [
+        {
+          "name": "Pyromancer_Fire_Ball_obj",
+          "result": "yes",
+          "speed": 10.0,
+          "lifetime": 120.0,
+          "origin": [60, 16],
+          "scale": 1.0,
+          "box": [0, 0, 71, 31]
+        },
+        {
+          "name": "Explosion_Item_obj",
+          "via": "Pyromancer_Fire_Ball_obj",
+          "result": "yes",
+          "speed": 0.5,
+          "origin": [32, 32],
+          "scale": 1.6,
+          "mask": "12813",
+          "at": [0, 0]
+        },
+        {
+          "name": "Pyromancer_Fire_Ball_Split_obj",
+          "via": "Pyromancer_Fire_Ball_obj",
+          "result": "yes",
+          "speed": 10.0,
+          "lifetime": 180.0,
+          "limited": true,
+          "origin": [60, 16],
+          "scale": 1.0,
+          "box": [0, 0, 71, 31]
+        }
+      ]
+    },
+    "fist_of_the_heavens": {
+      "objects": [],
+      "note": "It is not created with the cast modifiers, so the bonus never reaches it."
+    },
+    "flash_freeze": {
+      "objects": [],
+      "note": "Its speed is set in Step_0, after the step that applies the bonus."
+    },
+    "flying_scimitar": {
+      "objects": [
+        {
+          "name": "Flying_Scimitar_obj",
+          "result": "yes",
+          "speed": 18.0,
+          "limited": true,
+          "origin": [30, 46],
+          "scale": 0.9,
+          "box": [0, 0, 45, 71]
+        }
+      ]
+    },
+    "freezing_chain_shot": {
+      "objects": [
+        {
+          "name": "Pirate_Freezing_Chain_Shot_obj",
+          "result": "yes",
+          "speed": 8.0,
+          "limited": true,
+          "origin": [36, 36],
+          "scale": 1.0,
+          "mask": "16583",
+          "at": [0, 0]
+        }
+      ]
+    },
+    "frost_sunder": {
+      "objects": [],
+      "note": "It does not move (no deltaSpeed), so speed has nothing to scale."
+    },
+    "frozen_boulder": {
+      "objects": [
+        {
+          "name": "Jotunn_Frozen_Boulder_obj",
+          "result": "yes",
+          "speed": 2.5,
+          "lifetime": 210.0,
+          "origin": [35, 35],
+          "scale": 0.8,
+          "box": [3, 3, 66, 67]
+        },
+        {
+          "name": "Jotunn_Orb_of_Frost_obj",
+          "result": "yes",
+          "speed": 2.4,
+          "lifetime": 111.0,
+          "limited": true,
+          "origin": [42, 42],
+          "scale": 1.0,
+          "mask": "11436",
+          "at": [0, 0]
+        },
+        {
+          "name": "Marksman_Frag_Grenade_Shrapnel_obj",
+          "via": "Jotunn_Frozen_Boulder_obj",
+          "result": "no",
+          "speed": 2.0,
+          "limited": true,
+          "why": "It is not created with the cast modifiers, so the bonus never reaches it.",
+          "origin": [0, 8],
+          "scale": 1.0,
+          "box": [0, 0, 15, 15]
+        }
+      ]
+    },
+    "heavenly_fire": {
+      "objects": [
+        {
+          "name": "White_Mage_Heavenly_Fire_Orb_obj",
+          "result": "yes",
+          "speed": 2.0,
+          "lifetime": 120.0,
+          "origin": [44, 36],
+          "scale": 1.0,
+          "box": [0, 0, 82, 76]
+        }
+      ]
+    },
+    "holy_bolt": {
+      "objects": [
+        {
+          "name": "Paladin_Holy_Bolt_obj",
+          "result": "partly",
+          "speed": 4.0,
+          "lifetime": 75.0,
+          "why": "The bonus applies at launch, but Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [24, 7],
+          "scale": 1.0,
+          "box": [-11, -6, 32, 20]
+        }
+      ]
+    },
+    "holy_hammer": {
+      "objects": [
+        {
+          "name": "Paladin_Holy_Hammer_Lightforge_obj",
+          "result": "yes",
+          "speed": 12.0,
+          "limited": true,
+          "origin": [15, 15],
+          "scale": 1.0,
+          "mask": "14851",
+          "at": [-7, -8]
+        }
+      ]
+    },
+    "homing_missile": {
+      "objects": [
+        {
+          "name": "Marksman_Homing_Missile_obj",
+          "result": "yes",
+          "speed": 4.0,
+          "lifetime": 600.0,
+          "origin": [25, 7],
+          "scale": 1.0,
+          "box": [20, 0, 48, 14]
+        }
+      ]
+    },
+    "hydra": {
+      "objects": [
+        {
+          "name": "Pyromancer_Fire_Ball_obj",
+          "via": "Pyromancer_Hydra_obj",
+          "result": "no",
+          "speed": 12.0,
+          "lifetime": 180.0,
+          "why": "It is not created with the cast modifiers, so the bonus never reaches it.",
+          "origin": [60, 16],
+          "scale": 1.0,
+          "box": [0, 0, 71, 31]
+        },
+        {
+          "name": "Explosion_Item_obj",
+          "via": "Pyromancer_Fire_Ball_obj",
+          "result": "no",
+          "speed": 0.5,
+          "why": "It is not created with the cast modifiers, so the bonus never reaches it.",
+          "origin": [32, 32],
+          "scale": 1.6,
+          "mask": "12813",
+          "at": [0, 0]
+        },
+        {
+          "name": "Pyromancer_Fire_Ball_Split_obj",
+          "via": "Pyromancer_Fire_Ball_obj",
+          "result": "no",
+          "speed": 10.0,
+          "lifetime": 180.0,
+          "limited": true,
+          "why": "It is not created with the cast modifiers, so the bonus never reaches it.",
+          "origin": [60, 16],
+          "scale": 1.0,
+          "box": [0, 0, 71, 31]
+        },
+        {
+          "name": "Pyromancer_Hydra_Fire_Ball_obj",
+          "via": "Pyromancer_Hydra_obj",
+          "result": "no",
+          "speed": 12.0,
+          "lifetime": 180.0,
+          "why": "It is not created with the cast modifiers, so the bonus never reaches it.",
+          "origin": [60, 16],
+          "scale": 1.0,
+          "box": [0, 0, 71, 31]
+        }
+      ]
+    },
+    "icicles": {
+      "objects": [],
+      "note": "It is not created with the cast modifiers, so the bonus never reaches it."
+    },
+    "impale": {
+      "objects": [
+        {
+          "name": "Demonspawn_Impale_Spear_obj",
+          "result": "yes",
+          "speed": 6.0,
+          "limited": true,
+          "origin": [25, 25],
+          "scale": 1.0,
+          "mask": "6882",
+          "at": [4, 4]
+        }
+      ]
+    },
+    "jar_of_leeches": {
+      "objects": [
+        {
+          "name": "Plague_Doctor_Leech_obj",
+          "via": "Plague_Doctor_Jar_Leech_obj",
+          "result": "partly",
+          "speed": 3.0,
+          "limited": true,
+          "why": "The bonus applies at launch, but Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [4, 8],
+          "scale": 1.5,
+          "box": [0, 0, 8, 15]
+        }
+      ]
+    },
+    "lance_throw": {
+      "objects": [
+        {
+          "name": "Shield_Lancer_Lance_Throw_obj",
+          "result": "yes",
+          "speed": 8.0,
+          "limited": true,
+          "origin": [29, 4],
+          "scale": 1.0,
+          "box": [0, 0, 65, 8]
+        }
+      ]
+    },
+    "leaping_charge": {
+      "objects": [
+        {
+          "name": "Prophet_Leaping_Charge_Claw_obj",
+          "result": "yes",
+          "speed": 14.0,
+          "lifetime": 120.0,
+          "limited": true,
+          "origin": [17, 17],
+          "scale": 1.0,
+          "box": [0, 0, 30, 31]
+        },
+        {
+          "name": "Prophet_Leaping_Charge_Shuriken_obj",
+          "result": "no",
+          "speed": 10.0,
+          "lifetime": 60.0,
+          "limited": true,
+          "why": "It is not created with the cast modifiers, so the bonus never reaches it.",
+          "origin": [22, 22],
+          "scale": 1.0,
+          "box": [0, 0, 44, 44]
+        }
+      ]
+    },
+    "lightning_surge": {
+      "objects": [
+        {
+          "name": "Stormweaver_Lightning_Surge_Tornado_obj",
+          "result": "yes",
+          "speed": 2.0,
+          "lifetime": 180.0,
+          "limited": true,
+          "origin": [44, 38],
+          "scale": 1.85,
+          "box": [0, 0, 84, 76]
+        },
+        {
+          "name": "Stormweaver_Lightning_Surge_obj",
+          "result": "partly",
+          "speed": 6.0,
+          "limited": true,
+          "why": "The bonus applies at launch, but Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [110, 38],
+          "scale": 1.0,
+          "box": [4, 23, 423, 55]
+        }
+      ]
+    },
+    "mana_orb": {
+      "objects": [],
+      "note": "Its speed is set in Collision_Collision_Parent_obj, after the step that applies the bonus."
+    },
+    "meat_bomb": {
+      "objects": [],
+      "note": "Its speed is set in Alarm_0, Step_0, after the step that applies the bonus."
+    },
+    "meteor": {
+      "objects": [
+        {
+          "name": "Pyromancer_Meteor_obj",
+          "result": "yes",
+          "speed": 4.0,
+          "limited": true,
+          "why": "Later changes scale the current speed, so the bonus stays.",
+          "origin": [16, 15],
+          "scale": 1.5,
+          "mask": "17822",
+          "at": [1, 2]
+        }
+      ]
+    },
+    "miasma": {
+      "objects": [
+        {
+          "name": "Plague_Doctor_Miasma_obj",
+          "result": "yes",
+          "speed": 1.5,
+          "lifetime": 75.0,
+          "limited": true,
+          "origin": [22, 20],
+          "scale": 1.0,
+          "box": [0, 0, 44, 40]
+        }
+      ]
+    },
+    "moonshine_molotov": {
+      "objects": [
+        {
+          "name": "Redneck_Molotov_Spill_obj",
+          "via": "Redneck_Molotov_obj",
+          "result": "yes",
+          "speed": 2.0,
+          "origin": [16, 16],
+          "scale": 1.0,
+          "box": [0, 0, 31, 31]
+        }
+      ]
+    },
+    "multishot": {
+      "objects": [
+        {
+          "name": "Your weapon attack",
+          "result": "yes",
+          "speed": 12.0,
+          "drops": true,
+          "why": "Strike skill: the cast fires your weapon attack. That projectile copies the cast's modifier array, so it runs the same speed code as any other projectile. Base 12 px per frame for every ranged weapon; how far it goes before it drops depends on your weapon, and a faster throw drops further away.",
+          "origin": [16, 3],
+          "scale": 1.0,
+          "box": [0, 0, 32, 6]
+        }
+      ]
+    },
+    "omnislash": {
+      "objects": [],
+      "note": "Chain lightning: its speed is multiplied by the percent only; flat speed does not apply."
+    },
+    "orb_of_frost": {
+      "objects": [
+        {
+          "name": "Jotunn_Orb_of_Frost_obj",
+          "result": "yes",
+          "speed": 2.4,
+          "lifetime": 111.0,
+          "limited": true,
+          "origin": [42, 42],
+          "scale": 1.0,
+          "mask": "11436",
+          "at": [0, 0]
+        }
+      ]
+    },
+    "phantom_blade": {
+      "objects": [],
+      "note": "Its speed is set in Step_0, after the step that applies the bonus."
+    },
+    "pipe_bombs": {
+      "objects": [],
+      "note": "Its speed is set in Alarm_0, Step_0, after the step that applies the bonus."
+    },
+    "plague_of_rats": {
+      "objects": [
+        {
+          "name": "Plague_Doctor_Plague_of_Rats_obj",
+          "result": "yes",
+          "speed": 5.0,
+          "lifetime": 180.0,
+          "limited": true,
+          "origin": [12, 12],
+          "scale": 1.0,
+          "box": [0, 0, 23, 23]
+        },
+        {
+          "name": "Plague_Doctor_Toxic_Flask_Cloud_obj",
+          "via": "Plague_Doctor_Toxic_Flask_obj",
+          "result": "yes",
+          "speed": 1.5,
+          "lifetime": 75.0,
+          "limited": true,
+          "origin": [22, 20],
+          "scale": 1.0,
+          "box": [0, 0, 44, 40]
+        },
+        {
+          "name": "Plague_Doctor_Toxic_Flask_obj",
+          "result": "partly",
+          "speed": 5.0,
+          "why": "The bonus applies at launch, but Alarm_0, Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [10, 10],
+          "scale": 1.0,
+          "box": [0, 0, 20, 20]
+        },
+        {
+          "name": "Plague_Doctor_Plague_of_Rats_Carrier_obj",
+          "via": "Plague_Doctor_Plague_of_Rats_obj",
+          "result": "partly",
+          "speed": 3.0,
+          "limited": true,
+          "why": "The bonus applies at launch, but Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [0, 8],
+          "scale": 1.0,
+          "box": [0, 0, 15, 15]
+        }
+      ]
+    },
+    "poison_breath": {
+      "objects": [
+        {
+          "name": "Necromancer_Poison_Breath_obj",
+          "result": "yes",
+          "speed": 7.0,
+          "limited": true,
+          "origin": [19, 43],
+          "scale": 1.0,
+          "mask": "13835",
+          "at": [7, 10]
+        },
+        {
+          "name": "Necromancer_Bone_Spear_obj",
+          "result": "yes",
+          "speed": 12.0,
+          "limited": true,
+          "origin": [0, 6],
+          "scale": 1.0,
+          "mask": "13784",
+          "at": [0, -12]
+        }
+      ]
+    },
+    "poison_nova": {
+      "objects": [
+        {
+          "name": "Necromancer_Poison_Nova_obj",
+          "result": "partly",
+          "speed": 3.0,
+          "lifetime": 90.0,
+          "limited": true,
+          "why": "The bonus applies at launch, but Alarm_10 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [13, 5],
+          "scale": 1.0,
+          "box": [1, 1, 25, 9]
+        }
+      ]
+    },
+    "possessed_bullet": {
+      "objects": [
+        {
+          "name": "Your weapon attack",
+          "result": "yes",
+          "speed": 12.0,
+          "drops": true,
+          "why": "Strike skill: the cast fires your weapon attack. That projectile copies the cast's modifier array, so it runs the same speed code as any other projectile. Base 12 px per frame for every ranged weapon; how far it goes before it drops depends on your weapon, and a faster throw drops further away.",
+          "origin": [11, 8],
+          "scale": 1.0,
+          "box": [0, 0, 21, 16]
+        }
+      ]
+    },
+    "powder_trail": {
+      "objects": [
+        {
+          "name": "Pirate_Powder_Barrel_obj",
+          "result": "yes",
+          "speed": 3.0,
+          "lifetime": 90.0,
+          "limited": true,
+          "origin": [13, 18],
+          "scale": 1.0,
+          "box": [0, 0, 25, 36]
+        },
+        {
+          "name": "Pirate_Bomb_Rain_obj",
+          "via": "Pirate_Powder_Barrel_obj",
+          "result": "yes",
+          "speed": 5.0,
+          "origin": [14, 14],
+          "scale": 0.75,
+          "box": [0, 0, 27, 27]
+        }
+      ]
+    },
+    "raise_skeleton_mage": {
+      "objects": [
+        {
+          "name": "Necromancer_Summon_Skeleton_Mage_Projectile_obj",
+          "via": "Summon_Skeleton_Mage_obj",
+          "result": "no",
+          "speed": 8.0,
+          "lifetime": 180.0,
+          "limited": true,
+          "why": "It is not created with the cast modifiers, so the bonus never reaches it.",
+          "origin": [39, 17],
+          "scale": 0.66,
+          "box": [0, 0, 58, 34]
+        }
+      ]
+    },
+    "randy_the_rancid_rat": {
+      "objects": [
+        {
+          "name": "Illusionist_Summon_Arrow_obj",
+          "via": "QA3_Specimen_obj",
+          "result": "no",
+          "speed": 6.0,
+          "limited": true,
+          "why": "It is not created with the cast modifiers, so the bonus never reaches it.",
+          "origin": [0, 8],
+          "scale": 1.0,
+          "box": [0, 0, 15, 15]
+        }
+      ]
+    },
+    "rebound": {
+      "objects": [
+        {
+          "name": "Your weapon attack",
+          "result": "yes",
+          "speed": 12.0,
+          "drops": true,
+          "why": "Strike skill: the cast fires your weapon attack. That projectile copies the cast's modifier array, so it runs the same speed code as any other projectile. Base 12 px per frame for every ranged weapon; how far it goes before it drops depends on your weapon, and a faster throw drops further away.",
+          "origin": [31, 5],
+          "scale": 1.0,
+          "box": [8, -4, 56, 14]
+        }
+      ]
+    },
+    "restless_spirits": {
+      "objects": [],
+      "note": "It does not move (no deltaSpeed), so speed has nothing to scale."
+    },
+    "rock_fragments": {
+      "objects": [
+        {
+          "name": "Shaman_Rock_Fragments_obj",
+          "result": "yes",
+          "speed": 8.0,
+          "origin": [18, 19],
+          "scale": 1.0,
+          "box": [0, 0, 36, 38]
+        }
+      ]
+    },
+    "sand_gush": {
+      "objects": [],
+      "note": "It does not move (no deltaSpeed), so speed has nothing to scale."
+    },
+    "shadow_bolt": {
+      "objects": [
+        {
+          "name": "White_Mage_Shadow_Bolt_obj",
+          "result": "partly",
+          "speed": 4.0,
+          "lifetime": 120.0,
+          "limited": true,
+          "why": "The bonus applies at launch, but Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [41, 17],
+          "scale": 0.75,
+          "box": [0, 0, 58, 34]
+        }
+      ]
+    },
+    "shield_wall": {
+      "objects": [],
+      "note": "It does not move (no deltaSpeed), so speed has nothing to scale."
+    },
+    "shredder_trap": {
+      "objects": [],
+      "note": "Its speed is set in Alarm_0, Alarm_10, Step_0, after the step that applies the bonus."
+    },
+    "shuriken_throw": {
+      "objects": [
+        {
+          "name": "Samurai_Shuriken_obj",
+          "via": "Samurai_Shuriken_Creator_obj",
+          "result": "partly",
+          "speed": 8.0,
+          "lifetime": 75.0,
+          "limited": true,
+          "why": "The bonus applies at launch, but Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [9, 6],
+          "scale": 1.25,
+          "box": [0, 0, 15, 15]
+        }
+      ]
+    },
+    "slaying_riffs": {
+      "objects": [
+        {
+          "name": "Bard_Slaying_Riffs_obj",
+          "via": "Bard_Slaying_Riffs_Amplifier_obj",
+          "result": "yes",
+          "speed": 6.0,
+          "lifetime": 48.0,
+          "limited": true,
+          "origin": [16, 18],
+          "scale": 1.25,
+          "mask": "2468",
+          "at": [0, 0]
+        }
+      ]
+    },
+    "slice_of_shadows": {
+      "objects": [
+        {
+          "name": "Demon_Slayer_Slice_of_Shadows_obj",
+          "result": "yes",
+          "speed": 8.0,
+          "limited": true,
+          "origin": [71, 81],
+          "scale": 1.0,
+          "box": [0, 0, 138, 162]
+        }
+      ]
+    },
+    "slicing_throw": {
+      "objects": [
+        {
+          "name": "Butcher_Slicing_Throw_obj",
+          "result": "partly",
+          "speed": 20.0,
+          "why": "The bonus applies at launch, but Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [34, 68],
+          "scale": 1.1,
+          "mask": "4037",
+          "at": [-26, 8]
+        }
+      ]
+    },
+    "solar_flare": {
+      "objects": [
+        {
+          "name": "Exo_Solar_Flare_obj",
+          "result": "yes",
+          "speed": 4.3,
+          "lifetime": 180.0,
+          "origin": [54, 30],
+          "scale": 1.0,
+          "box": [0, 0, 85, 55]
+        }
+      ]
+    },
+    "spearnage": {
+      "objects": [
+        {
+          "name": "Amazon_Spearnage_obj",
+          "via": "Amazon_Spearnage_Controller_obj",
+          "result": "yes",
+          "speed": 7.0,
+          "limited": true,
+          "origin": [29, 13],
+          "scale": 1.0,
+          "box": [1, 6, 70, 20]
+        }
+      ]
+    },
+    "spinal_tap": {
+      "objects": [],
+      "note": "It does not move (no deltaSpeed), so speed has nothing to scale."
+    },
+    "storm_bolt": {
+      "objects": [
+        {
+          "name": "Stormweaver_Storm_Bolt_obj",
+          "result": "yes",
+          "speed": 8.0,
+          "lifetime": 180.0,
+          "limited": true,
+          "origin": [61, 43],
+          "scale": 0.75,
+          "mask": "27064",
+          "at": [35, 25]
+        }
+      ]
+    },
+    "storm_totem": {
+      "objects": [
+        {
+          "name": "Shaman_Totem_Storm_Charged_obj",
+          "via": "Shaman_Totem_Storm_obj",
+          "result": "yes",
+          "speed": 3.25,
+          "lifetime": 150.0,
+          "limited": true,
+          "origin": [40, 40],
+          "scale": 1.0,
+          "box": [27, 28, 51, 52]
+        }
+      ]
+    },
+    "summon_damned_legion": {
+      "objects": [
+        {
+          "name": "Necromancer_Damned_Bolt_obj",
+          "via": "Summon_Damned_Legion_obj",
+          "result": "no",
+          "speed": 10.0,
+          "limited": true,
+          "why": "It is not created with the cast modifiers, so the bonus never reaches it.",
+          "origin": [0, 8],
+          "scale": 1.0,
+          "box": [0, 0, 15, 15]
+        }
+      ]
+    },
+    "summon_raven": {
+      "objects": [
+        {
+          "name": "Prophet_Branch_obj",
+          "result": "yes",
+          "speed": 3.75,
+          "limited": true,
+          "origin": [13, 56],
+          "scale": 1.0,
+          "box": [0, 0, 25, 111]
+        },
+        {
+          "name": "Prophet_Branch_Splinter_obj",
+          "via": "Prophet_Branch_obj",
+          "result": "yes",
+          "speed": 12.0,
+          "lifetime": 48.0,
+          "limited": true,
+          "origin": [38, 8],
+          "scale": 1.0,
+          "box": [0, 0, 76, 15]
+        },
+        {
+          "name": "Prophet_Raven_Wasp_Projectile_obj",
+          "via": "Prophet_Raven_obj",
+          "result": "no",
+          "speed": 5.2,
+          "lifetime": 90.0,
+          "limited": true,
+          "why": "It is not created with the cast modifiers, so the bonus never reaches it.",
+          "origin": [7, 3],
+          "scale": 1.2,
+          "box": [-1, -2, 9, 8]
+        }
+      ]
+    },
+    "surgical_blood_letting": {
+      "objects": [
+        {
+          "name": "Plague_Doctor_Surgical_Bloodletting_obj",
+          "result": "partly",
+          "speed": 15.0,
+          "lifetime": 180.0,
+          "limited": true,
+          "why": "The bonus applies at launch, but Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [16, 16],
+          "scale": 0.75,
+          "mask": "27743",
+          "at": [0, 0]
+        }
+      ]
+    },
+    "tectonic_boulder": {
+      "objects": [
+        {
+          "name": "Shaman_Boulder_obj",
+          "result": "yes",
+          "speed": 3.0,
+          "limited": true,
+          "why": "Later changes scale the current speed, so the bonus stays.",
+          "origin": [35, 35],
+          "scale": 1.0,
+          "box": [3, 3, 66, 68]
+        }
+      ]
+    },
+    "the_big_boom": {
+      "objects": [
+        {
+          "name": "Marauder_The_Big_Boom_obj",
+          "result": "partly",
+          "speed": 5.0,
+          "why": "The bonus applies at launch, but Alarm_0, Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [29, 29],
+          "scale": 1.0,
+          "box": [7, 5, 50, 52]
+        },
+        {
+          "name": "Marauder_Unstable_Bomb_obj",
+          "via": "Marauder_The_Big_Boom_obj",
+          "result": "partly",
+          "speed": 2.0,
+          "why": "The bonus applies at launch, but Alarm_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [10, 10],
+          "scale": 1.0,
+          "mask": "12592",
+          "at": [0, 0]
+        }
+      ]
+    },
+    "thorned_branch": {
+      "objects": [
+        {
+          "name": "Prophet_Branch_obj",
+          "result": "yes",
+          "speed": 3.75,
+          "limited": true,
+          "origin": [13, 56],
+          "scale": 1.0,
+          "box": [0, 0, 25, 111]
+        },
+        {
+          "name": "Prophet_Branch_Splinter_obj",
+          "via": "Prophet_Branch_obj",
+          "result": "yes",
+          "speed": 12.0,
+          "lifetime": 48.0,
+          "limited": true,
+          "origin": [38, 8],
+          "scale": 1.0,
+          "box": [0, 0, 76, 15]
+        }
+      ]
+    },
+    "thunder_fury": {
+      "objects": [
+        {
+          "name": "Your weapon attack",
+          "result": "yes",
+          "speed": 12.0,
+          "drops": true,
+          "subtree": "none",
+          "why": "Strike skill: the cast fires your weapon attack. That projectile copies the cast's modifier array, so it runs the same speed code as any other projectile. Base 12 px per frame for every ranged weapon; how far it goes before it drops depends on your weapon, and a faster throw drops further away.",
+          "origin": [31, 5],
+          "scale": 1.0,
+          "box": [8, -4, 56, 14]
+        },
+        {
+          "name": "Amazon_Thunder_Fury_obj",
+          "via": "throw hit",
+          "result": "yes",
+          "speed": 10.0,
+          "lifetime": 75.0,
+          "limited": true,
+          "subtree": "base",
+          "why": "The thunder bolt that flies on when the throw hits. Its speed is 10 px per frame times (1 + Thunder's Reach), set before the speed step, and it inherits the throw's modifiers, so Projectile Speed makes it faster; it lives 1.25 s, so faster also means further.",
+          "origin": [50, 18],
+          "scale": 0.75,
+          "box": [0, 0, 78, 14]
+        }
+      ]
+    },
+    "tire_fire": {
+      "objects": [
+        {
+          "name": "Redneck_Tire_obj",
+          "result": "yes",
+          "speed": 3.0,
+          "lifetime": 150.0,
+          "limited": true,
+          "origin": [19, 13],
+          "scale": 1.0,
+          "mask": "18227",
+          "at": [0, 0]
+        }
+      ]
+    },
+    "tornado": {
+      "objects": [
+        {
+          "name": "Shaman_Twister_obj",
+          "via": "Shaman_Tornado_obj",
+          "result": "yes",
+          "speed": 5.0,
+          "lifetime": 120.0,
+          "limited": true,
+          "origin": [16, 17],
+          "scale": 1.0,
+          "mask": "19942",
+          "at": [-4, -4]
+        },
+        {
+          "name": "Shaman_Tornado_obj",
+          "result": "partly",
+          "speed": 4.75,
+          "lifetime": 141.0,
+          "limited": true,
+          "why": "The bonus applies at launch, but Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [40, 40],
+          "scale": 1.0,
+          "mask": "19941",
+          "at": [0, 0]
+        },
+        {
+          "name": "Shaman_Tornado_Tempest_obj",
+          "result": "partly",
+          "speed": 4.75,
+          "lifetime": 141.0,
+          "limited": true,
+          "why": "The bonus applies at launch, but Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [40, 40],
+          "scale": 1.0,
+          "mask": "19941",
+          "at": [0, 0]
+        }
+      ]
+    },
+    "toxic_flask": {
+      "objects": [
+        {
+          "name": "Plague_Doctor_Toxic_Flask_Cloud_obj",
+          "via": "Plague_Doctor_Toxic_Flask_obj",
+          "result": "yes",
+          "speed": 1.5,
+          "lifetime": 75.0,
+          "limited": true,
+          "origin": [22, 20],
+          "scale": 1.0,
+          "box": [0, 0, 44, 40]
+        },
+        {
+          "name": "Plague_Doctor_Toxic_Flask_obj",
+          "result": "partly",
+          "speed": 5.0,
+          "why": "The bonus applies at launch, but Alarm_0, Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [10, 10],
+          "scale": 1.0,
+          "box": [0, 0, 20, 20]
+        }
+      ]
+    },
+    "tree_trunk_triumph": {
+      "objects": [
+        {
+          "name": "Redneck_Tree_Trunk_Triumph_Splinters_obj",
+          "via": "Redneck_Tree_Trunk_Triumph_obj",
+          "result": "partly",
+          "speed": 4.0,
+          "lifetime": 150.0,
+          "limited": true,
+          "why": "The bonus applies at launch, but Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [19, 13],
+          "scale": 1.0,
+          "mask": "18227",
+          "at": [0, 0]
+        }
+      ]
+    },
+    "trickshot": {
+      "objects": [
+        {
+          "name": "Your weapon attack",
+          "result": "yes",
+          "speed": 12.0,
+          "drops": true,
+          "why": "Strike skill: the cast fires your weapon attack. That projectile copies the cast's modifier array, so it runs the same speed code as any other projectile. Base 12 px per frame for every ranged weapon; how far it goes before it drops depends on your weapon, and a faster throw drops further away.",
+          "origin": [16, 3],
+          "scale": 1.0,
+          "box": [0, 0, 32, 6]
+        }
+      ]
+    },
+    "trigger_finger": {
+      "objects": [
+        {
+          "name": "Demon_Slayer_Trigger_Finger_Raining_obj",
+          "result": "yes",
+          "speed": 14.0,
+          "origin": [5, 3],
+          "scale": 1.0,
+          "box": [-10, 0, 11, 6]
+        }
+      ]
+    },
+    "tsunami": {
+      "objects": [
+        {
+          "name": "Exo_Tsunami_obj",
+          "result": "partly",
+          "speed": 0.1,
+          "limited": true,
+          "why": "The bonus applies at launch, but Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [140, 140],
+          "scale": 0.75,
+          "box": [30, 26, 271, 264]
+        },
+        {
+          "name": "Exo_Lunar_Orbit_Shrapnel_obj",
+          "via": "Exo_Lunar_Orbit_obj",
+          "result": "partly",
+          "speed": 4.0,
+          "limited": true,
+          "why": "The bonus applies at launch, but Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
+          "origin": [0, 8],
+          "scale": 1.0,
+          "box": [0, 0, 15, 15]
+        }
+      ]
+    },
+    "twisters": {
+      "objects": [
+        {
+          "name": "Shaman_Twister_obj",
+          "result": "yes",
+          "speed": 5.0,
+          "lifetime": 240.0,
+          "limited": true,
+          "origin": [16, 17],
+          "scale": 1.0,
+          "mask": "19942",
+          "at": [-4, -4]
+        }
+      ]
+    },
+    "volatile_shot": {
+      "objects": [
+        {
+          "name": "Marksman_Volatile_Shot_obj",
+          "result": "yes",
+          "speed": 10.0,
+          "limited": true,
+          "origin": [53, 14],
+          "scale": 1.0,
+          "mask": "12782",
+          "at": [5, 1]
+        }
+      ]
+    }
+  }
+}

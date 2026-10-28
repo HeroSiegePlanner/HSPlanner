@@ -7,7 +7,9 @@ use gpui_kit::component::{
     menu::DropdownMenu,
 };
 use gpui_kit::{prelude::*, *};
-use hsplanner_ui::components::PlannerDialogExt;
+use hsplanner_ui::components::{
+    ModalSize, PlannerDialogExt, modal_body, modal_eyebrow, modal_header, modal_layout,
+};
 use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use hsplanner_ui::{
@@ -460,18 +462,33 @@ impl RenderOnce for TopBar {
                             .label("?")
                             .cursor_tooltip(tr("chrome.shortcuts"))
                             .on_click(|_, window, cx| {
-                                window.open_planner_dialog(cx, |dialog, _, _| {
-                                    dialog.title(tr("chrome.shortcuts")).child(
-                                        div()
-                                            .flex()
-                                            .flex_col()
-                                            .gap_2()
-                                            .child(tr("chrome.shortcut_save"))
-                                            .child(tr("chrome.shortcut_tree"))
-                                            .child(tr("chrome.shortcut_search"))
-                                            .child(tr("chrome.shortcut_escape")),
-                                    )
-                                })
+                                window.open_planner_modal(
+                                    cx,
+                                    ModalSize::Form,
+                                    |dialog, window, cx| {
+                                        dialog.child(
+                                            modal_layout(window)
+                                                .child(modal_header(
+                                                    modal_eyebrow(
+                                                        "shortcuts-eyebrow",
+                                                        tr("chrome.help"),
+                                                    ),
+                                                    tr("chrome.shortcuts"),
+                                                    None,
+                                                    cx,
+                                                ))
+                                                .child(
+                                                    modal_body("shortcuts-body")
+                                                        .gap_2()
+                                                        .text_size(rems(12. / 13.))
+                                                        .child(tr("chrome.shortcut_save"))
+                                                        .child(tr("chrome.shortcut_tree"))
+                                                        .child(tr("chrome.shortcut_search"))
+                                                        .child(tr("chrome.shortcut_escape")),
+                                                ),
+                                        )
+                                    },
+                                )
                             }),
                     )
                     .child(

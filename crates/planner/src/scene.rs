@@ -127,7 +127,7 @@ fn node_paint(
     }
 }
 
-// Warp links affect reachability but are deliberately invisible in Tauri.
+// Warp links affect reachability but are deliberately not drawn.
 fn visible_edge(graph: &Graph, a: usize, b: usize) -> bool {
     let warp = |index: usize| {
         graph

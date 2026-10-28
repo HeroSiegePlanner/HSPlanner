@@ -26,6 +26,8 @@ pub(crate) mod editor;
 
 #[path = "gear_import.rs"]
 mod import;
+#[path = "gear_suggest.rs"]
+mod suggest;
 #[path = "gear_picker.rs"]
 pub(crate) mod picker;
 #[path = "gear_presentation.rs"]
@@ -211,6 +213,9 @@ pub struct GearView {
     search: Entity<InputState>,
     stash_search: Entity<InputState>,
     stash_rows: Vec<crate::gear_stash::StashRow>,
+    stash_lines: Vec<crate::gear_stash::StashLine>,
+    stash_columns: usize,
+    stash_width: Pixels,
     stash_group: Option<String>,
     stash_list: ListState,
     stash_rem: Pixels,
@@ -335,6 +340,9 @@ impl GearView {
             search,
             stash_search,
             stash_rows: vec![],
+            stash_lines: vec![],
+            stash_columns: 1,
+            stash_width: px(0.),
             stash_group: None,
             stash_list: ListState::new(0, ListAlignment::Top, px(200.)),
             stash_rem: window.rem_size(),
@@ -470,7 +478,7 @@ impl GearView {
                 .iter()
                 .filter(|rw| {
                     base.is_some_and(|base| {
-                        base.rarity == "common" && rw.allowed_base_types.contains(&base.base_type)
+                        base.rarity == "common" && data::runeword_fits_base(rw, base)
                     }) && self
                         .candidate
                         .as_ref()
@@ -486,6 +494,11 @@ impl GearView {
                 .values()
                 .filter(|a| {
                     base.is_some_and(|base| gear::affix_allowed(base, a, self.show_all_affixes))
+                        && (self.show_all_affixes
+                            || self
+                                .candidate
+                                .as_ref()
+                                .is_none_or(|item| gear::affix_element_fits(item, a)))
                 })
                 .map(|a| {
                     use hsplanner_engine::calc::types::AffixKind;

@@ -18,7 +18,7 @@ pub(crate) static STAT_DEFS_MAP: LazyLock<HashMap<&'static str, &'static StatDef
         m
     });
 
-// `_more` keys fall back to base key (UI formatting overlay stays in TS).
+// `_more` keys fall back to the base key.
 pub fn stat_def(key: &str) -> Option<&'static StatDef> {
     let key = crate::calc::resistance::canonical_key(key);
     if let Some(def) = STAT_DEFS_MAP.get(key) {

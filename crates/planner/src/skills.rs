@@ -1,5 +1,7 @@
 //! Class skill trees and their inspector. The document owns ranks; this view owns selection.
-use hsplanner_ui::components::PlannerDialogExt;
+use hsplanner_ui::components::{
+    ModalSize, PlannerDialogExt, modal_eyebrow, modal_footer, modal_header, modal_layout,
+};
 use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::tooltip::CursorTooltipExt;
@@ -16,7 +18,7 @@ use crate::{
 };
 use gpui_kit::base::Disableable;
 use gpui_kit::component::{
-    Icon, IconName, Sizable, WindowExt,
+    Icon, IconName, Sizable,
     button::{Button, ButtonVariants},
 };
 use gpui_kit::{prelude::*, *};
@@ -410,21 +412,8 @@ impl SkillsView {
         };
         let session = self.session.clone();
         let view = cx.new(|cx| SubtreeView::new(session, skill, cx));
-        window.open_planner_dialog(cx, move |dialog, window, _| {
-            let rem = window.rem_size();
-            let viewport = window.viewport_size();
-            let width = (viewport.width - rem * 3.).min(rem * (680. / 13.));
-            // Modal.tsx header, body padding and footer surround the capped outer board.
-            let height = rem * ((subtree_board_size(window) + 160.375) / 13.);
-            let margin_top = ((viewport.height - height) / 2.).max(rem * 1.5);
-            dialog
-                .close_button(false)
-                .p_0()
-                .gap_0()
-                .rounded_xl()
-                .w(width)
-                .margin_top(margin_top)
-                .child(view.clone())
+        window.open_planner_modal(cx, ModalSize::Large, move |dialog, _, _| {
+            dialog.child(view.clone())
         });
     }
     fn tree_panel(
@@ -1546,10 +1535,11 @@ impl SubtreeView {
     }
 }
 /// Width of the complete bordered square, in the reference's 13px-root units.
+/// The outer board fits the modal's 88% height with its header, body padding and footer.
 fn subtree_board_size(window: &Window) -> f32 {
     let scale = f32::from(window.rem_size()) / 13.;
     let viewport = window.viewport_size();
-    (f32::from(viewport.height) / scale - 230.)
+    (f32::from(viewport.height) * 0.88 / scale - 230.)
         .min(592.)
         .min(f32::from(viewport.width) / scale - 73.5)
         .max(120.)
@@ -1568,7 +1558,7 @@ impl Render for SubtreeView {
             .map(theme::damage_color)
             .unwrap_or(p.accent_hot);
         let rem = window.rem_size();
-        // Tauri caps the OUTER square; p-4 and the border are inside that width.
+        // This caps the OUTER square; padding and border sit inside that width.
         let outer_board = subtree_board_size(window);
         let board = outer_board - 28.;
         let nodes: HashMap<usize, &SubskillNodeSpec> = self
@@ -1670,149 +1660,74 @@ impl Render for SubtreeView {
                 .text_color(p.faint)
                 .child(TooltipText::new(id, text.to_uppercase(), 0.14))
         };
-        div()
+        let points = div()
+            .flex_1()
+            .min_w_0()
             .flex()
-            .flex_col()
-            .line_height(relative(1.5))
-            .text_color(p.text)
-            .bg(linear_gradient(
-                180.,
-                linear_color_stop(p.panel_secondary, 0.),
-                linear_color_stop(p.background, 1.),
-            ))
+            .items_baseline()
+            .gap_1p5()
+            .font_family(theme::MONO_FONT_FAMILY)
+            .text_size(units(11.))
+            .text_color(p.faint)
+            .child(tr("planner.common.points"))
             .child(
                 div()
-                    .flex()
-                    .flex_wrap()
-                    .items_start()
-                    .justify_between()
-                    .gap_x_3()
-                    .gap_y_2()
-                    .px_6()
-                    .py_4()
-                    .border_b_1()
-                    .border_color(p.border)
-                    .child(
-                        div()
-                            .flex()
-                            .flex_col()
-                            .flex_1()
-                            .min_w(units(169.))
-                            .child(
-                                div()
-                                    .mb_1p5()
-                                    .flex()
-                                    .items_center()
-                                    .gap_2()
-                                    .font_family(theme::MONO_FONT_FAMILY)
-                                    .text_size(units(10.))
-                                    .text_color(p.faint)
-                                    .child(div().size(rems(0.25)).rounded_full().bg(p.accent))
-                                    .child(TooltipText::new(
-                                        "subtree-eyebrow",
-                                        tr("planner.skills.subtree_title"),
-                                        0.12,
-                                    )),
-                            )
-                            .child(
-                                div()
-                                    .text_size(units(17.))
-                                    .font_weight(FontWeight::SEMIBOLD)
-                                    .child(TooltipText::new(
-                                        "subtree-title",
-                                        self.skill.name.clone(),
-                                        -0.01,
-                                    )),
-                            )
-                            .child(
-                                div()
-                                    .mt_1()
-                                    .text_size(units(12.))
-                                    .text_color(p.muted)
-                                    .child(tr("planner.skills.subtree_help")),
-                            ),
-                    )
-                    .child(
-                        div()
-                            .flex()
-                            .items_center()
-                            .ml_auto()
-                            .flex_shrink_0()
-                            .gap_2()
-                            .child(
-                                div()
-                                    .flex()
-                                    .items_baseline()
-                                    .gap_1p5()
-                                    .font_family(theme::MONO_FONT_FAMILY)
-                                    .text_size(units(11.))
-                                    .text_color(p.faint)
-                                    .child(tr("planner.common.points"))
-                                    .child(
-                                        div()
-                                            .text_size(units(13.))
-                                            .font_weight(FontWeight::SEMIBOLD)
-                                            .text_color(p.accent_hot)
-                                            .child(format!("{spent}/{total}")),
-                                    )
-                                    .child(caption(
-                                        "subtree-remaining",
-                                        if spent > total {
-                                            trf(
-                                                "planner.skills.over_limit",
-                                                &[("0", (spent - total).to_string())],
-                                            )
-                                        } else if remaining > 0 {
-                                            trf(
-                                                "planner.skills.remaining",
-                                                &[("remaining", (remaining).to_string())],
-                                            )
-                                        } else {
-                                            tr("planner.skills.all_spent").into()
-                                        },
-                                        if spent > total {
-                                            p.negative
-                                        } else if remaining > 0 {
-                                            p.accent_deep
-                                        } else {
-                                            p.faint
-                                        },
-                                    )),
-                            )
-                            .child(
-                                modal_button(
-                                    "reset-subtree",
-                                    tr("planner.common.reset"),
-                                    ButtonTone::Neutral,
-                                    cx,
-                                )
-                                .disabled(spent == 0)
-                                .on_click(cx.listener(
-                                    move |this, _, _, cx| {
-                                        let prefix = format!("{skill_id}:");
-                                        this.session.update(cx, |session, cx| {
-                                            session.edit(|draft| {
-                                                draft
-                                                    .snapshot
-                                                    .subskill_ranks
-                                                    .retain(|key, _| !key.starts_with(&prefix))
-                                            });
-                                            cx.notify();
-                                        });
-                                    },
-                                )),
-                            )
-                            .child(
-                                modal_button(
-                                    "close-subtree",
-                                    tr("planner.common.close"),
-                                    ButtonTone::Neutral,
-                                    cx,
-                                )
-                                .on_click(|_, window, cx| window.close_dialog(cx)),
-                            ),
-                    ),
+                    .text_size(units(13.))
+                    .font_weight(FontWeight::SEMIBOLD)
+                    .text_color(p.accent_hot)
+                    .child(format!("{spent}/{total}")),
             )
+            .child(caption(
+                "subtree-remaining",
+                if spent > total {
+                    trf(
+                        "planner.skills.over_limit",
+                        &[("0", (spent - total).to_string())],
+                    )
+                } else if remaining > 0 {
+                    trf(
+                        "planner.skills.remaining",
+                        &[("remaining", (remaining).to_string())],
+                    )
+                } else {
+                    tr("planner.skills.all_spent").into()
+                },
+                if spent > total {
+                    p.negative
+                } else if remaining > 0 {
+                    p.accent_deep
+                } else {
+                    p.faint
+                },
+            ));
+        let reset = modal_button(
+            "reset-subtree",
+            tr("planner.common.reset"),
+            ButtonTone::Neutral,
+            cx,
+        )
+        .disabled(spent == 0)
+        .on_click(cx.listener(move |this, _, _, cx| {
+            let prefix = format!("{skill_id}:");
+            this.session.update(cx, |session, cx| {
+                session.edit(|draft| {
+                    draft
+                        .snapshot
+                        .subskill_ranks
+                        .retain(|key, _| !key.starts_with(&prefix))
+                });
+                cx.notify();
+            });
+        }));
+        modal_layout(window)
+            .line_height(relative(1.5))
+            .text_color(p.text)
+            .child(modal_header(
+                modal_eyebrow("subtree-eyebrow", tr("planner.skills.subtree_title")),
+                self.skill.name.clone(),
+                Some(tr("planner.skills.subtree_help").into()),
+                cx,
+            ))
             .child(
                 div()
                     .relative()
@@ -1891,15 +1806,14 @@ impl Render for SubtreeView {
                     .justify_between()
                     .gap_3()
                     .px_6()
-                    .py_2p5()
-                    .border_t_1()
-                    .border_color(p.border)
+                    .pb_3()
                     .child(hint("subtree-hint-click", tr("planner.skills.click_hint")))
                     .child(hint(
                         "subtree-hint-mods",
                         tr("planner.skills.modifier_hint_mixed"),
                     )),
             )
+            .child(modal_footer(cx).child(points).child(reset))
     }
 }
 
@@ -2372,7 +2286,7 @@ mod tests {
         snapshot.active_skill_ids.push("charged_bolts".into());
         adjust_skill_rank(&mut snapshot, "charged_bolts", false, all);
         assert!(!snapshot.skill_ranks.contains_key("charged_bolts"));
-        // Removing ranks retains the activation preference, as in Tauri.
+        // Removing ranks retains the activation preference.
         assert_eq!(snapshot.active_skill_ids, ["charged_bolts"]);
         adjust_skill_rank(&mut snapshot, "charged_bolts", false, Modifiers::default());
         assert!(snapshot.skill_ranks.is_empty());

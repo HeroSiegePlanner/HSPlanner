@@ -167,7 +167,7 @@
     "rarity": "common",
     "width": 1,
     "height": 1,
-    "maxAffixes": 4
+    "maxAffixes": 3
   },
   {
     "id": "charms_normal_large_charm",
@@ -187,7 +187,7 @@
     "rarity": "common",
     "width": 1,
     "height": 3,
-    "maxAffixes": 4
+    "maxAffixes": 5
   },
   {
     "id": "charm_heroic_finger_of_despair",

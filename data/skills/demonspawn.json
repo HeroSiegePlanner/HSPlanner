@@ -100,8 +100,8 @@
         "description": "Increases the projectile speed of fragments.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 10}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 10}
         }
       },
       {
@@ -543,8 +543,8 @@
         "description": "Increases the speed of bone projectiles.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {
@@ -1095,8 +1095,8 @@
         "description": "Increases the projectile speed of bone spikes.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {
@@ -1188,8 +1188,8 @@
         "description": "Unleash all the projectiles around you in a circle. Bone barrage no longer has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": {"of_total_damage": 0, "projectile_speed": 0, "cooldown_added": -5.5},
-          "perRank": {"of_total_damage": 35, "projectile_speed": 10, "cooldown_added": 0}
+          "base": {"of_total_damage": 0, "projectile_speed_pct": 0, "cooldown_added": -5.5},
+          "perRank": {"of_total_damage": 35, "projectile_speed_pct": 10, "cooldown_added": 0}
         }
       },
       {
@@ -1224,8 +1224,8 @@
         "description": "Bone spikes now spiral outwards from you with increased speed.",
         "maxRank": 3,
         "effects": {
-          "base": {"projectile_speed": 0, "projectile_count": 0},
-          "perRank": {"projectile_speed": 40, "projectile_count": 3}
+          "base": {"projectile_speed_pct": 0, "projectile_count": 0},
+          "perRank": {"projectile_speed_pct": 40, "projectile_count": 3}
         }
       }
     ]
@@ -1274,8 +1274,8 @@
         "description": "Increases the projectile speed of blood bolts.",
         "maxRank": 3,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {

@@ -89,8 +89,8 @@
         "description": "Increases the projectile speed of charged bolts.",
         "maxRank": 3,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 40}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 40}
         }
       },
       {
@@ -251,8 +251,8 @@
         "description": "Unleash charged bolts as a barrage dealing increased damage. Charged bolts now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": {"projectile_speed": 0, "cooldown_added": 3, "subtree_damage": 0},
-          "perRank": {"projectile_speed": 40, "cooldown_added": 0, "subtree_damage": 100}
+          "base": {"projectile_speed_pct": 0, "cooldown_added": 3, "subtree_damage": 0},
+          "perRank": {"projectile_speed_pct": 40, "cooldown_added": 0, "subtree_damage": 100}
         }
       }
     ]
@@ -1012,8 +1012,8 @@
         "description": "Storm cloud now slowly moves towards the closest nearby monster.",
         "maxRank": 2,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 35}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 35}
         }
       },
       {
@@ -1138,8 +1138,8 @@
       { "rank": 1 }
     ],
     "passiveStats": {
-      "base": { "projectile_speed": 10 },
-      "perRank": { "projectile_speed": 1.5 }
+      "base": { "projectile_speed_pct": 10 },
+      "perRank": { "projectile_speed_pct": 1.5 }
     }
   },
   {
@@ -1562,8 +1562,8 @@
         "description": "Increases the projectile speed of storm bolt.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {

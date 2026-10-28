@@ -4,15 +4,9 @@ use super::algo::{suggest_with_oracle, SearchInput};
 use super::types::{SuggestInput, SuggestResult};
 use crate::calc::build::compute_build_performance;
 use crate::calc::commands::{combined_dps_mid, perf_deps, BuildPerformanceInput};
-use crate::calc::season::SeasonScope;
 
-// SeasonScope is thread_local and Drop clears it, so the oracle re-enters the
-// scope on every call: rayon workers get the right season, and no outer scope
-// exists for a nested Drop to clobber.
 pub fn run_suggest(input: &SuggestInput, progress: impl Fn(u32, u32) + Sync) -> SuggestResult {
-    let season = input.perf.season.clone();
     let oracle = |alloc: &HashSet<u32>| -> f64 {
-        let _scope = SeasonScope::enter(season.clone());
         combined_dps_mid(&input.active_skill_ids, |main| {
             let main = main.or(input.perf.main_skill_id.as_deref());
             let mut deps = perf_deps(&input.perf, &input.perf.inventory, main);
@@ -30,20 +24,15 @@ pub fn run_suggest(input: &SuggestInput, progress: impl Fn(u32, u32) + Sync) -> 
         oracle,
         progress,
     );
-    let _scope = SeasonScope::enter(season);
     result.unsupported_lines = unsupported_lines_for(&result.added_nodes, &input.perf);
     result
 }
 
-/// Native searches reserve worker capacity for input and node previews.
-pub fn run_suggest_controlled(
-    input: &SuggestInput,
-    cancellation: &crate::task_control::Cancellation,
-    progress: impl Fn(u32, u32) + Sync,
-) -> Result<SuggestResult, String> {
+/// Workers shared by the native searches; two cores stay free for input and node previews.
+pub fn suggest_pool() -> &'static rayon::ThreadPool {
     use std::sync::OnceLock;
     static POOL: OnceLock<rayon::ThreadPool> = OnceLock::new();
-    let pool = POOL.get_or_init(|| {
+    POOL.get_or_init(|| {
         rayon::ThreadPoolBuilder::new()
             .num_threads(
                 std::thread::available_parallelism()
@@ -52,14 +41,20 @@ pub fn run_suggest_controlled(
             .thread_name(|index| format!("hsplanner-suggest-{index}"))
             .build()
             .expect("start suggestion workers")
-    });
+    })
+}
+
+pub fn run_suggest_controlled(
+    input: &SuggestInput,
+    cancellation: &crate::task_control::Cancellation,
+    progress: impl Fn(u32, u32) + Sync,
+) -> Result<SuggestResult, String> {
+    let pool = suggest_pool();
     cancellation.check()?;
-    let season = input.perf.season.clone();
     let oracle = |allocated: &HashSet<u32>| {
         if cancellation.is_cancelled() {
             return 0.;
         }
-        let _scope = SeasonScope::enter(season.clone());
         combined_dps_mid(&input.active_skill_ids, |main| {
             let mut deps = perf_deps(
                 &input.perf,
@@ -82,7 +77,6 @@ pub fn run_suggest_controlled(
             || cancellation.is_cancelled(),
         )
     })?;
-    let _scope = SeasonScope::enter(season);
     result.unsupported_lines = unsupported_lines_for(&result.added_nodes, &input.perf);
     Ok(result)
 }
@@ -110,7 +104,6 @@ mod tests {
         use crate::calc::types::EquippedItem;
         use std::collections::HashMap;
 
-        let _scope = SeasonScope::enter(None);
         let skills = crate::calc::data::get_skills_by_class("amazon");
         let skill = skills
             .iter()
@@ -187,7 +180,6 @@ mod tests {
         );
 
         let final_alloc: HashSet<u32> = result.added_nodes.iter().copied().collect();
-        let _scope = SeasonScope::enter(None);
         let direct = combined_dps_mid(&input.active_skill_ids, |main| {
             let main = main.or(input.perf.main_skill_id.as_deref());
             let mut deps = perf_deps(&input.perf, &input.perf.inventory, main);

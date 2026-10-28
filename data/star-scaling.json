@@ -190,6 +190,7 @@
     "poison_length_reduced": { "kind": "none" },
     "projectile_size": { "kind": "none" },
     "projectile_speed": { "kind": "none" },
+    "projectile_speed_pct": { "kind": "none" },
     "ranged_range": { "kind": "none" }
   }
 }

@@ -74,7 +74,7 @@ pub(crate) static CONVERSION_RULES: LazyLock<Vec<ConversionRule>> = LazyLock::ne
                 Some(ParsedConversion {
                     from_key: "sum_resistances".to_string(),
                     from_kind: ConvertKind::Stat,
-                    to_key: "life".to_string(),
+                    to_key: "increased_life".to_string(),
                     to_kind: ConvertKind::Stat,
                     pct: num(&m[1]),
                 })
@@ -89,7 +89,7 @@ pub(crate) static CONVERSION_RULES: LazyLock<Vec<ConversionRule>> = LazyLock::ne
                 Some(ParsedConversion {
                     from_key: "overcapped_resistances".to_string(),
                     from_kind: ConvertKind::Stat,
-                    to_key: "life".to_string(),
+                    to_key: "increased_life".to_string(),
                     to_kind: ConvertKind::Stat,
                     pct: num(&m[1]),
                 })

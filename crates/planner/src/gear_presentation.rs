@@ -1,10 +1,13 @@
 //! Equipment composition; the parent view retains draft and comparison ownership.
 use super::*;
-use crate::gear_stash::{self, StashRow};
+use crate::gear_stash::{self, StashLine, StashRow};
 use crate::item_tooltip;
 use gpui_kit::component::button::{ButtonCustomVariant, ButtonVariants};
-use hsplanner_ui::components::PlannerDialogExt;
-use hsplanner_ui::components::{panel, panel_with_trailing, section_heading};
+use gpui_kit::component::scroll::{Scrollbar, ScrollbarMode};
+use hsplanner_ui::components::{
+    ModalSize, PlannerDialogExt, modal_eyebrow, modal_frame, modal_header, modal_height,
+    modal_layout, panel, panel_with_trailing, section_heading,
+};
 use hsplanner_ui::controls::segment;
 use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::tooltip::CursorTooltipExt;
@@ -14,7 +17,9 @@ use std::{
 };
 
 const STASH_HEADER_PX: f32 = 28.;
-const STASH_ENTRY_PX: f32 = 56.;
+const STASH_COLUMN_MIN_PX: f32 = 320.;
+const STASH_COLUMN_GAP_PX: f32 = 12.;
+const STASH_MIN_HEIGHT_PX: f32 = 320.;
 
 static ITEM_IMAGES: LazyLock<Mutex<HashMap<String, Arc<RenderImage>>>> =
     LazyLock::new(Default::default);
@@ -135,7 +140,6 @@ impl GearView {
         let mercenary = self.mercenary;
         window.open_planner_dialog(cx, move |dialog, window, cx| {
             let on_close = weak.clone();
-            let palette = cx.global::<TooltipTheme>();
             let view = owner.read(cx);
             let picker_width = uses_item_picker_width(view.choosing, &view.picker);
             let logical_width = if picker_width > 0 {
@@ -145,62 +149,13 @@ impl GearView {
             } else {
                 1180.
             };
-            let width = (window.viewport_size().width * 0.96)
-                .min(window.rem_size() * (logical_width / 13.));
-            let heading = gpui_kit::component::dialog::DialogTitle::new()
-                .flex_none()
-                .child(
-                    div()
-                        .font_family(theme::FONT_FAMILY)
-                        .font_weight(FontWeight::NORMAL)
-                        .line_height(relative(1.5))
-                        .px_6()
-                        .py_4()
-                        .border_b_1()
-                        .border_color(palette.border)
-                        .child(
-                            div()
-                                .mb_1p5()
-                                .flex()
-                                .items_center()
-                                .gap_2()
-                                .child(div().size_1().rounded_full().bg(palette.accent))
-                                .child(
-                                    div()
-                                        .font_family(theme::MONO_FONT_FAMILY)
-                                        .text_size(rems(10. / 13.))
-                                        .text_color(palette.faint)
-                                        .child(hsplanner_ui::tooltip_text::TooltipText::new(
-                                            "gear-slot-eyebrow",
-                                            tr("gear.slot"),
-                                            0.12,
-                                        )),
-                                ),
-                        )
-                        .child(
-                            div()
-                                .text_size(rems(17. / 13.))
-                                .font_weight(FontWeight::SEMIBOLD)
-                                .text_color(palette.text)
-                                .child(gear_stash::slot_label(&slot_key)),
-                        ),
-                );
-            dialog
-                .p_0()
-                .gap_0()
-                .bg(linear_gradient(
-                    180.,
-                    linear_color_stop(palette.panel_secondary, 0.),
-                    linear_color_stop(palette.background, 1.),
-                ))
-                .width(width)
-                .h(window.viewport_size().height * 0.88)
-                .margin_top(window.viewport_size().height * 0.06)
+            modal_frame(dialog, ModalSize::Custom(logical_width), window, cx)
+                .h(modal_height(window))
                 .overlay_closable(false)
                 // Focused buttons keep their native Enter activation. An Enter
                 // bubbling from search or the dialog itself must not discard a draft.
                 .on_ok(|_, _, _| false)
-                // The close icon and Escape discard the draft, like Cancel.
+                // The close button and Escape discard the draft.
                 .on_cancel(|_, _, _| true)
                 .on_close(move |_, _, cx| {
                     let _ = on_close.update(cx, |owner, cx| {
@@ -209,14 +164,14 @@ impl GearView {
                         owner.revert(cx);
                     });
                 })
-                // The stock title/content split inserts an internal gap_y_2.
-                // One column retains DialogTitle semantics without that extra gap.
                 .child(
-                    div()
-                        .size_full()
-                        .flex()
-                        .flex_col()
-                        .child(heading)
+                    modal_layout(window)
+                        .child(modal_header(
+                            modal_eyebrow("gear-slot-eyebrow", tr("gear.slot")),
+                            gear_stash::slot_label(&slot_key),
+                            None,
+                            cx,
+                        ))
                         .child(editor.clone()),
                 )
         });
@@ -737,21 +692,34 @@ impl GearView {
         }
         let rows = gear_stash::group_stash_rows(stash, &query, self.stash_group.as_deref());
         if self.stash_rows != rows {
-            self.stash_list.reset(rows.len());
             self.stash_rows = rows;
+            self.relayout_stash();
         }
     }
 
-    fn stash_list_height(&self) -> Rems {
-        let px: f32 = self
-            .stash_rows
-            .iter()
-            .map(|row| match row {
-                StashRow::Header { .. } => STASH_HEADER_PX,
-                StashRow::Entry { .. } => STASH_ENTRY_PX,
-            })
-            .sum();
-        rems((px / 13.).min(28.))
+    fn relayout_stash(&mut self) {
+        self.stash_lines = gear_stash::stash_lines(&self.stash_rows, self.stash_columns);
+        self.stash_list.reset(self.stash_lines.len());
+    }
+
+    /// Picks the column count from the list's last laid-out width.
+    fn update_stash_columns(&mut self, window: &Window) {
+        let width = self.stash_list.viewport_bounds().size.width;
+        if width != self.stash_width {
+            self.stash_width = width;
+            // The width is a frame behind; settle once more after this layout.
+            window.request_animation_frame();
+        }
+        let rem = f32::from(window.rem_size());
+        let columns = gear_stash::stash_columns(
+            f32::from(width),
+            STASH_COLUMN_MIN_PX / 13. * rem,
+            STASH_COLUMN_GAP_PX / 13. * rem,
+        );
+        if columns != self.stash_columns {
+            self.stash_columns = columns;
+            self.relayout_stash();
+        }
     }
 
     fn stash_group_chips(&self, cx: &Context<Self>) -> Div {
@@ -814,19 +782,44 @@ impl GearView {
             .into_any_element()
     }
 
-    fn render_stash_row(
+    fn render_stash_line(
         &mut self,
         index: usize,
         _: &mut Window,
         cx: &mut Context<Self>,
     ) -> AnyElement {
-        let p = cx.global::<TooltipTheme>();
-        let entry_index = match self.stash_rows.get(index) {
-            Some(StashRow::Header { group, count }) => {
-                return self.render_stash_header(group, *count, cx);
-            }
-            Some(StashRow::Entry { index, .. }) => *index,
+        let entries = match self.stash_lines.get(index) {
+            Some(StashLine::Header(row)) => match self.stash_rows.get(*row) {
+                Some(StashRow::Header { group, count }) => {
+                    return self.render_stash_header(group, *count, cx);
+                }
+                _ => return div().into_any_element(),
+            },
+            Some(StashLine::Entries(rows)) => rows.clone(),
             None => return div().into_any_element(),
+        };
+        let filler = self.stash_columns.saturating_sub(entries.len());
+        div()
+            .w_full()
+            .flex()
+            .gap(rems(STASH_COLUMN_GAP_PX / 13.))
+            .children(entries.map(|row| {
+                div()
+                    .flex_1()
+                    .min_w_0()
+                    .child(self.render_stash_entry(row, cx))
+            }))
+            .children((0..filler).map(|_| div().flex_1().min_w_0()))
+            .into_any_element()
+    }
+
+    fn render_stash_entry(&mut self, row: usize, cx: &mut Context<Self>) -> AnyElement {
+        let p = cx.global::<TooltipTheme>();
+        let Some(StashRow::Entry {
+            index: entry_index, ..
+        }) = self.stash_rows.get(row).cloned()
+        else {
+            return div().into_any_element();
         };
         let session = self.session.read(cx);
         let Some(entry) = session.draft().stash.get(entry_index) else {
@@ -940,9 +933,13 @@ impl GearView {
         let p = cx.global::<TooltipTheme>();
         let session = self.session.read(cx);
         let empty = self.stash_rows.is_empty();
+        // Stretches to the row's height; the list takes what the search and chips leave.
         panel("stash-panel", tr("gear.stash"), cx)
             .min_w(rems(280. / 13.))
             .flex_1()
+            .self_stretch()
+            .flex()
+            .flex_col()
             .child(
                 div()
                     .px_3()
@@ -952,15 +949,59 @@ impl GearView {
             .child(self.stash_group_chips(cx))
             .child(
                 div()
+                    .flex_1()
+                    .flex()
+                    .flex_col()
                     .text_size(rems(11. / 13.))
                     .when(!empty, |view| {
                         view.child(
-                            list(
-                                self.stash_list.clone(),
-                                cx.processor(Self::render_stash_row),
-                            )
-                            .w_full()
-                            .h(self.stash_list_height()),
+                            div()
+                                .relative()
+                                .flex_1()
+                                .min_h(rems(STASH_MIN_HEIGHT_PX / 13.))
+                                // Reaches into the panel padding so the scrollbar sits at the border.
+                                .mr(-rems(1.))
+                                .on_scroll_wheel({
+                                    let list = self.stash_list.clone();
+                                    // A list with somewhere to scroll keeps the wheel off the page.
+                                    move |_, _, cx| {
+                                        if list.max_offset_for_scrollbar().y > px(0.) {
+                                            cx.stop_propagation();
+                                        }
+                                    }
+                                })
+                                // Rows end where the panel content does; the padding holds the bar.
+                                .child(
+                                    div()
+                                        .absolute()
+                                        .top_0()
+                                        .bottom_0()
+                                        .left_0()
+                                        .right(rems(1.))
+                                        .child(
+                                            list(
+                                                self.stash_list.clone(),
+                                                cx.processor(Self::render_stash_line),
+                                            )
+                                            .size_full(),
+                                        ),
+                                )
+                                .child(
+                                    Scrollbar::vertical(&self.stash_list)
+                                        .mode(ScrollbarMode::Always)
+                                        .viewport_from_layout()
+                                        .styles(|styles| {
+                                            styles
+                                                .track(|track| track.width(px(8.)))
+                                                .thumb(|thumb| thumb.width(px(4.)).inset(px(2.)))
+                                                .thumb_hover(|thumb| {
+                                                    thumb.width(px(6.)).inset(px(1.))
+                                                })
+                                                .thumb_active(|thumb| {
+                                                    thumb.width(px(6.)).inset(px(1.))
+                                                })
+                                        }),
+                                ),
                         )
                     })
                     .when(empty, |v| {
@@ -1209,8 +1250,9 @@ impl GearView {
     pub(super) fn overview(&mut self, window: &Window, cx: &Context<Self>) -> Div {
         if self.stash_rem != window.rem_size() {
             self.stash_rem = window.rem_size();
-            self.stash_list.reset(self.stash_rows.len());
+            self.stash_list.reset(self.stash_lines.len());
         }
+        self.update_stash_columns(window);
         if self.mercenary {
             return self.merc_loadout(window, cx);
         }
@@ -1225,6 +1267,7 @@ impl GearView {
                     div()
                         .w_full()
                         .min_w_0()
+                        .min_h_full()
                         .p_6()
                         .flex()
                         .flex_col()
@@ -1293,6 +1336,20 @@ impl GearView {
                                         )
                                         .child(
                                             hsplanner_ui::controls::command_button(
+                                                "suggest-upgrades",
+                                                tr("gear.suggest_upgrades"),
+                                                hsplanner_ui::controls::ButtonTone::Neutral,
+                                                hsplanner_ui::controls::ButtonSize::Small,
+                                                cx,
+                                            )
+                                            .on_click(
+                                                cx.listener(|this, _, window, cx| {
+                                                    this.open_suggest(window, cx)
+                                                }),
+                                            ),
+                                        )
+                                        .child(
+                                            hsplanner_ui::controls::command_button(
                                                 "import-screenshot",
                                                 tr("gear.import_screenshot"),
                                                 hsplanner_ui::controls::ButtonTone::Neutral,
@@ -1309,6 +1366,7 @@ impl GearView {
                         )
                         .child(
                             div()
+                                .flex_1()
                                 .flex()
                                 .items_start()
                                 .flex_wrap()

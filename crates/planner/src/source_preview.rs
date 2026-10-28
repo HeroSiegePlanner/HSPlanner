@@ -263,7 +263,7 @@ impl NodePreview {
                     move |bounds, _, window, _| {
                         let viewport =
                             [f32::from(bounds.size.width), f32::from(bounds.size.height)];
-                        // Match Tauri's 360×240 world-space mini-map; physical bounds come from layout.
+                        // A 360×240 world-space mini-map; physical bounds come from layout.
                         let camera = Camera::centered(center, viewport, viewport[0] / 360.);
                         scene.paint(
                             camera,

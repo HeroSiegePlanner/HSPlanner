@@ -221,7 +221,7 @@ pub fn apply_increased_all_attributes(attr_sources: &mut SourceMap, stat_sources
 }
 
 // Per-attribute `increased_X` + `increased_X_more` compounded as a delta.
-// Hardcoded SourceType::Tree matches TS (these typically come from tree).
+// Hardcoded SourceType::Tree: these typically come from the tree.
 pub fn apply_increased_per_attribute(attr_sources: &mut SourceMap, stat_sources: &SourceMap) {
     let cfg = data::game_config();
     for attr in cfg.attributes.iter() {

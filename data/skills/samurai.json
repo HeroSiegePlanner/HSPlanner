@@ -373,8 +373,8 @@
         "description": "Increases projectile speed.",
         "maxRank": 7,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 12}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 12}
         }
       },
       {
@@ -765,8 +765,8 @@
         "description": "Spirit double now spawns multiple shadows dashing with increased speed and damage.",
         "maxRank": 3,
         "effects": {
-          "base": {"projectile_speed": 0, "projectile_count": 0, "subtree_damage": 0},
-          "perRank": {"projectile_speed": 20, "projectile_count": 1, "subtree_damage": 30}
+          "base": {"projectile_speed_pct": 0, "projectile_count": 0, "subtree_damage": 0},
+          "perRank": {"projectile_speed_pct": 20, "projectile_count": 1, "subtree_damage": 30}
         }
       },
       {
@@ -921,8 +921,8 @@
         "description": "Increases projectile speed.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {
@@ -1238,8 +1238,8 @@
         "description": "Now consumes a percentage of your maximum life each cast giving your kunai increased speed and explosion aoe. Maximum life damage is non-lethal.",
         "maxRank": 2,
         "effects": {
-          "base": {"projectile_speed": 0, "area_of_effect": 0},
-          "perRank": {"projectile_speed": 30, "area_of_effect": 35}
+          "base": {"projectile_speed_pct": 0, "area_of_effect": 0},
+          "perRank": {"projectile_speed_pct": 30, "area_of_effect": 35}
         }
       },
       {
@@ -1358,8 +1358,8 @@
         "description": "Explosive kunai no longer explode but instead pierces with increased projectile speed slicing monsters inflicting bleeding.",
         "maxRank": 3,
         "effects": {
-          "base": {"increased_bleeding_damage": 0, "projectile_speed": 0},
-          "perRank": {"increased_bleeding_damage": 50, "projectile_speed": 15}
+          "base": {"increased_bleeding_damage": 0, "projectile_speed_pct": 0},
+          "perRank": {"increased_bleeding_damage": 50, "projectile_speed_pct": 15}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1586,8 +1586,8 @@
         "description": "Increases blade barriers rotation speed.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {
@@ -1891,8 +1891,8 @@
         "description": "Increases projectile speed.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {

@@ -1182,8 +1182,8 @@
         "description": "Increases cast rate and projectile speed when using tsunami.",
         "maxRank": 5,
         "effects": {
-          "base": {"faster_cast_rate": 0, "projectile_speed": 0},
-          "perRank": {"faster_cast_rate": 8, "projectile_speed": 12.5}
+          "base": {"faster_cast_rate": 0, "projectile_speed_pct": 0},
+          "perRank": {"faster_cast_rate": 8, "projectile_speed_pct": 12.5}
         }
       },
       {
@@ -1230,8 +1230,8 @@
         "description": "Increases the duration of tsunami decreasing its projectile speed.",
         "maxRank": 5,
         "effects": {
-          "base": {"skill_duration": 0, "projectile_speed": 0},
-          "perRank": {"skill_duration": 15, "projectile_speed": -12.5}
+          "base": {"skill_duration": 0, "projectile_speed_pct": 0},
+          "perRank": {"skill_duration": 15, "projectile_speed_pct": -12.5}
         }
       },
       {
@@ -1278,8 +1278,8 @@
         "description": "Increases the projectile speed of tsunami inflicting cold break on hit.",
         "maxRank": 3,
         "effects": {
-          "base": {"cold_break": 0, "projectile_speed": 0, "subtree_damage": 0},
-          "perRank": {"cold_break": 45, "projectile_speed": 25, "subtree_damage": 25}
+          "base": {"cold_break": 0, "projectile_speed_pct": 0, "subtree_damage": 0},
+          "perRank": {"cold_break": 45, "projectile_speed_pct": 25, "subtree_damage": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -1380,8 +1380,8 @@
         "description": "Increases the falling speed and maximum cast range of asteroid.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0, "skill_range": 0},
-          "perRank": {"projectile_speed": 18, "skill_range": 20}
+          "base": {"projectile_speed_pct": 0, "skill_range": 0},
+          "perRank": {"projectile_speed_pct": 18, "skill_range": 20}
         }
       },
       {
@@ -1639,8 +1639,8 @@
         "description": "Increases the orbital speed of lunar orbit.",
         "maxRank": 4,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 10}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 10}
         }
       },
       {
@@ -1759,8 +1759,8 @@
         "description": "When moons expire they are sent outwards bouncing on walls and terrain.",
         "maxRank": 3,
         "effects": {
-          "base": {"cold_skill_damage": 0, "projectile_speed": 0},
-          "perRank": {"cold_skill_damage": 85, "projectile_speed": 35}
+          "base": {"cold_skill_damage": 0, "projectile_speed_pct": 0},
+          "perRank": {"cold_skill_damage": 85, "projectile_speed_pct": 35}
         }
       },
       {

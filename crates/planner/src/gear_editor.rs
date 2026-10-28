@@ -1849,10 +1849,16 @@ impl GearView {
             (p.accent_hot, p.accent, p.border, p.muted, p.text);
         let id = row.id.clone();
         let description = format!("{}\n{}", row.label, row.detail);
+        let augment = (self.picker == Picker::Augment)
+            .then(|| data::get_augment(&row.id))
+            .flatten();
         div()
             .id(SharedString::from(format!("choice-{}", row.id)))
-            .cursor_tooltip_view(move |window, cx| {
-                gpui_kit::component::tooltip::Tooltip::new(description.clone()).build(window, cx)
+            .map(|view| match augment {
+                Some(augment) => view.cursor_tooltip_view(crate::item_tooltip::augment_tooltip(augment)),
+                None => view.cursor_tooltip_view(move |window, cx| {
+                    gpui_kit::component::tooltip::Tooltip::new(description.clone()).build(window, cx)
+                }),
             })
             .relative()
             .w_full()
@@ -2139,15 +2145,6 @@ impl GearView {
                     .child(
                         editor_button("revert-item", tr("gear.revert"), false, cx)
                             .on_click(cx.listener(|this, _, _, cx| this.revert(cx))),
-                    )
-                    .child(
-                        editor_button("cancel-item", tr("gear.cancel"), false, cx).on_click(
-                            cx.listener(|this, _, window, cx| {
-                                this.editing = false;
-                                this.revert(cx);
-                                window.close_dialog(cx);
-                            }),
-                        ),
                     )
                     .child(
                         editor_button("apply-item", tr("gear.apply"), true, cx)
@@ -2526,7 +2523,7 @@ fn roll_entries(item: &EquippedItem, base: &ItemBase) -> Vec<RollEntry> {
     entries
 }
 
-fn socketable_name(id: &str) -> String {
+pub(crate) fn socketable_name(id: &str) -> String {
     data::get_gem(id)
         .map(|g| g.name.clone())
         .or_else(|| data::get_rune(id).map(|r| r.name.clone()))
@@ -2540,8 +2537,7 @@ fn compatible_runeword_count(base: &ItemBase, max_sockets: u32) -> usize {
     data::runewords()
         .iter()
         .filter(|runeword| {
-            runeword.allowed_base_types.contains(&base.base_type)
-                && runeword.runes.len() <= max_sockets as usize
+            data::runeword_fits_base(runeword, base) && runeword.runes.len() <= max_sockets as usize
         })
         .count()
 }

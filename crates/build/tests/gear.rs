@@ -38,7 +38,7 @@ fn runewords_use_real_ordered_runes_and_do_not_create_invalid_unique_sockets() {
                 .runewords
                 .iter()
                 .find(|rw| {
-                    rw.allowed_base_types.contains(&base.base_type)
+                    data::runeword_fits_base(rw, base)
                         && rw.runes.len() <= gear::max_sockets(&item) as usize
                 })
                 .map(|rw| (base, rw))

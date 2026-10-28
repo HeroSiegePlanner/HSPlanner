@@ -3,7 +3,11 @@ use super::*;
 use gpui_kit::component::button::ButtonVariants;
 use gpui_kit::component::input::{Textarea, TextareaState};
 use hsplanner_build::item_text::{self, ParseResult};
-use hsplanner_ui::components::PlannerDialogExt;
+use hsplanner_ui::components::{
+    ModalSize, PlannerDialogExt, modal_eyebrow, modal_footer, modal_header, modal_height,
+    modal_layout, modal_status,
+};
+use hsplanner_ui::controls::{ButtonTone, modal_button};
 use hsplanner_ui::theme;
 
 impl GearView {
@@ -16,38 +20,19 @@ impl GearView {
         let owner = cx.entity().downgrade();
         let document = DocumentKey::from_session(self.session.read(cx));
         let editor = cx.new(|cx| ItemTextEditor::new(original, owner, document, window, cx));
-        window.open_planner_dialog(cx, move |dialog, window, cx| {
-            let p = cx.global::<TooltipTheme>();
+        window.open_planner_modal(cx, ModalSize::Editor, move |dialog, window, cx| {
             dialog
-                .width((window.rem_size() * (1100. / 13.)).min(window.viewport_size().width * 0.96))
-                .h(window.viewport_size().height * 0.88)
-                .margin_top(window.viewport_size().height * 0.06)
-                .bg(p.background)
+                .h(modal_height(window))
+                .overlay_closable(false)
                 .on_ok(|_, _, _| false)
                 .child(
-                    div()
-                        .size_full()
-                        .flex()
-                        .flex_col()
-                        .gap_3()
-                        .child(
-                            gpui_kit::component::dialog::DialogTitle::new()
-                                .flex_none()
-                                .child(
-                                    div()
-                                        .flex()
-                                        .flex_col()
-                                        .gap_1()
-                                        .child(
-                                            div()
-                                                .font_family(theme::MONO_FONT_FAMILY)
-                                                .text_xs()
-                                                .text_color(p.accent)
-                                                .child(tr("gear.text_edit_heading")),
-                                        )
-                                        .child(title.clone()),
-                                ),
-                        )
+                    modal_layout(window)
+                        .child(modal_header(
+                            modal_eyebrow("item-text-eyebrow", tr("gear.text_edit_heading")),
+                            title.clone(),
+                            None,
+                            cx,
+                        ))
                         .child(editor.clone()),
                 )
         });
@@ -190,7 +175,7 @@ impl ItemTextEditor {
     }
 }
 impl Render for ItemTextEditor {
-    fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+    fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let p = cx.global::<TooltipTheme>();
         let (border, muted, text, accent, negative, background) = (
             p.border,
@@ -279,11 +264,9 @@ impl Render for ItemTextEditor {
                     )),
             );
         }
-        // Bound the editor viewport inside the dialog's title and padding so
-        // multiline input and list intrinsic heights cannot push Save offscreen.
+        // The fixed modal height bounds the textarea and list, so Save stays in the footer.
         div()
-            .h((window.viewport_size().height * 0.88 - window.rem_size() * 8.).max(px(0.)))
-            .flex_none()
+            .flex_1()
             .min_h_0()
             .overflow_hidden()
             .flex()
@@ -293,6 +276,8 @@ impl Render for ItemTextEditor {
                 div()
                     .flex_1()
                     .min_h_0()
+                    .mx_6()
+                    .my_4()
                     .flex()
                     .border_1()
                     .border_color(border)
@@ -352,35 +337,19 @@ impl Render for ItemTextEditor {
                     ),
             )
             .child(
-                div()
-                    .flex_none()
-                    .pt_3()
-                    .flex()
-                    .items_center()
-                    .gap_2()
+                modal_footer(cx)
+                    .child(modal_status(
+                        if self.pending {
+                            tr("gear.validating")
+                        } else if ready {
+                            tr("gear.ready_to_save")
+                        } else {
+                            tr("gear.fix_errors")
+                        },
+                        if ready { accent } else { muted },
+                    ))
                     .child(
-                        div()
-                            .flex_1()
-                            .text_xs()
-                            .text_color(if ready { accent } else { muted })
-                            .child(if self.pending {
-                                tr("gear.validating")
-                            } else if ready {
-                                tr("gear.ready_to_save")
-                            } else {
-                                tr("gear.fix_errors")
-                            }),
-                    )
-                    .child(
-                        Button::new("cancel-text-edit")
-                            .planner_style(cx)
-                            .label(tr("gear.cancel"))
-                            .on_click(|_, window, cx| window.close_dialog(cx)),
-                    )
-                    .child(
-                        Button::new("save-text-edit")
-                            .planner_style(cx)
-                            .label(tr("gear.save"))
+                        modal_button("save-text-edit", tr("gear.save"), ButtonTone::Primary, cx)
                             .disabled(!ready)
                             .on_click(cx.listener(|this, _, window, cx| this.save(window, cx))),
                     ),

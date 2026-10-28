@@ -59,7 +59,6 @@ pub fn prepare_input(input: &PlannerInput) -> BuildPerformanceInput {
     build
         .inventory
         .retain(|slot, _| !input.disabled_potions.get(slot).copied().unwrap_or(false));
-    let _scope = super::season::SeasonScope::enter(build.season.clone());
     // An enabled potion is drunk: its granted buff is on.
     for (slot, item) in &build.inventory {
         if !slot.starts_with("potion_") {
@@ -149,9 +148,51 @@ pub fn prepare_input(input: &PlannerInput) -> BuildPerformanceInput {
     build
 }
 
+/// The stat panel's leading numbers, as min–max ranges.
+#[derive(Debug, Clone, Copy, Default, PartialEq)]
+pub struct DpsSummary {
+    pub hit_damage: Option<Ranged>,
+    pub hit_dps: Option<Ranged>,
+    pub combined_dps: Option<Ranged>,
+}
+
+pub fn dps_summary(input: &PlannerInput) -> DpsSummary {
+    let current = evaluate(input).current;
+    DpsSummary {
+        hit_damage: current.hit_damage(),
+        hit_dps: current.hit_dps_min.zip(current.hit_dps_max),
+        combined_dps: current.combined_dps_min.zip(current.combined_dps_max),
+    }
+}
+
+/// The combined DPS midpoint `evaluate` reports, without the stat breakdowns; for searches.
+pub fn combined_dps(input: &PlannerInput) -> f64 {
+    let prepared = prepare_input(input);
+    super::commands::combined_dps_mid(&input.active_skill_ids, |main| {
+        super::build::compute_build_performance(&super::commands::perf_deps(
+            &prepared,
+            &prepared.inventory,
+            main.or(prepared.main_skill_id.as_deref()),
+        ))
+    })
+}
+
+/// The main skill's Hit DPS midpoint `evaluate` reports, without the stat breakdowns; for searches.
+pub fn hit_dps(input: &PlannerInput) -> f64 {
+    let prepared = prepare_input(input);
+    let performance = super::build::compute_build_performance(&super::commands::perf_deps(
+        &prepared,
+        &prepared.inventory,
+        prepared.main_skill_id.as_deref(),
+    ));
+    performance
+        .hit_dps_min
+        .zip(performance.hit_dps_max)
+        .map_or(0., |(low, high)| (low + high) / 2.)
+}
+
 pub fn evaluate(input: &PlannerInput) -> PlannerPerformance {
     let prepared = prepare_input(input);
-    let _scope = super::season::SeasonScope::enter(prepared.season.clone());
     let mut computed = calc_build_stats(prepared.clone());
     let primary = super::build::performance_from_stats(
         &super::commands::perf_deps(
@@ -161,6 +202,16 @@ pub fn evaluate(input: &PlannerInput) -> PlannerPerformance {
         ),
         computed.clone(),
     );
+    // Crushing Blow stacks follow the main skill's contacts, known only after its pass.
+    for key in ["crushing_blow_stacks", "crushing_blow_armor_break"] {
+        if let Some(value) = primary.stats.get(key) {
+            computed.stats.insert(key.into(), *value);
+            let sources = primary.calculation_sources().get(key).cloned();
+            computed
+                .stat_sources
+                .insert(key.into(), sources.unwrap_or_default());
+        }
+    }
     let mut per_skill = Vec::with_capacity(input.active_skill_ids.len());
     for (index, id) in input.active_skill_ids.iter().enumerate() {
         let mut build = prepared.clone();
@@ -185,7 +236,6 @@ pub fn evaluate(input: &PlannerInput) -> PlannerPerformance {
         level: 1,
         inventory: input.merc_inventory.clone(),
         kills_per_sec: 1.,
-        season: prepared.season,
         ..Default::default()
     });
     let ether = summarize_ether(&input.allocated_ether_nodes);
@@ -344,18 +394,18 @@ pub fn summarize_ether(ids: &[u32]) -> Vec<EtherSummary> {
     out
 }
 
-pub fn dps_mid(performance: &PlannerPerformance) -> f64 {
-    let p = &performance.current;
-    let value: Ranged = (
-        p.combined_dps_min.or(p.hit_dps_min).unwrap_or(0.),
-        p.combined_dps_max.or(p.hit_dps_max).unwrap_or(0.),
-    );
-    (value.0 + value.1) / 2.
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn dps_mid(performance: &PlannerPerformance) -> f64 {
+        let p = &performance.current;
+        let value: Ranged = (
+            p.combined_dps_min.or(p.hit_dps_min).unwrap_or(0.),
+            p.combined_dps_max.or(p.hit_dps_max).unwrap_or(0.),
+        );
+        (value.0 + value.1) / 2.
+    }
 
     #[test]
     fn mercenary_aura_uses_final_pinned_rank_including_zero() {
@@ -429,6 +479,40 @@ mod tests {
         assert_eq!(result.combined_dps_max, Some(820.));
         assert_eq!(result.hit_dps_min, None);
     }
+    #[test]
+    fn search_measures_match_the_reported_dps() {
+        let skills: Vec<String> = data::get_skills_by_class("amazon")
+            .iter()
+            .filter(|s| s.damage_formula.is_some() || s.damage_per_rank.is_some())
+            .take(2)
+            .map(|s| s.id.clone())
+            .collect();
+        let mut input = PlannerInput::default();
+        input.build.class_id = Some("amazon".into());
+        input.build.level = 60;
+        input.build.skill_ranks = skills.iter().map(|id| (id.clone(), 20)).collect();
+        input.build.inventory.insert(
+            "weapon".into(),
+            super::super::types::EquippedItem {
+                base_id: "base_mace_ogre_maul".into(),
+                ..Default::default()
+            },
+        );
+        for count in [1, 2] {
+            input.active_skill_ids = skills[..count].to_vec();
+            let reported = dps_mid(&evaluate(&input));
+            assert!(reported > 0.);
+            assert!((combined_dps(&input) - reported).abs() <= reported * 1e-9);
+            let summary = dps_summary(&input);
+            let (low, high) = summary.combined_dps.expect("combined DPS");
+            assert!(((low + high) / 2. - reported).abs() <= reported * 1e-9);
+            assert!(summary.hit_damage.is_some());
+            let (low, high) = summary.hit_dps.expect("hit DPS");
+            let hit = (low + high) / 2.;
+            assert!(hit > 0. && (hit_dps(&input) - hit).abs() <= hit * 1e-9);
+        }
+    }
+
     #[test]
     fn preparation_boosts_only_spent_subskills_and_omits_disabled_potions() {
         let mut input = PlannerInput::default();

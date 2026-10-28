@@ -61,14 +61,8 @@ pub struct SavedBuild {
     pub favorite: bool,
     #[serde(default)]
     pub tags: Vec<String>,
-    #[serde(default = "current_season")]
-    pub season: String,
     #[serde(default)]
     pub stash: Vec<StashEntry>,
-}
-
-fn current_season() -> String {
-    "s10".into()
 }
 
 impl SavedBuild {
@@ -102,8 +96,6 @@ struct SavedBuildWire {
     favorite: bool,
     #[serde(default)]
     tags: Vec<String>,
-    #[serde(default = "current_season")]
-    season: String,
     #[serde(default)]
     stash: Vec<StashEntry>,
 }
@@ -152,7 +144,6 @@ impl TryFrom<SavedBuildWire> for SavedBuild {
             folder_id: wire.folder_id,
             favorite: wire.favorite,
             tags: wire.tags,
-            season: wire.season,
             stash: wire.stash,
         })
     }
@@ -285,7 +276,6 @@ impl Library {
             folder_id,
             favorite: false,
             tags: Vec::new(),
-            season: snapshot.season.clone(),
             stash: stash.to_vec(),
         });
         Ok(id)

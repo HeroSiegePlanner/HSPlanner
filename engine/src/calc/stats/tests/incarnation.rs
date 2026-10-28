@@ -3,7 +3,6 @@ use super::empty_input;
 
 #[test]
 fn vital_power_increases_final_life_from_final_strength() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let allocated = HashMap::from([("strength".to_string(), 1000)]);
     let inventory = HashMap::new();
     let skill_ranks = HashMap::new();
@@ -47,7 +46,6 @@ fn vital_power_increases_final_life_from_final_strength() {
 
 #[test]
 fn spiritual_fulfilment_applies_life_multiplier_to_converted_mana() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let allocated = HashMap::new();
     let inventory = HashMap::new();
     let skill_ranks = HashMap::new();
@@ -83,7 +81,6 @@ fn spiritual_fulfilment_applies_life_multiplier_to_converted_mana() {
 
 #[test]
 fn mana_from_life_reaches_mana_threshold_notes() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let allocated = HashMap::new();
     let inventory = HashMap::new();
     let skill_ranks = HashMap::new();
@@ -129,7 +126,6 @@ fn mana_from_life_reaches_mana_threshold_notes() {
 
 #[test]
 fn strength_to_life_uses_final_strength_and_stacks_per_node() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let allocated = HashMap::from([("strength".to_string(), 103)]);
     let inventory = HashMap::new();
     let skill_ranks = HashMap::new();
@@ -175,7 +171,6 @@ fn strength_to_life_uses_final_strength_and_stacks_per_node() {
 
 #[test]
 fn powerfunneled_lifespan_reads_weapon_damage_after_enhanced_damage() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let allocated = HashMap::new();
     let skill_ranks = HashMap::new();
     let active_buffs = HashMap::new();
@@ -534,8 +529,9 @@ fn resistance_conversions_sum_elements_and_respect_sign_and_caps() {
         ("poison_resistance", -20.0),
         ("arcane_resistance", 10.0),
     ];
+    // Vital Resistance and Feast of the Elements raise life by a percentage in game.
     for (node, target, expected) in [
-        (1152, "life", 15.6),
+        (1152, "increased_life", 15.6),
         (641, "increased_life", 14.0),
         (643, "damage", 2.8),
     ] {
@@ -552,6 +548,7 @@ fn resistance_conversions_sum_elements_and_respect_sign_and_caps() {
             "{node}: {:?}",
             source.value
         );
+        assert!(!source.label.contains("_resistances"), "{}", source.label);
     }
     // Feast also lowers Total All Resistances: derive its source from the
     // actual final resistances, then compare only the positive cap excess.
@@ -569,10 +566,15 @@ fn resistance_conversions_sum_elements_and_respect_sign_and_caps() {
             (feast.stats_combined[&key].0 - cap).max(0.0)
         })
         .sum();
-    let source = feast.stat_sources["life"]
+    let source = feast.stat_sources["increased_life"]
         .iter()
         .find(|s| s.label.contains("#175:"))
         .unwrap();
+    assert!(
+        source.label.ends_with("20% of Resistances over the cap"),
+        "{}",
+        source.label
+    );
     assert!((source.value.0 - sum * 0.2).abs() < 1e-9);
     for node in [641, 643] {
         let positive = audit_build(&[node], &[], &[("all_resistances", 100.0)]);
@@ -1002,7 +1004,7 @@ fn resistance_limiter_sets_fifty_percent_even_with_extra_maximum_resistances() {
         .iter()
         .map(|element| (combined[&format!("{element}_resistance")].0 - 50.0).max(0.0))
         .sum();
-    let from_feast = feast.stat_sources["life"]
+    let from_feast = feast.stat_sources["increased_life"]
         .iter()
         .find(|s| s.label.contains("#175:"))
         .unwrap();

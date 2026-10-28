@@ -9,7 +9,7 @@ use super::contrib;
 fn augment_stats_apply_and_level_clamps() {
     use crate::calc::types::{AugmentRef, EquippedItem};
 
-    let aug = data::get_augment("artful_dodger").expect("artful_dodger in augments.json");
+    let aug = data::get_augment("divine_piercing").expect("divine_piercing in augments.json");
     let last_tier = aug.levels.last().expect("levels present");
     let (key, &expected) = last_tier.stats.iter().next().expect("tier has stats");
 
@@ -38,14 +38,14 @@ fn augment_stats_apply_and_level_clamps() {
     let max_level = aug.levels.len() as u32;
     let without = sum_for(None);
     let with_max = sum_for(Some(AugmentRef {
-        id: "artful_dodger".into(),
+        id: "divine_piercing".into(),
         level: max_level,
     }));
     assert_eq!(with_max.0 - without.0, expected);
     assert_eq!(with_max.1 - without.1, expected);
 
     let with_overflow = sum_for(Some(AugmentRef {
-        id: "artful_dodger".into(),
+        id: "divine_piercing".into(),
         level: 99,
     }));
     assert_eq!(with_overflow, with_max);
@@ -282,6 +282,51 @@ fn multipliers_pass_scales_ailment_durations() {
     let s = stats.get("shadowburn_duration").copied().unwrap();
     assert!((s.0 - 10.5).abs() < 1e-9 && (s.1 - 10.5).abs() < 1e-9);
     assert_eq!(stats.get("stasis_duration"), Some(&(5.0, 5.0)));
+}
+
+#[test]
+fn multipliers_pass_scales_life_replenish_by_increased_life_replenish() {
+    let mut stats: HashMap<String, Ranged> = HashMap::new();
+    stats.insert("life_replenish".to_string(), (100.0, 100.0));
+    stats.insert("life_replenish_pct".to_string(), (2.0, 2.0));
+    stats.insert("life_replenish_increased".to_string(), (205.0, 285.0));
+    apply_multipliers_pass(&mut stats);
+    // 100 × (1 + 205%) = 305 and 100 × (1 + 285%) = 385; the % of max life scales too.
+    let flat = stats["life_replenish"];
+    assert!((flat.0 - 305.0).abs() < 1e-9 && (flat.1 - 385.0).abs() < 1e-9);
+    let pct = stats["life_replenish_pct"];
+    assert!((pct.0 - 6.1).abs() < 1e-9 && (pct.1 - 7.7).abs() < 1e-9);
+}
+
+#[test]
+fn item_stat_conversions_add_shares_of_attributes_and_stats() {
+    let attributes = HashMap::from([("intelligence".to_string(), (500.0, 500.0))]);
+    let stats = HashMap::from([
+        (
+            "intelligence_converted_to_magic_skill_dmg".to_string(),
+            (6.0, 10.0),
+        ),
+        ("movement_speed".to_string(), (40.0, 40.0)),
+        ("movement_speed_to_total_damage".to_string(), (25.0, 25.0)),
+        ("cold_resistance".to_string(), (80.0, 80.0)),
+        (
+            "cold_resistance_converted_to_cold_damage".to_string(),
+            (25.0, 25.0),
+        ),
+    ]);
+    let mut sources = SourceMap::new();
+    let touched = apply_item_stat_conversions(&attributes, &stats, &mut sources);
+    assert_eq!(
+        sum_contributions(&sources["magic_skill_damage"]),
+        (30.0, 50.0)
+    );
+    assert_eq!(sum_contributions(&sources["damage"]), (10.0, 10.0));
+    assert_eq!(
+        sum_contributions(&sources["cold_skill_damage"]),
+        (20.0, 20.0)
+    );
+    let expected = ["magic_skill_damage", "damage", "cold_skill_damage"];
+    assert_eq!(touched, expected.map(String::from).into_iter().collect());
 }
 
 #[test]
@@ -660,15 +705,33 @@ fn apply_diminishing_returns_skips_unconfigured_and_absent_keys() {
     assert!(!stats.contains_key("gold_find"));
 }
 
-// S10 config carries the four original curves plus FCR, deadly blow and skill haste.
+// S10 config: four original curves, FCR, deadly blow, skill haste, six Ignore Resistance caps.
 #[test]
 fn diminishing_returns_config_has_s10_curves() {
-    let s10 = crate::calc::data::data_for("s10")
+    let s10 = crate::calc::data::data()
         .game_config
         .diminishing_returns
         .as_ref()
         .unwrap();
-    assert_eq!(s10.len(), 7);
+    assert_eq!(s10.len(), 13);
     let db = &s10["deadly_blow"];
     assert_eq!((db.threshold, db.power, db.cap), (50.0, 0.75, Some(100.0)));
+}
+
+#[test]
+fn ignore_resistance_stops_at_100_and_keeps_its_raw_total() {
+    let defs = crate::calc::data::data()
+        .game_config
+        .diminishing_returns
+        .as_ref()
+        .unwrap();
+    let mut stats: HashMap<String, Ranged> = HashMap::from([
+        ("ignore_fire_res".to_string(), (80.0, 150.0)),
+        ("ignore_all_res".to_string(), (99999.0, 99999.0)),
+    ]);
+    let raw = apply_diminishing_returns(&mut stats, defs);
+    assert_eq!(stats["ignore_fire_res"], (80.0, 100.0));
+    assert_eq!(stats["ignore_all_res"], (100.0, 100.0));
+    assert_eq!(raw["ignore_fire_res"], (80.0, 150.0));
+    assert_eq!(raw["ignore_all_res"], (99999.0, 99999.0));
 }

@@ -1,12 +1,11 @@
-//! Reference Gear affix-pool restrictions, shared by the picker and edit validation.
+//! Gear affix-pool restrictions, shared by the picker and edit validation.
 use hsplanner_engine::calc::{
-    data, season,
+    data,
     types::{Affix, ItemBase},
 };
 use std::{
-    cell::RefCell,
     collections::{HashMap, HashSet},
-    sync::{LazyLock, Mutex},
+    sync::LazyLock,
 };
 
 struct Pools {
@@ -14,30 +13,18 @@ struct Pools {
     random: HashSet<String>,
 }
 
-static POOLS: LazyLock<Mutex<HashMap<String, &'static Pools>>> = LazyLock::new(Default::default);
-thread_local! { static CURRENT: RefCell<Option<(String, &'static Pools)>> = const { RefCell::new(None) }; }
+static POOLS: LazyLock<Pools> = LazyLock::new(|| Pools {
+    groups: serde_json::from_str(include_str!("../../../data/affix-pools.json"))
+        .expect("valid affix pools"),
+    random: data::data()
+        .items
+        .values()
+        .filter_map(|base| base.random_affix_group_id.clone())
+        .collect(),
+});
 
 fn pools() -> &'static Pools {
-    season::memoized_current_season(&CURRENT, |id| {
-        season::cached_per_season(&POOLS, id, |id| {
-            let base = serde_json::from_str(include_str!("../../../data/affix-pools.json"))
-                .expect("valid affix pools");
-            let value = season::patches_for(id)
-                .get("affix-pools")
-                .and_then(|patch| {
-                    season::apply_record_patch(&base, patch, "affix-pools", false).ok()
-                })
-                .unwrap_or(base);
-            Pools {
-                groups: serde_json::from_value(value).expect("valid affix pool types"),
-                random: data::data_for(id)
-                    .items
-                    .values()
-                    .filter_map(|base| base.random_affix_group_id.clone())
-                    .collect(),
-            }
-        })
-    })
+    &POOLS
 }
 
 pub fn jewel_affix_allowed(affix: &Affix) -> bool {
@@ -73,7 +60,12 @@ pub fn affix_pool_type(base: &ItemBase) -> Option<&'static str> {
         "belt" => Some("Belt"),
         "amulet" => Some("Amulet"),
         "ring" => Some("Ring"),
-        "charm" => Some("Charm"),
+        "charm" => Some(match base.name.as_str() {
+            "Small Charm" => "Charm:Small",
+            "Large Charm" => "Charm:Large",
+            "Grand Charm" => "Charm:Grand",
+            _ => "Charm",
+        }),
         "offhand" => Some("Shield"),
         "potion" => Some("Flask"),
         _ => None,
@@ -95,6 +87,16 @@ pub fn affix_allowed(base: &ItemBase, affix: &Affix, allow_outside_pool: bool) -
     allow_outside_pool
         || affix_pool_type(base)
             .is_none_or(|kind| group.is_none_or(|types| types.iter().any(|value| value == kind)))
+}
+
+pub fn affix_element_fits(item: &super::EquippedItem, affix: &Affix) -> bool {
+    let Some(element) = &affix.element else {
+        return true;
+    };
+    item.affixes
+        .iter()
+        .filter_map(|eq| data::get_affix(&eq.affix_id)?.element.as_ref())
+        .all(|other| other == element)
 }
 
 #[cfg(test)]
@@ -137,14 +139,10 @@ mod tests {
     }
 
     #[test]
-    fn signet_of_shadows_rolls_its_own_unholy_pool() {
+    fn signet_of_shadows_rolls_the_common_unholy_list() {
         let mut item = make_item("ring_heroic_signet_of_shadows_arcane").unwrap();
-        assert!(add_affix(&mut item, "random_unholy_to_strength").is_err());
-        add_affix(
-            &mut item,
-            "random_unholy_signet_of_shadows_intelligence_converted_to_magic_skill_dmg",
-        )
-        .unwrap();
+        assert!(add_affix(&mut item, "1_increased_experience_gain_t5_warlegend").is_err());
+        add_affix(&mut item, "random_unholy_movement_speed").unwrap();
         assert!(is_unholy_group(
             &data::get_affix(&item.affixes[0].affix_id).unwrap().group_id
         ));
@@ -183,6 +181,43 @@ mod tests {
         };
         assert!(affix_allowed(&unknown, experience, false));
         assert_eq!(affix_pool_type(&base), Some("Weapon:Melee"));
+    }
+
+    #[test]
+    fn charm_sizes_roll_only_their_own_affix_families() {
+        let small = data::get_item("charms_normal_small_charm").unwrap();
+        let grand = data::get_item("charms_normal_grand_charm").unwrap();
+        let affix = |id: &str| data::get_affix(id).unwrap();
+        let shared_gear_life = data::data()
+            .affixes
+            .values()
+            .find(|a| a.group_id == "15_30_to_life")
+            .unwrap();
+        let (small_life, grand_life) = (
+            affix("small_charm_to_life_t1_bear"),
+            affix("grand_charm_to_life_t1_bear"),
+        );
+        assert_eq!(affix_pool_type(small), Some("Charm:Small"));
+        assert!(affix_allowed(small, small_life, false));
+        assert!(!affix_allowed(small, grand_life, false));
+        assert!(affix_allowed(grand, grand_life, false));
+        for base in [small, grand] {
+            let per_kill = affix("charm_life_after_each_kill_t1_gravedigger");
+            assert!(affix_allowed(base, per_kill, false));
+            assert!(!affix_allowed(base, shared_gear_life, false));
+        }
+    }
+
+    #[test]
+    fn charm_elemental_affixes_share_one_element() {
+        let fire = "small_charm_to_fire_resistance_t1_fire_cloaking";
+        let cold = "small_charm_to_cold_resistance_t1_cold_cloaking";
+        let mut charm = make_item("charms_normal_small_charm").unwrap();
+        add_affix(&mut charm, fire).unwrap();
+        assert!(add_affix(&mut charm, cold).is_err());
+        add_affix(&mut charm, "charm_to_additive_fire_damage_t1_fire").unwrap();
+        add_affix_with_pool_override(&mut charm, cold, true).unwrap();
+        assert!(add_affix(&mut charm, "small_charm_to_life_t1_bear").is_err());
     }
 }
 

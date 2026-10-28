@@ -101,10 +101,6 @@ impl EditorView {
             _subscriptions: subscriptions,
         }
     }
-    pub fn show(&mut self, panel: Panel, cx: &mut Context<Self>) {
-        self.panel = panel;
-        cx.notify();
-    }
     fn edit(&mut self, cx: &mut Context<Self>, edit: impl FnOnce(&mut BuildSnapshot)) {
         self.session.update(cx, |session, cx| {
             session.edit(|draft| edit(&mut draft.snapshot));

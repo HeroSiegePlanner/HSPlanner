@@ -115,7 +115,7 @@ pub fn apply_multipliers_pass(stats: &mut HashMap<String, Ranged>) {
     apply_multiplier(
         stats,
         "life_replenish",
-        None,
+        Some("life_replenish_increased"),
         Some("life_replenish_more"),
         false,
     );
@@ -129,7 +129,7 @@ pub fn apply_multipliers_pass(stats: &mut HashMap<String, Ranged>) {
     apply_multiplier(
         stats,
         "life_replenish_pct",
-        None,
+        Some("life_replenish_increased"),
         Some("life_replenish_more"),
         false,
     );
@@ -195,6 +195,11 @@ const PER_MANA_STATS: &[(&str, &str, f64)] = &[
         750.0,
     ),
     (
+        "magic_skill_damage_per_100_mana",
+        "magic_skill_damage",
+        100.0,
+    ),
+    (
         "ranged_physical_per_500_mana",
         "ranged_projectile_damage",
         500.0,
@@ -214,6 +219,35 @@ const PER_LIGHT_RADIUS_STATS: &[(&str, &str, f64)] = &[
         1.0,
     ),
 ];
+
+/// "+X% magic skill damage per attack per second" (Magistriker) reads the final attack rate.
+pub fn apply_per_attack_rate_stats(
+    stats: &HashMap<String, Ranged>,
+    stat_sources: &mut SourceMap,
+) -> HashSet<String> {
+    let rate = stats
+        .get("magic_skill_damage_per_attack_per_second")
+        .copied()
+        .unwrap_or((0.0, 0.0));
+    if rate == (0.0, 0.0) {
+        return HashSet::new();
+    }
+    let aps = crate::calc::skills::attacks_per_second(stats);
+    push_source(
+        stat_sources,
+        "magic_skill_damage",
+        SourceContribution {
+            label: format!(
+                "{} (per attack per second)",
+                stat_name("magic_skill_damage")
+            ),
+            source_type: SourceType::Item,
+            value: (rate.0 * aps.0, rate.1 * aps.1),
+            forge: None,
+        },
+    );
+    HashSet::from(["magic_skill_damage".to_string()])
+}
 
 pub fn apply_per_mana_stats(
     stats: &HashMap<String, Ranged>,
@@ -458,11 +492,13 @@ pub fn apply_tree_conversions(
         if add_min == 0.0 && add_max == 0.0 {
             continue;
         }
-        let label = format!(
-            "{source_label}: {}% of {}",
-            conv.pct,
-            stat_name(&conv.from_key)
-        );
+        let source_name = match conv.from_key.as_str() {
+            "sum_resistances" => "Resistances".to_string(),
+            "overcapped_resistances" => "Resistances over the cap".to_string(),
+            "negative_resistances" => "Negative Resistances".to_string(),
+            key => stat_name(key),
+        };
+        let label = format!("{source_label}: {}% of {source_name}", conv.pct);
         let contrib = SourceContribution {
             label,
             source_type: SourceType::Tree,
@@ -481,6 +517,148 @@ pub fn apply_tree_conversions(
                 touched.insert(conv.to_key.clone());
             }
         }
+    }
+    touched
+}
+
+/// Item "X% of A converted to B" stats: (item stat, A, whether A is an attribute, B).
+const ITEM_STAT_CONVERSIONS: [(&str, &str, bool, &str); 16] = [
+    (
+        "intelligence_converted_to_magic_skill_dmg",
+        "intelligence",
+        true,
+        "magic_skill_damage",
+    ),
+    (
+        "vitality_converted_to_magic_skill_dmg",
+        "vitality",
+        true,
+        "magic_skill_damage",
+    ),
+    (
+        "energy_converted_to_magic_skill_dmg",
+        "energy",
+        true,
+        "magic_skill_damage",
+    ),
+    (
+        "armor_converted_to_magic_skill_dmg",
+        "armor",
+        true,
+        "magic_skill_damage",
+    ),
+    (
+        "vitality_converted_to_attack_dmg",
+        "vitality",
+        true,
+        "attack_damage",
+    ),
+    (
+        "armor_converted_to_attack_dmg",
+        "armor",
+        true,
+        "attack_damage",
+    ),
+    (
+        "intelligence_converted_to_arcane_skill_dmg",
+        "intelligence",
+        true,
+        "arcane_skill_damage",
+    ),
+    (
+        "intelligence_converted_to_cold_skill_dmg",
+        "intelligence",
+        true,
+        "cold_skill_damage",
+    ),
+    (
+        "intelligence_converted_to_fire_skill_dmg",
+        "intelligence",
+        true,
+        "fire_skill_damage",
+    ),
+    (
+        "intelligence_converted_to_lightning_skill_dmg",
+        "intelligence",
+        true,
+        "lightning_skill_damage",
+    ),
+    (
+        "energy_converted_to_cold_skill_dmg",
+        "energy",
+        true,
+        "cold_skill_damage",
+    ),
+    (
+        "energy_converted_to_lightning_skill_dmg",
+        "energy",
+        true,
+        "lightning_skill_damage",
+    ),
+    (
+        "cold_resistance_converted_to_cold_damage",
+        "cold_resistance",
+        false,
+        "cold_skill_damage",
+    ),
+    (
+        "poison_resistance_converted_to_poison_damage",
+        "poison_resistance",
+        false,
+        "poison_skill_damage",
+    ),
+    (
+        "faster_cast_rate_percent_converted_to_movement_speed",
+        "faster_cast_rate",
+        false,
+        "movement_speed",
+    ),
+    (
+        "movement_speed_to_total_damage",
+        "movement_speed",
+        false,
+        "damage",
+    ),
+];
+
+// Adds each item conversion's share of the source total to its target, as the tree's
+// conversions do; returns touched keys for re-sum. (#206)
+pub fn apply_item_stat_conversions(
+    attributes: &HashMap<String, Ranged>,
+    stats: &HashMap<String, Ranged>,
+    stat_sources: &mut SourceMap,
+) -> HashSet<String> {
+    let mut touched = HashSet::new();
+    for (item_key, from_key, is_attribute, to_key) in ITEM_STAT_CONVERSIONS {
+        let Some(&pct) = stats.get(item_key) else {
+            continue;
+        };
+        let stat = |key: &str| stats.get(key).copied().unwrap_or_default();
+        let source = if is_attribute {
+            attributes.get(from_key).copied().unwrap_or_default()
+        } else {
+            combine_additive_and_more(stat(from_key), stat(&format!("{from_key}_more")))
+        };
+        let add = (source.0 * pct.0 / 100.0, source.1 * pct.1 / 100.0);
+        if add == (0.0, 0.0) {
+            continue;
+        }
+        let share = if pct.0 == pct.1 {
+            format!("{}", pct.0)
+        } else {
+            format!("{}-{}", pct.0, pct.1)
+        };
+        push_source(
+            stat_sources,
+            to_key,
+            SourceContribution {
+                label: format!("Item: {share}% of {}", stat_name(from_key)),
+                source_type: SourceType::Item,
+                value: add,
+                forge: None,
+            },
+        );
+        touched.insert(to_key.to_string());
     }
     touched
 }

@@ -122,13 +122,6 @@ impl<T: Clone> Collection<T> {
         }
         Ok(())
     }
-    fn merge_missing(&mut self, incoming: Self) {
-        for entry in incoming.entries {
-            if !self.entries.iter().any(|current| current.id == entry.id) {
-                self.entries.push(entry);
-            }
-        }
-    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -342,21 +335,6 @@ impl Loadouts {
         for entry in &mut self.incarnation.entries {
             entry.value.sockets.clear();
         }
-    }
-    pub(crate) fn clear_trees(&mut self) {
-        for entry in &mut self.incarnation.entries {
-            entry.value.nodes.clear();
-            entry.value.sockets.clear();
-        }
-        for entry in &mut self.ether.entries {
-            entry.value.nodes.clear();
-        }
-    }
-    pub(crate) fn merge_missing(&mut self, incoming: Self) {
-        self.incarnation.merge_missing(incoming.incarnation);
-        self.ether.merge_missing(incoming.ether);
-        self.gear.merge_missing(incoming.gear);
-        self.skills.merge_missing(incoming.skills);
     }
     pub(crate) fn from_legacy(
         profiles: &[(String, String, BuildSnapshot)],

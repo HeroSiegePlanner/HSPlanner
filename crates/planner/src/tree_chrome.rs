@@ -1,4 +1,4 @@
-//! Floating tree controls keep the graph as the main surface, as in Tauri.
+//! Floating tree controls keep the graph as the main surface.
 use super::*;
 use gpui_kit::component::{Icon, IconName, Selectable};
 use gpui_kit::{

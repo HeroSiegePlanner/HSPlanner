@@ -6,114 +6,6 @@ use std::{
 };
 
 pub(super) fn portrait(class: Option<&str>, large: bool, cx: &App) -> Div {
-    static ICONS: LazyLock<HashMap<&str, Arc<Image>>> = LazyLock::new(|| {
-        [
-            (
-                "amazon",
-                include_bytes!("../../../assets/classes/amazon.webp").as_slice(),
-            ),
-            (
-                "bard",
-                include_bytes!("../../../assets/classes/bard.webp").as_slice(),
-            ),
-            (
-                "butcher",
-                include_bytes!("../../../assets/classes/butcher.webp").as_slice(),
-            ),
-            (
-                "demon_slayer",
-                include_bytes!("../../../assets/classes/demon_slayer.webp").as_slice(),
-            ),
-            (
-                "demonspawn",
-                include_bytes!("../../../assets/classes/demonspawn.webp").as_slice(),
-            ),
-            (
-                "exo",
-                include_bytes!("../../../assets/classes/exo.webp").as_slice(),
-            ),
-            (
-                "illusionist",
-                include_bytes!("../../../assets/classes/illusionist.webp").as_slice(),
-            ),
-            (
-                "jotunn",
-                include_bytes!("../../../assets/classes/jotunn.webp").as_slice(),
-            ),
-            (
-                "marauder",
-                include_bytes!("../../../assets/classes/marauder.webp").as_slice(),
-            ),
-            (
-                "marksman",
-                include_bytes!("../../../assets/classes/marksman.webp").as_slice(),
-            ),
-            (
-                "necromancer",
-                include_bytes!("../../../assets/classes/necromancer.webp").as_slice(),
-            ),
-            (
-                "nomad",
-                include_bytes!("../../../assets/classes/nomad.webp").as_slice(),
-            ),
-            (
-                "paladin",
-                include_bytes!("../../../assets/classes/paladin.webp").as_slice(),
-            ),
-            (
-                "pirate",
-                include_bytes!("../../../assets/classes/pirate.webp").as_slice(),
-            ),
-            (
-                "plague_doctor",
-                include_bytes!("../../../assets/classes/plague_doctor.webp").as_slice(),
-            ),
-            (
-                "prophet",
-                include_bytes!("../../../assets/classes/prophet.webp").as_slice(),
-            ),
-            (
-                "pyromancer",
-                include_bytes!("../../../assets/classes/pyromancer.webp").as_slice(),
-            ),
-            (
-                "redneck",
-                include_bytes!("../../../assets/classes/redneck.webp").as_slice(),
-            ),
-            (
-                "samurai",
-                include_bytes!("../../../assets/classes/samurai.webp").as_slice(),
-            ),
-            (
-                "shaman",
-                include_bytes!("../../../assets/classes/shaman.webp").as_slice(),
-            ),
-            (
-                "shield_lancer",
-                include_bytes!("../../../assets/classes/shield_lancer.webp").as_slice(),
-            ),
-            (
-                "stormweaver",
-                include_bytes!("../../../assets/classes/stormweaver.webp").as_slice(),
-            ),
-            (
-                "viking",
-                include_bytes!("../../../assets/classes/viking.webp").as_slice(),
-            ),
-            (
-                "white_mage",
-                include_bytes!("../../../assets/classes/white_mage.webp").as_slice(),
-            ),
-        ]
-        .into_iter()
-        .map(|(id, bytes)| {
-            (
-                id,
-                Arc::new(Image::from_bytes(ImageFormat::Webp, bytes.to_vec())),
-            )
-        })
-        .collect()
-    });
     let palette = cx.global::<TooltipTheme>();
     div()
         .flex_none()
@@ -125,9 +17,9 @@ pub(super) fn portrait(class: Option<&str>, large: bool, cx: &App) -> Div {
         .flex()
         .items_center()
         .justify_center()
-        .when_some(class.and_then(|id| ICONS.get(id)), |view, icon| {
+        .when_some(hsplanner_ui::assets::class_portrait(class), |view, icon| {
             view.child(
-                img(icon.clone())
+                img(icon)
                     .when(large, |icon| icon.size(rems(40. / 13.)))
                     .when(!large, |icon| icon.size_full())
                     .object_fit(ObjectFit::Contain),
@@ -390,7 +282,6 @@ impl LibraryView {
                                         ("class", class_name.to_owned()),
                                         ("level", snapshot.map_or(1, |s| s.level).to_string()),
                                         ("hero", nodes.to_string()),
-                                        ("season", build.season.clone()),
                                     ],
                                 ))),
                         )

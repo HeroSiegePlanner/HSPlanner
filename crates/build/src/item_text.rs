@@ -302,7 +302,7 @@ pub fn serialize(item: &EquippedItem) -> Result<String, String> {
     Ok(lines.join("\n"))
 }
 
-fn parse_modifier(line: &str, forged: bool) -> Result<EquippedAffix, String> {
+fn parse_modifier(line: &str, forged: bool, base: &ItemBase) -> Result<EquippedAffix, String> {
     let normalized = hsplanner_engine::calc::resistance::canonical_text(line);
     let line = normalized.as_ref();
     let unholy = line.starts_with("[Unholy]");
@@ -340,7 +340,11 @@ fn parse_modifier(line: &str, forged: bool) -> Result<EquippedAffix, String> {
                 || a.name.eq_ignore_ascii_case(content)
                 || a.id == content
         };
-        exact(b).cmp(&exact(a)).then(a.id.cmp(&b.id))
+        let fits = |a: &Affix| gear::affix_allowed(base, a, false);
+        exact(b)
+            .cmp(&exact(a))
+            .then(fits(b).cmp(&fits(a)))
+            .then(a.id.cmp(&b.id))
     });
     let a = matches.first().ok_or("Unknown affix or tier")?;
     let custom = c
@@ -617,7 +621,7 @@ pub fn parse(text: &str, original: &EquippedItem) -> ParseResult {
                         .find(|eq| modifier_text(eq, forged) == line)
                         .cloned()
                         .map(Ok)
-                        .unwrap_or_else(|| parse_modifier(line, forged))
+                        .unwrap_or_else(|| parse_modifier(line, forged, base))
                 };
                 match result {
                     Ok(a) => {
@@ -1021,8 +1025,16 @@ mod tests {
             .unwrap_or_else(|| panic!("{:?}", parsed.diagnostics));
         assert_eq!(imported.implicit_overrides["ignore_all_res"], 23.);
         assert!(!imported.implicit_overrides.contains_key("enemy_all_resist"));
-        let affix = parse_modifier("-7% to Enemy Cold Resistance [T3, custom]", false).unwrap();
+        let line = "-7% to Enemy Cold Resistance [T3, custom]";
+        let helmet = data::get_item("helmet_normal_cap").unwrap();
+        let affix = parse_modifier(line, false, helmet).unwrap();
         assert_eq!(affix.affix_id, "to_enemy_cold_resistance_t3_coldbreaking");
         assert_eq!(affix.custom_value, Some(7.));
+        let grand = data::get_item("charms_normal_grand_charm").unwrap();
+        let affix = parse_modifier(line, false, grand).unwrap();
+        assert_eq!(
+            affix.affix_id,
+            "grand_charm_to_enemy_cold_resistance_t3_cold_breaking"
+        );
     }
 }

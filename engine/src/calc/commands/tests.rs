@@ -1,70 +1,12 @@
 use super::*;
 
 #[test]
-fn parse_custom_stats_batch_mirrors_custom_stat_parser() {
-    let out = parse_custom_stats(vec![
-        "100".to_string(),
-        "50-80".to_string(),
-        "not a number".to_string(),
-    ]);
-    assert_eq!(out[0], Some([100.0, 100.0]));
-    assert_eq!(out[1], Some([50.0, 80.0]));
-    assert_eq!(out[2], None);
-}
-
-#[test]
-fn display_values_batch_matches_affix_math() {
-    let affix = Affix {
-        id: "t".into(),
-        stat_key: Some("life".into()),
-        value_min: Some(10.0),
-        value_max: Some(20.0),
-        ..Default::default()
-    };
-    let input = DisplayValuesInput {
-        affixes: vec![AffixValueReq {
-            affix: affix.clone(),
-            roll: 0.5,
-            stars: None,
-        }],
-        scaled: vec![ScaledValueReq {
-            value: [10.0, 20.0],
-            stat_key: "life".into(),
-            stars: Some(0),
-        }],
-    };
-    let out = display_values_impl(&input);
-    assert_eq!(
-        out.affixes[0].value,
-        super::super::affix::rolled_affix_value(&affix, 0.5)
-    );
-    assert_eq!(out.affixes[0].range_min, 10.0);
-    assert_eq!(out.affixes[0].range_max, 20.0);
-    assert_eq!(out.scaled[0], [10.0, 20.0]);
-}
-
-#[test]
-fn classify_tree_nodes_partitions_every_node_line() {
-    let map = classify_tree_nodes_impl();
-    assert!(!map.is_empty(), "tree data should yield nodes");
-    let nodes = super::super::data::tree_nodes();
-    for (id, cls) in &map {
-        let node = nodes.get(id).expect("classified id exists in data");
-        assert!(cls.parsed.len() + cls.unsupported.len() <= node.lines.len());
-        for line in cls.parsed.iter().chain(cls.unsupported.iter()) {
-            assert!(node.lines.contains(line), "line must come from the node");
-        }
-    }
-}
-
-#[test]
 fn subskill_aggregation_unknown_skill_returns_empty() {
     let input = SubskillAggregationInput {
         class_id: "no_such_class".to_string(),
         skill_id: "no_such_skill".to_string(),
         subskill_ranks: HashMap::from([("no_such_skill:sub".to_string(), 3)]),
         enemy_conditions: HashMap::new(),
-        season: None,
     };
     let out = subskill_aggregation_impl(&input);
     assert!(out.stats.is_empty());
@@ -93,11 +35,36 @@ fn rank_slot_items_scores_every_base() {
     assert!(out.values().all(|v| v.is_finite() && *v >= 0.0));
 }
 
+#[derive(Default)]
+struct NodeLineClassification {
+    parsed: Vec<String>,
+    unsupported: Vec<String>,
+}
+
+fn classify_tree_nodes_impl() -> HashMap<String, NodeLineClassification> {
+    use crate::calc::tree::parse::{classify_tree_node_line, TreeLineClass};
+    crate::calc::data::tree_nodes()
+        .iter()
+        .map(|(id, node)| {
+            let mut out = NodeLineClassification::default();
+            for line in &node.lines {
+                match classify_tree_node_line(line) {
+                    TreeLineClass::Stat(_) | TreeLineClass::Meta(_) => {
+                        out.parsed.push(line.clone())
+                    }
+                    TreeLineClass::RecognizedNoStat => {}
+                    TreeLineClass::Unknown => out.unsupported.push(line.clone()),
+                }
+            }
+            (id.clone(), out)
+        })
+        .collect()
+}
+
 // Every S10 stat line must either parse into a stat key or sit on the exemption
 // list below; a new pattern on either side fails the test.
 #[test]
 fn s10_incarnation_node_lines_parse_coverage() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     // ponytail: unmodeled S10 mechanics — drop an entry once the engine learns it.
     const EXEMPT_PATTERNS: &[&str] = &[
         "+#### Lightning Damage dealt by odin",
@@ -152,127 +119,6 @@ fn s10_incarnation_node_lines_parse_coverage() {
         stale_exempt.is_empty(),
         "exempt patterns that now parse — remove them from EXEMPT_PATTERNS: {stale_exempt:#?}"
     );
-}
-
-mod projectile_dto_tests {
-    use super::*;
-
-    #[test]
-    fn skill_damage_input_accepts_fractional_projectile_count() {
-        let input: SkillDamageInput = serde_json::from_value(serde_json::json!({
-            "skill": { "name": "Test" },
-            "allocatedRank": 1.0,
-            "projectileCount": 13.04
-        }))
-        .expect("fractional projectileCount must deserialize");
-        assert_eq!(input.projectile_count.max(0.0) as u32, 13);
-    }
-
-    #[test]
-    fn weapon_damage_input_accepts_fractional_projectile_count() {
-        let input: WeaponDamageInput = serde_json::from_value(serde_json::json!({
-            "projectileCount": 2.6
-        }))
-        .expect("fractional projectileCount must deserialize");
-        assert_eq!(input.projectile_count.map(|p| p.max(0.0) as u32), Some(2));
-    }
-}
-
-mod sourced_damage_dto_tests {
-    use super::*;
-
-    #[test]
-    fn standalone_attack_preserves_whole_hit_subtree_stage() {
-        let input = serde_json::json!({
-            "skill": {
-                "name": "Whole hit subtree", "damageType": "physical", "attackKind": "attack",
-                "tags": ["Orbital"],
-                "attackScaling": {
-                    "weaponBonusScaling": true, "weaponSubtreeScalesFullHit": true,
-                    "weaponDamagePct": { "base": 200, "perLevel": 0 }
-                }
-            },
-            "allocatedRank": 1,
-            "stats": { "orbital_skill_damage": 100 },
-            "scopedStats": { "subtree_damage": [0, 50] },
-            "weapon": { "name": "Test", "damageMin": 100, "damageMax": 100 }
-        });
-        let out = compute_attack_skill_damage(serde_json::from_value(input).unwrap()).unwrap();
-        assert_eq!((out.physical_hit_min, out.physical_hit_max), (450, 675));
-    }
-
-    #[test]
-    fn standalone_attack_preserves_intrinsic_critical_chance_and_damage() {
-        let input = serde_json::json!({
-            "skill": {
-                "name": "Local critical bonus",
-                "damageType": "physical",
-                "attackKind": "attack",
-                "attackScaling": {
-                    "weaponDamagePct": { "base": 100, "perLevel": 0 },
-                    "criticalChance": { "base": 50, "perLevel": 0 },
-                    "criticalDamage": { "base": 67.5, "perLevel": 22.5 }
-                }
-            },
-            "allocatedRank": 1,
-            "stats": { "crit_chance": 20, "crit_damage": 100 },
-            "weapon": { "name": "Test", "damageMin": 100, "damageMax": 100 }
-        });
-        let out = compute_attack_skill_damage(serde_json::from_value(input).unwrap()).unwrap();
-        assert_eq!(out.crit_chance, 70.);
-        assert!((out.crit_multiplier_avg - 2.33).abs() < 1e-12);
-        assert_eq!(out.crit_damage_pct, 190.);
-        assert_eq!(out.physical_hit_max, 150);
-        assert_eq!(out.physical_avg_max, 349);
-    }
-
-    fn staged_input() -> serde_json::Value {
-        serde_json::json!({
-            "skill": {
-                "name": "Staged fire hit",
-                "damageType": "fire",
-                "damageFormula": { "base": 4.0, "perLevel": 18.0 },
-                "damageScaling": "rankAndFlat",
-                "bonusSources": [{
-                    "per": "attribute_point", "source": "Intelligence",
-                    "stat": "fire_skill_damage", "value": 10.0
-                }]
-            },
-            "allocatedRank": 1.0,
-            "attributes": { "intelligence": 10.0 },
-            "stats": { "fire_skill_damage": 100.0 },
-            "scopedStats": { " SUBTREE_DAMAGE ": [50.0, 100.0] },
-            "projectileCount": 3.0
-        })
-    }
-
-    #[test]
-    fn standalone_skill_preserves_scoped_range_and_formula_stage() {
-        let input: SkillDamageInput = serde_json::from_value(staged_input()).unwrap();
-        let out = compute_skill_damage(input).unwrap();
-        // (4 + 18 * 2 synergy * 2 generic) * (1.5..2 own subtree).
-        assert_eq!((out.hit_min, out.hit_max), (114, 152));
-        assert_eq!((out.avg_min, out.avg_max), (342, 456));
-    }
-
-    #[test]
-    fn standalone_hybrid_forwards_scope_to_both_damage_components() {
-        let mut input = staged_input();
-        input["skill"]["attackKind"] = serde_json::json!("attack");
-        input["skill"]["attackScaling"] = serde_json::json!({
-            "weaponDamagePct": { "base": 100.0, "perLevel": 0.0 }
-        });
-        input["scopedStats"]["armor_break"] = serde_json::json!(100.0);
-        input["weapon"] = serde_json::json!({
-            "name": "Test weapon", "damageMin": 100.0, "damageMax": 100.0
-        });
-        input["stats"]["attacks_per_second"] = serde_json::json!(1.0);
-        let out = compute_attack_skill_damage(serde_json::from_value(input).unwrap()).unwrap();
-        // Physical: 100 weapon * (1.5 crushing + 1 own armor break).
-        assert_eq!((out.physical_hit_min, out.physical_hit_max), (250, 250));
-        assert_eq!((out.poison_hit_min, out.poison_hit_max), (114, 152));
-        assert_eq!((out.combined_hit_min, out.combined_hit_max), (364, 402));
-    }
 }
 
 mod combined_dps_mid_tests {

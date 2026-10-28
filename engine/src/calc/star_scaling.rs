@@ -1,11 +1,6 @@
 use serde::Deserialize;
-use std::cell::RefCell;
 use std::collections::HashMap;
 use std::sync::LazyLock;
-use std::sync::Mutex;
-
-use super::data::{patched_value, PatchKind};
-use super::season;
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum StarScaleConfig {
@@ -14,7 +9,6 @@ pub enum StarScaleConfig {
     None,
 }
 
-// Single source of truth shared with the TS calc layer (data/star-scaling.json).
 const STAR_SCALING_JSON: &str = include_str!("../../../data/star-scaling.json");
 
 #[derive(Deserialize, Clone, Copy)]
@@ -56,34 +50,17 @@ struct StarScaling {
     map: HashMap<String, StarScaleConfig>,
 }
 
-static STAR_SCALING_BY_SEASON: LazyLock<Mutex<HashMap<String, &'static StarScaling>>> =
-    LazyLock::new(|| Mutex::new(HashMap::new()));
-
-// On patch error, log and fall back to base; same season normalization as data::data_for.
-fn load_for(season_id: &str) -> StarScaling {
-    let patches = season::patches_for(season_id);
-    let base: serde_json::Value =
-        serde_json::from_str(STAR_SCALING_JSON).expect("data/star-scaling.json must be valid");
-    let value = patched_value(base, &patches, "star-scaling", PatchKind::RecordMerge);
+static STAR_SCALING: LazyLock<StarScaling> = LazyLock::new(|| {
     let dto: StarScalingData =
-        serde_json::from_value(value).expect("invalid star-scaling shape after patch");
+        serde_json::from_str(STAR_SCALING_JSON).expect("data/star-scaling.json must be valid");
     StarScaling {
         max_stars: dto.max_stars,
         map: dto.map.into_iter().map(|(k, v)| (k, v.into())).collect(),
     }
-}
-
-fn configs_for(season_id: &str) -> &'static StarScaling {
-    season::cached_per_season(&STAR_SCALING_BY_SEASON, season_id, load_for)
-}
-
-thread_local! {
-    static LAST_SCALING: RefCell<Option<(String, &'static StarScaling)>> =
-        const { RefCell::new(None) };
-}
+});
 
 fn configs() -> &'static StarScaling {
-    season::memoized_current_season(&LAST_SCALING, configs_for)
+    &STAR_SCALING
 }
 
 pub fn max_stars() -> u32 {

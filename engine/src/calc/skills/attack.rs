@@ -5,7 +5,7 @@ use super::{
     collect_extra_damage_with_scoped, damage::bonus_source_synergy_pct, damage::element_keys,
     deadly_blow_mult, r_max, r_min, rg, AttackSkillDamageBreakdown, AttrMap, ConditionMap,
     DamageFormula, ExtraSource, ItemSkillBonuses, Skill, SkillDamageBreakdown, SkillRanks, StatMap,
-    Weapon, CRUSHING_BLOW_DEFAULT,
+    Weapon,
 };
 
 pub struct AttackSkillInput<'a> {
@@ -46,14 +46,12 @@ fn formula_at_clamped_opt(f: Option<&DamageFormula>, rank: f64) -> f64 {
         .unwrap_or(0.0)
 }
 
-fn converted_attack_elements(
-    input: &AttackSkillInput<'_>,
-    hit: (f64, f64),
-    average: (f64, f64),
-) -> (Vec<super::ConvertedAttackDamage>, Vec<CalculationStep>) {
-    let mut elements = Vec::new();
-    let mut calculation = Vec::new();
-    for element in super::ELEMENTS {
+const CONVERSION_ORDER: [&str; 5] = ["arcane", "cold", "fire", "lightning", "poison"];
+
+/// The largest physical conversion total wins; ties go arcane → cold → fire → lightning → poison.
+fn physical_conversion(input: &AttackSkillInput<'_>) -> Option<(&'static str, (f64, f64))> {
+    let mut best: Option<(&'static str, (f64, f64))> = None;
+    for element in CONVERSION_ORDER {
         let key = format!("physical_to_{element}");
         let shared = rg(input.stats, &key);
         let scoped = rg(input.scoped, &key);
@@ -61,97 +59,116 @@ fn converted_attack_elements(
             (shared.0 + scoped.0).max(0.0),
             (shared.1 + scoped.1).max(0.0),
         );
-        if pct == (0.0, 0.0) {
-            continue;
+        if pct.1 > best.map_or(0.0, |(_, top)| top.1) {
+            best = Some((element, pct));
         }
-        let keys = element_keys(element).expect("element keys");
-        // The copied physical hit already includes generic/tag/skill bonuses.
-        // Only the destination's elemental percentages are added here; neither
-        // flat spell damage nor another application of the skill coefficient.
-        let element_damage = rg(input.stats, keys.skill_damage);
-        let magic_damage = rg(input.stats, "magic_skill_damage");
-        let element_more = rg(input.stats, keys.skill_damage_more);
-        let magic_more = rg(input.stats, "magic_skill_damage_more");
-        let element_multiplier = (
-            (1.0 + (element_damage.0 + magic_damage.0) / 100.0).max(0.0)
-                * (1.0 + element_more.0 / 100.0).max(0.0)
-                * (1.0 + magic_more.0 / 100.0).max(0.0),
-            (1.0 + (element_damage.1 + magic_damage.1) / 100.0).max(0.0)
-                * (1.0 + element_more.1 / 100.0).max(0.0)
-                * (1.0 + magic_more.1 / 100.0).max(0.0),
-        );
-        let resistance = input.enemy_resistances.get(element).copied().unwrap_or(0.0);
-        let ignored = (total_pct(input, keys.ignore_res)
-            + total_pct(input, keys.legacy_ignore_res)
-            + total_pct(input, "enemy_all_resist"))
-        .clamp(0.0, 100.0);
-        let resistance_mult = (1.0 - resistance * (1.0 - ignored / 100.0) / 100.0).max(0.0);
-        let elemental_break = (total_pct(input, "elemental_break")
-            + total_pct(input, "elemental_break_on_strike"))
-        .max(0.0);
-        let break_key = format!("{element}_break");
-        let element_break = if input
-            .enemy_conditions
-            .get(&break_key)
-            .copied()
-            .unwrap_or(false)
-        {
-            total_pct(input, &break_key).max(0.0)
-        } else {
-            0.0
-        };
-        let target_mult = resistance_mult * (1.0 + (elemental_break + element_break) / 100.0);
-        let (critical_break_average, critical_break_step) =
-            super::critical_break_average_multiplier(
-                element,
-                element_break,
-                elemental_break,
-                input.stats,
-                input.scoped,
-            );
-        let scale = (
-            pct.0 / 100.0 * element_multiplier.0 * target_mult,
-            pct.1 / 100.0 * element_multiplier.1 * target_mult,
-        );
-        let component = super::ConvertedAttackDamage {
-            element: element.to_string(),
-            conversion_pct: pct,
-            hit_min: (hit.0 * scale.0).floor() as i64,
-            hit_max: (hit.1 * scale.1).floor() as i64,
-            avg_min: (average.0 * scale.0 * critical_break_average.0).floor() as i64,
-            avg_max: (average.1 * scale.1 * critical_break_average.1).floor() as i64,
-        };
-        stat_inputs(
-            &mut calculation,
-            input.stats,
-            [
-                key.as_str(),
-                keys.skill_damage,
-                keys.skill_damage_more,
-                "magic_skill_damage",
-                "magic_skill_damage_more",
-                keys.ignore_res,
-                "elemental_break",
-                "elemental_break_on_strike",
-                break_key.as_str(),
-            ],
-        );
-        calculation.push(CalculationStep::new(
-            format!("Physical converted to {element}"),
-            format!("floor({} physical skill hit × {}% / 100 × {} elemental damage multiplier × {} resistance × [1 + ({}% Elemental Break + {}% {element} Break) / 100]); physical damage is preserved",
-                range(hit), range(pct), range(element_multiplier), number(resistance_mult),
-                number(elemental_break), number(element_break)),
-            (component.hit_min as f64, component.hit_max as f64),
-        ));
-        calculation.push(CalculationStep::new(
-            format!("Average converted {element} damage"),
-            "The physical average already includes critical chance, double damage and projectile count; apply conversion, target modifiers and the independent Critical Break adjustment once",
-            (component.avg_min as f64, component.avg_max as f64),
-        ));
-        calculation.extend(critical_break_step);
-        elements.push(component);
     }
-    (elements, calculation)
+    best
+}
+
+fn converted_attack_elements(
+    input: &AttackSkillInput<'_>,
+    conversion: Option<(&'static str, (f64, f64))>,
+    hit: (f64, f64),
+    average: (f64, f64),
+) -> (Vec<super::ConvertedAttackDamage>, Vec<CalculationStep>) {
+    let mut calculation = Vec::new();
+    stat_inputs(
+        &mut calculation,
+        input.stats,
+        CONVERSION_ORDER.map(|element| format!("physical_to_{element}")),
+    );
+    let Some((element, pct)) = conversion else {
+        return (Vec::new(), calculation);
+    };
+    let keys = element_keys(element).expect("element keys");
+    // Only the element's own Skill Damage scales the converted share.
+    let shared_damage = rg(input.stats, keys.skill_damage);
+    let scoped_damage = rg(input.scoped, keys.skill_damage);
+    let skill_damage = (
+        shared_damage.0 + scoped_damage.0,
+        shared_damage.1 + scoped_damage.1,
+    );
+    let element_multiplier = (
+        (1.0 + skill_damage.0 / 100.0).max(0.0),
+        (1.0 + skill_damage.1 / 100.0).max(0.0),
+    );
+    let resistance = input.enemy_resistances.get(element).copied().unwrap_or(0.0);
+    let ignored = (total_pct(input, keys.ignore_res)
+        + total_pct(input, keys.legacy_ignore_res)
+        + total_pct(input, "enemy_all_resist"))
+    .clamp(0.0, 100.0);
+    let resistance_mult = (1.0 - resistance * (1.0 - ignored / 100.0) / 100.0).max(0.0);
+    let elemental_break = (total_pct(input, "elemental_break")
+        + total_pct(input, "elemental_break_on_strike"))
+    .max(0.0);
+    let break_key = format!("{element}_break");
+    let element_break = if input
+        .enemy_conditions
+        .get(&break_key)
+        .copied()
+        .unwrap_or(false)
+    {
+        total_pct(input, &break_key).max(0.0)
+    } else {
+        0.0
+    };
+    // As on an elemental hit, the subtree's damage taken joins the elemental break sum.
+    let damage_taken = r_max(rg(input.scoped, "enemy_damage_taken_increased")).max(0.0);
+    let target_mult =
+        resistance_mult * (1.0 + (elemental_break + element_break + damage_taken) / 100.0);
+    let (critical_break_average, critical_break_step) = super::critical_break_average_multiplier(
+        element,
+        element_break,
+        elemental_break,
+        input.stats,
+        input.scoped,
+    );
+    let scale = (
+        pct.0 / 100.0 * element_multiplier.0 * target_mult,
+        pct.1 / 100.0 * element_multiplier.1 * target_mult,
+    );
+    let component = super::ConvertedAttackDamage {
+        element: element.to_string(),
+        conversion_pct: pct,
+        hit_min: (hit.0 * scale.0).floor() as i64,
+        hit_max: (hit.1 * scale.1).floor() as i64,
+        avg_min: (average.0 * scale.0 * critical_break_average.0).floor() as i64,
+        avg_max: (average.1 * scale.1 * critical_break_average.1).floor() as i64,
+    };
+    stat_inputs(
+        &mut calculation,
+        input.stats,
+        [
+            keys.skill_damage,
+            keys.ignore_res,
+            "elemental_break",
+            "elemental_break_on_strike",
+            break_key.as_str(),
+        ],
+    );
+    calculation.push(CalculationStep::new(
+        "Physical conversion",
+        format!(
+            "{}% to {element}, the largest physical conversion; ties go arcane → cold → fire → lightning → poison and the other conversions are ignored",
+            range(pct)
+        ),
+        pct,
+    ));
+    calculation.push(CalculationStep::new(
+        format!("Physical converted to {element}"),
+        format!("floor({} physical hit before the physical break × {}% / 100 × (1 + {}% {element} Skill Damage / 100) × {} resistance × [1 + ({}% Elemental Break + {}% {element} Break + {}% damage taken) / 100]); the rest stays physical",
+            range(hit), range(pct), range(skill_damage), number(resistance_mult),
+            number(elemental_break), number(element_break), number(damage_taken)),
+        (component.hit_min as f64, component.hit_max as f64),
+    ));
+    calculation.push(CalculationStep::new(
+        format!("Average converted {element} damage"),
+        "The physical average already includes critical chance, double damage and projectile count; apply conversion, target modifiers and the independent Critical Break adjustment once",
+        (component.avg_min as f64, component.avg_max as f64),
+    ));
+    calculation.extend(critical_break_step);
+    (vec![component], calculation)
 }
 
 pub fn compute_attack_skill_damage(
@@ -430,14 +447,17 @@ fn compute_attack_skill_damage_with_rank(
 
     // Same crush/deadly stage weapon.rs applies, so a skill swing and a plain
     // swing agree.
-    let crushing_raw = r_max(rg(input.stats, "crushing_blow_modifier"));
-    let crushing_blow_modifier = if crushing_raw == 0.0 {
-        CRUSHING_BLOW_DEFAULT
-    } else {
-        crushing_raw
-    };
     let armor_break_pct = total_pct(input, "armor_break");
-    let crush_armor_mult = crushing_blow_modifier + armor_break_pct / 100.0;
+    let crushing_blow_pct = total_pct(input, "crushing_blow_armor_break");
+    let crush_armor_mult = 1.0 + (armor_break_pct + crushing_blow_pct) / 100.0;
+    // The physical break lands after conversion: converted damage copies the hit before it.
+    let unbroken = |value: f64| {
+        if crush_armor_mult > 0.0 {
+            value / crush_armor_mult
+        } else {
+            0.0
+        }
+    };
 
     let deadly_blow_chance =
         total_pct(input, "deadly_blow_chance") + total_pct(input, "deadly_blow");
@@ -534,16 +554,25 @@ fn compute_attack_skill_damage_with_rank(
         .map(|p| (p.hit_min, p.hit_max, p.avg_min, p.avg_max))
         .unwrap_or((0, 0, 0, 0));
 
+    let conversion = physical_conversion(input);
+    let (converted_elements, conversion_steps) = converted_attack_elements(
+        input,
+        conversion,
+        (unbroken(phys_hit_min), unbroken(phys_hit_max)),
+        (unbroken(phys_avg_min), unbroken(phys_avg_max)),
+    );
+    // The converted share leaves the physical hit; the game sets no 100% cap.
+    let kept = conversion.map_or((1.0, 1.0), |(_, pct)| {
+        (1.0 - pct.0 / 100.0, 1.0 - pct.1 / 100.0)
+    });
+    let phys_hit_min = phys_hit_min * kept.0;
+    let phys_hit_max = phys_hit_max * kept.1;
+    let phys_avg_min = phys_avg_min * kept.0;
+    let phys_avg_max = phys_avg_max * kept.1;
     let phys_hit_min_i = phys_hit_min.floor() as i64;
     let phys_hit_max_i = phys_hit_max.floor() as i64;
     let phys_avg_min_i = phys_avg_min.floor() as i64;
     let phys_avg_max_i = phys_avg_max.floor() as i64;
-
-    let (converted_elements, conversion_steps) = converted_attack_elements(
-        input,
-        (phys_hit_min, phys_hit_max),
-        (phys_avg_min, phys_avg_max),
-    );
     let converted_hit = converted_elements
         .iter()
         .fold((0, 0), |sum, c| (sum.0 + c.hit_min, sum.1 + c.hit_max));
@@ -635,8 +664,8 @@ fn compute_attack_skill_damage_with_rank(
             "maximum_damage_pct",
             "attack_damage",
             "attack_damage_more",
-            "crushing_blow_modifier",
             "armor_break",
+            "crushing_blow_armor_break",
             "deadly_blow_chance",
             "deadly_blow",
             "deadly_blow_effectiveness",
@@ -754,10 +783,9 @@ fn compute_attack_skill_damage_with_rank(
     calculation.push(CalculationStep::new(
         "Crushing blow + armor break",
         format!(
-            "{} crushing (default {}) + {}% armor break / 100",
-            number(crushing_blow_modifier),
-            number(CRUSHING_BLOW_DEFAULT),
-            number(armor_break_pct)
+            "1 + ({}% Armor Break + {}% Crushing Blow stacks) / 100; physical damage only, conversions copy the hit before it",
+            number(armor_break_pct),
+            number(crushing_blow_pct)
         ),
         scalar(crush_armor_mult),
     ));
@@ -789,13 +817,14 @@ fn compute_attack_skill_damage_with_rank(
     calculation.push(CalculationStep::new(
         "Physical hit before rounding",
         format!(
-            "{} base × {} attack × {} skill × {} crush/armor × {} deadly × {} extra",
+            "{} base × {} attack × {} skill × {} crush/armor × {} deadly × {} extra × {} kept after conversion",
             range((base_min, base_max)),
             range((atk_mult_min, atk_mult_max)),
             range((skill_mult_min, skill_mult_max)),
             number(crush_armor_mult),
             number(deadly_mult),
-            number(extra_mult)
+            number(extra_mult),
+            range(kept)
         ),
         (phys_hit_min, phys_hit_max),
     ));
@@ -904,13 +933,14 @@ fn compute_attack_skill_damage_with_rank(
     calculation.push(CalculationStep::new(
         "Average physical damage",
         format!(
-            "floor(({} expected physical hit × {} average crit + {} third-attack critical contribution) × {} double damage expectation × ({} ordinary + {} expected additional projectiles))",
+            "floor(({} expected physical hit × {} average crit + {} third-attack critical contribution) × {} double damage expectation × ({} ordinary + {} expected additional projectiles) × {} kept after conversion)",
             range(physical_expected),
             range((crit_min.avg_mult, crit.avg_mult)),
             range(third_crit_extra),
             range(double_damage),
             projectiles,
-            range(extra_projectiles)
+            range(extra_projectiles),
+            range(kept)
         ),
         (phys_avg_min.floor(), phys_avg_max.floor()),
     ));
@@ -984,7 +1014,6 @@ fn compute_attack_skill_damage_with_rank(
         additive_physical_max: r_max(add_phys),
         attack_damage_min_pct: r_min(atk),
         attack_damage_max_pct: r_max(atk),
-        crushing_blow_modifier,
         armor_break_pct,
         deadly_blow_chance,
         crit_chance: crit.chance,
@@ -1088,6 +1117,172 @@ mod tests {
     }
 
     #[test]
+    fn crushing_blow_adds_to_armor_break_and_sundering_strikes() {
+        // Sundering Strikes reaches the planner as subtree armor_break.
+        let crushed = hit_max(
+            &stats(&[("armor_break", 20.0), ("crushing_blow_armor_break", 50.0)]),
+            &stats(&[("armor_break", 30.0)]),
+        );
+        assert_eq!(
+            crushed,
+            hit_max(&stats(&[("armor_break", 100.0)]), &StatMap::new())
+        );
+    }
+
+    fn converted(shared: &[(&str, f64)], scoped: &[(&str, f64)]) -> AttackSkillDamageBreakdown {
+        breakdown_for(
+            &skill(),
+            &stats(shared),
+            &stats(scoped),
+            &SkillRanks::new(),
+            1,
+            0.0,
+        )
+    }
+
+    fn element_and_hits(d: &AttackSkillDamageBreakdown) -> (&str, i64, i64) {
+        assert_eq!(d.converted_elements.len(), 1);
+        let c = &d.converted_elements[0];
+        (c.element.as_str(), d.physical_hit_max, c.hit_max)
+    }
+
+    #[test]
+    fn physical_converts_only_to_the_element_with_the_largest_total() {
+        let d = converted(
+            &[("physical_to_cold", 50.0), ("physical_to_fire", 70.0)],
+            &[],
+        );
+        assert_eq!(element_and_hits(&d), ("fire", 30, 70));
+    }
+
+    #[test]
+    fn tied_conversions_follow_arcane_cold_fire_lightning_poison() {
+        for (first, second) in [
+            ("arcane", "cold"),
+            ("cold", "fire"),
+            ("fire", "lightning"),
+            ("lightning", "poison"),
+            ("arcane", "poison"),
+        ] {
+            let a = format!("physical_to_{first}");
+            let b = format!("physical_to_{second}");
+            let d = converted(&[(b.as_str(), 50.0), (a.as_str(), 50.0)], &[]);
+            assert_eq!(element_and_hits(&d), (first, 50, 50));
+        }
+    }
+
+    #[test]
+    fn the_losing_conversion_is_ignored_and_its_share_stays_physical() {
+        // Cold Impact + Fire Impact: 50% cold, the fire 50% does nothing.
+        let impacts = [("physical_to_cold", 50.0), ("physical_to_fire", 50.0)];
+        let d = converted(&impacts, &[]);
+        assert_eq!(element_and_hits(&d), ("cold", 50, 50));
+        assert_eq!(d.combined_hit_max, 100);
+        // +20% fire from items: fire reaches 70% and Cold Impact stops working.
+        let d = converted(
+            &[("physical_to_cold", 50.0), ("physical_to_fire", 70.0)],
+            &[],
+        );
+        assert_eq!(element_and_hits(&d), ("fire", 30, 70));
+    }
+
+    #[test]
+    fn sources_of_the_same_element_add_up_before_the_comparison() {
+        let d = converted(
+            &[("physical_to_cold", 50.0), ("physical_to_fire", 60.0)],
+            &[("physical_to_cold", 20.0)],
+        );
+        assert_eq!(element_and_hits(&d), ("cold", 30, 70));
+    }
+
+    #[test]
+    fn conversion_keeps_the_rest_physical_and_scales_by_the_elements_skill_damage() {
+        // 1000 physical, Cold Impact and +40% Cold Skill Damage: 500 physical + 500 × 1.4 cold.
+        let mut s = skill();
+        s.attack_scaling
+            .as_mut()
+            .unwrap()
+            .weapon_damage_pct
+            .as_mut()
+            .unwrap()
+            .base = 1000.0;
+        let shared = stats(&[
+            ("physical_to_cold", 50.0),
+            ("cold_skill_damage", 40.0),
+            ("magic_skill_damage", 100.0),
+            ("cold_skill_damage_more", 100.0),
+        ]);
+        let d = breakdown_for(&s, &shared, &StatMap::new(), &SkillRanks::new(), 1, 0.0);
+        assert_eq!(element_and_hits(&d), ("cold", 500, 700));
+        assert_eq!(d.combined_hit_max, 1200);
+    }
+
+    #[test]
+    fn converted_damage_takes_the_elements_resistance_and_breaks() {
+        let s = skill();
+        let empty = StatMap::new();
+        let ranks = SkillRanks::new();
+        let skills = HashMap::new();
+        let weapon = Weapon {
+            name: "test".into(),
+            damage_min: 100.0,
+            damage_max: 100.0,
+        };
+        let shared = stats(&[
+            ("physical_to_cold", 50.0),
+            ("elemental_break_on_strike", 20.0),
+            ("cold_break", 30.0),
+        ]);
+        let scoped = stats(&[("enemy_damage_taken_increased", 10.0)]);
+        let resistance = HashMap::from([("cold".into(), 50.0)]);
+        let hit = |conditions: &ConditionMap| {
+            compute_attack_skill_damage(&AttackSkillInput {
+                action_rate_override: None,
+                skill: &s,
+                allocated_rank: 1.0,
+                attributes: &empty,
+                stats: &shared,
+                skill_ranks_by_name: &ranks,
+                skills_by_name: &skills,
+                item_skill_bonuses: &empty,
+                enemy_conditions: conditions,
+                enemy_resistances: &resistance,
+                weapon: Some(&weapon),
+                poison_breakdown: None,
+                scoped: &scoped,
+                projectile_count: 1,
+                of_total_damage: 0.0,
+                conversion_flat: 0.0,
+            })
+            .unwrap()
+        };
+        // 100 × 50% × (1 − 50% cold res) × [1 + (20% + 30% Cold Break + 10% taken) / 100].
+        let broken = hit(&ConditionMap::from([("cold_break".into(), true)]));
+        assert_eq!(element_and_hits(&broken), ("cold", 50, 40));
+        let open = hit(&ConditionMap::new());
+        assert_eq!(element_and_hits(&open), ("cold", 50, 32));
+    }
+
+    #[test]
+    fn crushing_blow_and_armor_break_reach_only_the_kept_physical() {
+        let conversion = [("physical_to_cold", 50.0)];
+        assert_eq!(
+            element_and_hits(&converted(&conversion, &[])),
+            ("cold", 50, 50)
+        );
+        let breaks = [
+            ("physical_to_cold", 50.0),
+            ("armor_break", 50.0),
+            ("crushing_blow_armor_break", 50.0),
+        ];
+        // 100 × 50% kept × (1 + (50% + 50%) / 100); the cold half takes neither.
+        assert_eq!(
+            element_and_hits(&converted(&breaks, &[])),
+            ("cold", 100, 50)
+        );
+    }
+
+    #[test]
     fn intrinsic_critical_chance_is_local_and_capped_after_global_chance() {
         let mut s = skill();
         s.attack_scaling.as_mut().unwrap().critical_chance = Some(DamageFormula {
@@ -1174,8 +1369,9 @@ mod tests {
             ("skill_crit_damage".into(), (30., 90.)),
         ]);
         let out = breakdown_for(&s, &shared, &scoped, &SkillRanks::new(), 1, 0.);
-        assert_eq!((out.physical_hit_min, out.physical_hit_max), (150, 150));
-        assert_eq!((out.physical_avg_min, out.physical_avg_max), (337, 382));
+        assert_eq!((out.physical_hit_min, out.physical_hit_max), (100, 100));
+        // 100 × (1 + 50% × (3.5..4.1 − 1)); 255 floors to 254 in f64.
+        assert_eq!((out.physical_avg_min, out.physical_avg_max), (225, 254));
         let step = out
             .calculation()
             .iter()
@@ -1237,7 +1433,7 @@ mod tests {
     }
 
     #[test]
-    fn conversion_uses_the_skill_hit_and_destination_bonus_without_consuming_physical() {
+    fn conversion_uses_the_skill_hit_and_destination_bonus_and_keeps_the_rest_physical() {
         let mut s = skill();
         s.attack_scaling
             .as_mut()
@@ -1247,19 +1443,19 @@ mod tests {
             .unwrap()
             .base = 300.0;
         let shared = stats(&[
-            ("crushing_blow_modifier", 1.0),
             ("physical_to_fire", 10.0),
             ("fire_skill_damage", 100.0),
             ("flat_fire_skill_damage", 99999.0),
         ]);
         let d = breakdown_for(&s, &shared, &StatMap::new(), &SkillRanks::new(), 1, 0.0);
-        assert_eq!(d.physical_hit_max, 300);
+        assert_eq!(d.physical_hit_max, 270);
         assert_eq!(d.converted_elements[0].hit_max, 60);
-        assert_eq!(d.combined_hit_max, 360);
+        assert_eq!(d.combined_hit_max, 330);
     }
 
     #[test]
-    fn conversions_above_one_hundred_percent_stack_and_average_only_once() {
+    fn conversion_past_one_hundred_percent_turns_the_kept_physical_negative() {
+        // The game has no cap: 150% leaves 1 − 1.5 of the physical hit.
         let shared = StatMap::from([
             ("physical_to_fire".into(), (100.0, 150.0)),
             ("physical_to_cold".into(), (100.0, 150.0)),
@@ -1287,22 +1483,25 @@ mod tests {
             3,
             0.0,
         );
-        assert_eq!(d.physical_hit_max, base.physical_hit_max);
-        assert_eq!(d.physical_avg_max, base.physical_avg_max);
-        assert_eq!(d.combined_hit_min, base.combined_hit_min * 3);
-        assert_eq!(d.combined_hit_max, base.combined_hit_max * 4);
-        assert_eq!(d.combined_avg_min, base.combined_avg_min * 3);
-        assert_eq!(d.combined_avg_max, base.combined_avg_max * 4);
+        assert_eq!(d.converted_elements.len(), 1);
+        assert_eq!(d.converted_elements[0].element, "cold");
+        assert_eq!((d.physical_hit_min, d.physical_hit_max), (0, -50));
+        assert_eq!((d.physical_avg_min, d.physical_avg_max), (0, -450));
+        assert_eq!(d.converted_elements[0].avg_max, 1350);
+        assert_eq!(d.combined_hit_min, base.combined_hit_min);
+        assert_eq!(d.combined_hit_max, base.combined_hit_max);
+        assert_eq!(d.combined_avg_min, base.combined_avg_min);
+        assert_eq!(d.combined_avg_max, base.combined_avg_max);
     }
 
     #[test]
-    fn each_converted_element_uses_its_own_bonuses_resistance_and_break() {
+    fn converted_element_uses_its_own_skill_damage_resistance_and_break() {
         let s = skill();
         let empty = StatMap::new();
         let ranks = SkillRanks::new();
         let skills = HashMap::new();
         let shared = stats(&[
-            ("physical_to_fire", 10.0),
+            ("physical_to_fire", 20.0),
             ("physical_to_cold", 10.0),
             ("fire_skill_damage", 50.0),
             ("magic_skill_damage", 50.0),
@@ -1331,11 +1530,15 @@ mod tests {
             of_total_damage: 0.0,
             conversion_flat: 0.0,
         };
-        let (components, _) = converted_attack_elements(&input, (300.0, 300.0), (900.0, 900.0));
-        let fire = components.iter().find(|c| c.element == "fire").unwrap();
-        // 300 × 10% × (1 + 50% fire + 50% magic) × 2 more × .75 res × (1 + 1 + 1 Break).
-        assert_eq!(fire.hit_max, 270);
-        assert_eq!(fire.avg_max, 810);
+        let conversion = physical_conversion(&input);
+        let (components, _) =
+            converted_attack_elements(&input, conversion, (300.0, 300.0), (900.0, 900.0));
+        assert_eq!(components.len(), 1);
+        let fire = &components[0];
+        // 300 × 20% × (1 + 50% fire) × .75 res × (1 + 1 + 1 Break); magic and more stay out.
+        assert_eq!(fire.element, "fire");
+        assert_eq!(fire.hit_max, 202);
+        assert_eq!(fire.avg_max, 607);
         let mut critical_stats = shared.clone();
         critical_stats.insert("fire_break_crit_chance".into(), (15.0, 100.0));
         critical_stats.insert("fire_break_crit_damage".into(), (25.0, 25.0));
@@ -1344,20 +1547,13 @@ mod tests {
                 stats: &critical_stats,
                 ..input
             },
+            conversion,
             (300.0, 300.0),
             (900.0, 900.0),
         );
-        let critical_fire = critical.iter().find(|c| c.element == "fire").unwrap();
-        assert_eq!((critical_fire.hit_min, critical_fire.hit_max), (270, 270));
-        assert_eq!((critical_fire.avg_min, critical_fire.avg_max), (820, 877));
-        assert_eq!(
-            components
-                .iter()
-                .find(|c| c.element == "cold")
-                .unwrap()
-                .hit_max,
-            0
-        );
+        let critical_fire = &critical[0];
+        assert_eq!((critical_fire.hit_min, critical_fire.hit_max), (202, 202));
+        assert_eq!((critical_fire.avg_min, critical_fire.avg_max), (615, 658));
     }
 
     #[test]
@@ -1368,7 +1564,6 @@ mod tests {
             ("maximum_damage_flat", 32.0),
             ("minimum_damage_pct", 50.0),
             ("maximum_damage_pct", 100.0),
-            ("crushing_blow_modifier", 1.0),
             ("physical_to_fire", 100.0),
         ]);
         let d = breakdown_for(
@@ -1379,8 +1574,8 @@ mod tests {
             1,
             0.0,
         );
-        assert_eq!(d.physical_hit_min, 312); // (100 * 2 + 8) * 1.5
-        assert_eq!(d.physical_hit_max, 464); // (100 * 2 + 32) * 2
+        // (100 * 2 + 8) * 1.5 and (100 * 2 + 32) * 2, all of it fire.
+        assert_eq!((d.physical_hit_min, d.physical_hit_max), (0, 0));
         assert_eq!(d.converted_elements[0].hit_min, 312);
         assert_eq!(d.converted_elements[0].hit_max, 464);
     }
@@ -1481,8 +1676,8 @@ mod tests {
             ("spell_damage", 500.0),
         ]);
         let result = breakdown_for(&s, &shared, &StatMap::new(), &SkillRanks::new(), 1, 0.0);
-        // 100 weapon × 1.5 crushing × (1 + (40 + 10)/100) × 1.2.
-        assert_eq!(result.physical_hit_max, 270);
+        // 100 weapon × (1 + (40 + 10)/100) × 1.2 = 180, floored from 179.99… in f64.
+        assert_eq!(result.physical_hit_max, 179);
     }
 
     #[test]
@@ -1537,17 +1732,17 @@ mod tests {
     }
 
     #[test]
-    fn crushing_blow_default_matches_the_weapon_panel() {
-        // weapon 100 * crushing 1.5 = 150, the same stage weapon.rs applies.
-        assert_eq!(hit_max(&StatMap::new(), &StatMap::new()), 150);
+    fn physical_break_stage_matches_the_weapon_panel() {
+        // weapon 100 with no break = 100, the same stage weapon.rs applies.
+        assert_eq!(hit_max(&StatMap::new(), &StatMap::new()), 100);
     }
 
     #[test]
     fn armor_break_raises_attack_skill_damage() {
-        // crush_armor_mult = 1.5 + 100/100 = 2.5
+        // crush_armor_mult = 1 + 100/100 = 2
         assert_eq!(
             hit_max(&stats(&[("armor_break", 100.0)]), &StatMap::new()),
-            250
+            200
         );
     }
 
@@ -1561,10 +1756,10 @@ mod tests {
 
     #[test]
     fn deadly_blow_effectiveness_scales_the_proc_bonus() {
-        // chance 100%: S8 deadly = 1.35 -> 150 * 1.35 = 202.5, floored
+        // chance 100%: S8 deadly = 1.35 -> 100 * 1.35 = 135
         let plain = hit_max(&stats(&[("deadly_blow_chance", 100.0)]), &StatMap::new());
-        assert_eq!(plain, 202);
-        // +50% effectiveness: on-proc 1.35 * 1.5 = 2.025 -> 150 * 2.025 = 303.75
+        assert_eq!(plain, 135);
+        // +50% effectiveness: on-proc 1.35 * 1.5 = 2.025 -> 100 * 2.025 = 202.5
         let boosted = hit_max(
             &stats(&[
                 ("deadly_blow_chance", 100.0),
@@ -1572,21 +1767,21 @@ mod tests {
             ]),
             &StatMap::new(),
         );
-        assert_eq!(boosted, 303);
+        assert_eq!(boosted, 202);
     }
 
     #[test]
     fn conversion_flat_lands_in_the_swing_before_the_multipliers() {
-        // weapon 100 + 40 converted, then the same crushing 1.5 stage.
-        assert_eq!(hit_max_with_conversion(0.0), 150);
-        assert_eq!(hit_max_with_conversion(40.0), 210);
+        // weapon 100 + 40 converted, then the same physical break stage.
+        assert_eq!(hit_max_with_conversion(0.0), 100);
+        assert_eq!(hit_max_with_conversion(40.0), 140);
     }
 
     #[test]
     fn subtree_deadly_blow_adds_to_the_chance() {
         assert_eq!(
             hit_max(&StatMap::new(), &stats(&[("deadly_blow", 100.0)])),
-            202,
+            135,
         );
     }
 
@@ -1616,7 +1811,7 @@ mod tests {
     #[test]
     fn bonus_source_synergy_raises_attack_damage() {
         // Flail Mastery rank 10 at 4%/level = +40% attack damage:
-        // 100 * 1.4 * 1.5 crushing = 210.
+        // 100 * 1.4 = 140.
         let mut s = skill();
         s.bonus_sources = vec![crate::calc::skills::BonusSource::SkillLevel {
             source: "flail mastery".into(),
@@ -1625,14 +1820,14 @@ mod tests {
         }];
         let ranks: SkillRanks = [("flail mastery".to_string(), 10.0)].into_iter().collect();
         let out = breakdown_for(&s, &StatMap::new(), &StatMap::new(), &ranks, 1, 0.0);
-        assert_eq!(out.combined_hit_max, 210);
+        assert_eq!(out.combined_hit_max, 140);
         assert_eq!(out.synergy_max_pct, 40.0);
     }
 
     #[test]
     fn skill_weapon_damage_pct_is_a_standalone_multiplier() {
         // S8: 200% attack damage and 300% skill tooltip multiply, not add:
-        // 100 * 3.0 * (1 + 2.0) * 1.5 = 1350 (additive would give 900).
+        // 100 * 3.0 * (1 + 2.0) = 900 (additive would give 600).
         let s = skill();
         let mut s2 = s.clone();
         s2.attack_scaling = Some(AttackSkillScaling {
@@ -1644,7 +1839,7 @@ mod tests {
         });
         let shared = stats(&[("attack_damage", 200.0)]);
         let out = breakdown_for(&s2, &shared, &StatMap::new(), &SkillRanks::new(), 1, 0.0);
-        assert_eq!(out.combined_hit_max, 1350);
+        assert_eq!(out.combined_hit_max, 900);
     }
 
     #[test]
@@ -1658,7 +1853,7 @@ mod tests {
             }),
             ..Default::default()
         });
-        // Rank one: weapon 100 * (1 + 1.20 * (1 + .08 + .04)) * crush 1.5.
+        // Rank one: weapon 100 * (1 + 1.20 * (1 + .08 + .04)).
         // The poison-only bonus must not change this physical coefficient.
         let scoped = stats(&[
             ("subtree_damage", 8.0),
@@ -1666,11 +1861,11 @@ mod tests {
             ("elemental_subtree_damage", 500.0),
         ]);
         let out = breakdown_for(&s, &StatMap::new(), &scoped, &SkillRanks::new(), 1, 0.0);
-        assert_eq!(out.physical_hit_max, 351);
+        assert_eq!(out.physical_hit_max, 234);
         let extra = stats(&[("expected_additional_projectiles", 0.25)]);
         let out = breakdown_for(&s, &StatMap::new(), &extra, &SkillRanks::new(), 1, 0.0);
-        assert_eq!(out.physical_hit_max, 330);
-        assert_eq!(out.physical_avg_max, 412);
+        assert_eq!(out.physical_hit_max, 220);
+        assert_eq!(out.physical_avg_max, 275);
     }
 
     #[test]
@@ -1694,13 +1889,13 @@ mod tests {
             ("third_attack_skill_crit_damage".into(), (100., 200.)),
         ]);
         let out = breakdown_for(&s, &shared, &scoped, &SkillRanks::new(), 1, 0.);
-        assert_eq!((out.physical_hit_min, out.physical_hit_max), (300, 300));
-        assert_eq!((out.physical_avg_min, out.physical_avg_max), (712, 850));
+        assert_eq!((out.physical_hit_min, out.physical_hit_max), (200, 200));
+        assert_eq!((out.physical_avg_min, out.physical_avg_max), (475, 566));
         assert_eq!(out.crit_damage_pct, 100.);
         let mut no_crit = shared.clone();
         no_crit.insert("crit_chance".into(), (0., 0.));
         let out = breakdown_for(&s, &no_crit, &scoped, &SkillRanks::new(), 1, 0.);
-        assert_eq!((out.physical_avg_min, out.physical_avg_max), (325, 350));
+        assert_eq!((out.physical_avg_min, out.physical_avg_max), (216, 233));
     }
 
     #[test]
@@ -1716,8 +1911,8 @@ mod tests {
         });
         let scoped = stats(&[("subtree_damage", 50.), ("subtree_damage_on_proc", 20.)]);
         let out = breakdown_for(&s, &StatMap::new(), &scoped, &SkillRanks::new(), 1, 0.);
-        assert_eq!(out.physical_hit_max, 375);
-        assert_eq!(out.physical_avg_max, 405);
+        assert_eq!(out.physical_hit_max, 250);
+        assert_eq!(out.physical_avg_max, 270);
     }
     #[test]
     fn whole_hit_subtree_retains_neutral_weapon_damage_and_both_bounds() {
@@ -1735,13 +1930,13 @@ mod tests {
         let shared = stats(&[("orbital_skill_damage", 100.0)]);
         let scoped = StatMap::from([("subtree_damage".into(), (0.0, 50.0))]);
         let whole = breakdown_for(&s, &shared, &scoped, &SkillRanks::new(), 1, 0.0);
-        assert_eq!((whole.physical_hit_min, whole.physical_hit_max), (450, 675));
+        assert_eq!((whole.physical_hit_min, whole.physical_hit_max), (300, 450));
         s.attack_scaling
             .as_mut()
             .unwrap()
             .weapon_subtree_scales_full_hit = false;
         let bonus = breakdown_for(&s, &shared, &scoped, &SkillRanks::new(), 1, 0.0);
-        assert_eq!((bonus.physical_hit_min, bonus.physical_hit_max), (450, 600));
+        assert_eq!((bonus.physical_hit_min, bonus.physical_hit_max), (300, 400));
     }
 
     #[test]
@@ -1762,10 +1957,10 @@ mod tests {
             value: 3.0,
         }];
         for (shared, synergy_rank, expected_skill_mult, expected_hit) in [
-            (stats(&[]), 0.0, 1.9, 285),
-            (stats(&[("orbital_skill_damage", 100.0)]), 0.0, 2.8, 420),
-            (stats(&[]), 10.0, 2.2, 330),
-            (stats(&[("orbital_skill_damage", 100.0)]), 10.0, 3.4, 510),
+            (stats(&[]), 0.0, 1.9, 190),
+            (stats(&[("orbital_skill_damage", 100.0)]), 0.0, 2.8, 280),
+            (stats(&[]), 10.0, 2.2, 220),
+            (stats(&[("orbital_skill_damage", 100.0)]), 10.0, 3.4, 340),
             (
                 stats(&[
                     ("orbital_skill_damage", 100.0),
@@ -1773,16 +1968,16 @@ mod tests {
                 ]),
                 0.0,
                 2.8,
-                630,
+                420,
             ),
-            (stats(&[("attack_damage", 100.0)]), 10.0, 2.2, 660),
+            (stats(&[("attack_damage", 100.0)]), 10.0, 2.2, 440),
             (
                 stats(&[("orbital_skill_damage_more", 100.0)]),
                 0.0,
                 2.8,
-                420,
+                280,
             ),
-            (stats(&[("spell_damage", 100.0)]), 0.0, 1.9, 285),
+            (stats(&[("spell_damage", 100.0)]), 0.0, 1.9, 190),
         ] {
             let ranks = HashMap::from([("test synergy".into(), synergy_rank)]);
             let out = breakdown_for(&s, &shared, &StatMap::new(), &ranks, 3, 0.0);
@@ -1794,8 +1989,8 @@ mod tests {
                 .value();
             assert!((skill_mult.0 - expected_skill_mult).abs() < 1e-9);
             assert!((skill_mult.1 - expected_skill_mult).abs() < 1e-9);
-            // The usual crushing factor is 1.5; three projectiles change only
-            // the volley average, never this coefficient or individual hit.
+            // Three projectiles change only the volley average, never this
+            // coefficient or individual hit.
             assert!((out.physical_hit_max - expected_hit).abs() <= 1);
             assert!((out.physical_avg_max - expected_hit * 3).abs() <= 1);
             assert_eq!(out.projectile_count, 3);
@@ -1813,15 +2008,15 @@ mod tests {
         });
         let shared = HashMap::from([("orbital_skill_damage".into(), (25.0, 100.0))]);
         let out = breakdown_for(&s, &shared, &StatMap::new(), &SkillRanks::new(), 1, 0.0);
-        assert_eq!(out.physical_hit_min, 318); // 100 × (1 + 0.9 × 1.25) × 1.5.
-        assert_eq!(out.physical_hit_max, 420); // 100 × (1 + 0.9 × 2) × 1.5.
+        assert_eq!(out.physical_hit_min, 212); // 100 × (1 + 0.9 × 1.25).
+        assert_eq!(out.physical_hit_max, 280); // 100 × (1 + 0.9 × 2).
     }
     #[test]
     fn physical_of_total_damage_applies_signed_adjustment_before_projectiles() {
         for (pct, expected_hit) in [
-            (0.0, 150),
-            (100.0, 300),
-            (-50.0, 75),
+            (0.0, 100),
+            (100.0, 200),
+            (-50.0, 50),
             (-100.0, 0),
             (-150.0, 0),
         ] {
@@ -1852,11 +2047,11 @@ mod tests {
         );
         assert_eq!(
             (result.physical_hit_min, result.physical_hit_max),
-            (150, 150)
+            (100, 100)
         );
         assert_eq!(
             (result.physical_avg_min, result.physical_avg_max),
-            (450, 900)
+            (300, 600)
         );
         assert_eq!(result.projectile_count, 3);
         assert_eq!(
@@ -1888,9 +2083,9 @@ mod tests {
             damage_max: 100.0,
         };
         for (pct, expected_physical, expected_elemental) in [
-            (0.0, 150, 100),
-            (100.0, 300, 200),
-            (-50.0, 75, 50),
+            (0.0, 100, 100),
+            (100.0, 200, 200),
+            (-50.0, 50, 50),
             (-100.0, 0, 0),
             (-150.0, 0, 0),
         ] {

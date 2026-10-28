@@ -129,15 +129,6 @@ fn source_value(
 
 /// Turns the owning skill's `conversion_*` subtree values into their two damage
 /// slots. Every such key is skill-scoped, so `scoped` is the only source.
-pub fn resolve(
-    scoped: &StatMap,
-    attributes: &AttrMap,
-    stats: &StatMap,
-    tags: &[String],
-) -> Conversions {
-    resolve_with_calculation(scoped, attributes, stats, tags).0
-}
-
 pub(crate) fn resolve_with_calculation(
     scoped: &StatMap,
     attributes: &AttrMap,
@@ -226,7 +217,7 @@ mod tests {
 
     // Every case below is a tagless skill; the entity-count case passes its own.
     fn resolve(scoped: &StatMap, attributes: &AttrMap, stats: &StatMap) -> Conversions {
-        super::resolve(scoped, attributes, stats, &[])
+        super::resolve_with_calculation(scoped, attributes, stats, &[]).0
     }
 
     fn map(pairs: &[(&str, f64)]) -> StatMap {
@@ -372,15 +363,17 @@ mod tests {
         let scoped = map(&[("conversion_summon_count", 10.0)]);
         let stats = map(&[("sentry_max_amount", 16.0), ("summon_max_amount", 4.0)]);
         // +10% per entity the build could field, the base one included.
-        let sentry = super::resolve(&scoped, &AttrMap::new(), &stats, &["Sentry".into()]);
+        let sentry =
+            super::resolve_with_calculation(&scoped, &AttrMap::new(), &stats, &["Sentry".into()]).0;
         assert_eq!(
             sentry.skill_damage_pct, 170.0,
             "a Sentry skill counts sentries, not summons"
         );
         assert_eq!(sentry.flat, 0.0);
-        let summon = super::resolve(&scoped, &AttrMap::new(), &stats, &["Summon".into()]);
+        let summon =
+            super::resolve_with_calculation(&scoped, &AttrMap::new(), &stats, &["Summon".into()]).0;
         assert_eq!(summon.skill_damage_pct, 50.0);
-        let neither = super::resolve(&scoped, &AttrMap::new(), &stats, &[]);
+        let neither = super::resolve_with_calculation(&scoped, &AttrMap::new(), &stats, &[]).0;
         assert_eq!(neither, Conversions::default());
     }
 }

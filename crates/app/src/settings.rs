@@ -1,9 +1,9 @@
 //! Application preferences dialog, after the reference SettingsModal.
 use gpui_kit::{base::Link, component::checkbox::Checkbox, prelude::*, *};
 use hsplanner_build::session::{Session, Settings};
-use hsplanner_ui::components::PlannerDialogExt;
+use hsplanner_ui::components::{ModalSize, PlannerDialogExt};
 use hsplanner_ui::{
-    components::{modal_eyebrow, modal_header},
+    components::{modal_eyebrow, modal_header, modal_layout},
     controls::segment,
     i18n::{self, Language, tr, trf},
     numbers::compact,
@@ -28,21 +28,8 @@ const PREVIEW_SAMPLES: [f64; 3] = [45_678., 12_345_678., 2_500_000_000.];
 
 pub(super) fn open(session: Entity<Session>, window: &mut Window, cx: &mut App) {
     let view = cx.new(|cx| SettingsView::new(session, cx));
-    window.open_planner_dialog(cx, move |dialog, window, cx| {
-        let palette = cx.global::<TooltipTheme>();
-        dialog
-            .p_0()
-            .gap_0()
-            .rounded_xl()
-            .bg(linear_gradient(
-                180.,
-                linear_color_stop(palette.panel_secondary, 0.),
-                linear_color_stop(palette.background, 1.),
-            ))
-            .width((window.rem_size() * (560. / 13.)).min(window.viewport_size().width * 0.92))
-            .max_h(window.viewport_size().height * 0.86)
-            .margin_top(window.viewport_size().height * 0.07)
-            .child(view.clone())
+    window.open_planner_modal(cx, ModalSize::Standard, move |dialog, _, _| {
+        dialog.child(view.clone())
     });
 }
 
@@ -117,7 +104,7 @@ fn external(id: &'static str, label: &'static str, url: &'static str, cx: &App) 
 }
 
 impl Render for SettingsView {
-    fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+    fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let p = cx.global::<TooltipTheme>();
         let settings = self.session.read(cx).state().settings.clone();
         let language = section("settings-language", tr("settings.language"), cx)
@@ -229,6 +216,18 @@ impl Render for SettingsView {
                     })),
             )
             .child(hint(tr("settings.zoom_hint").into(), p.faint));
+        let updates = section("settings-updates", tr("settings.updates"), cx)
+            .child(
+                Checkbox::new("settings-beta")
+                    .label(tr("settings.beta"))
+                    .checked(settings.beta_updates)
+                    .on_click(cx.listener(|this, checked: &bool, _, cx| {
+                        let checked = *checked;
+                        this.edit(cx, |settings| settings.beta_updates = checked);
+                    })),
+            )
+            .child(description(tr("settings.beta_hint"), cx))
+            .child(hint(tr("settings.beta_warning").into(), p.negative));
         let credits = section("settings-credits", tr("settings.credits"), cx)
             .child(
                 div()
@@ -281,10 +280,7 @@ impl Render for SettingsView {
                     .border_color(p.border)
                     .child(hint(tr("settings.disclaimer").to_uppercase(), p.faint)),
             );
-        div()
-            .size_full()
-            .flex()
-            .flex_col()
+        modal_layout(window)
             .text_size(rems(1.))
             .child(modal_header(
                 modal_eyebrow("settings-eyebrow", tr("settings.preferences")),
@@ -307,6 +303,7 @@ impl Render for SettingsView {
                     .child(saving)
                     .child(numbers)
                     .child(display)
+                    .child(updates)
                     .child(credits),
             )
     }

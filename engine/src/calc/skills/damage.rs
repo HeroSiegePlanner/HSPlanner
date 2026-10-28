@@ -548,8 +548,8 @@ fn compute_skill_damage_with_rank(
             r_max(rg(input.stats, k.ignore_res)) + implicit
         })
         .unwrap_or(0.0);
-    // LoadMonsterResistance: Res·(1 − Pen) with no clamp on either side.
-    let ignore_res_pct = raw_ignore;
+    // Res·(1 − Pen); ignore stops at 100% like attacks and the weapon panel (#205).
+    let ignore_res_pct = raw_ignore.min(100.0);
     let eff_res_pct = enemy_res_pct * (1.0 - ignore_res_pct / 100.0);
     let resistance_mult = 1.0 - eff_res_pct / 100.0;
 
@@ -599,8 +599,17 @@ fn compute_skill_damage_with_rank(
         0.0
     };
     let damage_taken_mult = 1.0;
-    let combined_break_mult =
-        1.0 + (elemental_break_pct + element_break_pct + damage_taken_pct) / 100.0;
+    // Physical break sum: Armor Break (incl. subtree Sundering Strikes) + Crushing Blow; no Rabies.
+    let armor_break_pct =
+        r_max(rg(input.stats, "armor_break")) + r_max(rg(input.scoped, "armor_break"));
+    let crushing_blow_pct = r_max(rg(input.stats, "crushing_blow_armor_break"));
+    let physical_break_pct = if s.damage_type.as_deref() == Some("physical") {
+        (armor_break_pct + crushing_blow_pct).max(0.0)
+    } else {
+        0.0
+    };
+    let combined_break_mult = 1.0
+        + (elemental_break_pct + element_break_pct + damage_taken_pct + physical_break_pct) / 100.0;
     let (critical_break_average, critical_break_step) = super::critical_break_average_multiplier(
         s.damage_type.as_deref().unwrap_or_default(),
         element_break_pct,
@@ -988,16 +997,32 @@ fn compute_skill_damage_with_rank(
         ),
         scalar(element_break_pct),
     ));
+    if physical_break_pct > 0.0 {
+        stat_inputs(
+            &mut calculation,
+            input.stats,
+            ["armor_break", "crushing_blow_armor_break"],
+        );
+        calculation.push(CalculationStep::new(
+            "Physical Break %",
+            format!(
+                "{}% Armor Break (shared + subtree) + {}% Crushing Blow stacks; physical hits only",
+                number(armor_break_pct),
+                number(crushing_blow_pct)
+            ),
+            scalar(physical_break_pct),
+        ));
+    }
     calculation.push(CalculationStep::new(
         "Combined Break multiplier",
-        format!("1 + ({}% Elemental Break + {}% matching typed Break) / 100; the two Break bonuses add", number(elemental_break_pct), number(element_break_pct)),
+        format!("1 + ({}% Elemental Break + {}% matching typed Break + {}% Physical Break) / 100; the Break bonuses add", number(elemental_break_pct), number(element_break_pct), number(physical_break_pct)),
         scalar(combined_break_mult),
     ));
     calculation.extend(critical_break_step);
     calculation.push(CalculationStep::new(
         "Effective enemy resistance %",
         format!(
-            "{}% configured resistance × (1 − {}% ignored / 100); ignore clamped to 0–100%",
+            "{}% configured resistance × (1 − {}% ignored / 100); ignore stops at 100%",
             number(enemy_res_pct),
             number(ignore_res_pct)
         ),
@@ -1340,6 +1365,57 @@ mod tests {
 
     fn cond(active: &[&str]) -> ConditionMap {
         active.iter().map(|c| (c.to_string(), true)).collect()
+    }
+
+    fn hit_against(
+        damage_type: &str,
+        stats: &StatMap,
+        scoped: &StatMap,
+        resists: &ResistMap,
+    ) -> i64 {
+        let mut skill = plain_skill();
+        skill.damage_type = Some(damage_type.to_string());
+        let empty_attrs = AttrMap::new();
+        let ranks = SkillRanks::new();
+        let bonuses = ItemSkillBonuses::new();
+        let conds = ConditionMap::new();
+        let by_name = HashMap::new();
+        let input = SkillInput {
+            skill: &skill,
+            allocated_rank: 1.0,
+            attributes: &empty_attrs,
+            stats,
+            skill_ranks_by_name: &ranks,
+            item_skill_bonuses: &bonuses,
+            enemy_conditions: &conds,
+            enemy_resistances: resists,
+            skills_by_name: &by_name,
+            projectile_count: 1,
+            of_total_damage: 0.0,
+            scoped,
+            conversion_flat: 0.0,
+            conversion_skill_damage_pct: 0.0,
+        };
+        compute_skill_damage(&input).expect("breakdown").hit_max
+    }
+
+    #[test]
+    fn crushing_blow_breaks_physical_hits_after_resistance_only() {
+        let none = StatMap::new();
+        let crushed = StatMap::from([("crushing_blow_armor_break".to_string(), (90.0, 90.0))]);
+        let open = ResistMap::new();
+        assert_eq!(hit_against("physical", &crushed, &none, &open), 190);
+        // Multiplies with resistance: 100 × (1 − 50%) × (1 + 90%).
+        let resists = ResistMap::from([("physical".to_string(), 50.0)]);
+        assert_eq!(hit_against("physical", &crushed, &none, &resists), 95);
+        assert_eq!(hit_against("fire", &crushed, &none, &open), 100);
+        // One sum with Armor Break and subtree Sundering Strikes.
+        let summed = StatMap::from([
+            ("armor_break".to_string(), (20.0, 20.0)),
+            ("crushing_blow_armor_break".to_string(), (50.0, 50.0)),
+        ]);
+        let sundering = StatMap::from([("armor_break".to_string(), (20.0, 20.0))]);
+        assert_eq!(hit_against("physical", &summed, &sundering, &open), 190);
     }
 
     #[test]
@@ -1812,7 +1888,7 @@ mod tests {
     }
 
     #[test]
-    fn aggregated_ignore_all_counts_once_in_elemental_damage_without_cap() {
+    fn aggregated_ignore_all_counts_once_in_elemental_damage_up_to_100() {
         use crate::calc::stats::{
             apply_stat_fan_outs, compute_final_stats, push_source, SourceContribution, SourceMap,
             SourceType,
@@ -1841,9 +1917,8 @@ mod tests {
                 });
                 let expected = match damage_type {
                     "physical" => 0.,
-                    // LoadMonsterResistance does not clamp penetration.
-                    "cold" => all + 20.,
-                    _ => all,
+                    "cold" => (all + 20.).min(100.),
+                    _ => all.min(100.),
                 };
                 assert_eq!(result.resistance_ignored_pct, expected, "{damage_type}");
             }

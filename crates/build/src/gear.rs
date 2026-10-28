@@ -12,8 +12,8 @@ use hsplanner_engine::calc::{
 #[path = "gear_affixes.rs"]
 mod affix_pools;
 pub use affix_pools::{
-    affix_allowed, affix_pool_type, affix_roll_bounds, affix_tiers, is_unholy_group,
-    jewel_affix_allowed, set_affix_value, set_forge_value,
+    affix_allowed, affix_element_fits, affix_pool_type, affix_roll_bounds, affix_tiers,
+    is_unholy_group, jewel_affix_allowed, set_affix_value, set_forge_value,
 };
 
 pub fn make_item(base_id: &str) -> Result<EquippedItem, String> {
@@ -185,6 +185,9 @@ pub fn add_affix_with_pool_override(
     if !affix_allowed(base, affix, allow_outside_pool) {
         return Err("This affix is not available for the selected item.".into());
     }
+    if !allow_outside_pool && !affix_element_fits(item, affix) {
+        return Err("This charm already rolled another element.".into());
+    }
     item.affixes.push(EquippedAffix {
         affix_id: id.into(),
         tier: affix.tier,
@@ -207,7 +210,7 @@ pub fn apply_runeword(item: &mut EquippedItem, id: &str) -> Result<(), String> {
         ..Default::default()
     };
     if base.rarity != "common"
-        || !rw.allowed_base_types.contains(&base.base_type)
+        || !data::runeword_fits_base(rw, base)
         || rw.runes.len() > max_sockets(&bare) as usize
     {
         return Err("This runeword does not fit the selected base.".into());

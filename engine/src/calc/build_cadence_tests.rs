@@ -400,7 +400,7 @@ fn butcher_local_critical_nodes_preserve_shared_stats_and_ordinary_hits() {
             build.subs.insert(subskill_key(id, node), rank);
             let boosted = build.run();
             let mut shared = boosted.stats.clone();
-            shared.remove("projectile_speed");
+            shared.remove("projectile_speed_pct");
             assert_eq!(shared, baseline.stats, "{node}/{rank}");
             let attack = boosted.attack_damage.as_ref().unwrap();
             assert_eq!(attack.physical_hit_min, plain.physical_hit_min, "{node}");

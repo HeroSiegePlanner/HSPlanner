@@ -71,7 +71,6 @@ pub(super) fn slider_state() -> SliderState {
         .default_value(DEFAULT_BUDGET as f32)
 }
 
-/// Same classification as the Tauri `treeGraph`/`treeSuggest` modules.
 pub(super) fn tree_graph(graph: &tree::Graph) -> TreeGraph {
     let id = |index: usize| graph.nodes[index].id as u32;
     let kind = |index: usize| {
@@ -153,7 +152,7 @@ fn apply_order(current: &[u32], sequence: &[SuggestStep]) -> Vec<u32> {
     ordered
 }
 
-fn gain_percent(base: f64, final_dps: f64) -> String {
+pub(crate) fn gain_percent(base: f64, final_dps: f64) -> String {
     if base <= 0. {
         return if final_dps > 0. {
             "+∞%".into()

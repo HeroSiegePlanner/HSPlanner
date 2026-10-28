@@ -49,7 +49,6 @@ pub struct BuildSnapshot {
     pub merc_skill_ranks: HashMap<String, u32>,
     pub merc_inventory: Inventory,
     pub merc_disabled_auras: HashMap<String, bool>,
-    pub season: String,
 }
 
 impl Default for BuildSnapshot {
@@ -91,7 +90,6 @@ impl Default for BuildSnapshot {
             merc_skill_ranks: HashMap::new(),
             merc_inventory: HashMap::new(),
             merc_disabled_auras: HashMap::new(),
-            season: "s10".into(),
         }
     }
 }
@@ -134,7 +132,6 @@ impl BuildSnapshot {
                 kills_per_sec: self.kills_per_sec,
                 entity_rates: self.entity_rates.clone(),
                 stack_counts: self.stack_counts.clone(),
-                season: Some(self.season.clone()),
                 granted_skill_ranks: HashMap::new(),
                 difficulty: Some(self.difficulty.clone()),
             },

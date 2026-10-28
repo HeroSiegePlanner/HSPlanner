@@ -40,7 +40,7 @@ impl NumberLocale {
 }
 
 /// Format a number using the saved `none`, `thousands`, `millions` or `billions` cap.
-/// A thousands suffix starts at 10,000, exactly as in the Tauri reference.
+/// A thousands suffix starts at 10,000.
 pub fn compact(value: f64, scale: &str) -> String {
     compact_in(value, scale, NumberLocale::system())
 }

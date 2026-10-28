@@ -1140,8 +1140,8 @@
         "description": "Increases the projectile speed of throw.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 10}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 10}
         }
       },
       {
@@ -1705,8 +1705,8 @@
         "description": "Increases the projectile speed of axes.",
         "maxRank": 3,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 8.5}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 8.5}
         }
       },
       {

@@ -19,7 +19,13 @@
     "increased_attack_speed": { "threshold": 400, "power": 0.85 },
     "faster_cast_rate": { "threshold": 350, "power": 0.75 },
     "deadly_blow": { "threshold": 50, "power": 0.75, "cap": 100 },
-    "skill_haste": { "threshold": 100, "power": 0.75, "cap": 200 }
+    "skill_haste": { "threshold": 100, "power": 0.75, "cap": 200 },
+    "ignore_all_res": { "threshold": 100, "power": 1, "cap": 100 },
+    "ignore_fire_res": { "threshold": 100, "power": 1, "cap": 100 },
+    "ignore_cold_res": { "threshold": 100, "power": 1, "cap": 100 },
+    "ignore_lightning_res": { "threshold": 100, "power": 1, "cap": 100 },
+    "ignore_poison_res": { "threshold": 100, "power": 1, "cap": 100 },
+    "ignore_arcane_res": { "threshold": 100, "power": 1, "cap": 100 }
   },
   "defaultBaseStats": {
     "attacks_per_second": 1.5,
@@ -102,7 +108,26 @@
         "damage_per_rage_stack": "damage",
         "ranged_damage_per_rage_stack": "ranged_projectile_damage"
       }
-    }
+    },
+    {
+      "key": "tempest", "name": "Tempest", "maxStat": "max_tempest_stacks",
+      "perStack": {},
+      "perStackStats": { "tempest_attack_speed": "increased_attack_speed", "tempest_movement_speed": "movement_speed" }
+    },
+    {
+      "key": "corrosion", "name": "Corrosion", "maxStat": "max_corrosion_stacks",
+      "perStack": {},
+      "perStackStats": { "corrosion_damage_increase": "enemy_damage_taken_increased" }
+    },
+    {
+      "key": "manastream", "name": "Manastream", "maxStat": "max_manastream_stacks",
+      "perStack": {}, "perStackStats": { "manastream_magic_skill_damage": "magic_skill_damage" }
+    },
+    {
+      "key": "avarice", "name": "Avarice", "maxStat": "max_avarice_stacks",
+      "perStack": {}, "perStackStats": { "avarice_magic_find": "magic_find", "avarice_gold_find": "gold_find" }
+    },
+    { "key": "crushing_blow", "name": "Crushing Blow", "maxStat": "max_crushing_blow_stacks" }
   ],
   "attributes": [
     { "key": "strength", "name": "Strength" },
@@ -177,6 +202,18 @@
     {
       "key": "projectile_speed",
       "name": "Projectile Speed",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "projectile_speed_pct",
+      "name": "Increased Projectile Speed",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "projectile_speed_more",
+      "name": "Total Projectile Speed",
       "category": "offense",
       "format": "percent"
     },
@@ -619,6 +656,18 @@
     {
       "key": "crushing_blow_chance",
       "name": "Crushing Blow",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "max_crushing_blow_stacks",
+      "name": "Maximum Crushing Blow Stacks",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "crushing_blow_armor_break",
+      "name": "Crushing Blow Armor Break",
       "category": "offense",
       "format": "percent"
     },
@@ -1737,11 +1786,23 @@
       "key": "melee_projectile_speed",
       "name": "Melee Projectile Speed",
       "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "melee_projectile_speed_pct",
+      "name": "Increased Melee Projectile Speed",
+      "category": "offense",
       "format": "percent"
     },
     {
       "key": "ranged_projectile_speed",
       "name": "Ranged Projectile Speed",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "ranged_projectile_speed_pct",
+      "name": "Increased Ranged Projectile Speed",
       "category": "offense",
       "format": "percent"
     },
@@ -4755,6 +4816,7 @@
     {"key": "charging_damage", "name": "Charge Skill Damage", "category": "offense", "format": "percent"},
     {"key": "quillboar_chance", "name": "Chance to Release Quillboar Spikes when Struck", "category": "offense", "format": "percent"},
     {"key": "mana_replenish_increased", "name": "Increased Mana Replenish", "category": "defense", "format": "percent"},
+    {"key": "life_replenish_increased", "name": "Increased Life Replenish", "category": "defense", "format": "percent"},
     {"key": "life_replenish_interval", "name": "Life Replenish Interval (seconds)", "category": "defense", "format": "flat"},
     {"key": "mana_replenish_interval", "name": "Mana Replenish Interval (seconds)", "category": "defense", "format": "flat"},
     {"key": "melee_damage", "name": "Melee Damage", "category": "offense", "format": "percent"},
@@ -4766,7 +4828,10 @@
     {"key": "struck_skill_effectiveness", "name": "Struck Skill Effectiveness", "category": "offense", "format": "percent"},
     {"key": "phasing", "name": "Phasing", "category": "defense", "format": "flat"},
     {"key": "skill_life_recovery_from_max_life_pct", "name": "Skill Life Recovery from Maximum Life", "category": "defense", "format": "percent", "skillScoped": true},
-    {"key": "skill_mana_recovery_from_max_mana_pct", "name": "Skill Mana Recovery from Maximum Mana", "category": "defense", "format": "percent", "skillScoped": true}
+    {"key": "skill_mana_recovery_from_max_mana_pct", "name": "Skill Mana Recovery from Maximum Mana", "category": "defense", "format": "percent", "skillScoped": true},
+    {"key": "attacks_hit_multiple_enemies", "name": "Attacks Can Hit Multiple Enemies", "category": "offense", "format": "flat"},
+    {"key": "cannot_be_frozen", "name": "Cannot Be Frozen", "category": "defense", "format": "flat"},
+    {"key": "increased_stasis_frequency", "name": "Increased Stasis Frequency", "category": "offense", "format": "percent"}
   ],
   "slots": [
     { "key": "helmet", "name": "Helmet", "group": "armor" },

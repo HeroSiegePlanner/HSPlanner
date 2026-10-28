@@ -72,8 +72,8 @@
         "description": "Increases the critical strike damage and projectile speed of slicing throw.",
         "maxRank": 5,
         "effects": {
-          "base": {"skill_crit_damage": 0, "projectile_speed": 0},
-          "perRank": {"skill_crit_damage": 20, "projectile_speed": 12.5}
+          "base": {"skill_crit_damage": 0, "projectile_speed_pct": 0},
+          "perRank": {"skill_crit_damage": 20, "projectile_speed_pct": 12.5}
         }
       },
       {
@@ -203,8 +203,8 @@
         "description": "Slicing throw now orbits you with increased projectile speed and increased damage.",
         "maxRank": 3,
         "effects": {
-          "base": {"subtree_damage": 0, "projectile_speed": 0},
-          "perRank": {"subtree_damage": 50, "projectile_speed": 35}
+          "base": {"subtree_damage": 0, "projectile_speed_pct": 0},
+          "perRank": {"subtree_damage": 50, "projectile_speed_pct": 35}
         }
       },
       {
@@ -749,8 +749,8 @@
         "description": "Increases the projectile speed of chain rip.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {
@@ -1181,8 +1181,8 @@
         "description": "Increases the projectile speed of butchers hook.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 10}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 10}
         }
       },
       {
@@ -1322,8 +1322,8 @@
         "description": "Increases the velocity of butchers hook over time causing it to deal damage more frequently.",
         "maxRank": 3,
         "effects": {
-          "base": {"projectile_speed": 0, "skill_duration": 0},
-          "perRank": {"projectile_speed": 5, "skill_duration": 15}
+          "base": {"projectile_speed_pct": 0, "skill_duration": 0},
+          "perRank": {"projectile_speed_pct": 5, "skill_duration": 15}
         }
       },
       {
@@ -1401,8 +1401,8 @@
         "description": "Increases the projectile speed of chain swing.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 10}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 10}
         }
       },
       {

@@ -107,14 +107,9 @@ impl MercenaryView {
                 .text_size(rems(10. / 13.))
                 .text_color(p.faint)
                 .child(
-                    div().text_color(p.accent_hot).child(
-                        snapshot
-                            .merc_skill_ranks
-                            .values()
-                            .copied()
-                            .sum::<u32>()
-                            .to_string(),
-                    ),
+                    div()
+                        .text_color(p.accent_hot)
+                        .child(class.spent_points(&snapshot.merc_skill_ranks).to_string()),
                 )
                 .child(tr("planner.mercenary.points")),
             cx,
@@ -508,7 +503,11 @@ impl Render for MercenaryView {
         let snapshot = self.session.read(cx).snapshot();
         let selected = snapshot.merc_class_id.as_deref();
         let used = snapshot.merc_inventory.len();
-        let spent: u32 = snapshot.merc_skill_ranks.values().copied().sum();
+        let spent = mercenary::data()
+            .classes
+            .iter()
+            .find(|class| Some(class.id.as_str()) == selected)
+            .map_or(0, |class| class.spent_points(&snapshot.merc_skill_ranks));
         let wide = window.viewport_size().width >= window.rem_size() * (1024. / 13.);
         div().size_full().bg(p.background).child(
             div()

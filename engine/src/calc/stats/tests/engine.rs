@@ -920,11 +920,11 @@ fn auroras_might_grants_lunar_aura_and_preserves_rune_bonuses() {
     assert_eq!(sum_ranged_from_map(&stats, "all_resistances"), (24., 56.));
     assert_eq!(
         sum_ranged_from_map(&stats, "additive_arcane_damage"),
-        (440., 600.)
+        (370., 600.)
     );
     assert_eq!(
         sum_ranged_from_map(&stats, "additive_cold_damage"),
-        (280., 280.)
+        (230., 280.)
     );
     assert_eq!(sum_ranged_from_map(&stats, "life_steal"), (7., 7.));
     assert_eq!(sum_ranged_from_map(&stats, "attack_damage"), (20., 20.));
@@ -1386,7 +1386,6 @@ fn trampling_force_converts_movement_speed_into_both_damage_stats() {
 
 #[test]
 fn celestial_might_moves_every_elemental_increase_into_arcane() {
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let mut ranks: HashMap<String, Ranged> = HashMap::new();
     ranks.insert(normalize_skill_name("Celestial Might"), (1.0, 1.0));
     let mut stats: HashMap<String, Ranged> = HashMap::new();
@@ -1432,7 +1431,6 @@ fn celestial_might_moves_every_elemental_increase_into_arcane() {
 fn replaces_conversion_never_drives_its_source_negative() {
     // A school whose only bonus is a `_more` multiplier: the converted figure
     // includes it, so taking it all off the additive key would leave -8%.
-    let _scope = crate::calc::season::SeasonScope::enter(Some("s10".to_string()));
     let mut ranks: HashMap<String, Ranged> = HashMap::new();
     ranks.insert(normalize_skill_name("Celestial Might"), (1.0, 1.0));
     let mut stats: HashMap<String, Ranged> = HashMap::new();

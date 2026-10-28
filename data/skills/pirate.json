@@ -752,8 +752,8 @@
         "description": "Increases the projectile speed of cannonball shrapnel.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {
@@ -1234,8 +1234,8 @@
         "description": "Increases the projectile speed of powder trail.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 10}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 10}
         }
       },
       {
@@ -1586,8 +1586,8 @@
         "description": "Increases the projectile speed of bomb barrage.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 10}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 10}
         }
       },
       {
@@ -2118,8 +2118,8 @@
         "description": "Increases the projectile speed of freezing chain shot.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 10}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 10}
         }
       },
       {
@@ -2804,8 +2804,8 @@
         "description": "Increases the spinning speed.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 20}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 20}
         }
       },
       {

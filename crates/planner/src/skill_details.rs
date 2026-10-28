@@ -542,7 +542,7 @@ pub(crate) struct TagView {
     pub removed: Vec<String>,
 }
 
-// Mirrors the frontend tag rewrite: allocated subskills add/remove tags, removes win.
+// Tag rewrite: allocated subskills add or remove tags; removals win.
 pub(crate) fn effective_tags(skill: &SkillSpec, snapshot: &BuildSnapshot) -> TagView {
     let visible = |tags: &[String]| -> Vec<String> {
         tags.iter()
@@ -1235,7 +1235,6 @@ pub(crate) fn subtree_block(details: &DetailsContext, cx: &App) -> Option<Div> {
         skill_id: skill.id.clone(),
         subskill_ranks: details.snapshot.subskill_ranks.clone(),
         enemy_conditions: details.snapshot.enemy_conditions.clone(),
-        season: None,
     });
     let mut stats: Vec<(&String, &f64)> = aggregation
         .stats

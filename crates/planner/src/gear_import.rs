@@ -1,32 +1,20 @@
-//! Import an item from a game tooltip screenshot, after ImportScreenshotModal.tsx.
+//! Import an item from a game tooltip screenshot.
 use super::*;
 use gpui_kit::base::Disableable;
 use gpui_kit::component::WindowExt;
 use hsplanner_engine::calc::types::ItemBase;
 use hsplanner_engine::tooltip_parse::{self, LineStatus, TooltipParseResult};
-use hsplanner_ui::components::PlannerDialogExt;
+use hsplanner_ui::components::{ModalSize, PlannerDialogExt};
 use hsplanner_ui::{
-    components::{modal_eyebrow, modal_footer, modal_header},
+    components::{modal_eyebrow, modal_footer, modal_header, modal_layout},
     controls::{ButtonSize, ButtonTone, command_button, modal_button, segment},
 };
 
 impl GearView {
     pub(super) fn open_import(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         let view = cx.new(|_| ImportView::new(self.session.clone(), self.mercenary));
-        window.open_planner_dialog(cx, move |dialog, window, cx| {
-            let palette = cx.global::<TooltipTheme>();
+        window.open_planner_modal(cx, ModalSize::Standard, move |dialog, _, _| {
             dialog
-                .p_0()
-                .gap_0()
-                .rounded_xl()
-                .bg(linear_gradient(
-                    180.,
-                    linear_color_stop(palette.panel_secondary, 0.),
-                    linear_color_stop(palette.background, 1.),
-                ))
-                .width((window.rem_size() * (560. / 13.)).min(window.viewport_size().width * 0.94))
-                .max_h(window.viewport_size().height * 0.86)
-                .margin_top(window.viewport_size().height * 0.07)
                 .overlay_closable(false)
                 .on_ok(|_, _, _| false)
                 .child(view.clone())
@@ -134,10 +122,14 @@ impl ImportView {
         self.image =
             preview_format(&bytes).map(|format| Arc::new(Image::from_bytes(format, bytes.clone())));
         cx.notify();
-        let season = self.session.read(cx).snapshot().season.clone();
         let task = cx.background_spawn(async move {
-            hsplanner_engine::ocr::ocr_image_bytes(&bytes)
-                .map(|lines| tooltip_parse::parse_tooltip_lines(lines, Some(season)))
+            hsplanner_engine::ocr::ocr_image_lines(&bytes).map(|lines| {
+                let lines: Vec<_> = lines
+                    .into_iter()
+                    .map(|line| (line.text, Some(line.color)))
+                    .collect();
+                tooltip_parse::parse_tooltip_colored(&lines)
+            })
         });
         cx.spawn(async move |this, cx| {
             let outcome = task.await;
@@ -246,7 +238,7 @@ fn line_row(line: &tooltip_parse::TooltipLine, p: &TooltipTheme) -> Div {
 }
 
 impl Render for ImportView {
-    fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+    fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let p = cx.global::<TooltipTheme>();
         let item = self.item();
         let base = item.as_ref().map(|(_, base)| *base);
@@ -393,10 +385,7 @@ impl Render for ImportView {
                 });
         }
         let relic = base.is_some_and(gear::is_relic);
-        div()
-            .size_full()
-            .flex()
-            .flex_col()
+        modal_layout(window)
             .child(modal_header(
                 modal_eyebrow("import-eyebrow", tr("gear.import")),
                 tr("gear.import_title"),

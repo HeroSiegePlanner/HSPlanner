@@ -1497,13 +1497,13 @@
     "passiveStats": {
       "base": {
         "all_resistances": 5,
-        "life_replenish": 45,
-        "mana_replenish": 45
+        "life_replenish_increased": 45,
+        "mana_replenish_increased": 45
       },
       "perRank": {
         "all_resistances": 2,
-        "life_replenish": 8,
-        "mana_replenish": 8
+        "life_replenish_increased": 8,
+        "mana_replenish_increased": 8
       }
     }
   },
@@ -2185,6 +2185,22 @@
       "perRank": {
         "attack_damage": 6,
         "increased_attack_speed": 2
+      }
+    }
+  },
+  {
+    "id": "grimwalkers_demons_presence",
+    "name": "Demon's Presence (Grimwalkers)",
+    "description": "[5-10]% chance when casting to cast Demon's Presence, temporarily increasing your attack speed and attack damage.",
+    "condition": "grimwalkers_demons_presence_buff",
+    "passiveStats": {
+      "base": {
+        "increased_attack_speed": 19,
+        "attack_damage": 17
+      },
+      "perRank": {
+        "increased_attack_speed": 1,
+        "attack_damage": 3
       }
     }
   },

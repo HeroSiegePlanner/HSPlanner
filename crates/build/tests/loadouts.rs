@@ -423,7 +423,7 @@ fn invalid_collection_ids_and_selections_are_rejected_without_overwriting_native
 }
 
 #[test]
-fn shared_loadouts_normalize_inactive_equipment_and_clear_old_season_trees() {
+fn shared_loadouts_normalize_inactive_equipment() {
     let mut session = populated_session();
     session.add_loadout(LoadoutKind::Gear, "Inactive").unwrap();
     session
@@ -440,7 +440,6 @@ fn shared_loadouts_normalize_inactive_equipment_and_clear_old_season_trees() {
         "stars":99, "augment":{"id":"example","level":99}});
     loadouts["gear"]["entries"][1]["value"]["inventory"]["weapon"] = malicious_item;
     let mut snapshot = value(session.snapshot());
-    snapshot["season"] = json!("s9");
     snapshot["level"] = json!(20_000);
     let wire = json!({"v":3, "snapshot":snapshot,"loadouts":loadouts});
     let code = lz_str::compress_to_encoded_uri_component(&wire.to_string());
@@ -453,15 +452,6 @@ fn shared_loadouts_normalize_inactive_equipment_and_clear_old_season_trees() {
     assert_eq!(weapon["stars"], 5);
     assert_eq!(weapon["augment"]["level"], 7);
     assert_eq!(snapshot.level, 10_000);
-    assert_eq!(snapshot.season, "s10");
-    for kind in ["incarnation", "ether"] {
-        for entry in normalized[kind]["entries"].as_array().unwrap() {
-            assert!(entry["value"]["nodes"].as_array().unwrap().is_empty());
-            if kind == "incarnation" {
-                assert!(entry["value"]["sockets"].as_object().unwrap().is_empty());
-            }
-        }
-    }
 }
 
 #[test]

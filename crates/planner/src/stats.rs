@@ -7,7 +7,7 @@ use gpui_kit::component::{
     input::{Input, InputEvent, InputState},
 };
 use gpui_kit::{prelude::*, *};
-use hsplanner_build::session::Session;
+use hsplanner_build::{BuildSnapshot, session::Session};
 use hsplanner_engine::calc::{
     build::BuildPerformance,
     data,
@@ -229,6 +229,22 @@ fn group(key: &str, category: &str) -> Group {
         Group::Other
     }
 }
+/// The skill the Stats view leads with: the first active skill, else the highest-ranked one.
+pub(crate) fn main_skill_id(snapshot: &BuildSnapshot) -> Option<&str> {
+    let rank = |id: &str| snapshot.skill_ranks.get(id).copied().unwrap_or(0);
+    snapshot
+        .active_skill_ids
+        .first()
+        .map(String::as_str)
+        .or_else(|| {
+            data::get_skills_by_class(snapshot.class_id.as_deref().unwrap_or(""))
+                .iter()
+                .filter(|s| s.kind == SkillKind::Active && rank(&s.id) > 0)
+                .max_by_key(|s| rank(&s.id))
+                .map(|s| s.id.as_str())
+        })
+}
+
 fn units(value: f32) -> Rems {
     rems(value / 13.)
 }
@@ -504,6 +520,19 @@ impl StatsView {
         };
         let mut breakdown = compute_stat_breakdown(&computed.stat_sources, key, Some(value));
         breakdown.stat_name = label.to_owned();
+        let diagram = {
+            use crate::source_breakdown::Diagram;
+            let snapshot = self.session.read(cx).snapshot();
+            main_skill_id(snapshot).and_then(|id| {
+                if crate::hitbox::is_size_stat(key) {
+                    crate::hitbox::preview(snapshot, computed, id).map(Diagram::Area)
+                } else if crate::projectile::is_speed_stat(key) {
+                    crate::projectile::preview(snapshot, computed, id).map(Diagram::Flight)
+                } else {
+                    None
+                }
+            })
+        };
         let button = Button::new(SharedString::from(format!("stat-{key}")))
             .ghost()
             .w_full()
@@ -571,6 +600,7 @@ impl StatsView {
                         )),
                         button,
                         breakdown,
+                        diagram,
                         self.session.clone(),
                     )),
             )
@@ -731,6 +761,7 @@ impl StatsView {
                 )),
                 button,
                 breakdown,
+                None,
                 self.session.clone(),
             ));
         }
@@ -908,6 +939,7 @@ impl StatsView {
                         &[("label", (label).to_string())],
                     )),
                     breakdown,
+                    None,
                     self.session.clone(),
                 ));
             } else {
@@ -1253,16 +1285,7 @@ impl StatsView {
         let snapshot = self.session.read(cx).snapshot();
         let skills = data::get_skills_by_class(snapshot.class_id.as_deref().unwrap_or(""));
         let mut content = Vec::new();
-        let main_id = snapshot.active_skill_ids.first().or_else(|| {
-            skills
-                .iter()
-                .filter(|s| {
-                    s.kind == SkillKind::Active
-                        && snapshot.skill_ranks.get(&s.id).copied().unwrap_or(0) > 0
-                })
-                .max_by_key(|skill| snapshot.skill_ranks.get(&skill.id).copied().unwrap_or(0))
-                .map(|skill| &skill.id)
-        });
+        let main_id = main_skill_id(snapshot);
         if matches!(self.filter, Filter::All | Filter::Damage) && query.is_empty() {
             let main = main_id.and_then(|id| {
                 result
@@ -1273,7 +1296,7 @@ impl StatsView {
                             .iter()
                             .flat_map(|result| result.per_skill.iter()),
                     )
-                    .find(|skill| &skill.skill_id == id)
+                    .find(|skill| skill.skill_id == id)
             });
             let mut main_panel = panel("main-skill-title", tr("planner.stats.main_skill"), cx);
             if let Some(main) = main {

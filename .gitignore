@@ -14,7 +14,7 @@ node_modules
 dist
 dist-ssr
 *.local
-engine/models/
+engine/models/*.rten
 
 # Editor directories and files
 .vscode/*

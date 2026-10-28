@@ -51,9 +51,12 @@ re!(
 );
 re!(SOCKETS_LINE, r"(?i)^sockets?\s*\(?(\d+)\)?");
 re!(HAS_SIGN, r"^[+-]");
+// "<stat> increased by 15%" carries its value at the end, unsigned.
+re!(INCREASED_BY, r"(?i)\bincreased by\s*\d+(?:\.\d+)?\s*%\s*$");
 re!(HANDEDNESS, r"(?i)\b(1|2|i|l|one|two)[\s-]*handed\b");
 // "+5 to All Skills [2-5] Tier S" — the tier tag follows the range on base affixes.
-re!(TRAILING_TIER, r"(?i)\s+tier\s+\S+\s*$");
+// OCR sometimes glues the grade on ("TIERS" for "TIER S").
+re!(TRAILING_TIER, r"(?i)\s+tier(?:\s+\S+|[a-z]{1,2})\s*$");
 
 static IGNORED_PREFIXES: LazyLock<Vec<Regex>> = LazyLock::new(|| {
     [
@@ -107,7 +110,7 @@ pub struct ParsedAugment {
     pub level: u32,
 }
 
-/// Mirrors the frontend `EquippedItem` shape so the modal can equip it as-is.
+/// Serializes like `EquippedItem`, so the import dialog can equip it as-is.
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ParsedItem {
@@ -482,14 +485,72 @@ fn find_item_name(lines: &[String]) -> Option<(String, usize)> {
         }
         for (candidate, end) in &candidates {
             for item in &items {
-                let score = similarity(candidate, &item.name);
+                let score = similarity(candidate, display_name(&item.name));
                 if score >= NAME_MATCH_THRESHOLD && best.is_none_or(|(_, _, s)| score > s) {
                     best = Some((item, *end, score));
                 }
             }
         }
     }
-    best.map(|(item, end, _)| (item.id.clone(), end))
+    let (item, end, _) = best?;
+    // Same-named variants differ only in their implicits; keep the one the stat lines fit best.
+    let name = display_name(&item.name);
+    let hits = |base: &ItemBase| implicit_hits(base, &lines[end + 1..]);
+    let variant = items
+        .iter()
+        .filter(|other| display_name(&other.name) == name)
+        .fold(item, |kept, other| {
+            if hits(other) > hits(kept) {
+                other
+            } else {
+                kept
+            }
+        });
+    Some((variant.id.clone(), end))
+}
+
+/// The game title omits the planner's variant qualifier: "Signet of Shadows (Arcane)".
+fn display_name(name: &str) -> &str {
+    name.rsplit_once(" (")
+        .filter(|(_, rest)| rest.ends_with(')'))
+        .map_or(name, |(head, _)| head)
+}
+
+fn implicit_hits(base: &ItemBase, lines: &[String]) -> usize {
+    lines
+        .iter()
+        .filter(|line| {
+            let (ranges, no_range) = extract_trailing_range(&strip_trailing_tier(line));
+            let (_, rest) = extract_class_suffix(&no_range);
+            let percent = rest.contains('%');
+            match_implicit(
+                base,
+                &canon_phrase(&rest),
+                extract_value(&rest),
+                &ranges,
+                percent,
+            )
+            .is_some()
+        })
+        .count()
+}
+
+/// Magic and rare titles wrap the base in a prefix and suffix ("Cannibal Golden Ring of Mana Wraith").
+fn find_common_base(lines: &[String]) -> Option<(String, usize)> {
+    let bases = sorted_by_id(data::data().items.values(), |i: &ItemBase| &i.id);
+    let mut best: Option<(&ItemBase, usize, f64)> = None;
+    for (i, line) in lines.iter().take(NAME_SCAN_LINES).enumerate() {
+        for base in bases.iter().filter(|base| base.rarity == "common") {
+            let score = best_window_similarity(line, &base.name);
+            let better = best.is_none_or(|(current, _, s)| {
+                score > s || (score == s && base.name.len() > current.name.len())
+            });
+            if score >= NAME_MATCH_THRESHOLD && better {
+                best = Some((base, i, score));
+            }
+        }
+    }
+    best.map(|(base, end, _)| (base.id.clone(), end))
 }
 
 struct RunewordHeader {
@@ -576,13 +637,15 @@ fn detect_runeword(lines: &[String]) -> Option<RunewordHeader> {
         .captures(&base_text)
         .is_some_and(|m| matches!(m[1].to_lowercase().as_str(), "2" | "two"));
     let type_text = canon_phrase(&HANDEDNESS.replace_all(&base_text, " "));
+    let variants: Vec<&Runeword> = words.iter().filter(|w| w.name == rw.name).collect();
     let bases = sorted_by_id(data::data().items.values(), |i: &ItemBase| &i.id);
     let base = bases
         .iter()
         .filter(|item| item.rarity == "common")
         .filter(|item| {
-            rw.allowed_base_types
+            variants
                 .iter()
+                .flat_map(|w| &w.allowed_base_types)
                 .any(|t| t.eq_ignore_ascii_case(&item.base_type))
         })
         .filter(|item| item.two_handed.unwrap_or(false) == two_handed)
@@ -593,6 +656,10 @@ fn detect_runeword(lines: &[String]) -> Option<RunewordHeader> {
             _ => Some(next),
         })
         .map(|(item, _)| *item)?;
+    let rw = variants
+        .into_iter()
+        .find(|w| data::runeword_fits_base(w, base))
+        .unwrap_or(rw);
     let name_end = runes_ix.unwrap_or(header_ix);
     let details = (0..=name_end)
         .map(|i| {
@@ -637,7 +704,11 @@ fn match_runeword_stat(rw: &Runeword, line: &str) -> Option<StatMatch> {
     if phrase.is_empty() {
         return None;
     }
-    let mut stats: Vec<(&String, &f64)> = rw.stats.iter().collect();
+    let mut stats: Vec<(&String, f64)> = rw
+        .stats
+        .iter()
+        .map(|(key, value)| (key, value.as_ranged().1))
+        .collect();
     stats.sort_by(|a, b| a.0.cmp(b.0));
     let mut best: Option<(&String, f64)> = None;
     for (key, expected) in stats {
@@ -695,26 +766,69 @@ fn sorted_implicits(base: &ItemBase) -> Vec<(&String, (f64, f64))> {
     out
 }
 
+fn is_percent_stat(key: &str) -> bool {
+    let defs = &data::game_config().stats;
+    defs.iter()
+        .find(|d| d.key == key)
+        .and_then(|d| d.format.as_deref())
+        == Some("percent")
+}
+
+/// The game's wording of each stat key, from affix descriptions ("Chance for a Crushing Blow").
+static GAME_PHRASES: LazyLock<HashMap<&'static str, Vec<String>>> = LazyLock::new(|| {
+    let mut out: HashMap<&'static str, Vec<String>> = HashMap::new();
+    for affix in data::data().affixes.values() {
+        let Some(key) = affix.stat_key.as_deref() else {
+            continue;
+        };
+        let phrase = canon_phrase(&affix.description);
+        let phrases = out.entry(key).or_default();
+        if !phrase.is_empty() && !phrases.contains(&phrase) {
+            phrases.push(phrase);
+        }
+    }
+    out
+});
+
+/// Also "<name> increased by N%" for percent stats, and game wording for a fixed implicit.
+fn implicit_score(key: &str, phrase: &str, fixed: bool) -> f64 {
+    let name = canon_phrase(&stat_name(key));
+    let stem = name.strip_prefix("increased ").unwrap_or(&name);
+    let game = GAME_PHRASES
+        .get(key)
+        .filter(|_| fixed)
+        .into_iter()
+        .flatten()
+        .map(|p| similarity(p, phrase))
+        .fold(0.0, f64::max);
+    similarity(&name, phrase)
+        .max(similarity(&format!("{stem} increased by"), phrase))
+        .max(game)
+}
+
+/// `percent` says whether the line shows a %, so "+33 to X" picks the flat key over the percent one.
 fn match_implicit(
     base: &ItemBase,
     phrase: &str,
     value: Option<f64>,
     ranges: &[(f64, f64)],
+    percent: bool,
 ) -> Option<StatMatch> {
     let implicit = sorted_implicits(base);
     if !ranges.is_empty() {
-        let mut best: Option<(&String, f64)> = None;
+        let mut best: Option<(&String, bool, f64)> = None;
         for (key, pair) in &implicit {
             if pair.0 == pair.1 || !ranges.contains(pair) {
                 continue;
             }
-            let score = similarity(&canon_phrase(&stat_name(key)), phrase);
-            if best.is_none_or(|(_, s)| score > s) {
-                best = Some((key, score));
+            let fit = is_percent_stat(key) == percent;
+            let score = implicit_score(key, phrase, false);
+            if best.is_none_or(|(_, f, s)| (fit, score) > (f, s)) {
+                best = Some((key, fit, score));
             }
         }
         return match (best, value) {
-            (Some((key, _)), Some(v)) => {
+            (Some((key, _, _)), Some(v)) => {
                 let pinned = v.abs();
                 Some(StatMatch::matched(
                     format!("implicit {key} = {pinned}"),
@@ -725,17 +839,18 @@ fn match_implicit(
         };
     }
     let value = value?;
-    let mut best: Option<(&String, (f64, f64), f64)> = None;
+    let mut best: Option<(&String, (f64, f64), bool, f64)> = None;
     for (key, pair) in &implicit {
-        let score = similarity(&canon_phrase(&stat_name(key)), phrase);
-        if best.is_none_or(|(_, _, s)| score > s) {
-            best = Some((key, *pair, score));
+        let score = implicit_score(key, phrase, pair.0 == pair.1);
+        if score < PHRASE_MATCH_THRESHOLD {
+            continue;
+        }
+        let fit = is_percent_stat(key) == percent;
+        if best.is_none_or(|(_, _, f, s)| (fit, score) > (f, s)) {
+            best = Some((key, *pair, fit, score));
         }
     }
-    let (key, pair, score) = best?;
-    if score < PHRASE_MATCH_THRESHOLD {
-        return None;
-    }
+    let (key, pair, _, _) = best?;
     let pinned = value.abs();
     if pair.0 == pair.1 && pair.0 == pinned {
         return Some(StatMatch::matched(
@@ -890,12 +1005,26 @@ fn match_augment_line(line: &str) -> Option<StatMatch> {
 struct Indexes {
     affix: Vec<AffixGroup<'static>>,
     crystal: Vec<AffixGroup<'static>>,
+    /// The item's own random unholy pool; empty when it rolls none.
+    unholy: Vec<AffixGroup<'static>>,
 }
 
-fn match_stat_line(base: &ItemBase, line: &str, idx: &Indexes) -> Option<StatMatch> {
+/// The game's red ("#952d54") for unholy affixes and satanic crystal mods alike; red over blue
+/// over green, unlike orange procs or lavender stats.
+fn is_red([r, g, b]: [u8; 3]) -> bool {
+    r >= 100 && r > g.saturating_mul(2) && b > g && r > b
+}
+
+/// `red` is the OCR color's verdict, when the line's color is known.
+fn match_stat_line(
+    base: &ItemBase,
+    line: &str,
+    idx: &Indexes,
+    red: Option<bool>,
+) -> Option<StatMatch> {
     let (candidates, no_range) = extract_trailing_range(&strip_trailing_tier(line));
     let has_sign = HAS_SIGN.is_match(line.trim());
-    if !has_sign && candidates.is_empty() {
+    if !has_sign && candidates.is_empty() && !INCREASED_BY.is_match(&no_range) {
         return None;
     }
     let (class_id, rest) = extract_class_suffix(&no_range);
@@ -904,16 +1033,24 @@ fn match_stat_line(base: &ItemBase, line: &str, idx: &Indexes) -> Option<StatMat
     if phrase.is_empty() {
         return None;
     }
-    // Red "(Based on Level)" lines are crystal forged mods; the affix pool has look-alikes.
-    let (first, second) = if phrase.contains("based on level") {
-        ((&idx.crystal, true), (&idx.affix, false))
+    let found = if red == Some(true) {
+        // Red is an unholy roll from the item's own pool first, then a satanic crystal mod.
+        match_pool(&idx.unholy, false, &phrase, value, &candidates)
+            .or_else(|| match_pool(&idx.crystal, true, &phrase, value, &candidates))
+            .or_else(|| match_pool(&idx.affix, false, &phrase, value, &candidates))
     } else {
-        ((&idx.affix, false), (&idx.crystal, true))
+        // Without a color, a "(Based on Level)" line stands in for red; the affix pool has look-alikes.
+        let crystal_first = red.is_none() && phrase.contains("based on level");
+        let (first, second) = if crystal_first {
+            ((&idx.crystal, true), (&idx.affix, false))
+        } else {
+            ((&idx.affix, false), (&idx.crystal, true))
+        };
+        match_implicit(base, &phrase, value, &candidates, rest.contains('%'))
+            .or_else(|| match_skill_bonus(base, &phrase, value))
+            .or_else(|| match_pool(first.0, first.1, &phrase, value, &candidates))
+            .or_else(|| match_pool(second.0, second.1, &phrase, value, &candidates))
     };
-    let found = match_implicit(base, &phrase, value, &candidates)
-        .or_else(|| match_skill_bonus(base, &phrase, value))
-        .or_else(|| match_pool(first.0, first.1, &phrase, value, &candidates))
-        .or_else(|| match_pool(second.0, second.1, &phrase, value, &candidates));
     let Some(mut found) = found else {
         let group = best_group(&idx.affix, &phrase).or_else(|| best_group(&idx.crystal, &phrase));
         let mut stat_keys: Vec<String> = Vec::new();
@@ -1040,18 +1177,26 @@ fn resolve_socketed_gems(pending: Vec<PendingGemLine>, socket_count: u32) -> Opt
 }
 
 pub fn parse_tooltip(raw_lines: &[String]) -> TooltipParseResult {
-    let lines: Vec<String> = raw_lines
+    let lines: Vec<(String, Option<[u8; 3]>)> =
+        raw_lines.iter().map(|line| (line.clone(), None)).collect();
+    parse_tooltip_colored(&lines)
+}
+
+/// OCR lines with the color of their text, when it is known.
+pub fn parse_tooltip_colored(raw_lines: &[(String, Option<[u8; 3]>)]) -> TooltipParseResult {
+    let (lines, colors): (Vec<String>, Vec<Option<[u8; 3]>>) = raw_lines
         .iter()
-        .map(|l| WS.replace_all(l, " ").trim().to_string())
-        .filter(|l| !l.is_empty())
-        .collect();
+        .map(|(line, color)| (WS.replace_all(line, " ").trim().to_string(), *color))
+        .filter(|(line, _)| !line.is_empty())
+        .unzip();
     let mut out: Vec<TooltipLine> = Vec::new();
 
     let header = detect_runeword(&lines);
     let found_name = header
         .as_ref()
         .map(|h| (h.base.id.clone(), h.name_end))
-        .or_else(|| find_item_name(&lines));
+        .or_else(|| find_item_name(&lines))
+        .or_else(|| find_common_base(&lines));
     let Some((base_id, name_end)) = found_name else {
         return TooltipParseResult {
             base_id: None,
@@ -1079,9 +1224,14 @@ pub fn parse_tooltip(raw_lines: &[String]) -> TooltipParseResult {
     };
 
     let game = data::data();
+    let unholy = game
+        .affixes
+        .values()
+        .filter(|a| base.random_affix_group_id.as_ref() == Some(&a.group_id));
     let idx = Indexes {
         affix: build_group_index(&sorted_by_id(game.affixes.values(), |a: &Affix| &a.id)),
         crystal: build_group_index(&sorted_by_id(game.crystals.values(), |a: &Affix| &a.id)),
+        unholy: build_group_index(&sorted_by_id(unholy, |a: &Affix| &a.id)),
     };
     let mut acc = Acc::default();
     let mut pending: Vec<PendingGemLine> = Vec::new();
@@ -1121,7 +1271,7 @@ pub fn parse_tooltip(raw_lines: &[String]) -> TooltipParseResult {
             .and_then(|h| match_runeword_stat(h.rw, line))
             .or_else(|| match_augment_line(line))
             .or_else(|| match_proc_line(base, line))
-            .or_else(|| match_stat_line(base, line, &idx));
+            .or_else(|| match_stat_line(base, line, &idx, colors[i].map(is_red)));
         let Some(found) = found else {
             push(&mut out, LineStatus::Ignored, None);
             continue;
@@ -1186,11 +1336,6 @@ pub fn parse_tooltip(raw_lines: &[String]) -> TooltipParseResult {
         lines: out,
         errors: Vec::new(),
     }
-}
-
-pub fn parse_tooltip_lines(lines: Vec<String>, season: Option<String>) -> TooltipParseResult {
-    let _scope = crate::calc::season::SeasonScope::enter(season);
-    parse_tooltip(&lines)
 }
 
 #[cfg(test)]
@@ -1497,6 +1642,180 @@ FACE OF TERROR TO ALL THOSE WHO MEET THEIR FATE
 IN NIFLHEL.
 TIER SS. REQUIRES LEVEL 100
 2E";
+
+    const MYTHIC_RING: &str = "\
+CANNIBAL GOLDEN RING OF MANA WRAITH
+MYTHIC RING
++6% INCREASED ATTACK RATING [6-20 TIER A
++7% MANA STOLEN PER HIT [5-12 TIERS
++23 LIFE AFTER EACH KILL[5-25 TIER S
++25% MAGIC FIND (BASED ON LEVEL) TIER A
++11% INCREASED MAGIC FIND [10-28]
+TIER S, REQUIRES LEVEL 67";
+
+    const SACRED_WHIP: &str = "\
+SACRED WHIP
+SATANIC 1-HANDED MACE
+ATTACK DAMAGE: 100 TO 143 [35[32-36]
+ATTACKS PER SECOND: 2.27 [1.75]
++308% ENHANCED DAMAGE 280-320]
++30% NCREASED ATTACK SPEED
++50% CHANCE FOR A CRUSHING BLOW
++763 TO ADDITIVE LIGHTNING DAMAGE [675-785)
+-25% TO ENEMY LIGHTNING RESISTANCE
++15% TO ALL RESISTANCES
++9% EXTRA GOLD DROPPED FROM KILLS [5-10]
++40% NCREASED MAGIC FIND [25-40]
+SOCKETS (3) 10-4)
+TIER A, REQUIRES LEVEL 65";
+
+    #[test]
+    fn fixed_implicits_match_the_games_phrasing() {
+        let result = parse(SACRED_WHIP);
+        assert_eq!(result.base_id.as_deref(), Some("mace_satanic_sacred_whip"));
+        assert!(warnings(&result).is_empty(), "{:?}", warnings(&result));
+        // Its fixed "Increased Attack Speed" and "Chance for a Crushing Blow" are implicits, not affixes.
+        assert!(result.equipped.as_ref().unwrap().affixes.is_empty());
+        assert_eq!(implicit(&result, "enhanced_damage"), Some(308.));
+    }
+
+    const SIGNET_OF_SHADOWS: &str = "\
+SIGNET OF SHADOWS
+HEROIC RING
++4 TO ARCANE SKILLS
++20% NCREASED MOVEMENT SPEED [10-20]
+AILMENT DAMAGE INCREASED BY 15%
++33 TO ARCANE SKILL DAMAGE
+ARCANE SKILL DAMAGE INCREASED BY 15%
++5% NCREASED EXPERIENCE GAIN [1-5]
+FROM DEATH ENDLESS POWER IS REBORN..
+TIER SS, REQUIRES LEVEL 100
+T
+?";
+
+    #[test]
+    fn same_named_variants_pick_the_one_whose_implicits_match() {
+        let result = parse(SIGNET_OF_SHADOWS);
+        assert_eq!(
+            result.base_id.as_deref(),
+            Some("ring_heroic_signet_of_shadows_arcane")
+        );
+        assert!(warnings(&result).is_empty(), "{:?}", warnings(&result));
+        // "+33 to Arcane Skill Damage" is the flat implicit, not 33% on the percent one.
+        assert_eq!(implicit(&result, "arcane_skill_damage"), None);
+        let ailment = result.lines.iter().find(|l| l.text.starts_with("AILMENT"));
+        let detail = ailment
+            .and_then(|l| l.detail.as_deref())
+            .unwrap_or_default();
+        assert!(detail.contains("implicit ailment_damage_all"), "{detail}");
+    }
+
+    #[test]
+    fn red_lines_are_unholy_affixes_on_items_that_roll_them() {
+        const RED: [u8; 3] = [0x96, 0x2e, 0x55];
+        const LAVENDER: [u8; 3] = [0x6c, 0x62, 0xbf];
+        let lines: Vec<(String, Option<[u8; 3]>)> = SIGNET_OF_SHADOWS
+            .lines()
+            .map(|text| {
+                let red = text.contains("MOVEMENT") || text.contains("EXPERIENCE");
+                (text.to_string(), Some(if red { RED } else { LAVENDER }))
+            })
+            .collect();
+        let result = parse_tooltip_colored(&lines);
+        let equipped = result.equipped.as_ref().unwrap();
+        let forged: Vec<&str> = equipped
+            .forged_mods
+            .iter()
+            .flatten()
+            .map(|m| m.affix_id.as_str())
+            .collect();
+        assert!(forged.is_empty(), "{forged:?}");
+        let affixes: Vec<&str> = equipped
+            .affixes
+            .iter()
+            .map(|a| a.affix_id.as_str())
+            .collect();
+        assert_eq!(
+            affixes,
+            [
+                "random_unholy_movement_speed",
+                "random_unholy_experience_gain"
+            ]
+        );
+        assert!(warnings(&result).is_empty(), "{:?}", warnings(&result));
+    }
+
+    #[test]
+    fn red_lines_without_an_unholy_pool_are_crystal_mods() {
+        const RED: [u8; 3] = [0x96, 0x2e, 0x55];
+        let text = format!("{TOOLTIP3}\n+15% INCREASED MOVEMENT SPEED [10-20]");
+        let lines: Vec<(String, Option<[u8; 3]>)> = text
+            .lines()
+            .map(|line| (line.to_string(), line.contains("MOVEMENT").then_some(RED)))
+            .collect();
+        let result = parse_tooltip_colored(&lines);
+        let equipped = result.equipped.as_ref().unwrap();
+        let forged: Vec<&str> = equipped
+            .forged_mods
+            .iter()
+            .flatten()
+            .map(|m| m.affix_id.as_str())
+            .collect();
+        assert_eq!(forged, ["crystal_satanic_movement_speed"]);
+    }
+
+    #[test]
+    fn red_lines_try_the_items_unholy_pool_before_crystals() {
+        const RED: [u8; 3] = [0x96, 0x2e, 0x55];
+        let text = SIGNET_OF_SHADOWS.replace(
+            "+5% NCREASED EXPERIENCE GAIN [1-5]",
+            "+20% TO ALL RESISTANCES",
+        );
+        let lines: Vec<(String, Option<[u8; 3]>)> = text
+            .lines()
+            .map(|line| {
+                let red = line.contains("MOVEMENT") || line.contains("RESISTANCES");
+                (line.to_string(), red.then_some(RED))
+            })
+            .collect();
+        let result = parse_tooltip_colored(&lines);
+        let equipped = result.equipped.as_ref().unwrap();
+        let affixes: Vec<&str> = equipped
+            .affixes
+            .iter()
+            .map(|a| a.affix_id.as_str())
+            .collect();
+        assert_eq!(
+            affixes,
+            [
+                "random_unholy_movement_speed",
+                "random_unholy_all_resistances"
+            ]
+        );
+        assert_eq!(equipped.forged_mods, None);
+    }
+
+    #[test]
+    fn lavender_based_on_level_lines_stay_affixes() {
+        let lines: Vec<(String, Option<[u8; 3]>)> = MYTHIC_RING
+            .lines()
+            .map(|text| (text.to_string(), Some([0x6d, 0x64, 0xa6])))
+            .collect();
+        let result = parse_tooltip_colored(&lines);
+        let equipped = result.equipped.as_ref().unwrap();
+        assert_eq!(equipped.forged_mods, None);
+        assert_eq!(equipped.affixes.len(), 4, "{:?}", equipped.affixes);
+    }
+
+    #[test]
+    fn generated_item_names_find_their_common_base() {
+        let result = parse(MYTHIC_RING);
+        assert_eq!(result.base_id.as_deref(), Some("rings_normal_golden_ring"));
+        assert!(warnings(&result).is_empty(), "{:?}", warnings(&result));
+        let affixes = &result.equipped.as_ref().unwrap().affixes;
+        assert_eq!(affixes.len(), 4, "{affixes:?}");
+        assert_eq!(implicit(&result, "magic_find"), Some(11.0));
+    }
 
     #[test]
     fn grimbone_survives_ocr_typos() {

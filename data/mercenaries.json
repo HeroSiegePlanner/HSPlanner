@@ -105,14 +105,6 @@
           "description": "Increases life per hit from melee attacks"
         },
         {
-          "id": "aura_expert",
-          "name": "Aura Expert",
-          "kind": "passive",
-          "damageType": null,
-          "shared": true,
-          "description": "Increases the value of the Mercenary's aura"
-        },
-        {
           "id": "evasive_tactics",
           "name": "Evasive Tactics",
           "kind": "passive",
@@ -257,14 +249,6 @@
           "description": "Increases the Mercenary's and Player's life per hit"
         },
         {
-          "id": "aura_expert",
-          "name": "Aura Expert",
-          "kind": "passive",
-          "damageType": null,
-          "shared": true,
-          "description": "Increases the value of the Mercenary's aura"
-        },
-        {
           "id": "shatter_armor",
           "name": "Shatter Armor",
           "kind": "passive",
@@ -407,14 +391,6 @@
           "damageType": "magic",
           "shared": false,
           "description": "The Mercenary has a chance on attack to burn and slow enemies"
-        },
-        {
-          "id": "aura_expert",
-          "name": "Aura Expert",
-          "kind": "passive",
-          "damageType": null,
-          "shared": true,
-          "description": "Increases the value of the Mercenary's aura"
         },
         {
           "id": "reptillian_brain",

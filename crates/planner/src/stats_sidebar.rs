@@ -481,21 +481,7 @@ impl StatsSidebar {
         }
         content = content.child(divider(cx));
         if let Some(value) = performance {
-            let damage = value
-                .attack_damage
-                .as_ref()
-                .map(|damage| {
-                    (
-                        damage.combined_hit_min as f64,
-                        damage.combined_hit_max as f64,
-                    )
-                })
-                .or_else(|| {
-                    value
-                        .damage
-                        .as_ref()
-                        .map(|damage| (damage.final_min as f64, damage.final_max as f64))
-                });
+            let damage = value.hit_damage();
             content = content.child(row(
                 tr("planner.common.hit_damage"),
                 damage

@@ -27,7 +27,7 @@ const SUFFIX_TO_CONDITION: &[(&str, &str)] = &[
     ("slow", "slow"),
 ];
 
-/// Matches TS regex `/_<suffix>$/`: leading `_` required, suffix must end string.
+/// Matches `_<suffix>` at the end of the key; the leading `_` is required.
 fn matches_suffix(key: &str, suffix: &str) -> bool {
     key.len() > suffix.len()
         && key.ends_with(suffix)

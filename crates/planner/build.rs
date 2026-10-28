@@ -1,6 +1,6 @@
 use std::{env, fs, path::PathBuf};
 
-// Compile the engine's exact classifier without pulling Tauri/OCR into the planner crate.
+// Compile the engine's exact classifier without depending on the whole engine.
 #[allow(dead_code, clippy::collapsible_if)]
 #[rustfmt::skip]
 #[path = "../../engine/src/calc/tree/parse/mod.rs"]
@@ -76,7 +76,7 @@ fn main() {
     }
     source.push_str("];\n");
     fs::write(output.join("item-icons.rs"), source).unwrap();
-    // Socketables are keyed by display name ("Pristine Sapphire"), augments by id, like the frontend.
+    // Socketables are keyed by display name ("Pristine Sapphire"), augments by id.
     let mut source = String::new();
     for (constant, directory, key) in [
         ("SOCKETABLE_ICONS", "socketable", true),
@@ -147,7 +147,11 @@ fn skill_visuals(root: &std::path::Path, output: &std::path::Path) {
         let mut paths = Vec::new();
         for class in fs::read_dir(directory).unwrap() {
             let class = class.unwrap().path();
-            if class.is_dir() {
+            // Mercenary skill icons are embedded by mercenary_icons.rs.
+            let mercenary = class
+                .file_name()
+                .is_some_and(|name| name.to_string_lossy().starts_with("merc_"));
+            if class.is_dir() && !mercenary {
                 paths.extend(
                     fs::read_dir(class)
                         .unwrap()

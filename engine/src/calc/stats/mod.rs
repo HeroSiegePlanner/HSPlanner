@@ -1,5 +1,4 @@
-// Stat aggregation: source-tracking parity with TS computeBuildStats in
-// src/utils/stats.ts.
+// Stat aggregation with per-source tracking.
 
 use std::collections::{HashMap, HashSet};
 
@@ -238,9 +237,20 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
 
     // 2. Inventory loop (implicits + affixes + sockets + runeword + augment)
     let weapon_has_aps = apply_inventory(input.inventory, &mut attr_sources, &mut stat_sources);
+    apply_toggled_augments(
+        input.inventory,
+        input.player_conditions,
+        &mut attr_sources,
+        &mut stat_sources,
+    );
+    apply_per_active_buff_stats(
+        input.active_buffs,
+        input.player_conditions,
+        &mut attr_sources,
+        &mut stat_sources,
+    );
 
-    // 3. Tree contributions (returns deferred conversions + disables);
-    //    the incarnation tree's node set is season-patched data.
+    // 3. Tree contributions (returns deferred conversions + disables).
     let tree_agg = apply_tree_contributions(
         input.allocated_tree_nodes,
         input.player_conditions,
@@ -675,6 +685,9 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     // 16b. Damage from Resistances → enhanced_damage (needs fanned-out resists).
     apply_damage_per_resist(&mut stat_sources);
 
+    // 16c. Crushing Blow stacks on the target, once every chance source is in.
+    apply_crushing_blow(input.stack_counts, &mut attr_sources, &mut stat_sources);
+
     // 17. Compute stat totals from sources
     let mut stats = compute_final_stats(&stat_sources);
 
@@ -702,9 +715,16 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         &mut stat_sources,
     );
 
+    // 20a. Item "X% of A converted to B" stats read the converted attributes.
+    let touched_stats = apply_item_stat_conversions(&attributes, &stats, &mut stat_sources);
+
     // Converted life/mana percentages and flats must reach the final totals
     // before "per Mana" notes read them.
-    for k in touched_item.iter().chain(touched_tree.iter()) {
+    for k in touched_item
+        .iter()
+        .chain(touched_tree.iter())
+        .chain(touched_stats.iter())
+    {
         if let Some(list) = stat_sources.get(k) {
             stats.insert(k.clone(), sum_contributions(list));
         }
@@ -718,8 +738,15 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     // 20c. "per point in Light Radius" lines read the finalized light radius.
     let touched_light = apply_per_light_radius_stats(&stats, &mut stat_sources);
 
+    // 20d. "per attack per second" lines read the finalized attack rate.
+    let touched_aps = apply_per_attack_rate_stats(&stats, &mut stat_sources);
+
     // 21. Re-sum the remaining late contributions.
-    for k in touched_mana.iter().chain(touched_light.iter()) {
+    for k in touched_mana
+        .iter()
+        .chain(touched_light.iter())
+        .chain(touched_aps.iter())
+    {
         if let Some(list) = stat_sources.get(k) {
             stats.insert(k.clone(), sum_contributions(list));
         }
@@ -728,7 +755,7 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     // 22. Tree disables (zero out life_replenish if flagged)
     apply_tree_disables(&tree_agg.disables, &mut stats);
 
-    // 22b. Diminishing returns on final totals (config-driven, season-aware).
+    // 22b. Diminishing returns on final totals (config-driven).
     let diminished_raw = match data::game_config().diminishing_returns.as_ref() {
         Some(defs) => apply_diminishing_returns(&mut stats, defs),
         None => HashMap::new(),

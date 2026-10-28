@@ -36,6 +36,8 @@ pub struct Settings {
     pub ui_zoom: f32,
     /// Stat keys shown first on the Stats page, in pin order.
     pub pinned_stats: Vec<String>,
+    /// Update checks also offer pre-releases.
+    pub beta_updates: bool,
 }
 impl Default for Settings {
     fn default() -> Self {
@@ -46,6 +48,7 @@ impl Default for Settings {
             extra_charm_slot: true,
             ui_zoom: 1.,
             pinned_stats: Vec::new(),
+            beta_updates: false,
         }
     }
 }
@@ -61,12 +64,6 @@ pub struct WorkspaceState {
     pub draft: Draft,
     #[serde(default)]
     pub settings: Settings,
-    #[serde(default)]
-    pub filters: serde_json::Value,
-    #[serde(default)]
-    pub legacy_storage: std::collections::BTreeMap<String, String>,
-    #[serde(default)]
-    pub migrated_from: Option<String>,
 }
 impl Default for WorkspaceState {
     fn default() -> Self {
@@ -76,9 +73,6 @@ impl Default for WorkspaceState {
             library: Library::default(),
             draft: Draft::default(),
             settings: Settings::default(),
-            filters: serde_json::json!({"version":1,"filters":[]}),
-            legacy_storage: Default::default(),
-            migrated_from: None,
         }
     }
 }
@@ -94,12 +88,6 @@ struct WorkspaceWire {
     draft: serde_json::Value,
     #[serde(default)]
     settings: Settings,
-    #[serde(default)]
-    filters: serde_json::Value,
-    #[serde(default)]
-    legacy_storage: std::collections::BTreeMap<String, String>,
-    #[serde(default)]
-    migrated_from: Option<String>,
 }
 impl TryFrom<WorkspaceWire> for WorkspaceState {
     type Error = String;
@@ -144,24 +132,7 @@ impl TryFrom<WorkspaceWire> for WorkspaceState {
             library: wire.library,
             draft,
             settings: wire.settings,
-            filters: wire.filters,
-            legacy_storage: wire.legacy_storage,
-            migrated_from: wire.migrated_from,
         })
-    }
-}
-
-impl WorkspaceState {
-    pub fn is_pristine(&self) -> bool {
-        self.revision == 0
-            && self.migrated_from.is_none()
-            && self.library.builds.is_empty()
-            && self.library.folders.is_empty()
-            && serde_json::to_value(&self.draft).ok() == serde_json::to_value(Draft::default()).ok()
-            && serde_json::to_value(&self.settings).ok()
-                == serde_json::to_value(Settings::default()).ok()
-            && self.legacy_storage.is_empty()
-            && self.filters == WorkspaceState::default().filters
     }
 }
 
@@ -203,9 +174,6 @@ impl Session {
     }
     pub fn has_undo(&self) -> bool {
         !self.undo.is_empty()
-    }
-    pub fn has_redo(&self) -> bool {
-        !self.redo.is_empty()
     }
     fn changed(&mut self) {
         self.state.revision += 1;
@@ -291,7 +259,6 @@ impl Session {
         build.notes = draft.notes.to_html();
         build.stash = draft.stash.clone();
         build.class_id = draft.snapshot.class_id.clone();
-        build.season = draft.snapshot.season.clone();
         if serde_json::to_value(&*build).map_err(|error| error.to_string())? != previous {
             build.updated_at = now();
             self.changed();
@@ -418,81 +385,6 @@ impl Session {
         }
         self.changed();
     }
-    pub fn import_transfer(
-        &mut self,
-        export: crate::storage::MigrationExport,
-    ) -> Result<(), String> {
-        if self.state.migrated_from.is_some() {
-            return Err("This library has already imported its transfer.".into());
-        }
-        let mut incoming = export.into_state()?;
-        if self.state.is_pristine() {
-            incoming.revision = self.state.revision + 1;
-            self.state = incoming;
-        } else {
-            let mut next = self.state.clone();
-            for folder in incoming.library.folders {
-                if !next
-                    .library
-                    .folders
-                    .iter()
-                    .any(|current| current.id == folder.id)
-                {
-                    next.library.folders.push(folder);
-                }
-            }
-            for build in incoming.library.builds {
-                if let Some(existing) = next
-                    .library
-                    .builds
-                    .iter_mut()
-                    .find(|current| current.id == build.id)
-                {
-                    existing.loadouts.merge_missing(build.loadouts);
-                    existing.archived_profiles.extend(build.archived_profiles);
-                } else {
-                    next.library.builds.push(build);
-                }
-            }
-            if let Some(filters) = incoming
-                .filters
-                .get("filters")
-                .and_then(serde_json::Value::as_array)
-                && let Some(current) = next
-                    .filters
-                    .get_mut("filters")
-                    .and_then(serde_json::Value::as_array_mut)
-            {
-                for filter in filters {
-                    if !current.iter().any(|item| item["id"] == filter["id"]) {
-                        current.push(filter.clone());
-                    }
-                }
-            }
-            next.legacy_storage.extend(incoming.legacy_storage);
-            next.legacy_storage.insert(
-                "hsplanner.migration.unsavedDocument".into(),
-                serde_json::to_string(&incoming.draft).map_err(|e| e.to_string())?,
-            );
-            next.library.create(
-                "Recovered Tauri document",
-                &incoming.draft.snapshot,
-                &incoming.draft.notes,
-                &incoming.draft.stash,
-                None,
-            )?;
-            next.library.validate()?;
-            next.migrated_from = incoming.migrated_from;
-            next.revision += 1;
-            self.state = next;
-        }
-        self.calculation_revision += 1;
-        self.undo.clear();
-        self.redo.clear();
-        self.dirty = true;
-        Ok(())
-    }
-
     pub fn persisted(&mut self, revision: u64) {
         if revision == self.revision() {
             self.dirty = false;

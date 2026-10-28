@@ -1321,8 +1321,8 @@
         "description": "Increases projectile speed.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 15}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 15}
         }
       },
       {
@@ -1793,8 +1793,8 @@
         "description": "Increases holy hammer projectile speed.",
         "maxRank": 5,
         "effects": {
-          "base": {"projectile_speed": 0},
-          "perRank": {"projectile_speed": 12.5}
+          "base": {"projectile_speed_pct": 0},
+          "perRank": {"projectile_speed_pct": 12.5}
         }
       },
       {

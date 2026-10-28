@@ -129,15 +129,27 @@ pub struct Installed;
 
 pub struct Updater {
     pub state: State,
+    beta: bool,
 }
 
 impl EventEmitter<Installed> for Updater {}
 
 impl Updater {
-    pub fn new(cx: &mut Context<Self>) -> Self {
-        let mut this = Self { state: State::Idle };
+    pub fn new(beta: bool, cx: &mut Context<Self>) -> Self {
+        let mut this = Self {
+            state: State::Idle,
+            beta,
+        };
         this.check(true, cx);
         this
+    }
+
+    /// Switching the beta channel checks again, so the offer matches the new setting.
+    pub fn set_beta(&mut self, beta: bool, cx: &mut Context<Self>) {
+        if self.beta != beta {
+            self.beta = beta;
+            self.check(true, cx);
+        }
     }
 
     pub fn check(&mut self, silent: bool, cx: &mut Context<Self>) {
@@ -147,15 +159,18 @@ impl Updater {
         self.state = State::Checking;
         cx.notify();
         let http = cx.http_client();
-        let task = cx.background_spawn(async move { fetch_latest(http).await });
+        let beta = self.beta;
+        let task = cx.background_spawn(async move { fetch_releases(http, beta).await });
         cx.spawn(async move |this, cx| {
             let result = task.await;
             let _ = this.update(cx, |this, cx| {
                 this.state = match result {
-                    Ok(release) => match pick(release, &current_version(), std::env::consts::OS) {
-                        Some(update) => State::Available(update),
-                        None => State::UpToDate,
-                    },
+                    Ok(releases) => {
+                        match newest(releases, &current_version(), std::env::consts::OS) {
+                            Some(update) => State::Available(update),
+                            None => State::UpToDate,
+                        }
+                    }
                     Err(error) => {
                         log::warn!("Update check failed: {error:#}");
                         if silent {
@@ -288,28 +303,50 @@ fn pick(release: Release, current: &Version, os: &str) -> Option<Update> {
     })
 }
 
+fn newest(releases: Vec<Release>, current: &Version, os: &str) -> Option<Update> {
+    releases
+        .into_iter()
+        .filter_map(|release| pick(release, current, os))
+        .max_by(|a, b| a.version.cmp(&b.version))
+}
+
 // Linux and Windows packages are published in lowercase (`hsplanner_…`).
 fn is_package(name: &str) -> bool {
     name.get(..ASSET_PREFIX.len())
         .is_some_and(|prefix| prefix.eq_ignore_ascii_case(ASSET_PREFIX))
 }
 
-fn feed_url() -> String {
+fn feed_url(beta: bool) -> String {
     // A local release JSON lets debug builds rehearse the whole update without publishing.
     std::env::var("HSPLANNER_UPDATE_FEED")
         .ok()
         .filter(|_| cfg!(debug_assertions))
-        .unwrap_or_else(|| format!("https://api.github.com/repos/{REPO}/releases/latest"))
+        .unwrap_or_else(|| {
+            // `releases/latest` never returns a pre-release; the list does.
+            let path = if beta {
+                "releases?per_page=10"
+            } else {
+                "releases/latest"
+            };
+            format!("https://api.github.com/repos/{REPO}/{path}")
+        })
 }
 
-async fn fetch_latest(http: Arc<dyn HttpClient>) -> anyhow::Result<Release> {
-    let request = Request::get(feed_url())
+async fn fetch_releases(http: Arc<dyn HttpClient>, beta: bool) -> anyhow::Result<Vec<Release>> {
+    let request = Request::get(feed_url(beta))
         .header("Accept", "application/vnd.github+json")
         .follow_redirects(RedirectPolicy::FollowAll)
         .timeout(CHECK_TIMEOUT)
         .body(AsyncBody::default())?;
     let body = read(http.send(request).await?).await?;
-    serde_json::from_slice(&body).context("unexpected release JSON")
+    let value: serde_json::Value =
+        serde_json::from_slice(&body).context("unexpected release JSON")?;
+    if value.is_array() {
+        serde_json::from_value(value)
+    } else {
+        serde_json::from_value(value).map(|release| vec![release])
+    }
+    .context("unexpected release JSON")
 }
 
 async fn download(
@@ -495,7 +532,7 @@ mod tests {
     // Explicit imports: the crate's `gpui_kit::*` glob would shadow `#[test]` with `gpui::test`.
     use super::{
         Asset, Download, Failure, Release, State, Step, Update, Version, advance, bundle_of,
-        digest_matches, pick,
+        digest_matches, newest, pick,
     };
     use sha2::{Digest, Sha256};
     use std::path::Path;
@@ -593,6 +630,20 @@ mod tests {
         assert!(pick(release("v1.1.0", &names), &Version::new(1, 1, 0), "macos").is_none());
         assert!(pick(release("v1.0.9", &names), &Version::new(1, 1, 0), "macos").is_none());
         assert!(pick(release("nightly", &names), &Version::new(1, 1, 0), "macos").is_none());
+    }
+
+    #[test]
+    fn beta_channel_offers_the_newest_release_including_pre_releases() {
+        let names = ["HSPlanner_1.2.2_aarch64.dmg", "SHA256SUMS"];
+        let releases = vec![
+            release("v1.2.1", &names),
+            release("v1.2.2", &names),
+            release("v1.1.0", &names),
+        ];
+        let update = newest(releases, &Version::new(1, 2, 0), "macos").unwrap();
+        assert_eq!(update.version, Version::new(1, 2, 2));
+        let same = vec![release("v1.2.0", &names)];
+        assert!(newest(same, &Version::new(1, 2, 0), "macos").is_none());
     }
 
     #[test]
@@ -708,7 +759,9 @@ mod tests {
         let http: std::sync::Arc<dyn super::HttpClient> = std::sync::Arc::new(
             reqwest_client::ReqwestClient::user_agent(super::USER_AGENT).unwrap(),
         );
-        let release = futures::executor::block_on(super::fetch_latest(http)).unwrap();
+        let release = futures::executor::block_on(super::fetch_releases(http, false))
+            .unwrap()
+            .remove(0);
         assert!(release.tag_name.starts_with('v'), "{}", release.tag_name);
         assert!(release.html_url.contains("/releases/tag/"));
         assert!(release.assets.iter().all(|asset| {
