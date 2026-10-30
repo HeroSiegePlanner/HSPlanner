@@ -1511,7 +1511,7 @@
     "id": "retiarius_net",
     "activationKind": "cast",
     "speedPath": "cast",
-    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 1.0, "confidence": "C", "note": "Per cast, cursor on the dummy's body (x, y-24): the base net flies to the cursor point (xTarget = tupm[6]/[7]; the instance_nearest <= 320 px retarget runs only with p11) and lands 24 px from the dummy centre; Marauder_Retiarius_Net_obj creates 1 Explosion_Item_obj (reach >= 31.5 + 11.5 = 43 px) with damage[1] = D = 1 hit; stun [94]/buff 19 adds none. perExtraProjectile = 1.0: the net loop is i < 1 (+1 from p8 Multinet Throw), an extra net lands on the same aim point and adds one blast (I for gear 'extra projectile' feeding this loop). p5 second bounce (0), p6 bomb, p13 chain (+1 hit), p10 pull (the dummy cannot be pulled) are subskill effects. No cooldown in the base (p14: 8 s): period 1/castRate."},
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast, cursor on the dummy's body (x, y-24): the base net flies to the cursor point (xTarget = tupm[6]/[7]; the instance_nearest <= 320 px retarget runs only with p11) and lands 24 px from the dummy centre; Marauder_Retiarius_Net_obj creates 1 Explosion_Item_obj (reach >= 31.5 + 11.5 = 43 px) with damage[1] = D = 1 hit; stun [94]/buff 19 adds none. perExtraProjectile = 1.0: the net loop is i < 1 (+1 from p8 Multinet Throw), no gear projectiles feed it (no RESP), and the second net lands 64 px further along the aim, ~68 px from the dummy, outside the blast reach (hsextract 2026-10-29), so perExtraProjectile = 0. p5 second bounce (0), p6 bomb, p13 chain (+1 hit), p10 pull (the dummy cannot be pulled) are subskill effects. No cooldown in the base (p14: 8 s): period 1/castRate."},
     "classId": "marauder",
     "name": "Retiarius Net",
     "kind": "active",
@@ -1637,7 +1637,7 @@
       {
         "id": "multinet_throw",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.03, 1.06, 1.09, 1.12, 1.15], "note": "chance 3r% per cast for one extra net on the same aim point (extra blast)"}], "confidence": "C", "note": "card p8 row; planner on_cast 3r% + of_total_damage 100 agrees"},
+        "dummy": {"effects": [{"kind": "utility", "byRank": [1.03, 1.06, 1.09, 1.12, 1.15], "note": "chance 3r% per cast for one extra net, but it lands 64 px further along the aim (hsextract 2026-10-29), ~68 px from the dummy and outside the 43 px blast reach: no extra hit on the dummy"}], "confidence": "C", "note": "card p8 row; planner on_cast 3r% + of_total_damage 100 agrees"},
         "name": "Multinet Throw",
         "description": "Chance on cast to unleash an additional retiarius net.",
         "maxRank": 5,

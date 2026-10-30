@@ -867,6 +867,7 @@ impl SkillsView {
                     ),
             )
             .children(skill_details::tag_chips(&tags, cx))
+            .children(crate::skill_preview::block(skill, cx))
             .children(skill_details::bonuses_block(&details, cx))
             .children(skill_details::stats_block(&details, cx))
             .children(skill_details::synergy_blocks(&details, cx))
