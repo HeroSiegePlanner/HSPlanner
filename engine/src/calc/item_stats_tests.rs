@@ -545,6 +545,36 @@ fn every_item_stat_is_defined_and_reaches_the_calculation() {
     );
 }
 
+// #218: Lady Luck's blessing turns on by itself once the crown's rolls sum above 777.
+#[test]
+fn roll_the_dice_blesses_only_above_777_combined_stats() {
+    let crown = "helmet_heroic_high_roller_s_deathcrown";
+    let scenario = &scenarios()[0];
+    let blessed = |life: f64| {
+        let mut item = equipped(crown);
+        item.implicit_overrides = [
+            ("movement_speed", 40.0),
+            ("all_attributes", 80.0),
+            ("attack_damage", 100.0),
+            ("magic_skill_damage", 100.0),
+            ("life", life),
+            ("all_resistances", 70.0),
+        ]
+        .into_iter()
+        .map(|(key, value)| (key.to_string(), value))
+        .collect();
+        let perf = run(build(scenario, item));
+        has_source(
+            &perf.computed.stat_sources,
+            "all_skills",
+            "Roll the Dice (rank 1)",
+        )
+    };
+    assert!(blessed(400.0), "790 combined stats");
+    assert!(!blessed(387.0), "777 combined stats");
+    assert!(!blessed(310.0), "700 combined stats");
+}
+
 // #217: Jagged Gauntlet's proc reaches spells, and grows with its rank.
 #[test]
 fn jagged_gauntlet_rank_raises_spell_damage() {

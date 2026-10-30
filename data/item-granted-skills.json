@@ -37,7 +37,7 @@
     "starRankLocked": true,
     "name": "Roll the Dice",
     "description": "The die has been rolled.. if the crowns combined stats surpass 777 gain lady luck's blessing as bonus stats.",
-    "condition": "roll_the_dice_blessing",
+    "statSumThreshold": 777,
     "passiveStats": {
       "base": {
         "all_skills": 7,

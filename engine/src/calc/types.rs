@@ -480,6 +480,9 @@ pub struct ItemGrantedSkill {
     pub passive_converts: Option<PassiveConverts>,
     #[serde(default)]
     pub condition: Option<String>,
+    /// Applies only while the granting item's rolled implicit values sum above this.
+    #[serde(default)]
+    pub stat_sum_threshold: Option<f64>,
     #[serde(default)]
     pub proc_damage: Option<Vec<ProcDamageSpec>>,
     #[serde(default)]

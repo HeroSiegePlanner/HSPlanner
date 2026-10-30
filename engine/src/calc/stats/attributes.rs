@@ -620,6 +620,41 @@ fn proc_buff_ranks(inventory: &Inventory) -> HashMap<String, Ranged> {
     out
 }
 
+// Roll the Dice: the granting item's rolled implicit values (stars and pinned rolls
+// included), summed per bound.
+fn granting_item_stat_sum(inventory: &Inventory, skill_name: &str) -> Ranged {
+    let key = normalize_skill_name(skill_name);
+    let mut best: Ranged = (0.0, 0.0);
+    for (slot, item, _) in data::inventory_entries(inventory) {
+        let Some(base) = data::get_item(&item.base_id) else {
+            continue;
+        };
+        let grants = base
+            .skill_bonuses
+            .as_ref()
+            .is_some_and(|b| b.keys().any(|name| normalize_skill_name(name) == key));
+        if !grants {
+            continue;
+        }
+        let stars = data::can_star_forge(slot, &base.rarity)
+            .then_some(item.stars)
+            .flatten();
+        let sum = base
+            .implicit
+            .iter()
+            .flatten()
+            .fold((0.0, 0.0), |sum, (k, v)| {
+                let rolled = item.implicit_overrides.get(k).map_or_else(
+                    || apply_stars_to_ranged_value(v.as_ranged(), k, stars),
+                    |&pinned| (pinned, pinned),
+                );
+                (sum.0 + rolled.0, sum.1 + rolled.1)
+            });
+        best = (best.0.max(sum.0), best.1.max(sum.1));
+    }
+    best
+}
+
 pub fn apply_item_granted_passive_stats(
     inventory: &Inventory,
     extra_ranks: Option<&HashMap<String, Ranged>>,
@@ -650,6 +685,15 @@ pub fn apply_item_granted_passive_stats(
         let Some(passive) = granted.passive_stats.as_ref() else {
             continue;
         };
+        let unlocked = granted
+            .stat_sum_threshold
+            .map_or((true, true), |threshold| {
+                let sum = granting_item_stat_sum(inventory, &granted.name);
+                (sum.0 > threshold, sum.1 > threshold)
+            });
+        if !unlocked.1 {
+            continue;
+        }
         // Conditional blessings only apply when their config toggle is on.
         if let Some(cond) = granted.condition.as_ref() {
             if !player_conditions
@@ -673,6 +717,9 @@ pub fn apply_item_granted_passive_stats(
                 let max = existing.1 + v * rank_max;
                 out.insert(k.clone(), (min, max));
             }
+        }
+        if !unlocked.0 {
+            out.values_mut().for_each(|v| v.0 = 0.0);
         }
         if granted.aura {
             super::skills::apply_aura_effectiveness(&mut out, stat_sources);
