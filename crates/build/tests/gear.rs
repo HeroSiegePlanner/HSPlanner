@@ -398,3 +398,37 @@ fn class_and_mercenary_changes_drop_weapons_they_cannot_hold() {
     snapshot.set_mercenary_class(Some("merc_knight"));
     assert!(!snapshot.merc_inventory.contains_key("weapon"));
 }
+
+#[test]
+fn runeword_rolls_reset_only_when_the_runeword_changes() {
+    let fits = |rw: &hsplanner_engine::calc::types::Runeword| {
+        data::data().items.values().find(|b| {
+            b.rarity == "common"
+                && data::runeword_fits_base(rw, b)
+                && b.max_sockets.unwrap_or(0) as usize >= rw.runes.len()
+        })
+    };
+    let (first, base) = data::runewords()
+        .iter()
+        .find_map(|rw| fits(rw).map(|b| (rw, b)))
+        .unwrap();
+    let other = data::runewords()
+        .iter()
+        .find(|rw| {
+            rw.id != first.id
+                && data::runeword_fits_base(rw, base)
+                && rw.runes.len() <= base.max_sockets.unwrap_or(0) as usize
+        })
+        .unwrap();
+    let mut item = gear::make_item(&base.id).unwrap();
+    gear::apply_runeword(&mut item, &first.id).unwrap();
+    item.runeword_overrides.insert("life".into(), 1.);
+    gear::apply_runeword(&mut item, &first.id).unwrap();
+    assert_eq!(item.runeword_overrides.get("life"), Some(&1.));
+    gear::apply_runeword(&mut item, &other.id).unwrap();
+    assert!(item.runeword_overrides.is_empty());
+
+    item.runeword_overrides.insert("life".into(), 1.);
+    gear::set_socket(&mut item, 0, None).unwrap();
+    assert!(item.runeword_overrides.is_empty());
+}

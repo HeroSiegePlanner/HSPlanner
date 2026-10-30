@@ -243,11 +243,15 @@ pub fn apply_inventory(
         if let Some(rw) = runeword {
             let label = format!("{} ({})", rw.name, item_name);
             for (stat_key, value) in rw.stats.iter() {
+                let rolled = item
+                    .runeword_overrides
+                    .get(stat_key)
+                    .map_or_else(|| value.as_ranged(), |&pinned| (pinned, pinned));
                 apply_contribution(
                     attr_sources,
                     stat_sources,
                     stat_key,
-                    value.as_ranged(),
+                    rolled,
                     label.clone(),
                     SourceType::Item,
                     None,

@@ -42,11 +42,26 @@ pub fn max_sockets(item: &EquippedItem) -> u32 {
     (base.max_sockets.or(base.sockets).unwrap_or(0) + bonus).min(6)
 }
 
+// Pinned runeword rolls belong to one runeword; a different one starts unpinned.
+fn runeword_id(item: &EquippedItem) -> Option<&'static str> {
+    let base = data::get_item(&item.base_id)?;
+    let sockets: Vec<_> = item.socketed.iter().map(|id| id.as_deref()).collect();
+    data::detect_runeword(base, &sockets).map(|rw| rw.id.as_str())
+}
+
+fn keep_runeword_rolls_for(item: &mut EquippedItem, before: Option<&str>) {
+    if runeword_id(item) != before {
+        item.runeword_overrides.clear();
+    }
+}
+
 pub fn set_socket_count(item: &mut EquippedItem, count: u32) {
+    let before = runeword_id(item);
     item.socket_count = count.min(max_sockets(item));
     item.socketed.resize(item.socket_count as usize, None);
     item.socket_types
         .resize(item.socket_count as usize, SocketType::Normal);
+    keep_runeword_rolls_for(item, before);
 }
 
 pub fn set_socket(item: &mut EquippedItem, index: usize, id: Option<&str>) -> Result<(), String> {
@@ -56,8 +71,10 @@ pub fn set_socket(item: &mut EquippedItem, index: usize, id: Option<&str>) -> Re
     if id.is_some_and(|id| data::get_gem(id).is_none() && data::get_rune(id).is_none()) {
         return Err("Unknown gem or rune.".into());
     }
+    let before = runeword_id(item);
     item.socketed.resize(item.socket_count as usize, None);
     item.socketed[index] = id.map(str::to_owned);
+    keep_runeword_rolls_for(item, before);
     Ok(())
 }
 
@@ -215,9 +232,11 @@ pub fn apply_runeword(item: &mut EquippedItem, id: &str) -> Result<(), String> {
     {
         return Err("This runeword does not fit the selected base.".into());
     }
+    let before = runeword_id(item);
     item.socket_count = rw.runes.len() as u32;
     item.socketed = rw.runes.iter().cloned().map(Some).collect();
     item.socket_types.resize(rw.runes.len(), SocketType::Normal);
+    keep_runeword_rolls_for(item, before);
     Ok(())
 }
 

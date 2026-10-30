@@ -593,3 +593,52 @@ fn jagged_gauntlet_rank_raises_spell_damage() {
     let (rank_2, rank_7) = (dps(2.0), dps(7.0));
     assert!(rank_7 > rank_2, "rank 2: {rank_2}, rank 7: {rank_7}");
 }
+
+// A runeword with a ranged stat, socketed into the first common base that fits it.
+pub(crate) fn ranged_runeword_item() -> (EquippedItem, String, (f64, f64), String) {
+    let d = data::data();
+    let mut runewords: Vec<_> = d.runewords.iter().collect();
+    runewords.sort_by(|a, b| a.id.cmp(&b.id));
+    let mut bases: Vec<_> = d.items.values().filter(|b| b.rarity == "common").collect();
+    bases.sort_by(|a, b| a.id.cmp(&b.id));
+    for rw in runewords {
+        let Some((key, value)) = rw
+            .stats
+            .iter()
+            .filter(|(_, v)| v.as_ranged().0 != v.as_ranged().1)
+            .min_by(|a, b| a.0.cmp(b.0))
+        else {
+            continue;
+        };
+        let Some(base) = bases.iter().find(|b| {
+            data::runeword_fits_base(rw, b) && b.max_sockets.unwrap_or(0) as usize >= rw.runes.len()
+        }) else {
+            continue;
+        };
+        let mut item = equipped(&base.id);
+        item.socket_count = rw.runes.len() as u32;
+        item.socketed = rw.runes.iter().cloned().map(Some).collect();
+        return (item, key.clone(), value.as_ranged(), rw.name.clone());
+    }
+    panic!("no runeword with a ranged stat fits a common base");
+}
+
+#[test]
+fn a_pinned_runeword_roll_replaces_its_range() {
+    let (mut item, key, (lo, hi), name) = ranged_runeword_item();
+    let scenario = &scenarios()[0];
+    let credited = |item: EquippedItem| {
+        let perf = run(build(scenario, item));
+        perf.computed
+            .stat_sources
+            .get(&key)
+            .into_iter()
+            .flatten()
+            .find(|s| s.label.starts_with(&name))
+            .map(|s| s.value)
+    };
+    assert_eq!(credited(item.clone()), Some((lo, hi)));
+    let pinned = (lo + hi) / 2.0;
+    item.runeword_overrides.insert(key.clone(), pinned);
+    assert_eq!(credited(item), Some((pinned, pinned)), "{key}");
+}
