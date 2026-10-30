@@ -804,10 +804,12 @@
     "description": "Spells and attacks have a chance to deal increased damage based on your critical strike damage. This effect does not count as a critical hit. Your critical chance is halved and your critical damage is capped.",
     "passiveStats": {
       "base": {
-        "crit_chance": -4
+        "jagged_gauntlet_max_crit_damage": 40
       },
       "perRank": {
-        "crit_chance": 4
+        "jagged_gauntlet_chance": 4,
+        "jagged_gauntlet_damage": 10,
+        "jagged_gauntlet_max_crit_damage": 20
       }
     }
   },

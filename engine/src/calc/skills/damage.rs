@@ -530,6 +530,7 @@ fn compute_skill_damage_with_rank(
             },
             on_crit_mult: 1.0 - crit_portion + crit_portion * base.on_crit_mult,
             avg_mult: 1.0 - crit_portion + crit_portion * base.avg_mult,
+            ..base
         }
     };
 

@@ -544,3 +544,22 @@ fn every_item_stat_is_defined_and_reaches_the_calculation() {
         failures.join("\n")
     );
 }
+
+// #217: Jagged Gauntlet's proc reaches spells, and grows with its rank.
+#[test]
+fn jagged_gauntlet_rank_raises_spell_damage() {
+    let scenarios = scenarios();
+    let fireball = scenarios.iter().find(|s| s.skill_id == "fireball").unwrap();
+    let dps = |rank: f64| {
+        let mut gloves = equipped("gloves_angelic_st_ahto_s_diamond_hands");
+        gloves.skill_bonus_overrides = HashMap::from([("Jagged Gauntlet".to_string(), rank)]);
+        let mut input = build(fireball, gloves);
+        input.custom_stats.push(CustomStat {
+            stat_key: "spell_crit_damage".into(),
+            value: "300".into(),
+        });
+        run(input).current.avg_hit_dps_max.unwrap()
+    };
+    let (rank_2, rank_7) = (dps(2.0), dps(7.0));
+    assert!(rank_7 > rank_2, "rank 2: {rank_2}, rank 7: {rank_7}");
+}

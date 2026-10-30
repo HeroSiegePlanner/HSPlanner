@@ -2730,6 +2730,24 @@
       "format": "percent"
     },
     {
+      "key": "jagged_gauntlet_chance",
+      "name": "Jagged Gauntlet Chance",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "jagged_gauntlet_damage",
+      "name": "Jagged Gauntlet Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "jagged_gauntlet_max_crit_damage",
+      "name": "Maximum Critical Damage (Jagged Gauntlet)",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
       "key": "colossus_damage",
       "name": "Colossus Damage",
       "category": "offense",
