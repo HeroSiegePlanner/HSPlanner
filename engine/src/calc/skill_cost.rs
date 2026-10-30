@@ -211,6 +211,14 @@ pub fn game_use_rate(skill: &SkillSpec, stats: &StatMap, scoped: &StatMap) -> Op
     Some(rate)
 }
 
+/// Pulses per second of a damaging aura; its timer ignores cast speed.
+pub fn pulse_rate(skill: &SkillSpec, scoped: &StatMap) -> Option<Ranged> {
+    let frames = skill.pulse_frames?;
+    let speed = rg(scoped, "aura_pulse_speed");
+    let rate = |pct: f64| 60.0 / ((frames * (1.0 - pct / 100.0)).ceil().max(0.0) + 1.0);
+    Some((rate(speed.0), rate(speed.1)))
+}
+
 /// Uses per second of a leap/charge skill: trigger frames + flight frames.
 pub fn use_period_rate(skill: &SkillSpec, stats: &StatMap, scoped: &StatMap) -> Option<Ranged> {
     let period = skill.use_period.as_ref()?;
@@ -320,6 +328,10 @@ pub fn compute_skill_cost(input: &SkillCostInput<'_>) -> SkillCost {
     }
     // Skills with a speed path from the game data use the game's own gating.
     if let Some(rate) = game_use_rate(input.skill, stats, stats) {
+        cast_rate_min = Some(rate.0);
+        cast_rate_max = Some(rate.1);
+    }
+    if let Some(rate) = pulse_rate(input.skill, stats) {
         cast_rate_min = Some(rate.0);
         cast_rate_max = Some(rate.1);
     }

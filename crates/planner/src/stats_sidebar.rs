@@ -5,7 +5,7 @@ use hsplanner_build::{BuildSnapshot, session::Session};
 use hsplanner_engine::calc::{
     data,
     defense::{EhpResult, effective_cap},
-    planner::PlannerPerformance,
+    planner::{self, PlannerPerformance},
     skills::Ranged,
     types::SkillKind,
 };
@@ -257,7 +257,17 @@ impl StatsSidebar {
                 cx,
             );
         }
-        if snapshot.active_skill_ids.is_empty() {
+        // A damaging aura in the aura slot deals damage beside the picked skills.
+        let aura = planner::damaging_aura(
+            snapshot.class_id.as_deref(),
+            snapshot.active_aura_id.as_deref(),
+            &snapshot.skill_ranks,
+        );
+        let mut ids = snapshot.active_skill_ids.clone();
+        if let Some(aura) = aura.filter(|aura| !ids.iter().any(|id| id == aura)) {
+            ids.push(aura.to_string());
+        }
+        if ids.is_empty() {
             return section(
                 "sidebar-active-skills",
                 tr("planner.common.active_skills"),
@@ -272,8 +282,8 @@ impl StatsSidebar {
             );
         }
         let mut buttons = div().flex().flex_col().gap_1().mb_2();
-        for id in &snapshot.active_skill_ids {
-            let name = active
+        for id in &ids {
+            let name = skills
                 .iter()
                 .find(|skill| &skill.id == id)
                 .map(|skill| skill.name.as_str())
@@ -289,6 +299,7 @@ impl StatsSidebar {
                 .map(|range| compact_range(range, scale))
                 .unwrap_or_else(|| "—".into());
             let remove = id.clone();
+            let is_aura = aura == Some(id.as_str());
             let label = trf(
                 "planner.sidebar.remove_active",
                 &[("name", name.to_string())],
@@ -331,7 +342,11 @@ impl StatsSidebar {
                         .on_click(cx.listener(move |this, _, _, cx| {
                             this.session.update(cx, |session, cx| {
                                 session.edit(|draft| {
-                                    draft.snapshot.active_skill_ids.retain(|id| id != &remove)
+                                    if is_aura {
+                                        draft.snapshot.active_aura_id = None;
+                                    } else {
+                                        draft.snapshot.active_skill_ids.retain(|id| id != &remove)
+                                    }
                                 });
                                 cx.notify();
                             });
@@ -340,10 +355,9 @@ impl StatsSidebar {
             );
         }
         content = content.child(buttons);
-        let primary = snapshot
-            .active_skill_ids
+        let primary = ids
             .first()
-            .and_then(|id| active.iter().find(|skill| &skill.id == id));
+            .and_then(|id| skills.iter().find(|skill| &skill.id == id));
         let Some(skill) = primary else {
             return section(
                 "sidebar-active-skills",

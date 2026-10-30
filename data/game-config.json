@@ -4794,6 +4794,21 @@
       "skillScoped": true
     },
     {
+      "key": "aura_pulse_speed",
+      "name": "Aura Pulse Speed",
+      "category": "offense",
+      "format": "percent",
+      "description": "Shortens the time between a damaging aura's pulses.",
+      "skillScoped": true
+    },
+    {
+      "key": "subtree_damage_per_100_max_life",
+      "name": "Skill Damage per 100 Maximum Life",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
       "key": "subtree_damage_per_movement_speed",
       "name": "Skill Damage from Movement Speed",
       "category": "offense",

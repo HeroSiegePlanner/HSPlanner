@@ -922,6 +922,10 @@ pub struct SkillSpec {
     /// (abilityAttackSpeed set, weapon rate) or "cast" (castRate).
     #[serde(default)]
     pub speed_path: Option<String>,
+    /// Damaging aura (LoadAuraScorching): one pulse every
+    /// ceil(frames · (1 − aura_pulse_speed%)) + 1 frames, whatever the cast speed.
+    #[serde(default)]
+    pub pulse_frames: Option<f64>,
     #[serde(default)]
     pub base_cooldown: Option<f64>,
     #[serde(default)]

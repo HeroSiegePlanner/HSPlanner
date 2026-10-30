@@ -839,7 +839,7 @@ pub(crate) fn performance_from_stats(
     let active_skill: Option<&SkillSpec> = deps.main_skill_id.and_then(|mid| {
         all_class_skills
             .iter()
-            .filter(|s| s.kind == SkillKind::Active)
+            .filter(|s| s.kind == SkillKind::Active || s.pulse_frames.is_some())
             .find(|s| s.id == mid)
     });
     let unavailable_reason = active_skill.and_then(|s| {
@@ -1287,6 +1287,23 @@ pub(crate) fn performance_from_stats(
                         } else {
                             format!(", {} flight {} frames after floor(24/S) + 1 trigger frames", p.kind, number(p.extra_frames))
                         })
+                    ),
+                    rate,
+                ));
+                (Some(rate.0), Some(rate.1))
+            }
+            None => effective_rate,
+        };
+        let effective_rate = match active_skill
+            .and_then(|s| super::skill_cost::pulse_rate(s, main_scoped))
+        {
+            Some(rate) => {
+                calculation.push(CalculationStep::new(
+                    "Aura pulse rate",
+                    format!(
+                        "60 / (ceil({} frames × (1 − {}% pulse speed)) + 1); cast speed does not apply",
+                        number(active_skill.and_then(|s| s.pulse_frames).unwrap_or(0.0)),
+                        range(rg(main_scoped, "aura_pulse_speed"))
                     ),
                     rate,
                 ));
@@ -2332,3 +2349,7 @@ mod dps_snapshot_tests;
 #[cfg(test)]
 #[path = "item_stats_tests.rs"]
 mod item_stats_tests;
+
+#[cfg(test)]
+#[path = "scorching_aura_tests.rs"]
+mod scorching_aura_tests;

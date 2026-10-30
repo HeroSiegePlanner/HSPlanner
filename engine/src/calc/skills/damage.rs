@@ -633,25 +633,39 @@ fn compute_skill_damage_with_rank(
     } else {
         0.0
     };
-    let scaled_min = unscaled_base
+    // LoadAura case 32: a damaging aura's pulse is floor(LTD × (1 + effectiveness)).
+    let aura_effectiveness = if s.tags.iter().any(|tag| tag == "Aura") {
+        let e = rg(input.stats, "damaging_aura_effectiveness");
+        ((1.0 + e.0 / 100.0).max(0.0), (1.0 + e.1 / 100.0).max(0.0))
+    } else {
+        (1.0, 1.0)
+    };
+    let scaled_min = (unscaled_base
         + (base_min - unscaled_base + flat_min)
             * (1.0 + synergy_min / 100.0)
-            * (1.0 + skill_dmg_min / 100.0).max(0.0);
-    let scaled_max = unscaled_base
+            * (1.0 + skill_dmg_min / 100.0).max(0.0))
+        * aura_effectiveness.0;
+    let scaled_max = (unscaled_base
         + (base_max - unscaled_base + flat_max)
             * (1.0 + synergy_max / 100.0)
-            * (1.0 + skill_dmg_max / 100.0).max(0.0);
+            * (1.0 + skill_dmg_max / 100.0).max(0.0))
+        * aura_effectiveness.1;
     let common_subtree = rg(input.scoped, "subtree_damage");
     let elemental_subtree = rg(input.scoped, "elemental_subtree_damage");
     let movement_conversion = rg(input.scoped, "subtree_damage_per_movement_speed");
     let movement_speed = rg(input.stats, "movement_speed");
+    // Burning Soul: m += value% × maximum life / 100, inside the subtree multiplier.
+    let life_conversion = rg(input.scoped, "subtree_damage_per_100_max_life");
+    let life = rg(input.stats, "life");
     let subtree = (
         common_subtree.0
             + elemental_subtree.0
-            + movement_conversion.0 * movement_speed.0.max(0.0) / 100.0,
+            + movement_conversion.0 * movement_speed.0.max(0.0) / 100.0
+            + life_conversion.0 * life.0.max(0.0) / 100.0,
         common_subtree.1
             + elemental_subtree.1
-            + movement_conversion.1 * movement_speed.1.max(0.0) / 100.0,
+            + movement_conversion.1 * movement_speed.1.max(0.0) / 100.0
+            + life_conversion.1 * life.1.max(0.0) / 100.0,
     );
     let subtree_mult = (
         (1.0 + subtree.0 / 100.0).max(0.0),
