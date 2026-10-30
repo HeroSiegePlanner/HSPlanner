@@ -2328,3 +2328,7 @@ mod proc_target_tests;
 #[cfg(test)]
 #[path = "build_dps_snapshot_tests.rs"]
 mod dps_snapshot_tests;
+
+#[cfg(test)]
+#[path = "item_stats_tests.rs"]
+mod item_stats_tests;

@@ -189,7 +189,7 @@ impl GearView {
         if hsplanner_build::gear::accepts_affixes(base) || !item.affixes.is_empty() {
             content = content.child(self.affixes_section(&item, base, window, cx));
         }
-        if data::forge_kind_for(&base.rarity).is_some() {
+        if data::accepts_crystal(&self.slot, &base.rarity) {
             content = content.child(self.forged_section(&item, window, cx));
         }
         if self.slot == "armor" {

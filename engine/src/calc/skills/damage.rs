@@ -471,7 +471,11 @@ fn compute_skill_damage_with_rank(
     } else {
         (0.0, 0.0)
     };
-    let total_mult = (1.0 + total_damage.0 / 100.0, 1.0 + total_damage.1 / 100.0);
+    // Drawbacks such as Belt of Skulls' -666% floor a hit at zero, never below.
+    let total_mult = (
+        (1.0 + total_damage.0 / 100.0).max(0.0),
+        (1.0 + total_damage.1 / 100.0).max(0.0),
+    );
     let spell_damage = if staged_elemental {
         rg(input.stats, "spell_damage")
     } else {
@@ -631,11 +635,11 @@ fn compute_skill_damage_with_rank(
     let scaled_min = unscaled_base
         + (base_min - unscaled_base + flat_min)
             * (1.0 + synergy_min / 100.0)
-            * (1.0 + skill_dmg_min / 100.0);
+            * (1.0 + skill_dmg_min / 100.0).max(0.0);
     let scaled_max = unscaled_base
         + (base_max - unscaled_base + flat_max)
             * (1.0 + synergy_max / 100.0)
-            * (1.0 + skill_dmg_max / 100.0);
+            * (1.0 + skill_dmg_max / 100.0).max(0.0);
     let common_subtree = rg(input.scoped, "subtree_damage");
     let elemental_subtree = rg(input.scoped, "elemental_subtree_damage");
     let movement_conversion = rg(input.scoped, "subtree_damage_per_movement_speed");

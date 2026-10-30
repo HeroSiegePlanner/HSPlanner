@@ -205,7 +205,7 @@ pub fn apply_inventory(
             );
         }
 
-        if can_sf {
+        if data::accepts_crystal(slot_key, &base.rarity) {
             if let Some(forge_kind) = data::forge_kind_for(&base.rarity) {
                 for eq in item.forged_mods.iter() {
                     let Some(mod_def) = data::get_crystal_mod(&eq.affix_id) else {

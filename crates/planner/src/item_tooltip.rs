@@ -767,7 +767,7 @@ pub(crate) fn build_model(
     }
 
     if let Some(item) = equipped
-        && data::forge_kind_for(&base.rarity).is_some()
+        && data::accepts_crystal(&base.slot, &base.rarity)
     {
         let forged: Vec<Line> = item
             .forged_mods

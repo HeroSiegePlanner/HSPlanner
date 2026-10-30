@@ -726,7 +726,7 @@ pub fn parse(text: &str, original: &EquippedItem) -> ParseResult {
     if !item.affixes.is_empty() && !gear::accepts_affixes(base) {
         report(0, "This item cannot have affixes".into(), false)
     }
-    if !item.forged_mods.is_empty() && !data::can_star_forge(&base.slot, &base.rarity) {
+    if !item.forged_mods.is_empty() && !data::accepts_crystal(&base.slot, &base.rarity) {
         report(0, "This item cannot have forged modifiers".into(), false)
     }
     let valid = !diagnostics.iter().any(|d| !d.warning);
@@ -883,9 +883,9 @@ mod tests {
     }
     #[test]
     fn text_edits_affixes_forge_custom_stats_and_preserves_unrepresented_fields() {
-        let mut item = armor();
+        let mut item = gear::make_item("body_armor_heroic_stoneplate_of_corruption").unwrap();
         item.all_skills_class_id = Some("viking".into());
-        gear::add_affix(&mut item, "25_50_enhanced_defense_t1_armorer_s").unwrap();
+        gear::add_affix(&mut item, "random_unholy_movement_speed").unwrap();
         gear::set_forge(&mut item, Some("crystal_satanic_all_attributes")).unwrap();
         gear::set_forge_value(&mut item, 0, 17.);
         let text = serialize(&item).unwrap();

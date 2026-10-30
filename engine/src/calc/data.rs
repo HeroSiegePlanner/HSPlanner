@@ -78,6 +78,11 @@ pub fn forge_kind_for(rarity: &str) -> Option<ForgeKind> {
     }
 }
 
+/// Satanic-or-better gear and charms take a crystal; potions never do (#214).
+pub fn accepts_crystal(slot: &str, rarity: &str) -> bool {
+    forge_kind_for(rarity).is_some() && (is_gear_slot(slot) || is_charm_slot(slot))
+}
+
 pub struct GameData {
     pub affixes: HashMap<String, Affix>,
     pub affix_tags: BTreeMap<String, AffixTag>,
