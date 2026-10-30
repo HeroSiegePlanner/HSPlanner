@@ -149,6 +149,7 @@ struct RollTarget {
     forged: bool,
     stat: String,
     skill: bool,
+    runeword: bool,
     relic_tier: bool,
 }
 
@@ -1040,6 +1041,8 @@ fn apply_roll_value(
     }
     let values = if target.skill {
         &mut item.skill_bonus_overrides
+    } else if target.runeword {
+        &mut item.runeword_overrides
     } else {
         &mut item.implicit_overrides
     };
@@ -1212,12 +1215,30 @@ mod control_tests {
     }
 
     #[::core::prelude::v1::test]
+    fn a_runeword_slider_pins_the_runeword_roll() {
+        let target = RollTarget {
+            affix: None,
+            forged: false,
+            stat: "life".into(),
+            skill: false,
+            runeword: true,
+            relic_tier: false,
+        };
+        let mut item = EquippedItem::default();
+        let mut observed = 20.;
+        assert!(apply_roll_value(&mut item, &target, &mut observed, 15., false));
+        assert_eq!(item.runeword_overrides.get("life"), Some(&15.));
+        assert!(item.implicit_overrides.is_empty());
+    }
+
+    #[::core::prelude::v1::test]
     fn slider_keyboard_and_native_value_changes_edit_the_same_roll_and_reset_does_not_repin() {
         let target = RollTarget {
             affix: None,
             forged: false,
             stat: "life".into(),
             skill: false,
+            runeword: false,
             relic_tier: false,
         };
         let mut item = EquippedItem::default();

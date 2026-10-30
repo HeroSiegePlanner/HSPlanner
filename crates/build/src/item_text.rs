@@ -289,6 +289,22 @@ pub fn serialize(item: &EquippedItem) -> Result<String, String> {
             ));
         }
     }
+    let sockets: Vec<_> = item.socketed.iter().map(|id| id.as_deref()).collect();
+    if let Some(runeword) = data::detect_runeword(base, &sockets) {
+        lines.extend(["--------".into(), format!("Runeword: {}", runeword.name)]);
+        let mut keys: Vec<_> = runeword.stats.keys().collect();
+        keys.sort();
+        for key in keys {
+            let pin = item.runeword_overrides.get(key);
+            let shown = pin.map_or_else(|| runeword.stats[key].as_ranged(), |v| (*v, *v));
+            lines.push(format!(
+                "{} {}{}",
+                value_text(shown, percent(key)),
+                stat_label(key),
+                if pin.is_some() { " [custom]" } else { "" }
+            ));
+        }
+    }
     if let Some(augment) = &item.augment {
         lines.extend([
             "--------".into(),
@@ -399,6 +415,8 @@ pub fn parse(text: &str, original: &EquippedItem) -> ParseResult {
     item.socket_count = 0;
     item.implicit_overrides.clear();
     item.skill_bonus_overrides.clear();
+    item.runeword_overrides.clear();
+    let mut runeword_stats = vec![];
     let mut kept = HashSet::new();
     let mut skills = HashSet::new();
     let mut skill_section = false;
@@ -502,7 +520,7 @@ pub fn parse(text: &str, original: &EquippedItem) -> ParseResult {
             continue;
         }
         if line.starts_with("Runeword:") {
-            section = "metadata";
+            section = "runeword";
             continue;
         }
         if let Some(rarity) = line.strip_prefix("Rarity:") {
@@ -608,6 +626,21 @@ pub fn parse(text: &str, original: &EquippedItem) -> ParseResult {
                 }
                 pending_stats.push((key, value, range, custom, skill));
             }
+            "runeword" => {
+                let custom = line.ends_with("[custom]");
+                let body = line.trim_end_matches("[custom]").trim();
+                let normalized = hsplanner_engine::calc::resistance::canonical_text(body);
+                match prefix(normalized.as_ref()) {
+                    Some((value, range, name)) => {
+                        runeword_stats.push((line_no, name, value, range, custom))
+                    }
+                    None => report(
+                        line_no,
+                        "Expected a numeric value followed by a stat name".into(),
+                        false,
+                    ),
+                }
+            }
             "affixes" | "forged" => {
                 let result = {
                     let forged = section == "forged";
@@ -675,6 +708,40 @@ pub fn parse(text: &str, original: &EquippedItem) -> ParseResult {
             _ => report(line_no, format!("Unknown section or line: {line}"), false),
         }
     }
+    // The runeword comes from the sockets; its lines may only pin that runeword's rolls.
+    let sockets: Vec<_> = item.socketed.iter().map(|id| id.as_deref()).collect();
+    let runeword = data::detect_runeword(base, &sockets);
+    for (line_no, name, value, range, custom) in runeword_stats {
+        let Some(runeword) = runeword else {
+            report(line_no, "The sockets do not make a runeword".into(), false);
+            continue;
+        };
+        let key = runeword.stats.keys().find(|key| {
+            stat_label(key).eq_ignore_ascii_case(&name)
+                || key.as_str() == hsplanner_engine::calc::resistance::canonical_key(&name)
+        });
+        let Some(key) = key else {
+            report(
+                line_no,
+                format!("{} has no stat: {name}", runeword.name),
+                false,
+            );
+            continue;
+        };
+        if custom && range {
+            report(
+                line_no,
+                "A custom value must be a single number".into(),
+                false,
+            );
+            continue;
+        }
+        let (lo, hi) = runeword.stats[key].as_ranged();
+        if range || (!custom && lo == hi && (lo - value).abs() < 0.005) {
+            continue;
+        }
+        item.runeword_overrides.insert(key.clone(), value);
+    }
     for (key, value, range, custom, skill) in pending_stats {
         let base_value = if skill {
             base.skill_bonuses.as_ref()
@@ -726,7 +793,7 @@ pub fn parse(text: &str, original: &EquippedItem) -> ParseResult {
     if !item.affixes.is_empty() && !gear::accepts_affixes(base) {
         report(0, "This item cannot have affixes".into(), false)
     }
-    if !item.forged_mods.is_empty() && !data::can_star_forge(&base.slot, &base.rarity) {
+    if !item.forged_mods.is_empty() && !data::accepts_crystal(&base.slot, &base.rarity) {
         report(0, "This item cannot have forged modifiers".into(), false)
     }
     let valid = !diagnostics.iter().any(|d| !d.warning);
@@ -873,6 +940,58 @@ mod tests {
             );
         }
     }
+    #[test]
+    fn text_shows_the_runeword_and_pins_its_rolls() {
+        let (rw, base) = data::runewords()
+            .iter()
+            .filter(|rw| {
+                rw.stats
+                    .values()
+                    .any(|v| v.as_ranged().0 != v.as_ranged().1)
+            })
+            .find_map(|rw| {
+                data::data()
+                    .items
+                    .values()
+                    .filter(|b| b.rarity == "common")
+                    .find(|b| {
+                        data::runeword_fits_base(rw, b)
+                            && b.max_sockets.unwrap_or(0) as usize >= rw.runes.len()
+                    })
+                    .map(|b| (rw, b))
+            })
+            .unwrap();
+        let mut item = gear::make_item(&base.id).unwrap();
+        item.socket_count = rw.runes.len() as u32;
+        item.socket_types = vec![SocketType::Normal; rw.runes.len()];
+        item.socketed = rw.runes.iter().cloned().map(Some).collect();
+        let (key, value) = rw
+            .stats
+            .iter()
+            .filter(|(_, v)| v.as_ranged().0 != v.as_ranged().1)
+            .min_by(|a, b| a.0.cmp(b.0))
+            .unwrap();
+        let (lo, hi) = value.as_ranged();
+        let ranged_line = format!("{} {}", value_text((lo, hi), percent(key)), stat_label(key));
+
+        let text = serialize(&item).unwrap();
+        assert!(text.contains(&format!("Runeword: {}", rw.name)), "{text}");
+        assert!(text.contains(&ranged_line), "{text}");
+        let parsed = parse(&text, &item).item.unwrap();
+        assert!(parsed.runeword_overrides.is_empty());
+
+        let pinned_line = format!(
+            "{} {} [custom]",
+            value_text((lo, lo), percent(key)),
+            stat_label(key)
+        );
+        let edited = text.replace(&ranged_line, &pinned_line);
+        let result = parse(&edited, &item);
+        let parsed = result.item.expect(&format!("{:?}", result.diagnostics));
+        assert_eq!(parsed.runeword_overrides.get(key), Some(&lo));
+        assert!(serialize(&parsed).unwrap().contains(&pinned_line));
+    }
+
     fn armor() -> EquippedItem {
         let base = data::data()
             .items
@@ -883,9 +1002,9 @@ mod tests {
     }
     #[test]
     fn text_edits_affixes_forge_custom_stats_and_preserves_unrepresented_fields() {
-        let mut item = armor();
+        let mut item = gear::make_item("body_armor_heroic_stoneplate_of_corruption").unwrap();
         item.all_skills_class_id = Some("viking".into());
-        gear::add_affix(&mut item, "25_50_enhanced_defense_t1_armorer_s").unwrap();
+        gear::add_affix(&mut item, "random_unholy_movement_speed").unwrap();
         gear::set_forge(&mut item, Some("crystal_satanic_all_attributes")).unwrap();
         gear::set_forge_value(&mut item, 0, 17.);
         let text = serialize(&item).unwrap();

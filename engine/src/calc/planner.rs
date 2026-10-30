@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::collections::{BTreeMap, HashMap};
 use std::sync::LazyLock;
 
@@ -165,8 +166,56 @@ pub fn dps_summary(input: &PlannerInput) -> DpsSummary {
     }
 }
 
+/// The skills whose damage counts: the selected ones, plus a pulsing aura (Scorching
+/// Aura) in the aura slot, which deals its own damage beside them or on its own.
+pub fn dps_skill_ids(input: &PlannerInput) -> Vec<String> {
+    let build = &input.build;
+    let mut ids = input.active_skill_ids.clone();
+    let aura = damaging_aura(
+        build.class_id.as_deref(),
+        build.active_aura_id.as_deref(),
+        &build.skill_ranks,
+    );
+    if let Some(aura) = aura.filter(|aura| !ids.iter().any(|id| id == aura)) {
+        if ids.is_empty() {
+            ids.extend(build.main_skill_id.clone());
+        }
+        ids.push(aura.to_string());
+    }
+    ids
+}
+
+/// The aura slot's skill when it is a ranked pulsing aura that deals damage.
+pub fn damaging_aura<'a>(
+    class_id: Option<&str>,
+    active_aura_id: Option<&'a str>,
+    skill_ranks: &HashMap<String, u32>,
+) -> Option<&'a str> {
+    let aura = active_aura_id?;
+    let pulses = class_id.is_some_and(|class| {
+        data::get_skills_by_class(class)
+            .iter()
+            .any(|s| s.id == aura && s.pulse_frames.is_some())
+    });
+    (pulses && skill_ranks.get(aura).copied().unwrap_or(0) > 0).then_some(aura)
+}
+
+fn with_damaging_aura(input: &PlannerInput) -> Cow<'_, PlannerInput> {
+    let ids = dps_skill_ids(input);
+    if ids == input.active_skill_ids {
+        return Cow::Borrowed(input);
+    }
+    let mut out = input.clone();
+    if out.build.main_skill_id.is_none() {
+        out.build.main_skill_id = ids.first().cloned();
+    }
+    out.active_skill_ids = ids;
+    Cow::Owned(out)
+}
+
 /// The combined DPS midpoint `evaluate` reports, without the stat breakdowns; for searches.
 pub fn combined_dps(input: &PlannerInput) -> f64 {
+    let input = &*with_damaging_aura(input);
     let prepared = prepare_input(input);
     super::commands::combined_dps_mid(&input.active_skill_ids, |main| {
         super::build::compute_build_performance(&super::commands::perf_deps(
@@ -192,6 +241,7 @@ pub fn hit_dps(input: &PlannerInput) -> f64 {
 }
 
 pub fn evaluate(input: &PlannerInput) -> PlannerPerformance {
+    let input = &*with_damaging_aura(input);
     let prepared = prepare_input(input);
     let mut computed = calc_build_stats(prepared.clone());
     let primary = super::build::performance_from_stats(

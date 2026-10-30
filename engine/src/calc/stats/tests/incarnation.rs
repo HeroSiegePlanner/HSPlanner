@@ -170,7 +170,9 @@ fn strength_to_life_uses_final_strength_and_stacks_per_node() {
 }
 
 #[test]
-fn powerfunneled_lifespan_reads_weapon_damage_after_enhanced_damage() {
+// #215: 7.5% of the Attack Damage stat, not of the weapon's damage, so weapon
+// Enhanced Damage changes nothing.
+fn powerfunneled_lifespan_converts_the_attack_damage_stat() {
     let allocated = HashMap::new();
     let skill_ranks = HashMap::new();
     let active_buffs = HashMap::new();
@@ -181,9 +183,6 @@ fn powerfunneled_lifespan_reads_weapon_damage_after_enhanced_damage() {
     let subskill_ranks = HashMap::new();
     let enemy_conditions = HashMap::new();
     let weapon_id = "base_melee_giant_axe";
-    let weapon = crate::calc::data::get_item(weapon_id).unwrap();
-    let weapon_min = weapon.damage_min.unwrap();
-    let weapon_max = weapon.damage_max.unwrap();
 
     for added_ed in [0.0, 50.0] {
         let affixes = if added_ed == 0.0 {
@@ -216,13 +215,9 @@ fn powerfunneled_lifespan_reads_weapon_damage_after_enhanced_damage() {
             &enemy_conditions,
         );
         let result = compute_build_stats(&input);
-        let ed = result.stats.get("enhanced_damage").map_or(0.0, |v| v.0);
-        // Strength now feeds the Attack Damage stage that Powerfunnel also reads.
-        let atk = result.stats.get("attack_damage").map_or(0.0, |v| v.0);
-        let expected = (
-            weapon_min * (1.0 + ed / 100.0) * (1.0 + atk / 100.0) * 0.075,
-            weapon_max * (1.0 + ed / 100.0) * (1.0 + atk / 100.0) * 0.075,
-        );
+        // Strength feeds the Attack Damage that Powerfunnel reads.
+        let atk = result.stats.get("attack_damage").copied().unwrap_or_default();
+        let expected = (atk.0 * 0.075, atk.1 * 0.075);
         let actual = result
             .stats
             .get("increased_life")
@@ -842,34 +837,13 @@ fn enhanced_damage_tree_branches_follow_weapon_type_and_reach_powerfunnel() {
                 "{kind}: {key}"
             );
         }
-        let ed = result
-            .stats
-            .get("enhanced_damage")
-            .copied()
-            .unwrap_or_default()
-            .0;
-        let more = result
-            .stats
-            .get("enhanced_damage_more")
-            .copied()
-            .unwrap_or_default()
-            .0;
-        let flat = result
-            .stats
-            .get("additive_physical_damage")
-            .copied()
-            .unwrap_or_default()
-            .0;
         let attack = result
             .stats
             .get("attack_damage")
             .copied()
             .unwrap_or_default()
             .0;
-        let expected_life_pct =
-            (weapon.damage_min.unwrap() * (1.0 + ed / 100.0) * (1.0 + more / 100.0) + flat)
-                * (1.0 + attack / 100.0)
-                * 0.075;
+        let expected_life_pct = attack * 0.075;
         let added_life_pct = result.stats["increased_life"].0
             - base
                 .stats
@@ -1029,8 +1003,11 @@ fn delayed_recovery_compensates_tick_interval_in_its_per_second_rate() {
 
 #[test]
 fn citadel_scales_recovery_with_configured_colossus_stacks() {
-    let custom = [("life_replenish", 100.0)];
+    // Citadel is Increased Life Replenish: it shares Angel's Vibrance's pool (#216).
+    let custom = [("life_replenish", 100.0), ("life_replenish_increased", 45.0)];
     let base = audit_build(&[], &[], &custom);
+    let increased = base.stats["life_replenish_increased"].0 / 100.0;
+    let raw = base.stats["life_replenish"].0 / (1.0 + increased);
     for count in [0, 1, 4, 5, 99] {
         let r = audit_build_with_conditions(
             &[579, 580, 581, 582, 583],
@@ -1039,9 +1016,11 @@ fn citadel_scales_recovery_with_configured_colossus_stacks() {
             &[],
             &[("colossus", count)],
         );
-        assert_eq!(
-            r.stats["life_replenish"].0,
-            base.stats["life_replenish"].0 * (1.0 + 2.5 * f64::from(count.min(5)))
+        let expected = raw * (1.0 + increased + 2.5 * f64::from(count.min(5)));
+        assert!(
+            (r.stats["life_replenish"].0 - expected).abs() < 1e-9,
+            "{count} stacks: {:?}",
+            r.stats["life_replenish"]
         );
         assert_eq!(
             r.stats_combined

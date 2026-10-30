@@ -1985,7 +1985,7 @@
       ],
       "increased_mana": 20,
       "random_skill_element": 2,
-      "mana_costs_decreased": [
+      "mana_cost_reduction": [
         5,
         10
       ]

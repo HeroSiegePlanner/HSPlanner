@@ -2085,7 +2085,7 @@
       ],
       "faster_cast_rate": 20,
       "mana_replenish_pct": 75,
-      "mana_costs_decreased": [
+      "mana_cost_reduction": [
         5,
         10
       ]

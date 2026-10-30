@@ -480,6 +480,9 @@ pub struct ItemGrantedSkill {
     pub passive_converts: Option<PassiveConverts>,
     #[serde(default)]
     pub condition: Option<String>,
+    /// Applies only while the granting item's rolled implicit values sum above this.
+    #[serde(default)]
+    pub stat_sum_threshold: Option<f64>,
     #[serde(default)]
     pub proc_damage: Option<Vec<ProcDamageSpec>>,
     #[serde(default)]
@@ -919,6 +922,10 @@ pub struct SkillSpec {
     /// (abilityAttackSpeed set, weapon rate) or "cast" (castRate).
     #[serde(default)]
     pub speed_path: Option<String>,
+    /// Damaging aura (LoadAuraScorching): one pulse every
+    /// ceil(frames · (1 − aura_pulse_speed%)) + 1 frames, whatever the cast speed.
+    #[serde(default)]
+    pub pulse_frames: Option<f64>,
     #[serde(default)]
     pub base_cooldown: Option<f64>,
     #[serde(default)]
@@ -1148,6 +1155,13 @@ pub struct EquippedItem {
     /// Pinned totals for item-granted skill ranks, keyed by base skillBonuses name.
     #[serde(default)]
     pub skill_bonus_overrides: HashMap<String, f64>,
+    /// Pinned rolls of the socketed runeword's ranged stats, keyed by stat.
+    #[serde(
+        default,
+        deserialize_with = "super::resistance::deserialize_overrides",
+        skip_serializing_if = "HashMap::is_empty"
+    )]
+    pub runeword_overrides: HashMap<String, f64>,
     /// Which skill the item's "Random Skill" roll landed on, picked by the user.
     #[serde(default)]
     pub random_skill_id: Option<String>,

@@ -392,7 +392,7 @@
         35,
         65
       ],
-      "mana_costs_decreased": [
+      "mana_cost_reduction": [
         7,
         15
       ]
@@ -1312,7 +1312,7 @@
         75,
         125
       ],
-      "mana_costs_decreased": [
+      "mana_cost_reduction": [
         8,
         15
       ]

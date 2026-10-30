@@ -85,7 +85,7 @@
     },
     {
       "key": "colossus", "name": "Colossus", "maxStat": "max_colossus_stacks",
-      "perStack": {}, "perStackStats": { "colossus_damage": "damage", "life_replenish_per_colossus_stack": "life_replenish_more" }
+      "perStack": {}, "perStackStats": { "colossus_damage": "damage", "life_replenish_per_colossus_stack": "life_replenish_increased" }
     },
     {
       "key": "wizardry", "name": "Wizardry", "maxStat": "max_wizardry_stacks",
@@ -2730,6 +2730,24 @@
       "format": "percent"
     },
     {
+      "key": "jagged_gauntlet_chance",
+      "name": "Jagged Gauntlet Chance",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "jagged_gauntlet_damage",
+      "name": "Jagged Gauntlet Damage",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
+      "key": "jagged_gauntlet_max_crit_damage",
+      "name": "Maximum Critical Damage (Jagged Gauntlet)",
+      "category": "offense",
+      "format": "percent"
+    },
+    {
       "key": "colossus_damage",
       "name": "Colossus Damage",
       "category": "offense",
@@ -4771,6 +4789,21 @@
     {
       "key": "subtree_damage_per_100_dexterity",
       "name": "Skill Damage per 100 Dexterity",
+      "category": "offense",
+      "format": "percent",
+      "skillScoped": true
+    },
+    {
+      "key": "aura_pulse_speed",
+      "name": "Aura Pulse Speed",
+      "category": "offense",
+      "format": "percent",
+      "description": "Shortens the time between a damaging aura's pulses.",
+      "skillScoped": true
+    },
+    {
+      "key": "subtree_damage_per_100_max_life",
+      "name": "Skill Damage per 100 Maximum Life",
       "category": "offense",
       "format": "percent",
       "skillScoped": true

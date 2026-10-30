@@ -504,15 +504,51 @@ pub(crate) struct CritFactors {
     pub damage_pct: f64,
     pub on_crit_mult: f64,
     pub avg_mult: f64,
+    jagged: Option<JaggedGauntlet>,
+}
+
+// St. Ahto's Diamond Hands (#217): a non-critical proc worth the critical damage,
+// at the cost of half the crit chance and a critical damage cap. ponytail: the
+// proc formula follows HS Helper's ability text; no game code was traced.
+#[derive(Clone, Copy)]
+struct JaggedGauntlet {
+    chance: f64,
+    damage_pct: f64,
+    max_crit_damage: f64,
+}
+
+impl JaggedGauntlet {
+    fn from_stats(stats: &StatMap) -> Option<Self> {
+        let max_crit_damage = r_max(rg(stats, "jagged_gauntlet_max_crit_damage"));
+        (max_crit_damage > 0.0).then(|| Self {
+            chance: r_max(rg(stats, "jagged_gauntlet_chance")),
+            damage_pct: r_max(rg(stats, "jagged_gauntlet_damage")),
+            max_crit_damage,
+        })
+    }
 }
 
 impl CritFactors {
+    fn capped(&self, damage_pct: f64) -> f64 {
+        self.jagged
+            .map_or(damage_pct, |j| damage_pct.min(j.max_crit_damage))
+    }
+
+    fn average(&self) -> f64 {
+        let chance = self.chance.clamp(0.0, 95.0) / 100.0;
+        let jagged = self.jagged.map_or(1.0, |j| {
+            1.0 + j.chance.clamp(0.0, 100.0) / 100.0 * self.damage_pct.max(0.0) / 100.0
+                * (1.0 + j.damage_pct / 100.0)
+        });
+        (1.0 - chance + chance * self.on_crit_mult) * jagged
+    }
+
     pub(crate) fn with_skill_bonuses(mut self, chance_bonus: f64, damage_bonus: f64) -> Self {
         self.chance += chance_bonus;
-        self.damage_pct += damage_bonus;
-        self.on_crit_mult += damage_bonus / 100.0;
-        let chance = self.chance.clamp(0.0, 95.0) / 100.0;
-        self.avg_mult = 1.0 - chance + chance * self.on_crit_mult;
+        let damage_pct = self.capped(self.damage_pct + damage_bonus);
+        self.on_crit_mult += (damage_pct - self.damage_pct) / 100.0;
+        self.damage_pct = damage_pct;
+        self.avg_mult = self.average();
         self
     }
 }
@@ -522,6 +558,7 @@ pub(crate) fn crit_factors_with_tags(
     is_spell: bool,
     tags: &[String],
 ) -> CritFactors {
+    let jagged = JaggedGauntlet::from_stats(stats);
     let chance = r_max(rg(
         stats,
         if is_spell {
@@ -529,7 +566,7 @@ pub(crate) fn crit_factors_with_tags(
         } else {
             "crit_chance"
         },
-    ));
+    )) / if jagged.is_some() { 2.0 } else { 1.0 };
     let damage_pct = r_max(rg(
         stats,
         if is_spell {
@@ -548,15 +585,17 @@ pub(crate) fn crit_factors_with_tags(
     } else {
         r_max(rg(stats, "crit_damage_more"))
     };
-    let on_crit_mult = (1.0 + damage_pct / 100.0) * (1.0 + damage_more / 100.0);
-    let clamped = chance.clamp(0.0, 95.0) / 100.0;
-    let avg_mult = 1.0 - clamped + clamped * on_crit_mult;
-    CritFactors {
+    let mut crit = CritFactors {
         chance,
         damage_pct,
-        on_crit_mult,
-        avg_mult,
-    }
+        on_crit_mult: 1.0,
+        avg_mult: 1.0,
+        jagged,
+    };
+    crit.damage_pct = crit.capped(damage_pct);
+    crit.on_crit_mult = (1.0 + crit.damage_pct / 100.0) * (1.0 + damage_more / 100.0);
+    crit.avg_mult = crit.average();
+    crit
 }
 
 impl SkillDamageBreakdown {

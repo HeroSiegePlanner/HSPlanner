@@ -329,7 +329,8 @@ fn compute_attack_skill_damage_with_rank(
             });
 
     let (bound_flat, bound_multiplier) = super::damage_bound_bonuses(input.stats);
-    let base_min = w_min * (1.0 + r_min(ed) / 100.0) * (1.0 + r_min(ed_more) / 100.0)
+    // Lucifer's Crown's -300% all resistance drives damage-per-resist ED far below -100%.
+    let base_min = w_min * (1.0 + r_min(ed) / 100.0).max(0.0) * (1.0 + r_min(ed_more) / 100.0)
         + r_min(add_phys)
         + ranged_flat.0
         + skill_flat_min
@@ -337,7 +338,7 @@ fn compute_attack_skill_damage_with_rank(
         + input.conversion_flat
         + bound_flat.0;
     let base_min = base_min * bound_multiplier.0;
-    let base_max = w_max * (1.0 + r_max(ed) / 100.0) * (1.0 + r_max(ed_more) / 100.0)
+    let base_max = w_max * (1.0 + r_max(ed) / 100.0).max(0.0) * (1.0 + r_max(ed_more) / 100.0)
         + r_max(add_phys)
         + ranged_flat.1
         + skill_flat_max

@@ -599,7 +599,7 @@ impl Search<'_> {
             let filled = item.socketed.iter().flatten().count() as u32;
             gain += f64::from(gear::max_sockets(item).saturating_sub(filled)) * gem;
         }
-        if self.options.crystals && data::forge_kind_for(&base.rarity).is_some() {
+        if self.options.crystals && data::accepts_crystal(&base.slot, &base.rarity) {
             let crystal = scores.crystals.first().map_or(0., |(_, gain)| *gain);
             let socket = if self.options.sockets && adds_socket(item) {
                 gem
@@ -644,7 +644,7 @@ impl Search<'_> {
         if self.options.sockets {
             pick = self.sockets(snapshot, slot, pick, scores);
         }
-        if self.options.crystals && data::forge_kind_for(&base.rarity).is_some() {
+        if self.options.crystals && data::accepts_crystal(&base.slot, &base.rarity) {
             let sockets = pick.item.socket_count;
             pick = self.crystal(snapshot, slot, pick, scores);
             if pick.item.socket_count != sockets {

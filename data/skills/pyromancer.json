@@ -1328,6 +1328,7 @@
     "name": "Scorching Aura",
     "kind": "aura",
     "description": "Scorch monsters around you dealing fire damage.",
+    "pulseFrames": 60,
     "damageType": "fire",
     "tags": ["Cast", "Active", "Aura"],
     "maxRank": 20,
@@ -1368,8 +1369,8 @@
         "description": "Increases the damage dealt by scorching aura.",
         "maxRank": 5,
         "effects": {
-          "base": {"fire_skill_damage": 0},
-          "perRank": {"fire_skill_damage": 8}
+          "base": {"subtree_damage": 0},
+          "perRank": {"subtree_damage": 8}
         }
       },
       {
@@ -1412,8 +1413,8 @@
         "description": "Increases the tick rate of scorching aura.",
         "maxRank": 5,
         "effects": {
-          "base": {"faster_cast_rate": 0},
-          "perRank": {"faster_cast_rate": 15}
+          "base": {"aura_pulse_speed": 0},
+          "perRank": {"aura_pulse_speed": 15}
         }
       },
       {
@@ -1490,8 +1491,8 @@
         "description": "Frequently unleash small bursts of fire dealing additional damage stunning monsters on hit.",
         "maxRank": 3,
         "effects": {
-          "base": {"fire_skill_damage": 0, "projectile_count": 0},
-          "perRank": {"fire_skill_damage": 10, "projectile_count": 4}
+          "base": {"subtree_damage": 0, "projectile_count": 0},
+          "perRank": {"subtree_damage": 10, "projectile_count": 4}
         }
       },
       {
@@ -1501,8 +1502,8 @@
         "description": "Increases the damage of scorching aura based on your maximum life.",
         "maxRank": 3,
         "effects": {
-          "base": {"conversion_max_life": 0},
-          "perRank": {"conversion_max_life": 6}
+          "base": {"subtree_damage_per_100_max_life": 0},
+          "perRank": {"subtree_damage_per_100_max_life": 6}
         }
       },
       {

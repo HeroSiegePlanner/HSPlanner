@@ -189,7 +189,7 @@ impl GearView {
         if hsplanner_build::gear::accepts_affixes(base) || !item.affixes.is_empty() {
             content = content.child(self.affixes_section(&item, base, window, cx));
         }
-        if data::forge_kind_for(&base.rarity).is_some() {
+        if data::accepts_crystal(&self.slot, &base.rarity) {
             content = content.child(self.forged_section(&item, window, cx));
         }
         if self.slot == "armor" {
@@ -564,7 +564,12 @@ impl GearView {
         let (accent_hot, faint, text) = (p.accent_hot, p.faint, p.text);
         let mut rows = div().p_2().flex().flex_col().gap_1p5();
         for entry in &entries {
-            let (key, stat, is_skill) = (entry.key.clone(), entry.stat.clone(), entry.is_skill);
+            let (key, stat, is_skill, is_runeword) = (
+                entry.key.clone(),
+                entry.stat.clone(),
+                entry.is_skill,
+                entry.is_runeword,
+            );
             let (lo, hi) = entry.bounds;
             self.roll_slider(
                 key.clone(),
@@ -575,6 +580,7 @@ impl GearView {
                     forged: false,
                     stat,
                     skill: is_skill,
+                    runeword: is_runeword,
                     relic_tier: false,
                 },
                 cx,
@@ -714,6 +720,7 @@ impl GearView {
                 forged: false,
                 stat: String::new(),
                 skill: false,
+                runeword: false,
                 relic_tier: true,
             },
             cx,
@@ -969,6 +976,7 @@ impl GearView {
                             forged: false,
                             stat: String::new(),
                             skill: false,
+                            runeword: false,
                             relic_tier: false,
                         },
                         cx,
@@ -1143,6 +1151,7 @@ impl GearView {
                             forged: true,
                             stat: String::new(),
                             skill: false,
+                            runeword: false,
                             relic_tier: false,
                         },
                         cx,
@@ -2452,12 +2461,15 @@ struct RollEntry {
     bounds: (f64, f64),
     pinned: Option<f64>,
     is_skill: bool,
+    is_runeword: bool,
 }
 
 impl RollEntry {
     fn clear_pin(&self, item: &mut EquippedItem) {
         if self.is_skill {
             item.skill_bonus_overrides.remove(&self.stat);
+        } else if self.is_runeword {
+            item.runeword_overrides.remove(&self.stat);
         } else {
             let resolved = resolved_implicit_key(item, &self.stat);
             item.implicit_overrides.remove(&self.stat);
@@ -2468,7 +2480,8 @@ impl RollEntry {
 
 use hsplanner_build::item_text::resolved_implicit_key;
 
-// Ranged implicits and skill bonuses the user can pin; runeword items get no star scaling.
+// Ranged implicits, runeword stats and skill bonuses the user can pin; runeword items get
+// no star scaling.
 fn roll_entries(item: &EquippedItem, base: &ItemBase) -> Vec<RollEntry> {
     let stars = data::can_star_forge(&base.slot, &base.rarity)
         .then_some(item.stars)
@@ -2499,6 +2512,27 @@ fn roll_entries(item: &EquippedItem, base: &ItemBase) -> Vec<RollEntry> {
                 bounds: apply_stars_to_ranged_value((min, max), &resolved, implicit_stars),
                 pinned,
                 is_skill: false,
+                is_runeword: false,
+            });
+        }
+    }
+    if let Some(runeword) = item_tooltip::runeword_for(base, Some(item)) {
+        let mut keys: Vec<_> = runeword.stats.keys().collect();
+        keys.sort();
+        for key in keys {
+            let (min, max) = runeword.stats[key].as_ranged();
+            if min == max {
+                continue;
+            }
+            entries.push(RollEntry {
+                key: format!("runeword:{key}"),
+                stat: key.clone(),
+                label: format!("{} · {}", runeword.name, stat_name(key)),
+                format_key: key.clone(),
+                bounds: (min, max),
+                pinned: item.runeword_overrides.get(key).copied(),
+                is_skill: false,
+                is_runeword: true,
             });
         }
     }
@@ -2517,6 +2551,7 @@ fn roll_entries(item: &EquippedItem, base: &ItemBase) -> Vec<RollEntry> {
                 bounds: item_skill_rank_range(name, (min, max), stars, None),
                 pinned,
                 is_skill: true,
+                is_runeword: false,
             });
         }
     }
@@ -2571,6 +2606,51 @@ fn editor_button(id: &'static str, label: &'static str, primary: bool, cx: &App)
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[::core::prelude::v1::test]
+    fn runeword_ranges_get_their_own_roll_sliders() {
+        let (rw, base) = data::runewords()
+            .iter()
+            .filter(|rw| rw.stats.values().any(|v| v.as_ranged().0 != v.as_ranged().1))
+            .find_map(|rw| {
+                data::data()
+                    .items
+                    .values()
+                    .filter(|b| b.rarity == "common")
+                    .find(|b| {
+                        data::runeword_fits_base(rw, b)
+                            && b.max_sockets.unwrap_or(0) as usize >= rw.runes.len()
+                    })
+                    .map(|b| (rw, b))
+            })
+            .unwrap();
+        let mut item = EquippedItem {
+            base_id: base.id.clone(),
+            socket_count: rw.runes.len() as u32,
+            socketed: rw.runes.iter().cloned().map(Some).collect(),
+            ..Default::default()
+        };
+        let ranged: Vec<_> = rw
+            .stats
+            .iter()
+            .filter(|(_, v)| v.as_ranged().0 != v.as_ranged().1)
+            .collect();
+        let entries: Vec<_> = roll_entries(&item, base)
+            .into_iter()
+            .filter(|entry| entry.is_runeword)
+            .collect();
+        assert_eq!(entries.len(), ranged.len());
+        let entry = &entries[0];
+        assert_eq!(entry.bounds, rw.stats[&entry.stat].as_ranged());
+        item.runeword_overrides.insert(entry.stat.clone(), entry.bounds.0);
+        let pinned = roll_entries(&item, base)
+            .into_iter()
+            .find(|e| e.key == entry.key)
+            .unwrap();
+        assert_eq!(pinned.pinned, Some(entry.bounds.0));
+        pinned.clear_pin(&mut item);
+        assert!(item.runeword_overrides.is_empty());
+    }
 
     #[::core::prelude::v1::test]
     fn selected_class_roll_pins_follow_raw_key_precedence() {

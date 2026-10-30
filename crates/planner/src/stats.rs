@@ -229,13 +229,21 @@ fn group(key: &str, category: &str) -> Group {
         Group::Other
     }
 }
-/// The skill the Stats view leads with: the first active skill, else the highest-ranked one.
+/// The skill the Stats view leads with: the first active skill, else a damaging aura in
+/// the aura slot, else the highest-ranked one.
 pub(crate) fn main_skill_id(snapshot: &BuildSnapshot) -> Option<&str> {
     let rank = |id: &str| snapshot.skill_ranks.get(id).copied().unwrap_or(0);
     snapshot
         .active_skill_ids
         .first()
         .map(String::as_str)
+        .or_else(|| {
+            planner::damaging_aura(
+                snapshot.class_id.as_deref(),
+                snapshot.active_aura_id.as_deref(),
+                &snapshot.skill_ranks,
+            )
+        })
         .or_else(|| {
             data::get_skills_by_class(snapshot.class_id.as_deref().unwrap_or(""))
                 .iter()
@@ -473,7 +481,7 @@ impl StatsView {
         input.active_skill_ids =
             data::get_skills_by_class(snapshot.class_id.as_deref().unwrap_or(""))
                 .iter()
-                .filter(|skill| skill.kind == SkillKind::Active)
+                .filter(|skill| skill.kind == SkillKind::Active || skill.pulse_frames.is_some())
                 .map(|skill| skill.id.clone())
                 .collect();
         self.task = Some(cx.spawn(async move |this, cx| {
@@ -1336,7 +1344,7 @@ impl StatsView {
         let mut cards = div().flex().flex_col().gap_2();
         let mut count = 0;
         for skill in skills.iter().filter(|skill| {
-            skill.kind == SkillKind::Active
+            (skill.kind == SkillKind::Active || skill.pulse_frames.is_some())
                 && (query.is_empty()
                     || skill.name.to_lowercase().contains(query)
                     || skill.damage_type.as_deref().is_some_and(|kind| {
@@ -2074,5 +2082,21 @@ mod tests {
         assert!(!Group::Offense.visible(Filter::Stats));
         assert!(Group::Offense.visible(Filter::Damage));
         assert!(!Group::World.visible(Filter::Skills));
+    }
+
+    #[::core::prelude::v1::test]
+    fn an_aura_only_build_leads_with_its_damaging_aura() {
+        let snapshot = BuildSnapshot {
+            class_id: Some("pyromancer".into()),
+            skill_ranks: [("scorching_aura".to_string(), 10)].into(),
+            active_aura_id: Some("scorching_aura".into()),
+            ..Default::default()
+        };
+        assert_eq!(main_skill_id(&snapshot), Some("scorching_aura"));
+        let picked = BuildSnapshot {
+            active_skill_ids: vec!["fireball".into()],
+            ..snapshot
+        };
+        assert_eq!(main_skill_id(&picked), Some("fireball"));
     }
 }

@@ -682,10 +682,14 @@ pub(crate) fn build_model(
         ));
     }
     if let Some(runeword) = runeword {
+        let pinned = |key: &String| equipped.and_then(|item| item.runeword_overrides.get(key));
         let mut stats: Vec<(&String, Ranged)> = runeword
             .stats
             .iter()
-            .map(|(key, value)| (key, value.as_ranged()))
+            .map(|(key, value)| {
+                let rolled = pinned(key).map_or_else(|| value.as_ranged(), |&v| (v, v));
+                (key, rolled)
+            })
             .filter(|(_, value)| !is_zero(*value))
             .collect();
         stats.sort_by(|a, b| a.0.cmp(b.0));
@@ -694,7 +698,7 @@ pub(crate) fn build_model(
             .map(|(key, value)| Line::Text {
                 text: stat_line(key, value),
                 style: LineStyle::Runeword,
-                custom: false,
+                custom: pinned(key).is_some(),
             })
             .chain(runeword.description.iter().map(|text| Line::Text {
                 text: text.clone(),
@@ -767,7 +771,7 @@ pub(crate) fn build_model(
     }
 
     if let Some(item) = equipped
-        && data::forge_kind_for(&base.rarity).is_some()
+        && data::accepts_crystal(&base.slot, &base.rarity)
     {
         let forged: Vec<Line> = item
             .forged_mods
