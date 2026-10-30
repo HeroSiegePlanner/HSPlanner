@@ -85,7 +85,7 @@
     },
     {
       "key": "colossus", "name": "Colossus", "maxStat": "max_colossus_stacks",
-      "perStack": {}, "perStackStats": { "colossus_damage": "damage", "life_replenish_per_colossus_stack": "life_replenish_more" }
+      "perStack": {}, "perStackStats": { "colossus_damage": "damage", "life_replenish_per_colossus_stack": "life_replenish_increased" }
     },
     {
       "key": "wizardry", "name": "Wizardry", "maxStat": "max_wizardry_stacks",

@@ -1003,8 +1003,11 @@ fn delayed_recovery_compensates_tick_interval_in_its_per_second_rate() {
 
 #[test]
 fn citadel_scales_recovery_with_configured_colossus_stacks() {
-    let custom = [("life_replenish", 100.0)];
+    // Citadel is Increased Life Replenish: it shares Angel's Vibrance's pool (#216).
+    let custom = [("life_replenish", 100.0), ("life_replenish_increased", 45.0)];
     let base = audit_build(&[], &[], &custom);
+    let increased = base.stats["life_replenish_increased"].0 / 100.0;
+    let raw = base.stats["life_replenish"].0 / (1.0 + increased);
     for count in [0, 1, 4, 5, 99] {
         let r = audit_build_with_conditions(
             &[579, 580, 581, 582, 583],
@@ -1013,9 +1016,11 @@ fn citadel_scales_recovery_with_configured_colossus_stacks() {
             &[],
             &[("colossus", count)],
         );
-        assert_eq!(
-            r.stats["life_replenish"].0,
-            base.stats["life_replenish"].0 * (1.0 + 2.5 * f64::from(count.min(5)))
+        let expected = raw * (1.0 + increased + 2.5 * f64::from(count.min(5)));
+        assert!(
+            (r.stats["life_replenish"].0 - expected).abs() < 1e-9,
+            "{count} stacks: {:?}",
+            r.stats["life_replenish"]
         );
         assert_eq!(
             r.stats_combined
