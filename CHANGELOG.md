@@ -1,7 +1,4 @@
-## Interface
-
-- Fix version badge to match with version stream: Stable for stable stream, opt-in beta for beta stream and dev for local
-## Calculations
+## Fixes
 
 - "+X to Melee, Ranged, Area of Effect and Orbit Skills" on items now raise the ranks of skills with that tag; before, they did nothing.
 - Mana Costs Decreased on items and the Manaleak–Manahunger affixes now reduce mana costs instead of doing nothing or adding flat Mana.
