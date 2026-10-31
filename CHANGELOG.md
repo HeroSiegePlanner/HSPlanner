@@ -1,3 +1,8 @@
+## Interface
+
+- Report a bug has an "Already reported" tab listing the reports tracked on GitHub, with open/closed state and search by title or #number; click an entry to read its description, with a link to its GitHub page.
+- Sending a report that looks like an existing one shows the similar reports first, each readable in place; Send anyway sends it, and editing the title or description checks again.
+
 ## Fixes
 
 - "+X to Melee, Ranged, Area of Effect and Orbit Skills" on items now raise the ranks of skills with that tag; before, they did nothing.

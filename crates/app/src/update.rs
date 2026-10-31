@@ -417,7 +417,7 @@ async fn download(
     Ok(path)
 }
 
-async fn read(mut response: Response<AsyncBody>) -> anyhow::Result<Vec<u8>> {
+pub(crate) async fn read(mut response: Response<AsyncBody>) -> anyhow::Result<Vec<u8>> {
     let status = response.status();
     let mut body = Vec::new();
     response.body_mut().read_to_end(&mut body).await?;
