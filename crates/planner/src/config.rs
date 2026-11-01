@@ -1579,10 +1579,9 @@ impl ConfigView {
                     (
                         augment.name.clone(),
                         match augment.period {
-                            Some(period) => trf(
-                                "planner.config.every_seconds",
-                                &[("0", period.to_string())],
-                            ),
+                            Some(period) => {
+                                trf("planner.config.every_seconds", &[("0", period.to_string())])
+                            }
                             None => format!("{chance}% · {}", augment.trigger.replace("on_", "")),
                         },
                     ),

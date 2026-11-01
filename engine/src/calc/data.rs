@@ -648,8 +648,14 @@ mod tests {
         }
         // Hero_Siege.exe: start + per level × L.
         let staticshot = get_augment("staticshot").unwrap();
-        assert_eq!(staticshot.tier(7).unwrap().stats["flat_lightning_skill_damage"], 6500.);
-        assert_eq!(get_augment("gut_rippers_spikeball").unwrap().trigger, "on_attack");
+        assert_eq!(
+            staticshot.tier(7).unwrap().stats["flat_lightning_skill_damage"],
+            6500.
+        );
+        assert_eq!(
+            get_augment("gut_rippers_spikeball").unwrap().trigger,
+            "on_attack"
+        );
     }
 
     #[test]
@@ -659,9 +665,7 @@ mod tests {
             assert!(skill.condition.is_some(), "{name} applies without a toggle");
             let passive = skill.passive_stats.as_ref().expect(name);
             let get = |map: &Option<crate::calc::types::StatMap>| {
-                map.as_ref()
-                    .and_then(|m| m.get(key).copied())
-                    .unwrap_or(0.)
+                map.as_ref().and_then(|m| m.get(key).copied()).unwrap_or(0.)
             };
             get(&passive.base) + get(&passive.per_rank) * rank
         };

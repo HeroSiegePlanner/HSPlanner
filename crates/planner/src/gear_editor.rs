@@ -1864,9 +1864,12 @@ impl GearView {
         div()
             .id(SharedString::from(format!("choice-{}", row.id)))
             .map(|view| match augment {
-                Some(augment) => view.cursor_tooltip_view(crate::item_tooltip::augment_tooltip(augment)),
+                Some(augment) => {
+                    view.cursor_tooltip_view(crate::item_tooltip::augment_tooltip(augment))
+                }
                 None => view.cursor_tooltip_view(move |window, cx| {
-                    gpui_kit::component::tooltip::Tooltip::new(description.clone()).build(window, cx)
+                    gpui_kit::component::tooltip::Tooltip::new(description.clone())
+                        .build(window, cx)
                 }),
             })
             .relative()
@@ -2611,7 +2614,11 @@ mod tests {
     fn runeword_ranges_get_their_own_roll_sliders() {
         let (rw, base) = data::runewords()
             .iter()
-            .filter(|rw| rw.stats.values().any(|v| v.as_ranged().0 != v.as_ranged().1))
+            .filter(|rw| {
+                rw.stats
+                    .values()
+                    .any(|v| v.as_ranged().0 != v.as_ranged().1)
+            })
             .find_map(|rw| {
                 data::data()
                     .items
@@ -2642,7 +2649,8 @@ mod tests {
         assert_eq!(entries.len(), ranged.len());
         let entry = &entries[0];
         assert_eq!(entry.bounds, rw.stats[&entry.stat].as_ranged());
-        item.runeword_overrides.insert(entry.stat.clone(), entry.bounds.0);
+        item.runeword_overrides
+            .insert(entry.stat.clone(), entry.bounds.0);
         let pinned = roll_entries(&item, base)
             .into_iter()
             .find(|e| e.key == entry.key)

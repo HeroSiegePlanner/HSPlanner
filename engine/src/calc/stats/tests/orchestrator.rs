@@ -1337,12 +1337,25 @@ fn timed_buff_stats_scale_by_uptime_with_skill_haste() {
             value: haste.into(),
         }];
         let mut input = empty_input(
-            &allocated, &inventory, &ranks, &buffs, &custom, &tree, &sockets, &conditions,
-            &subskills, &conditions,
+            &allocated,
+            &inventory,
+            &ranks,
+            &buffs,
+            &custom,
+            &tree,
+            &sockets,
+            &conditions,
+            &subskills,
+            &conditions,
         );
         input.class_id = Some(class);
         input.level = 50;
-        compute_build_stats(&input).stats.get(key).copied().unwrap_or((0.0, 0.0)).1
+        compute_build_stats(&input)
+            .stats
+            .get(key)
+            .copied()
+            .unwrap_or((0.0, 0.0))
+            .1
     };
     let gain = |class, skill, key, haste| {
         stat(class, skill, key, 1, haste) - stat(class, skill, key, 0, haste)

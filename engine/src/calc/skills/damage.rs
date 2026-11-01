@@ -561,16 +561,15 @@ fn compute_skill_damage_with_rank(
     // LoadAllModifiers selects stat235 when the owning skill's damage types
     // include physical, otherwise stat236. Spell tags do not decide this:
     // Blade Barrier is a Spell with physical + arcane damage.
-    let elemental_break_source = if s.attack_scaling.is_some()
-        || s.damage_type.as_deref() == Some("physical")
-    {
-        "elemental_break_on_strike"
-    } else {
-        "elemental_break_on_spell"
-    };
+    let elemental_break_source =
+        if s.attack_scaling.is_some() || s.damage_type.as_deref() == Some("physical") {
+            "elemental_break_on_strike"
+        } else {
+            "elemental_break_on_spell"
+        };
     let elemental_break_pct = if is_elemental {
-        let base = r_max(rg(input.stats, "elemental_break"))
-            + r_max(rg(input.scoped, "elemental_break"));
+        let base =
+            r_max(rg(input.stats, "elemental_break")) + r_max(rg(input.scoped, "elemental_break"));
         let on = r_max(rg(input.stats, elemental_break_source))
             + r_max(rg(input.scoped, elemental_break_source));
         (base + on).max(0.0)
@@ -622,7 +621,6 @@ fn compute_skill_damage_with_rank(
         input.stats,
         input.scoped,
     );
-
 
     // The runtime elemental path adds the intercept after the rank/flat
     // term's synergy and generic modifiers. Only verified metadata opts in.
@@ -715,10 +713,7 @@ fn compute_skill_damage_with_rank(
     } else {
         generic_rounded
     };
-    let target_mult = extra_mult
-        * damage_taken_mult
-        * combined_break_mult
-        * resistance_mult;
+    let target_mult = extra_mult * damage_taken_mult * combined_break_mult * resistance_mult;
     let cast_hit = |value: f64| {
         if staged_elemental {
             value.floor()
@@ -995,10 +990,7 @@ fn compute_skill_damage_with_rank(
     stat_inputs(
         &mut calculation,
         input.stats,
-        [
-            "elemental_break",
-            elemental_break_source,
-        ],
+        ["elemental_break", elemental_break_source],
     );
     calculation.push(CalculationStep::new(
         "Elemental Break %",

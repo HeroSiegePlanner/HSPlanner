@@ -132,7 +132,15 @@ fn parity_with_ts_fixtures() {
 // derive from those totals are re-baselined; damage and all other rows stay archived.
 fn rebaseline_attribute_conversions(actual: &Value, expected: &mut Value) {
     // Strength feeds Attack Damage (StatAttackDamage), not Enhanced Damage.
-    for key in ["crit_damage", "life", "mana", "life_replenish", "mana_replenish", "attack_damage", "enhanced_damage"] {
+    for key in [
+        "crit_damage",
+        "life",
+        "mana",
+        "life_replenish",
+        "mana_replenish",
+        "attack_damage",
+        "enhanced_damage",
+    ] {
         expected["stats"][key] = actual["stats"][key].clone();
     }
     if let Some(entries) = actual["ehp"]["entries"].as_array() {
@@ -144,7 +152,16 @@ fn rebaseline_attribute_conversions(actual: &Value, expected: &mut Value) {
         return;
     };
     for (id, cost) in costs {
-        for field in ["manaRegenMin", "manaRegenMax", "netMin", "netMax", "uptimeMin", "uptimeMax", "sustainable", "unsustainable"] {
+        for field in [
+            "manaRegenMin",
+            "manaRegenMax",
+            "netMin",
+            "netMax",
+            "uptimeMin",
+            "uptimeMax",
+            "sustainable",
+            "unsustainable",
+        ] {
             if !expected["skillCosts"][id].is_null() {
                 expected["skillCosts"][id][field] = cost[field].clone();
             }
@@ -170,14 +187,23 @@ fn rebaseline_cast_speed(input: &Value, actual: &Value, expected: &mut Value) {
         if expected["skillCosts"][id].is_null() {
             continue;
         }
-        for field in ["baseRate", "castRateMin", "castRateMax", "manaPerSecMin", "manaPerSecMax"] {
+        for field in [
+            "baseRate",
+            "castRateMin",
+            "castRateMax",
+            "manaPerSecMin",
+            "manaPerSecMax",
+        ] {
             expected["skillCosts"][id][field] = cost[field].clone();
         }
     }
     for (field, ratio) in [
-        ("hitDpsMin", ratio_min), ("hitDpsMax", ratio_max),
-        ("avgHitDpsMin", ratio_min), ("avgHitDpsMax", ratio_max),
-        ("combinedDpsMin", ratio_min), ("combinedDpsMax", ratio_max),
+        ("hitDpsMin", ratio_min),
+        ("hitDpsMax", ratio_max),
+        ("avgHitDpsMin", ratio_min),
+        ("avgHitDpsMax", ratio_max),
+        ("combinedDpsMin", ratio_min),
+        ("combinedDpsMax", ratio_max),
     ] {
         if let (Some(r), Some(v)) = (ratio, expected[field].as_f64()) {
             expected[field] = serde_json::json!(v * r);
@@ -202,9 +228,12 @@ fn rebaseline_dummy_hits(input: &Value, actual: &Value, expected: &mut Value) {
     }
     for field in [
         "hitsPerCast",
-        "hitDpsMin", "hitDpsMax",
-        "avgHitDpsMin", "avgHitDpsMax",
-        "combinedDpsMin", "combinedDpsMax",
+        "hitDpsMin",
+        "hitDpsMax",
+        "avgHitDpsMin",
+        "avgHitDpsMax",
+        "combinedDpsMin",
+        "combinedDpsMax",
     ] {
         expected[field] = actual[field].clone();
     }

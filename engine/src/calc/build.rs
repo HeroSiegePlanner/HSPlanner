@@ -203,7 +203,8 @@ fn effective_projectile_count(
 /// ceil(T) frames after activation, the next every ceil(T) + 1 frames.
 /// `active` = frames from activation (deadly, 2 frames after creation) to destruction.
 pub(crate) fn tick_hits(active: u32, tick_frames: f64, first_overlap: u32, max_ticks: u32) -> u32 {
-    let (mut tick, mut cooldown, mut hit_map, mut hits, mut ticks) = (0.0_f64, 0u32, false, 0u32, 0u32);
+    let (mut tick, mut cooldown, mut hit_map, mut hits, mut ticks) =
+        (0.0_f64, 0u32, false, 0u32, 0u32);
     let mut deadly = true;
     for f in 0..active {
         if cooldown > 0 {
@@ -290,7 +291,12 @@ fn subskill_dummy_adjustment(
         }
         for e in &dummy.effects {
             if let Some(req) = e.requires.as_deref() {
-                if subskill_ranks.get(&subskill_key(&spec.id, req)).copied().unwrap_or(0) == 0 {
+                if subskill_ranks
+                    .get(&subskill_key(&spec.id, req))
+                    .copied()
+                    .unwrap_or(0)
+                    == 0
+                {
                     continue;
                 }
             }
@@ -325,7 +331,10 @@ fn subskill_dummy_adjustment(
                     rank,
                     e.kind,
                     number(v),
-                    e.per.as_deref().map(|p| format!(" per {}", p)).unwrap_or_default(),
+                    e.per
+                        .as_deref()
+                        .map(|p| format!(" per {}", p))
+                        .unwrap_or_default(),
                     dummy.confidence.as_deref().unwrap_or("?")
                 ));
             }
@@ -378,8 +387,13 @@ fn attack_action_rate_override(
     let base = rg(stats, "attacks_per_second");
     let ias = rg(stats, "increased_attack_speed");
     let more = rg(stats, "increased_attack_speed_more");
-    let rate = |b: f64, i: f64, m: f64| (super::skills::attack_rate(b.max(0.0), i) * (1.0 + m / 100.0)).max(0.0);
-    Some((gate.0.min(rate(base.0, ias.0, more.0)), gate.1.min(rate(base.1, ias.1, more.1))))
+    let rate = |b: f64, i: f64, m: f64| {
+        (super::skills::attack_rate(b.max(0.0), i) * (1.0 + m / 100.0)).max(0.0)
+    };
+    Some((
+        gate.0.min(rate(base.0, ias.0, more.0)),
+        gate.1.min(rate(base.1, ias.1, more.1)),
+    ))
 }
 
 /// Trigger cadence is independent of the damage dealt by the triggered skill.
@@ -464,7 +478,13 @@ fn augment_buff_uptimes(
         ) {
             continue;
         }
-        let rate = augment_trigger_rate(&aug.trigger, activation, actions, contacts, deps.kills_per_sec);
+        let rate = augment_trigger_rate(
+            &aug.trigger,
+            activation,
+            actions,
+            contacts,
+            deps.kills_per_sec,
+        );
         let interval = aug.proc_cooldown.unwrap_or(0.0).max(ITEM_PROC_ICD_SECS);
         let uptime = |rate: f64| ((rate * chance / 100.0).min(1.0 / interval) * duration).min(1.0);
         let uptime = (uptime(rate.0), uptime(rate.1));
@@ -523,7 +543,12 @@ fn augment_hit(
         let more = rg(stats, &format!("{element}_skill_damage_more"));
         let res = deps.enemy_resistances.get(element).copied().unwrap_or(0.0);
         let scale = |add: f64, more: f64| {
-            value * synergy * (1.0 + add / 100.0) * (1.0 + more / 100.0) * extra * (1.0 - res / 100.0)
+            value
+                * synergy
+                * (1.0 + add / 100.0)
+                * (1.0 + more / 100.0)
+                * extra
+                * (1.0 - res / 100.0)
         };
         hit.0 += scale(r_min(add), r_min(more));
         hit.1 += scale(r_max(add), r_max(more));
@@ -567,7 +592,6 @@ struct ProcContext<'a> {
     empty_scoped: &'a StatMap,
 }
 
-
 fn append_subskill_notes(
     skill: &SkillSpec,
     ranks: &HashMap<String, u32>,
@@ -582,7 +606,9 @@ fn append_subskill_notes(
         {
             if let Some(note) = node.calculation_note.as_deref() {
                 // The dps_cards dummy model now counts these contacts.
-                let note = if node.counts_dummy_hits() && note.contains("excluded from displayed DPS") {
+                let note = if node.counts_dummy_hits()
+                    && note.contains("excluded from displayed DPS")
+                {
                     format!("{} Superseded: the dps_cards dummy model counts these contacts (see Subskill dummy effects).", note)
                 } else {
                     note.to_string()
@@ -892,7 +918,9 @@ pub(crate) fn performance_from_stats(
                     .iter()
                     .flatten()
                     .filter(|n| n.counts_dummy_hits())
-                    .filter(|n| super::stats::attributes::node_weapon_ok(&s.id, &n.id, &weapon_kind))
+                    .filter(|n| {
+                        super::stats::attributes::node_weapon_ok(&s.id, &n.id, &weapon_kind)
+                    })
                     .map(|n| {
                         let rank = deps
                             .subskill_ranks
@@ -1211,7 +1239,10 @@ pub(crate) fn performance_from_stats(
         (Some(swing.min), Some(swing.max))
     } else {
         let (base_rate, rate_bonus) = if active_skill.is_some_and(|s| s.uses_attack_speed) {
-            (Some(r_max(stat("attacks_per_second"))), stat("increased_attack_speed"))
+            (
+                Some(r_max(stat("attacks_per_second"))),
+                stat("increased_attack_speed"),
+            )
         } else if active_skill.is_some_and(|s| s.uses_skill_haste) {
             // Cooldown-gated cast: one cast per cooldown, and skill haste is what shortens it.
             (
@@ -1223,7 +1254,10 @@ pub(crate) fn performance_from_stats(
                 (stat("skill_haste").0 * 0.5, stat("skill_haste").1 * 0.5),
             )
         } else {
-            (active_skill.and_then(|s| s.base_cast_rate), stat("faster_cast_rate"))
+            (
+                active_skill.and_then(|s| s.base_cast_rate),
+                stat("faster_cast_rate"),
+            )
         };
         let base_rate_min = if active_skill.is_some_and(|s| s.uses_attack_speed) {
             Some(stat("attacks_per_second").0)
@@ -1243,7 +1277,10 @@ pub(crate) fn performance_from_stats(
         let more = match active_skill {
             Some(s) if s.uses_attack_speed => {
                 let mut merged = computed.stats.clone();
-                merged.insert("skill_attack_speed_more".into(), rg(main_scoped, "skill_attack_speed_more"));
+                merged.insert(
+                    "skill_attack_speed_more".into(),
+                    rg(main_scoped, "skill_attack_speed_more"),
+                );
                 super::skills::attack_speed_more(&merged)
             }
             Some(s) if s.uses_skill_haste => (0.0, 0.0),
@@ -1423,7 +1460,11 @@ pub(crate) fn performance_from_stats(
             None => dh.base + dh.per_extra_projectile * converted.min(n - base_n),
         };
         // A card transformation already counts every wave of the use.
-        let waves = if sub.set_hits.is_some() { 1.0 } else { wave_factor };
+        let waves = if sub.set_hits.is_some() {
+            1.0
+        } else {
+            wave_factor
+        };
         let per_use = ((per_hit_base * (1.0 + sub.extra_per_hit) + sub.extra_per_use)
             * sub.hits_mult)
             .max(0.0)
@@ -1635,8 +1676,7 @@ pub(crate) fn performance_from_stats(
     // Switched-on augment buffs that proc less often than they last are rerun
     // at their uptime, once: the second pass keeps this pass's trigger rates.
     if !AugmentUptimeScope::active() {
-        let uptimes =
-            augment_buff_uptimes(deps, proc_activation, player_actions, proc_contacts);
+        let uptimes = augment_buff_uptimes(deps, proc_activation, player_actions, proc_contacts);
         if !uptimes.is_empty() {
             let _scope = AugmentUptimeScope::enter(uptimes);
             return performance_from_stats(deps, compute_stats_for_skill(deps, deps.main_skill_id));
@@ -1800,7 +1840,8 @@ pub(crate) fn performance_from_stats(
                 continue;
             }
             if proc.trigger == "on_attack"
-                && active_skill.is_some_and(|skill| normalize_skill_name(&skill.name) == target_name)
+                && active_skill
+                    .is_some_and(|skill| normalize_skill_name(&skill.name) == target_name)
             {
                 continue;
             }
@@ -1965,7 +2006,11 @@ pub(crate) fn performance_from_stats(
                 let lightning = active_skill
                     .and_then(|s| s.damage_type.as_deref())
                     .is_some_and(|t| t.eq_ignore_ascii_case("lightning"));
-                let res = deps.enemy_resistances.get("lightning").copied().unwrap_or(0.0);
+                let res = deps
+                    .enemy_resistances
+                    .get("lightning")
+                    .copied()
+                    .unwrap_or(0.0);
                 let scale = if lightning {
                     share / 100.0 * (1.0 - res / 100.0)
                 } else {

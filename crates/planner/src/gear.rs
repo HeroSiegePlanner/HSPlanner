@@ -26,12 +26,12 @@ pub(crate) mod editor;
 
 #[path = "gear_import.rs"]
 mod import;
-#[path = "gear_suggest.rs"]
-mod suggest;
 #[path = "gear_picker.rs"]
 pub(crate) mod picker;
 #[path = "gear_presentation.rs"]
 pub(crate) mod presentation;
+#[path = "gear_suggest.rs"]
+mod suggest;
 use std::{collections::HashMap, sync::Arc};
 
 include!(concat!(env!("OUT_DIR"), "/item-icons.rs"));
@@ -1226,7 +1226,13 @@ mod control_tests {
         };
         let mut item = EquippedItem::default();
         let mut observed = 20.;
-        assert!(apply_roll_value(&mut item, &target, &mut observed, 15., false));
+        assert!(apply_roll_value(
+            &mut item,
+            &target,
+            &mut observed,
+            15.,
+            false
+        ));
         assert_eq!(item.runeword_overrides.get("life"), Some(&15.));
         assert!(item.implicit_overrides.is_empty());
     }

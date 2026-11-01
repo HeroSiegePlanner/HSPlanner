@@ -439,7 +439,13 @@ pub(crate) fn collect_extra_damage(
         && is_condition_active("extra_damage_low_life", Some(enemy_conditions))
     {
         let mut low = 0.0;
-        push_source(stats, "extra_damage_low_life", "Low Life (physical, separate)", &mut low, &mut sources);
+        push_source(
+            stats,
+            "extra_damage_low_life",
+            "Low Life (physical, separate)",
+            &mut low,
+            &mut sources,
+        );
         if low > 0.0 {
             factor *= 1.0 + low / 100.0;
         }

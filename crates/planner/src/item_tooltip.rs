@@ -832,7 +832,9 @@ pub(crate) fn build_model(
                 let mut stats: Vec<(&String, &f64)> = tier
                     .stats
                     .iter()
-                    .filter(|(k, v)| **v != 0. && !(k.starts_with("max_") && k.ends_with("_stacks")))
+                    .filter(|(k, v)| {
+                        **v != 0. && !(k.starts_with("max_") && k.ends_with("_stacks"))
+                    })
                     .collect();
                 stats.sort_by(|a, b| a.0.cmp(b.0));
                 sections.push(Section::titled(
@@ -1050,10 +1052,16 @@ pub(crate) fn augment_model(augment: &AngelicAugment) -> ItemTooltipModel {
 
     let mut facts = Vec::new();
     if let Some(chance) = first.and_then(|tier| tier.proc_chance) {
-        facts.push((format!("{}%", num(chance)), augment.trigger.replace('_', " ")));
+        facts.push((
+            format!("{}%", num(chance)),
+            augment.trigger.replace('_', " "),
+        ));
     }
     if let Some(cooldown) = augment.proc_cooldown.or(augment.period) {
-        facts.push((format!("{} s", num(cooldown)), tr("item.flask_cooldown").to_owned()));
+        facts.push((
+            format!("{} s", num(cooldown)),
+            tr("item.flask_cooldown").to_owned(),
+        ));
     }
     if let Some(duration) = range(&|tier| tier.proc_duration_sec) {
         facts.push((span(duration, " s"), tr("item.potion_duration").to_owned()));
@@ -1184,7 +1192,9 @@ fn augment_stat_line(key: &str, value: Ranged) -> String {
 }
 
 /// Picker rows for augments: the rich augment card instead of a text tooltip.
-pub(crate) fn augment_tooltip(augment: &'static AngelicAugment) -> impl Fn(&mut Window, &mut App) -> AnyView {
+pub(crate) fn augment_tooltip(
+    augment: &'static AngelicAugment,
+) -> impl Fn(&mut Window, &mut App) -> AnyView {
     move |_, cx| cx.new(|_| ItemTooltip::new(augment_model(augment))).into()
 }
 
@@ -1942,23 +1952,29 @@ fn render_panel(model: &ItemTooltipModel, embedded: bool, window: &Window, cx: &
                                 }),
                         ),
                 )
-                .children(model.icon.clone().or_else(|| item_icon(&model.image_id)).map(|icon| {
-                    div()
-                        .absolute()
-                        .right_2()
-                        .top_0()
-                        .bottom_0()
-                        .w(units(48.))
-                        .flex()
-                        .items_center()
-                        .justify_center()
-                        .child(
-                            img(icon)
-                                .max_w_full()
-                                .max_h(units(48.))
-                                .object_fit(ObjectFit::Contain),
-                        )
-                })),
+                .children(
+                    model
+                        .icon
+                        .clone()
+                        .or_else(|| item_icon(&model.image_id))
+                        .map(|icon| {
+                            div()
+                                .absolute()
+                                .right_2()
+                                .top_0()
+                                .bottom_0()
+                                .w(units(48.))
+                                .flex()
+                                .items_center()
+                                .justify_center()
+                                .child(
+                                    img(icon)
+                                        .max_w_full()
+                                        .max_h(units(48.))
+                                        .object_fit(ObjectFit::Contain),
+                                )
+                        }),
+                ),
         );
     for (index, section) in model.sections.iter().enumerate() {
         let mut block = div().px_3().py_2().when(index > 0, |v| {
@@ -2252,8 +2268,18 @@ mod tests {
         let dodger = augment_model(data::get_augment("artful_dodger").unwrap());
         assert_eq!(dodger.name, "Artful Dodger");
         assert_eq!(dodger.type_line, "Angelic Augment");
-        assert!(lines(&dodger).iter().any(|l| l == "+[8-56]% Enhanced Damage"), "{:?}", lines(&dodger));
-        assert!(lines(&dodger).iter().any(|l| l == "Counts while switched on in Config"));
+        assert!(
+            lines(&dodger)
+                .iter()
+                .any(|l| l == "+[8-56]% Enhanced Damage"),
+            "{:?}",
+            lines(&dodger)
+        );
+        assert!(
+            lines(&dodger)
+                .iter()
+                .any(|l| l == "Counts while switched on in Config")
+        );
 
         let staticshot = augment_model(data::get_augment("staticshot").unwrap());
         let facts: Vec<(String, String)> = staticshot
@@ -2267,22 +2293,42 @@ mod tests {
             .flatten()
             .collect();
         assert_eq!(facts[0], ("22%".to_owned(), "on strike".to_owned()));
-        assert!(lines(&staticshot).iter().any(|l| l.contains("+100% damage per level")), "{:?}", lines(&staticshot));
+        assert!(
+            lines(&staticshot)
+                .iter()
+                .any(|l| l.contains("+100% damage per level")),
+            "{:?}",
+            lines(&staticshot)
+        );
 
         let tempest = augment_model(data::get_augment("tempest_strikes").unwrap());
-        assert!(lines(&tempest).iter().any(|l| l == "+[0.02-0.14]% Attack Speed per stack"), "{:?}", lines(&tempest));
+        assert!(
+            lines(&tempest)
+                .iter()
+                .any(|l| l == "+[0.02-0.14]% Attack Speed per stack"),
+            "{:?}",
+            lines(&tempest)
+        );
         let elementalist = augment_model(data::get_augment("elementalist").unwrap());
-        assert!(lines(&elementalist).iter().any(|l| l == "+[0.1-0.7]% Magic Skill Damage per 100 maximum mana"), "{:?}", lines(&elementalist));
+        assert!(
+            lines(&elementalist)
+                .iter()
+                .any(|l| l == "+[0.1-0.7]% Magic Skill Damage per 100 maximum mana"),
+            "{:?}",
+            lines(&elementalist)
+        );
         let shield = augment_model(data::get_augment("survivors_shield").unwrap());
         assert_eq!(shield.name, "Survivor's Shield");
         assert!(shield.sections.iter().flat_map(|s| &s.lines).any(|line| matches!(line,
             Line::Facts(facts) if facts.contains(&("0.5–3.5 s".to_owned(), "immunity".to_owned())))));
 
         let monstrosity = augment_model(data::get_augment("monstrosity").unwrap());
-        assert!(monstrosity
-            .sections
-            .iter()
-            .any(|section| section.header.as_ref().is_some_and(|(title, _, _)| title == "At full stacks")));
+        assert!(monstrosity.sections.iter().any(|section| {
+            section
+                .header
+                .as_ref()
+                .is_some_and(|(title, _, _)| title == "At full stacks")
+        }));
     }
 
     #[::core::prelude::v1::test]
@@ -2302,16 +2348,27 @@ mod tests {
                 .iter()
                 .flat_map(|section| &section.lines)
                 .find_map(|line| match line {
-                    Line::Entry { title, desc, .. } if title == &data::get_augment(id).unwrap().name => {
+                    Line::Entry { title, desc, .. }
+                        if title == &data::get_augment(id).unwrap().name =>
+                    {
                         Some(desc.clone())
                     }
                     _ => None,
                 })
                 .unwrap()
         };
-        assert_eq!(desc("staticshot").as_deref(), Some("22% on strike · deals its own hit"));
-        assert_eq!(desc("lethal_tempo").as_deref(), Some("Counts while switched on in Config"));
-        assert_eq!(desc("zapper").as_deref(), Some("8% on strike · deals its own hit"));
+        assert_eq!(
+            desc("staticshot").as_deref(),
+            Some("22% on strike · deals its own hit")
+        );
+        assert_eq!(
+            desc("lethal_tempo").as_deref(),
+            Some("Counts while switched on in Config")
+        );
+        assert_eq!(
+            desc("zapper").as_deref(),
+            Some("8% on strike · deals its own hit")
+        );
         assert_eq!(desc("precision"), None);
     }
 
@@ -2337,10 +2394,12 @@ mod tests {
                 &("1".to_owned(), "charge".to_owned()),
             ]
         );
-        assert!(model.sections.iter().all(|section| section
-            .header
-            .as_ref()
-            .is_none_or(|(title, _, _)| title != tr("item.not_supported"))));
+        assert!(model.sections.iter().all(|section| {
+            section
+                .header
+                .as_ref()
+                .is_none_or(|(title, _, _)| title != tr("item.not_supported"))
+        }));
     }
 
     #[::core::prelude::v1::test]

@@ -148,9 +148,9 @@ pub fn cooldown_rate(skill: &SkillSpec, cooldown: f64, haste: Ranged) -> Ranged 
 pub fn animation_locked(skill: &SkillSpec) -> bool {
     skill.speed_path.is_some()
         && !skill
-        .tags
-        .as_ref()
-        .is_some_and(|tags| tags.iter().any(|t| t == "Movement" || t == "Blink"))
+            .tags
+            .as_ref()
+            .is_some_and(|tags| tags.iter().any(|t| t == "Movement" || t == "Blink"))
 }
 
 /// Sequence speed S of the use animation (TalentUseSetSpeed image_speed): the
@@ -158,7 +158,10 @@ pub fn animation_locked(skill: &SkillSpec) -> bool {
 pub fn sequence_speed(skill: &SkillSpec, stats: &StatMap, scoped: &StatMap) -> Ranged {
     if skill.speed_path.as_deref() == Some("attack") {
         let mut merged = stats.clone();
-        merged.insert("skill_attack_speed_more".into(), rg(scoped, "skill_attack_speed_more"));
+        merged.insert(
+            "skill_attack_speed_more".into(),
+            rg(scoped, "skill_attack_speed_more"),
+        );
         let more = crate::calc::skills::attack_speed_more(&merged);
         let base = rg(stats, "attacks_per_second");
         let ias = rg(stats, "increased_attack_speed");
@@ -224,9 +227,17 @@ pub fn use_period_rate(skill: &SkillSpec, stats: &StatMap, scoped: &StatMap) -> 
     let period = skill.use_period.as_ref()?;
     let speed = sequence_speed(skill, stats, scoped);
     let rate = |s: f64| {
-        let trigger = if period.trigger == Some(false) { 0.0 } else { crate::calc::skills::trigger_frames(s) };
+        let trigger = if period.trigger == Some(false) {
+            0.0
+        } else {
+            crate::calc::skills::trigger_frames(s)
+        };
         let frames = trigger + period.extra_frames.max(0.0);
-        if frames > 0.0 { 60.0 / frames } else { 0.0 }
+        if frames > 0.0 {
+            60.0 / frames
+        } else {
+            0.0
+        }
     };
     Some((rate(speed.0), rate(speed.1)))
 }
@@ -705,7 +716,10 @@ mod tests {
         let skill = thunder_fury();
         let plain = cost(&skill, 5.0, &stats(&[]));
         let twin = cost(&skill, 5.0, &stats(&[("skill_mana_cost_more", 50.0)]));
-        assert!(close(twin.base_mana_max.unwrap(), plain.base_mana_max.unwrap() * 1.5));
+        assert!(close(
+            twin.base_mana_max.unwrap(),
+            plain.base_mana_max.unwrap() * 1.5
+        ));
     }
 
     #[test]
@@ -784,8 +798,14 @@ mod tests {
         let slow_weapon = cost(buckshot, 1.0, &bonuses);
         // Swing speeds 0.1 / 0.24; the use animation (METODA 37) then allows
         // 60 / (ceil(72 / S) + 1) uses per second.
-        assert!(close(slow_weapon.cast_rate_min.unwrap(), crate::calc::skills::animation_lock_rate(0.1)));
-        assert!(close(slow_weapon.cast_rate_max.unwrap(), crate::calc::skills::animation_lock_rate(0.24)));
+        assert!(close(
+            slow_weapon.cast_rate_min.unwrap(),
+            crate::calc::skills::animation_lock_rate(0.1)
+        ));
+        assert!(close(
+            slow_weapon.cast_rate_max.unwrap(),
+            crate::calc::skills::animation_lock_rate(0.24)
+        ));
     }
 
     #[test]

@@ -968,7 +968,10 @@ fn on_hit_subproc_counts_projectiles_and_repeated_contacts() {
     build.projectiles.insert("lightning_surge".into(), 3);
     close(build.run().proc_dps_max, base.proc_dps_max * 2.0);
     build.stat("faster_cast_rate", "100");
-    close(build.run().proc_dps_max, base.proc_dps_max * 2.0 * 43.0 / 28.0);
+    close(
+        build.run().proc_dps_max,
+        base.proc_dps_max * 2.0 * 43.0 / 28.0,
+    );
 }
 
 #[test]
@@ -1097,7 +1100,10 @@ fn attack_speed_spells_preserve_both_weapon_rate_endpoints_for_damage_and_cost()
             .find(|step| step.label() == "Actions per second")
             .unwrap()
             .value();
-        let locked = (crate::calc::skills::animation_lock_rate(weapon_rate.0), crate::calc::skills::animation_lock_rate(weapon_rate.1));
+        let locked = (
+            crate::calc::skills::animation_lock_rate(weapon_rate.0),
+            crate::calc::skills::animation_lock_rate(weapon_rate.1),
+        );
         assert_eq!(actions, locked, "{skill}");
         let cost = &result.skill_costs[skill];
         assert_eq!(

@@ -796,8 +796,17 @@ impl SubskillNodeSpec {
         }
         let r = rank as f64;
         let of = |e: &SubskillEffectSpec| {
-            e.base.as_ref().and_then(|m| m.get(key)).copied().unwrap_or(0.0)
-                + e.per_rank.as_ref().and_then(|m| m.get(key)).copied().unwrap_or(0.0) * r
+            e.base
+                .as_ref()
+                .and_then(|m| m.get(key))
+                .copied()
+                .unwrap_or(0.0)
+                + e.per_rank
+                    .as_ref()
+                    .and_then(|m| m.get(key))
+                    .copied()
+                    .unwrap_or(0.0)
+                    * r
         };
         let own = self.effects.as_ref().map(of).unwrap_or(0.0);
         let proc = self.proc.as_ref().map_or(0.0, |p| {

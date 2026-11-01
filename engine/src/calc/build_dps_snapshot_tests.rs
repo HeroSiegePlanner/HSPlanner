@@ -7,10 +7,30 @@
 use super::*;
 
 const CLASSES: [&str; 24] = [
-    "amazon", "bard", "butcher", "demon_slayer", "demonspawn", "exo", "illusionist", "jotunn",
-    "marauder", "marksman", "necromancer", "nomad", "paladin", "pirate", "plague_doctor",
-    "prophet", "pyromancer", "redneck", "samurai", "shaman", "shield_lancer", "stormweaver",
-    "viking", "white_mage",
+    "amazon",
+    "bard",
+    "butcher",
+    "demon_slayer",
+    "demonspawn",
+    "exo",
+    "illusionist",
+    "jotunn",
+    "marauder",
+    "marksman",
+    "necromancer",
+    "nomad",
+    "paladin",
+    "pirate",
+    "plague_doctor",
+    "prophet",
+    "pyromancer",
+    "redneck",
+    "samurai",
+    "shaman",
+    "shield_lancer",
+    "stormweaver",
+    "viking",
+    "white_mage",
 ];
 
 fn step_value(perf: &BuildPerformance, label: &str) -> Option<Ranged> {
@@ -30,7 +50,8 @@ fn fmt(v: Option<f64>) -> String {
 fn dps_snapshot() {
     let out = std::env::var("HSP_DPS_SNAPSHOT").unwrap_or_else(|_| "dps_snapshot.csv".into());
     let mut rows = vec![
-        "class,skill,name,actions_per_s,hits_per_cast,hit_avg,hit_dps,combined_dps,dummy_conf".to_string(),
+        "class,skill,name,actions_per_s,hits_per_cast,hit_avg,hit_dps,combined_dps,dummy_conf"
+            .to_string(),
     ];
     // Reference build: level 100, skill rank 20, no gear, no subskills; weapon
     // requirements lifted so attack skills still report.
@@ -92,7 +113,11 @@ fn dps_snapshot() {
             let rate = step_value(&perf, "Actions per second")
                 .or_else(|| step_value(&perf, "Entity actions per second"))
                 .map(|r| r.1)
-                .or_else(|| perf.attack_damage.as_ref().map(|a| a.attacks_per_second_max));
+                .or_else(|| {
+                    perf.attack_damage
+                        .as_ref()
+                        .map(|a| a.attacks_per_second_max)
+                });
             rows.push(format!(
                 "{class},{},{},{},{},{},{},{},{}",
                 spec.id,
@@ -109,9 +134,10 @@ fn dps_snapshot() {
                     .or(perf.damage.as_ref().map(|d| d.avg_max as f64))),
                 fmt(perf.hit_dps_max),
                 fmt(perf.combined_dps_max),
-                spec.dummy_hits
-                    .as_ref()
-                    .map_or("-".to_string(), |d| d.confidence.clone().unwrap_or_default()),
+                spec.dummy_hits.as_ref().map_or("-".to_string(), |d| d
+                    .confidence
+                    .clone()
+                    .unwrap_or_default()),
             ));
         }
     }
@@ -123,11 +149,21 @@ fn dps_snapshot() {
 fn tick_hits_matches_rule_20_table() {
     // tools/tick_hits.py: (lifetime s, tick s) -> hits, active = life*60 - 2.
     for (life, tick, want) in [
-        (1.25, 0.5, 3), (1.0, 0.5, 2), (2.0, 0.5, 4), (3.0, 0.5, 6),
-        (4.0, 0.33, 12), (4.5, 0.4, 11), (5.0, 0.25, 19), (2.25, 0.5, 5),
+        (1.25, 0.5, 3),
+        (1.0, 0.5, 2),
+        (2.0, 0.5, 4),
+        (3.0, 0.5, 6),
+        (4.0, 0.33, 12),
+        (4.5, 0.4, 11),
+        (5.0, 0.25, 19),
+        (2.25, 0.5, 5),
     ] {
         let active = (life * 60.0_f64).round() as u32 - 2;
-        assert_eq!(tick_hits(active, tick * 60.0, 0, 0), want, "{life} s / {tick} s");
+        assert_eq!(
+            tick_hits(active, tick * 60.0, 0, 0),
+            want,
+            "{life} s / {tick} s"
+        );
     }
 }
 
@@ -161,7 +197,9 @@ fn dummy_hits_with(class: &str, skill: &str, subskills: &[(&str, u32)]) -> f64 {
         granted_skill_ranks: None,
         difficulty: None,
     });
-    step_value(&perf, "Dummy hits per use").expect("dummy hits").1
+    step_value(&perf, "Dummy hits per use")
+        .expect("dummy hits")
+        .1
 }
 
 #[test]
