@@ -1409,6 +1409,42 @@ fn stash_equip_targets(
 mod stash_target_tests {
     use super::*;
     #[::core::prelude::v1::test]
+    fn every_item_has_an_icon_except_known_gaps() {
+        const KNOWN_GAPS: &[&str] = &[
+            "amulet_heroic_dragon_s_eye",
+            "amulets_normal_elven_necklace",
+            "amulets_normal_golden_amulet",
+            "amulets_normal_hawks_claw_amulet",
+            "amulets_normal_silver_necklace",
+            "amulets_normal_skull_trophy",
+            "base_melee_hatchet",
+            "base_throwing_short_spear",
+            "relic_relic_shocker_3000",
+            "relic_relic_snowball",
+            "relic_relic_soul_box",
+            "relic_relic_thief_s_glove",
+            "s10_leviathans_ribcage",
+            "shields_fallen_gladiators_shield",
+            "shields_gabriels_unholy_oath",
+            "w_throwing_crystal_infused_javelin",
+            "w_throwing_deep_sea_glaive",
+            "w_throwing_imperial_glaive",
+            "w_throwing_mimirs_corrupted_axe",
+            "w_throwing_valkyries_thunder_javelin",
+            "w_throwing_wakaykas_tomahawk",
+            "w_throwing_wargods_wrath",
+        ];
+        let mut missing: Vec<&str> = data::data()
+            .items
+            .values()
+            .map(|item| item.id.as_str())
+            .filter(|id| !ITEM_ICONS.iter().any(|(icon, _)| icon == id))
+            .collect();
+        missing.sort_unstable();
+        assert_eq!(missing, KNOWN_GAPS);
+    }
+
+    #[::core::prelude::v1::test]
     fn rings_offer_both_slots_even_when_automatic_target_is_first() {
         let ring = data::data()
             .items

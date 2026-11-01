@@ -391,6 +391,19 @@ mod tests {
     use super::*;
 
     #[test]
+    fn every_runeword_rune_exists() {
+        for runeword in runewords() {
+            for rune in &runeword.runes {
+                assert!(
+                    get_rune(rune).is_some(),
+                    "{} uses unknown rune {rune}",
+                    runeword.id
+                );
+            }
+        }
+    }
+
+    #[test]
     fn completed_runeword_adds_its_granted_skill_to_the_item() {
         let base = get_item("armors_normal_steel_armor").unwrap();
         let item = EquippedItem {
