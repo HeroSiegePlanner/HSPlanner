@@ -42,7 +42,5 @@ jobs:
           workspaces: '. -> target'
       - name: Workspace tests including native OCR
         run: cargo test --workspace --locked
-      - name: Engine and isolated integrations
-        run: cargo test -p HSPlanner --no-default-features --features ocr,suggestions --lib --examples --locked
       - name: Existing calculation fixtures
-        run: cargo test -p HSPlanner --no-default-features --test parity --locked
+        run: cargo test -p hsplanner-engine --no-default-features --test parity --locked

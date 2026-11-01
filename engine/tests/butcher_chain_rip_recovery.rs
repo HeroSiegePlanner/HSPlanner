@@ -1,5 +1,7 @@
-use app_lib::calc::commands::{calc_build_performance, calc_build_stats, BuildPerformanceInput};
-use app_lib::calc::types::{CustomStat, EquippedItem};
+use hsplanner_engine::calc::commands::{
+    calc_build_performance, calc_build_stats, BuildPerformanceInput,
+};
+use hsplanner_engine::calc::types::{CustomStat, EquippedItem};
 
 fn build(node_rank: u32, chainfueled: bool) -> BuildPerformanceInput {
     let mut input = BuildPerformanceInput {

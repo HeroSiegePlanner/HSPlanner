@@ -2,7 +2,7 @@
 //!
 //! Not an assertion test: run it to compare planner numbers before and after a
 //! model change.
-//! `HSP_DPS_SNAPSHOT=/path/out.csv cargo test -p HSPlanner dps_snapshot -- --ignored`
+//! `HSP_DPS_SNAPSHOT=/path/out.csv cargo test -p hsplanner-engine dps_snapshot -- --ignored`
 
 use super::*;
 

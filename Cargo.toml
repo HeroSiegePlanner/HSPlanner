@@ -12,7 +12,7 @@ publish = false
 [workspace.dependencies]
 hsplanner-notes={path="crates/notes"}
 hsplanner-library={path="crates/library"}
-hsplanner-engine = { package = "HSPlanner", path = "engine", default-features = false }
+hsplanner-engine = { path = "engine", default-features = false }
 hsplanner-build = { path = "crates/build" }
 hsplanner-planner = { path = "crates/planner" }
 hsplanner-ui = { path = "crates/ui" }
@@ -26,6 +26,7 @@ opt-level = 1
 
 [profile.dev.package."*"]
 opt-level = 2
+debug = false
 
 [profile.release]
 debug = 0

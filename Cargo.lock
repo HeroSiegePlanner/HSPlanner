@@ -3,19 +3,6 @@
 version = 4
 
 [[package]]
-name = "HSPlanner"
-version = "0.9.1"
-dependencies = [
- "image",
- "ocrs",
- "rayon",
- "regex",
- "rten",
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "accesskit"
 version = "0.24.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2979,10 +2966,10 @@ dependencies = [
 name = "hsplanner-build"
 version = "1.2.2-beta.2"
 dependencies = [
- "HSPlanner",
  "ammonia",
  "chrono",
  "fs2",
+ "hsplanner-engine",
  "html2md",
  "lz-str",
  "pulldown-cmark",
@@ -2995,12 +2982,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "hsplanner-engine"
+version = "1.2.2-beta.2"
+dependencies = [
+ "image",
+ "ocrs",
+ "rayon",
+ "regex",
+ "rten",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "hsplanner-library"
 version = "1.2.2-beta.2"
 dependencies = [
- "HSPlanner",
  "gpui-kit",
  "hsplanner-build",
+ "hsplanner-engine",
  "hsplanner-ui",
 ]
 
@@ -3017,9 +3017,9 @@ dependencies = [
 name = "hsplanner-planner"
 version = "1.2.2-beta.2"
 dependencies = [
- "HSPlanner",
  "gpui-kit",
  "hsplanner-build",
+ "hsplanner-engine",
  "hsplanner-ui",
  "image",
  "log",

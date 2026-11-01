@@ -1,4 +1,4 @@
-use app_lib::calc::{data, tree::parse::classify_tree_node_line};
+use hsplanner_engine::calc::{data, tree::parse::classify_tree_node_line};
 use std::collections::BTreeMap;
 
 fn main() {
