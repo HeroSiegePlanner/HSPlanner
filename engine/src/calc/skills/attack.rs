@@ -329,6 +329,15 @@ fn compute_attack_skill_damage_with_rank(
             });
 
     let (bound_flat, bound_multiplier) = super::damage_bound_bonuses(input.stats);
+    // Weapon damage stats 448/450 (Hydrangea) and 451 (Drax) scale weapon hits only, never spells.
+    let bound_flat = (
+        bound_flat.0 + rg(input.stats, "min_weapon_damage_flat").0,
+        bound_flat.1 + rg(input.stats, "max_weapon_damage_flat").1,
+    );
+    let bound_multiplier = (
+        bound_multiplier.0,
+        bound_multiplier.1 * (1.0 + rg(input.stats, "max_weapon_damage").1 / 100.0).max(0.0),
+    );
     // Lucifer's Crown's -300% all resistance drives damage-per-resist ED far below -100%.
     let base_min = w_min * (1.0 + r_min(ed) / 100.0).max(0.0) * (1.0 + r_min(ed_more) / 100.0)
         + r_min(add_phys)
@@ -663,6 +672,9 @@ fn compute_attack_skill_damage_with_rank(
             "maximum_damage_flat",
             "minimum_damage_pct",
             "maximum_damage_pct",
+            "min_weapon_damage_flat",
+            "max_weapon_damage_flat",
+            "max_weapon_damage",
             "attack_damage",
             "attack_damage_more",
             "armor_break",
@@ -1579,6 +1591,36 @@ mod tests {
         assert_eq!((d.physical_hit_min, d.physical_hit_max), (0, 0));
         assert_eq!(d.converted_elements[0].hit_min, 312);
         assert_eq!(d.converted_elements[0].hit_max, 464);
+    }
+
+    #[test]
+    fn weapon_damage_stats_raise_the_weapon_hit_bounds() {
+        let hit = |shared: &StatMap| {
+            let d = breakdown_for(
+                &skill(),
+                shared,
+                &StatMap::new(),
+                &SkillRanks::new(),
+                1,
+                0.0,
+            );
+            (d.physical_hit_min, d.physical_hit_max)
+        };
+        let (base_min, base_max) = hit(&StatMap::new());
+        let (drax_min, drax_max) = hit(&stats(&[("max_weapon_damage", 100.0)]));
+        assert_eq!(drax_min, base_min);
+        assert!(
+            (drax_max as f64 / base_max as f64 - 2.0).abs() < 0.02,
+            "{base_max} -> {drax_max}"
+        );
+        let (flat_min, flat_max) = hit(&stats(&[
+            ("min_weapon_damage_flat", 20.0),
+            ("max_weapon_damage_flat", 20.0),
+        ]));
+        assert!(
+            flat_min > base_min && flat_max > base_max,
+            "{base_min}–{base_max} -> {flat_min}–{flat_max}"
+        );
     }
 
     fn hit_max_with_conversion(conversion_flat: f64) -> i64 {

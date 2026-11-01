@@ -99,6 +99,19 @@ fn an_active_scorching_aura_adds_to_the_main_skills_dps() {
 }
 
 #[test]
+fn manahunger_reaches_the_aura_through_its_spell_tag() {
+    let (base, _) = hit_and_rate(&[], &[]);
+    let hungry = calc_build_performance(BuildPerformanceInput {
+        allocated_tree_nodes: [777].into(),
+        ..input(&[], &[])
+    })
+    .hit_damage()
+    .expect("Scorching Aura deals damage")
+    .1;
+    assert!((hungry / base - 1.25).abs() < 0.01, "{base} -> {hungry}");
+}
+
+#[test]
 fn an_aura_only_build_reports_the_auras_dps() {
     let mut build = input(&[], &[]);
     build.main_skill_id = None;

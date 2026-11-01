@@ -6,6 +6,7 @@ use crate::skill_details::stat_name;
 use gpui_kit::component::select::{Select, SelectEvent, SelectState};
 use gpui_kit::component::{Icon, IconName, IndexPath, Sizable};
 use hsplanner_engine::calc::commands::{RankSlotItemsInput, rank_slot_items};
+use hsplanner_engine::calc::planner::dps_skill_ids;
 use hsplanner_engine::calc::types::{ItemBase, RangedValue};
 use hsplanner_ui::controls::segment;
 use hsplanner_ui::tooltip::CursorTooltipExt;
@@ -416,6 +417,7 @@ impl GearView {
         };
         self.dps_pending = true;
         let planner = self.session.read(cx).snapshot().planner_input();
+        let active_skill_ids = dps_skill_ids(&planner);
         let input = RankSlotItemsInput {
             perf: planner.build,
             slot: self.slot.clone(),
@@ -424,7 +426,7 @@ impl GearView {
                 .iter()
                 .map(|row| row.base_id.clone())
                 .collect(),
-            active_skill_ids: planner.active_skill_ids,
+            active_skill_ids,
         };
         let task = cx.background_spawn(async move { rank_slot_items(input) });
         cx.spawn(async move |this, cx| {

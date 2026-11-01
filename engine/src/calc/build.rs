@@ -1103,7 +1103,11 @@ pub(crate) fn performance_from_stats(
             } else {
                 echo_stat.0.abs().min(echo_stat.1.abs())
             };
-            if echo_max > 0.0 && calc_skill.tags.iter().any(|tag| tag == "Spell") {
+            // A pulsing aura never passes through TalentUseClass, so it never echoes.
+            if echo_max > 0.0
+                && active_skill.is_none_or(|s| s.pulse_frames.is_none())
+                && calc_skill.tags.iter().any(|tag| tag == "Spell")
+            {
                 if is_attack_skill || super::affix_tags::is_entity(&calc_skill.tags) {
                     calculation.push(CalculationStep::new(
                         "Temporal Echo not yet modeled",

@@ -4877,7 +4877,7 @@
       ],
       "deadly_blow": 25,
       "attack_damage": 20,
-      "maximum_damage_pct": 3
+      "max_weapon_damage": 3
     },
     "procs": [
       {
@@ -4916,7 +4916,7 @@
       "mana_replenish_pct": 40,
       "magic_skill_damage": 15,
       "increased_mana": 20,
-      "maximum_damage_pct": 3
+      "max_weapon_damage": 3
     },
     "procs": [
       {
@@ -4973,7 +4973,7 @@
       "attack_damage": 20,
       "all_resistances": 8,
       "deadly_blow": 25,
-      "maximum_damage_pct": 3
+      "max_weapon_damage": 3
     },
     "procs": [
       {
@@ -5033,7 +5033,7 @@
       "attack_damage": 20,
       "all_resistances": 8,
       "deadly_blow": 25,
-      "maximum_damage_pct": 3
+      "max_weapon_damage": 3
     },
     "procs": [
       {
@@ -5078,7 +5078,7 @@
         15,
         25
       ],
-      "maximum_damage_pct": 3,
+      "max_weapon_damage": 3,
       "to_energy": 10,
       "mana_cost_reduction": 3,
       "attack_rating": 50
@@ -5126,7 +5126,7 @@
         30,
         40
       ],
-      "maximum_damage_pct": 3,
+      "max_weapon_damage": 3,
       "to_energy": 10,
       "mana_cost_reduction": 3,
       "attack_rating": 50
@@ -5447,11 +5447,11 @@
       "extra_damage_poisoned": 15,
       "increased_attack_speed": 40,
       "attack_rating_pct": 30,
-      "minimum_damage_flat": [
+      "min_weapon_damage_flat": [
         18,
         25
       ],
-      "maximum_damage_flat": [
+      "max_weapon_damage_flat": [
         18,
         25
       ],
@@ -5489,11 +5489,11 @@
       "extra_damage_poisoned": 25,
       "increased_attack_speed": 40,
       "attack_rating_pct": 40,
-      "minimum_damage_flat": [
+      "min_weapon_damage_flat": [
         25,
         36
       ],
-      "maximum_damage_flat": [
+      "max_weapon_damage_flat": [
         25,
         36
       ],
@@ -5546,7 +5546,7 @@
       "to_armor": 40,
       "all_attributes": 20,
       "increased_mana": 30,
-      "maximum_damage_pct": 3,
+      "max_weapon_damage": 3,
       "magic_skill_damage": 13
     },
     "requiresLevel": 69,
@@ -5715,7 +5715,7 @@
         300
       ],
       "damage_mitigation": 15,
-      "maximum_damage_pct": 3,
+      "max_weapon_damage": 3,
       "projectile_speed": 1,
       "max_all_resistances": 2,
       "deadly_blow": 1,
@@ -5761,7 +5761,7 @@
       ],
       "all_damage_taken_reduced_pct": 6,
       "projectile_speed": 1,
-      "maximum_damage_pct": 3
+      "max_weapon_damage": 3
     },
     "procs": [
       {
@@ -5846,7 +5846,7 @@
       "crit_damage": 50,
       "ignore_all_res": 6,
       "deadly_blow_effectiveness": 8,
-      "maximum_damage_pct": 3
+      "max_weapon_damage": 3
     },
     "requiresLevel": 100,
     "requiresItemLevel": 1

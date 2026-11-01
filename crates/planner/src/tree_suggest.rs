@@ -219,6 +219,7 @@ impl TreeView {
         self.suggest.progress = progress.clone();
         self.suggest.phase = Phase::Computing;
         let planner = self.build_input.planner_input();
+        let active_skill_ids = hsplanner_engine::calc::planner::dps_skill_ids(&planner);
         let mut perf = planner.build;
         perf.allocated_tree_nodes = self
             .selected
@@ -234,7 +235,7 @@ impl TreeView {
             .collect();
         let input = SuggestInput {
             perf,
-            active_skill_ids: planner.active_skill_ids,
+            active_skill_ids,
             graph: without_nodes(tree_graph(&self.scene.graph), &excluded),
             budget: self.suggest.budget,
         };
