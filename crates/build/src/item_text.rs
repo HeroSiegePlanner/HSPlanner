@@ -987,7 +987,9 @@ mod tests {
         );
         let edited = text.replace(&ranged_line, &pinned_line);
         let result = parse(&edited, &item);
-        let parsed = result.item.expect(&format!("{:?}", result.diagnostics));
+        let parsed = result
+            .item
+            .unwrap_or_else(|| panic!("{:?}", result.diagnostics));
         assert_eq!(parsed.runeword_overrides.get(key), Some(&lo));
         assert!(serialize(&parsed).unwrap().contains(&pinned_line));
     }

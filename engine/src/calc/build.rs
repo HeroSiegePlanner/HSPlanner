@@ -207,9 +207,7 @@ pub(crate) fn tick_hits(active: u32, tick_frames: f64, first_overlap: u32, max_t
         (0.0_f64, 0u32, false, 0u32, 0u32);
     let mut deadly = true;
     for f in 0..active {
-        if cooldown > 0 {
-            cooldown -= 1;
-        }
+        cooldown = cooldown.saturating_sub(1);
         if deadly && cooldown == 0 && f >= first_overlap {
             cooldown = 3;
             if !hit_map {

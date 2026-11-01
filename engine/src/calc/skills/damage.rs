@@ -135,6 +135,7 @@ fn archetype_skill_damage(stats: &StatMap, tags: &[String]) -> (Ranged, Ranged) 
 // value% per effective source rank (or per attribute point). The attack path
 // consumes only attack_damage synergies; the spell path everything else
 // (attack_rating is no damage stat on either side).
+#[allow(clippy::too_many_arguments)]
 pub(super) fn bonus_source_synergy_pct(
     s: &Skill,
     attributes: &AttrMap,

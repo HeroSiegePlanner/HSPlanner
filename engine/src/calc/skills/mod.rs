@@ -615,6 +615,11 @@ impl AttackSkillDamageBreakdown {
     }
 }
 
+/// Mechanical Engineering preserves damage dealt by separate entities.
+pub(crate) fn self_damage_disabled(stats: &StatMap, tags: &[String]) -> bool {
+    rg(stats, "self_damage_disabled").1 > 0.0 && !crate::calc::affix_tags::is_entity(tags)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -838,9 +843,4 @@ mod tests {
         assert!((mult - 1.5).abs() < 1e-9, "expected 1.5, got {mult}");
         assert_eq!(sources.len(), 1);
     }
-}
-
-/// Mechanical Engineering preserves damage dealt by separate entities.
-pub(crate) fn self_damage_disabled(stats: &StatMap, tags: &[String]) -> bool {
-    rg(stats, "self_damage_disabled").1 > 0.0 && !crate::calc::affix_tags::is_entity(tags)
 }

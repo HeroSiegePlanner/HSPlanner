@@ -2463,8 +2463,10 @@ mod tests {
 
     #[::core::prelude::v1::test]
     fn custom_text_keeps_notes_and_rebuilds_stale_or_missing_text() {
-        let mut snapshot = BuildSnapshot::default();
-        snapshot.custom_stats = parse_custom_text("+8 Light Radius").0;
+        let mut snapshot = BuildSnapshot {
+            custom_stats: parse_custom_text("+8 Light Radius").0,
+            ..Default::default()
+        };
         assert_eq!(custom_text(&snapshot), "+8 Light Radius");
         snapshot.custom_stats_text = "// Wizard's Dice\n+8 Light Radius".into();
         assert_eq!(custom_text(&snapshot), "// Wizard's Dice\n+8 Light Radius");

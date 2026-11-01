@@ -1150,7 +1150,7 @@ fn buffing_aura_effectiveness_scales_active_aura_passive() {
     let mut attrs0: SourceMap = HashMap::new();
     let mut stats0: SourceMap = HashMap::new();
     apply_skill_ranks(
-        Some(&class_id),
+        Some(class_id),
         &ranks,
         Some(&aura.id),
         &HashMap::new(),
@@ -1178,7 +1178,7 @@ fn buffing_aura_effectiveness_scales_active_aura_passive() {
         }],
     );
     apply_skill_ranks(
-        Some(&class_id),
+        Some(class_id),
         &ranks,
         Some(&aura.id),
         &HashMap::new(),

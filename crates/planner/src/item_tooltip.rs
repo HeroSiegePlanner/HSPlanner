@@ -1110,7 +1110,7 @@ pub(crate) fn augment_model(augment: &AngelicAugment) -> ItemTooltipModel {
 
     let stat_lines = |stats: &dyn Fn(&AugmentLevel) -> Option<&StatMap>| -> Vec<Line> {
         let mut keys: Vec<&String> = first
-            .and_then(|tier| stats(tier))
+            .and_then(stats)
             .map(|map| map.keys().filter(|key| !stack_keys(key)).collect())
             .unwrap_or_default();
         keys.sort();

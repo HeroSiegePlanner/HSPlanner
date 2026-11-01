@@ -433,7 +433,7 @@ pub(crate) fn preview(
     let (terms, mut ignored) = size_terms(
         &tags,
         hitbox.map_or(1., |h| h.aoe_scale),
-        &shared_of,
+        shared_of,
         converted,
     );
     let own = SIZE_KEYS

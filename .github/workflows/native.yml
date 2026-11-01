@@ -37,9 +37,15 @@ jobs:
             libgbm-dev libx11-xcb-dev libxcb-randr0-dev libxcb-shape0-dev \
             libxcb-xfixes0-dev libxcb-xkb-dev
       - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
       - uses: swatinem/rust-cache@v2
         with:
           workspaces: '. -> target'
+      - name: Formatting
+        run: cargo fmt --all --check
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
       - name: Workspace tests including native OCR
         run: cargo test --workspace --locked
       - name: Existing calculation fixtures
