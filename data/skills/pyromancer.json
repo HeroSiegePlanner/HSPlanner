@@ -839,8 +839,8 @@
     "manaCostFormula": { "base": 9, "perLevel": 1 },
     "buffUptime": { "duration": 40, "cooldown": 60 },
     "passiveStats": {
-      "base": { "increased_attack_speed": 30, "fire_skill_damage": 20, "spell_crit_damage": 20, "crit_chance": 20 },
-      "perRank": { "increased_attack_speed": 1.5, "fire_skill_damage": 2, "spell_crit_damage": 2.5, "crit_chance": 0 }
+      "base": { "increased_attack_speed": 30, "fire_skill_damage": 20, "spell_crit_damage": 20, "spell_crit_chance": 20 },
+      "perRank": { "increased_attack_speed": 1.5, "fire_skill_damage": 2, "spell_crit_damage": 2.5, "spell_crit_chance": 0 }
     }
   },
   {
@@ -1330,7 +1330,7 @@
     "description": "Scorch monsters around you dealing fire damage.",
     "pulseFrames": 60,
     "damageType": "fire",
-    "tags": ["Cast", "Active", "Aura"],
+    "tags": ["Cast", "Active", "Aura", "Spell"],
     "maxRank": 20,
     "requiresLevel": 8,
     "tree": "Arsonist",

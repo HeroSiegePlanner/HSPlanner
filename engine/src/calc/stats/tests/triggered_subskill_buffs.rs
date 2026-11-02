@@ -408,7 +408,7 @@ fn rage_trance_buff_requires_learned_parent_node_and_namespaced_active_flag() {
 fn temporary_subtree_buff_metadata_describes_acquisition_not_uptime() {
     for expected in [&HELLSENT, &KILLING_SPREE, &RAGE_TRANCE] {
         let skill = data::get_skills_by_class("butcher")
-            .into_iter()
+            .iter()
             .find(|skill| skill.id == expected.skill)
             .unwrap();
         let node = skill

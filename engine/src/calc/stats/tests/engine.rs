@@ -1150,7 +1150,7 @@ fn buffing_aura_effectiveness_scales_active_aura_passive() {
     let mut attrs0: SourceMap = HashMap::new();
     let mut stats0: SourceMap = HashMap::new();
     apply_skill_ranks(
-        Some(&class_id),
+        Some(class_id),
         &ranks,
         Some(&aura.id),
         &HashMap::new(),
@@ -1178,7 +1178,7 @@ fn buffing_aura_effectiveness_scales_active_aura_passive() {
         }],
     );
     apply_skill_ranks(
-        Some(&class_id),
+        Some(class_id),
         &ranks,
         Some(&aura.id),
         &HashMap::new(),
@@ -1484,65 +1484,58 @@ fn a_portion_convert_leaves_its_source_alone() {
 
 #[test]
 fn apply_inventory_implicit_overrides_replace_base_implicits() {
-    // Pick any item with non-empty implicit, override one of its keys
-    // with a scalar value, and verify the override appears in the source.
-    let item_with_implicit = data::data()
-        .items
-        .values()
-        .find(|i| {
-            i.implicit
-                .as_ref()
-                .is_some_and(|m| !m.is_empty() && !m.contains_key("enhanced_defense"))
-        })
-        .cloned();
-    let Some(base) = item_with_implicit else {
-        eprintln!("no item with non-ED implicit in data; skipping");
-        return;
+    let has_override = |map: &SourceMap, key: &str| {
+        map.get(key)
+            .is_some_and(|v| v.iter().any(|c| c.value == (999.0, 999.0)))
     };
-    let (override_key, _) = base.implicit.as_ref().unwrap().iter().next().unwrap();
-    let override_key = override_key.clone();
-    let mut overrides = std::collections::HashMap::new();
-    overrides.insert(override_key.clone(), 999.0_f64);
+    let mut missing = Vec::new();
+    for base in data::data().items.values() {
+        let Some(implicit) = base.implicit.as_ref() else {
+            continue;
+        };
+        // An enhanced_defense override rescales the item's defense instead.
+        for override_key in implicit.keys().filter(|k| *k != "enhanced_defense") {
+            let mut inv: Inventory = HashMap::new();
+            inv.insert(
+                base.slot.clone(),
+                EquippedItem {
+                    base_id: base.id.clone(),
+                    implicit_overrides: HashMap::from([(override_key.clone(), 999.0)]),
+                    random_skill_element: Some("fire".into()),
+                    all_skills_class_id: Some("viking".into()),
+                    ..Default::default()
+                },
+            );
+            let mut attrs: SourceMap = HashMap::new();
+            let mut stats: SourceMap = HashMap::new();
+            apply_inventory(&inv, &mut attrs, &mut stats);
 
-    let mut inv: Inventory = HashMap::new();
-    inv.insert(
-        base.slot.clone(),
-        EquippedItem {
-            base_id: base.id.clone(),
-            implicit_overrides: overrides,
-            ..Default::default()
-        },
-    );
-    let mut attrs: SourceMap = HashMap::new();
-    let mut stats: SourceMap = HashMap::new();
-    apply_inventory(&inv, &mut attrs, &mut stats);
-
-    // Override value should appear somewhere — either in attr_sources (if
-    // the stat modifies an attribute) or in stat_sources.
-    let in_stats = stats
-        .get(&override_key)
-        .map(|v| v.iter().any(|c| c.value == (999.0, 999.0)))
-        .unwrap_or(false);
-    let in_attrs = if let Some(def) = stat_def(&override_key) {
-        if let Some(target) = def.modifies_attribute.as_deref() {
-            let key = if target == "all" {
-                data::game_config()
-                    .attributes
-                    .first()
-                    .map(|a| a.key.clone())
-            } else {
-                Some(target.to_string())
+            // Rolled keys land on what the item rolled; unpicked they stay inert.
+            let stat_key = match override_key.as_str() {
+                "random_skill_element" => "fire_skills",
+                "all_skills_class" => "all_skills_viking",
+                key => key,
             };
-            key.and_then(|k| attrs.get(&k).cloned())
-                .map(|v| v.iter().any(|c| c.value == (999.0, 999.0)))
-                .unwrap_or(false)
-        } else {
-            false
+            let in_attrs = stat_def(stat_key)
+                .and_then(|def| def.modifies_attribute.as_deref())
+                .and_then(|target| match target {
+                    "all" => data::game_config()
+                        .attributes
+                        .first()
+                        .map(|a| a.key.as_str()),
+                    _ => Some(target),
+                })
+                .is_some_and(|key| has_override(&attrs, key));
+            if !has_override(&stats, stat_key) && !in_attrs {
+                missing.push(format!("{} {override_key}", base.id));
+            }
         }
-    } else {
-        false
-    };
-    assert!(in_stats || in_attrs, "override value not found anywhere");
+    }
+    missing.sort();
+    assert!(
+        missing.is_empty(),
+        "overrides not found anywhere: {missing:#?}"
+    );
 }
 
 #[test]

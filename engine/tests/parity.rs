@@ -59,7 +59,7 @@ fn parity_with_ts_fixtures() {
             // Charged Bolts' base value is LoadTalentDamage V1 = 6.75 + 9.25·L
             // from the game natives (the archived formula had 4.5 + 9.25·L), so
             // the rank-10 hit grows by 2.25 before modifiers.
-            let bolts = app_lib::calc::data::get_skills_by_class("stormweaver")
+            let bolts = hsplanner_engine::calc::data::get_skills_by_class("stormweaver")
                 .iter()
                 .find(|s| s.id == "charged_bolts")
                 .and_then(|s| s.damage_formula)
@@ -76,7 +76,7 @@ fn parity_with_ts_fixtures() {
         correct_archived_weapon_requirements(&entry.name, input_v, &mut expected);
         correct_archived_raw_mana_cost(&entry.name, input_v, archived_expected, &mut expected);
 
-        let input: app_lib::calc::commands::BuildPerformanceInput =
+        let input: hsplanner_engine::calc::commands::BuildPerformanceInput =
             match serde_json::from_value(input_v.clone()) {
                 Ok(v) => v,
                 Err(e) => {
@@ -88,7 +88,7 @@ fn parity_with_ts_fixtures() {
                 }
             };
 
-        let actual = app_lib::calc::commands::calc_build_performance(input);
+        let actual = hsplanner_engine::calc::commands::calc_build_performance(input);
         let actual_json =
             serde_json::to_value(&actual).expect("BuildPerformance must be JSON-serialisable");
 
@@ -132,7 +132,15 @@ fn parity_with_ts_fixtures() {
 // derive from those totals are re-baselined; damage and all other rows stay archived.
 fn rebaseline_attribute_conversions(actual: &Value, expected: &mut Value) {
     // Strength feeds Attack Damage (StatAttackDamage), not Enhanced Damage.
-    for key in ["crit_damage", "life", "mana", "life_replenish", "mana_replenish", "attack_damage", "enhanced_damage"] {
+    for key in [
+        "crit_damage",
+        "life",
+        "mana",
+        "life_replenish",
+        "mana_replenish",
+        "attack_damage",
+        "enhanced_damage",
+    ] {
         expected["stats"][key] = actual["stats"][key].clone();
     }
     if let Some(entries) = actual["ehp"]["entries"].as_array() {
@@ -144,7 +152,16 @@ fn rebaseline_attribute_conversions(actual: &Value, expected: &mut Value) {
         return;
     };
     for (id, cost) in costs {
-        for field in ["manaRegenMin", "manaRegenMax", "netMin", "netMax", "uptimeMin", "uptimeMax", "sustainable", "unsustainable"] {
+        for field in [
+            "manaRegenMin",
+            "manaRegenMax",
+            "netMin",
+            "netMax",
+            "uptimeMin",
+            "uptimeMax",
+            "sustainable",
+            "unsustainable",
+        ] {
             if !expected["skillCosts"][id].is_null() {
                 expected["skillCosts"][id][field] = cost[field].clone();
             }
@@ -170,14 +187,23 @@ fn rebaseline_cast_speed(input: &Value, actual: &Value, expected: &mut Value) {
         if expected["skillCosts"][id].is_null() {
             continue;
         }
-        for field in ["baseRate", "castRateMin", "castRateMax", "manaPerSecMin", "manaPerSecMax"] {
+        for field in [
+            "baseRate",
+            "castRateMin",
+            "castRateMax",
+            "manaPerSecMin",
+            "manaPerSecMax",
+        ] {
             expected["skillCosts"][id][field] = cost[field].clone();
         }
     }
     for (field, ratio) in [
-        ("hitDpsMin", ratio_min), ("hitDpsMax", ratio_max),
-        ("avgHitDpsMin", ratio_min), ("avgHitDpsMax", ratio_max),
-        ("combinedDpsMin", ratio_min), ("combinedDpsMax", ratio_max),
+        ("hitDpsMin", ratio_min),
+        ("hitDpsMax", ratio_max),
+        ("avgHitDpsMin", ratio_min),
+        ("avgHitDpsMax", ratio_max),
+        ("combinedDpsMin", ratio_min),
+        ("combinedDpsMax", ratio_max),
     ] {
         if let (Some(r), Some(v)) = (ratio, expected[field].as_f64()) {
             expected[field] = serde_json::json!(v * r);
@@ -194,7 +220,7 @@ fn rebaseline_dummy_hits(input: &Value, actual: &Value, expected: &mut Value) {
     let Some(class) = input["classId"].as_str() else {
         return;
     };
-    let has_dummy = app_lib::calc::data::get_skills_by_class(class)
+    let has_dummy = hsplanner_engine::calc::data::get_skills_by_class(class)
         .iter()
         .any(|s| s.id == main && s.dummy_hits.is_some());
     if !has_dummy || actual["hitsPerCast"].is_null() {
@@ -202,9 +228,12 @@ fn rebaseline_dummy_hits(input: &Value, actual: &Value, expected: &mut Value) {
     }
     for field in [
         "hitsPerCast",
-        "hitDpsMin", "hitDpsMax",
-        "avgHitDpsMin", "avgHitDpsMax",
-        "combinedDpsMin", "combinedDpsMax",
+        "hitDpsMin",
+        "hitDpsMax",
+        "avgHitDpsMin",
+        "avgHitDpsMax",
+        "combinedDpsMin",
+        "combinedDpsMax",
     ] {
         expected[field] = actual[field].clone();
     }

@@ -1,12 +1,16 @@
-//! A retained report draft. Nothing leaves the device until Send report is activated.
+//! A retained report draft. The draft leaves the device only when Send report is activated;
+//! opening the dialog reads the public GitHub issue list.
+use crate::bug_report_issues::{self as issues, Issue};
 use crate::bug_report_transport::{self as transport, MAX_SHOTS, Report, Shot};
 use gpui_kit::{
-    base::Disableable,
+    base::{Disableable, Link, Selectable},
     component::{
         IndexPath,
+        button::{Button, ButtonCustomVariant, ButtonVariants},
         checkbox::Checkbox,
         input::{Input, InputEvent, InputState, Textarea, TextareaState},
         select::{SearchableVec, Select, SelectEvent, SelectItem, SelectState},
+        text::{TextView, TextViewStyle},
     },
     prelude::*,
     *,
@@ -18,12 +22,18 @@ use hsplanner_ui::{
     components::{
         modal_eyebrow, modal_footer, modal_header, modal_label, modal_layout, modal_status,
     },
-    controls::{ButtonTone, PlannerControl, icon_button, modal_button},
-    theme::TooltipTheme,
+    controls::{ButtonTone, PlannerControl, icon_button, modal_button, tab},
+    theme::{FONT_FAMILY, MONO_FONT_FAMILY, TooltipTheme},
 };
+use std::time::{Duration, Instant};
 
 const KINDS: [&str; 3] = ["report.kind_bug", "report.kind_data", "report.kind_idea"];
 const IDEA: usize = 2;
+// GitHub search allows 10 anonymous requests a minute; reopening the dialog reuses the list.
+const ISSUE_CACHE_TTL: Duration = Duration::from_secs(10 * 60);
+
+struct IssueCache(Instant, Vec<Issue>);
+impl Global for IssueCache {}
 
 #[derive(Clone)]
 struct Kind(usize);
@@ -78,6 +88,14 @@ struct ReportEditor {
     loading: bool,
     sent: bool,
     error: Option<String>,
+    // None while loading.
+    issues: Option<Result<Vec<Issue>, String>>,
+    browsing: bool,
+    search: Entity<InputState>,
+    // Shown after a Send attempt; the next Send goes through.
+    duplicates: Vec<Issue>,
+    expanded: Option<u64>,
+    _fetch: Task<()>,
     _subscriptions: Vec<Subscription>,
 }
 impl ReportEditor {
@@ -118,25 +136,35 @@ impl ReportEditor {
                 }
             },
         )];
-        for input in [&title, &contact] {
+        let search =
+            cx.new(|cx| InputState::new(window, cx).placeholder(tr("report.issues_search")));
+        subscriptions.push(cx.observe(&search, |_, _, cx| cx.notify()));
+        // Only the text the duplicate check reads asks for a new check.
+        for (input, rechecks) in [(&title, true), (&contact, false)] {
             subscriptions.push(cx.observe(input, |_, _, cx| cx.notify()));
-            subscriptions.push(cx.subscribe(input, |this, _, event: &InputEvent, cx| {
+            subscriptions.push(cx.subscribe(input, move |this, _, event: &InputEvent, cx| {
                 if matches!(event, InputEvent::Change) {
                     this.error = None;
+                    if rechecks {
+                        this.duplicates.clear();
+                    }
                     cx.notify();
                 }
             }));
         }
-        for input in [&description, &steps, &expected] {
+        for (input, rechecks) in [(&description, true), (&steps, false), (&expected, false)] {
             subscriptions.push(cx.observe(input, |_, _, cx| cx.notify()));
-            subscriptions.push(cx.subscribe(input, |this, _, event: &InputEvent, cx| {
+            subscriptions.push(cx.subscribe(input, move |this, _, event: &InputEvent, cx| {
                 if matches!(event, InputEvent::Change) {
                     this.error = None;
+                    if rechecks {
+                        this.duplicates.clear();
+                    }
                     cx.notify();
                 }
             }));
         }
-        Self {
+        let mut editor = Self {
             title,
             description,
             steps,
@@ -152,8 +180,37 @@ impl ReportEditor {
             loading: false,
             sent: false,
             error: None,
+            issues: None,
+            browsing: false,
+            search,
+            duplicates: vec![],
+            expanded: None,
+            _fetch: Task::ready(()),
             _subscriptions: subscriptions,
+        };
+        editor.load_issues(cx);
+        editor
+    }
+    fn load_issues(&mut self, cx: &mut Context<Self>) {
+        if let Some(IssueCache(fetched, known)) = cx.try_global::<IssueCache>()
+            && fetched.elapsed() < ISSUE_CACHE_TTL
+        {
+            self.issues = Some(Ok(known.clone()));
+            return;
         }
+        self.issues = None;
+        cx.notify();
+        let task = cx.background_spawn(issues::fetch(cx.http_client()));
+        self._fetch = cx.spawn(async move |this, cx| {
+            let result = task.await;
+            let _ = this.update(cx, |this, cx| {
+                if let Ok(known) = &result {
+                    cx.set_global(IssueCache(Instant::now(), known.clone()));
+                }
+                this.issues = Some(result);
+                cx.notify();
+            });
+        });
     }
     fn report(&self, cx: &App) -> Report {
         Report {
@@ -187,6 +244,17 @@ impl ReportEditor {
             self.error = Some(error);
             cx.notify();
             return;
+        }
+        // ponytail: an unloaded or failed issue list never blocks sending.
+        if self.duplicates.is_empty()
+            && let Some(Ok(known)) = &self.issues
+        {
+            self.duplicates =
+                issues::similar(known, &format!("{} {}", report.title, report.description));
+            if !self.duplicates.is_empty() {
+                cx.notify();
+                return;
+            }
         }
         self.busy = true;
         self.error = None;
@@ -298,15 +366,216 @@ impl ReportEditor {
             tr("report.reading").into()
         } else if let Some(error) = self.error.as_ref().or(validation) {
             error.clone()
+        } else if !self.duplicates.is_empty() {
+            tr("report.duplicate_status").into()
         } else if self.attach && self.build.is_some() {
             tr("report.sends_build").into()
         } else {
             tr("report.sends_system").into()
         }
     }
+    fn layout(&self, window: &Window, cx: &Context<Self>) -> Div {
+        let tabs = div()
+            .flex_none()
+            .flex()
+            .border_b_1()
+            .border_color(cx.global::<TooltipTheme>().border)
+            .child(
+                tab("report-tab-new", tr("report.tab_new"), !self.browsing, cx).on_click(
+                    cx.listener(|this, _, _, cx| {
+                        this.browsing = false;
+                        cx.notify();
+                    }),
+                ),
+            )
+            .child(
+                tab(
+                    "report-tab-reported",
+                    tr("report.tab_reported"),
+                    self.browsing,
+                    cx,
+                )
+                .on_click(cx.listener(|this, _, _, cx| {
+                    this.browsing = true;
+                    cx.notify();
+                })),
+            );
+        modal_layout(window)
+            .child(modal_header(
+                modal_eyebrow("bug-report-eyebrow", tr("report.feedback")),
+                tr("report.heading"),
+                Some(tr("report.subtitle").into()),
+                cx,
+            ))
+            .child(tabs)
+    }
+    fn issue_list(&self, cx: &Context<Self>) -> Stateful<Div> {
+        let p = cx.global::<TooltipTheme>();
+        let query = self.search.read(cx).value().to_string();
+        let list = div()
+            .id("reported-issues")
+            .flex_1()
+            .min_h_0()
+            .overflow_y_scroll()
+            .p_5()
+            .flex()
+            .flex_col()
+            .gap_2p5()
+            .text_size(rems(12. / 13.))
+            .child(div().text_color(p.muted).child(tr("report.issues_note")))
+            .child(
+                Input::new(&self.search)
+                    .aria_label(tr("report.issues_search"))
+                    .planner_style(cx),
+            );
+        match &self.issues {
+            None => list.child(div().text_color(p.faint).child(tr("report.issues_loading"))),
+            Some(Err(error)) => list
+                .child(div().text_color(p.negative).child(error.clone()))
+                .child(
+                    div().flex().child(
+                        modal_button(
+                            "report-issues-retry",
+                            tr("report.issues_retry"),
+                            ButtonTone::Neutral,
+                            cx,
+                        )
+                        .on_click(cx.listener(|this, _, _, cx| this.load_issues(cx))),
+                    ),
+                ),
+            Some(Ok(known)) => {
+                let rows: Vec<_> = known
+                    .iter()
+                    .filter(|issue| issues::matches(issue, &query))
+                    .map(|issue| self.issue_row("reported-issue", issue, cx))
+                    .collect();
+                if rows.is_empty() {
+                    list.child(div().text_color(p.faint).child(tr("report.issues_empty")))
+                } else {
+                    list.children(rows)
+                }
+            }
+        }
+    }
+    fn issue_footer(&self, cx: &App) -> Div {
+        let p = cx.global::<TooltipTheme>();
+        let count = match &self.issues {
+            Some(Ok(known)) => trf("report.issues_count", &[("count", known.len().to_string())]),
+            _ => String::new(),
+        };
+        modal_footer(cx).child(modal_status(count, p.faint)).child(
+            Link::new("report-issues-github")
+                .child(tr("report.issues_github"))
+                .href(issues::issues_url())
+                .text_color(p.accent_hot)
+                .underline()
+                .accessibility_label(tr("report.issues_github"))
+                .open_with(|url, _, _, cx| cx.open_url(url)),
+        )
+    }
+    fn duplicate_warning(&self, cx: &Context<Self>) -> Stateful<Div> {
+        let p = cx.global::<TooltipTheme>();
+        div()
+            .id("report-duplicates")
+            .flex_none()
+            .max_h(rems(16.))
+            .overflow_y_scroll()
+            .flex()
+            .flex_col()
+            .gap_1p5()
+            .px_6()
+            .py_3()
+            .border_t_1()
+            .border_color(p.border)
+            .text_size(rems(12. / 13.))
+            .child(
+                div()
+                    .font_weight(FontWeight::SEMIBOLD)
+                    .text_color(p.accent_hot)
+                    .child(tr("report.duplicate_heading")),
+            )
+            .child(div().text_color(p.muted).child(tr("report.duplicate_body")))
+            .children(
+                self.duplicates
+                    .iter()
+                    .map(|issue| self.issue_row("duplicate-issue", issue, cx)),
+            )
+    }
+    fn issue_row(&self, scope: &str, issue: &Issue, cx: &Context<Self>) -> Div {
+        let p = cx.global::<TooltipTheme>();
+        let number = issue.number;
+        let expanded = self.expanded == Some(number);
+        let state = if issue.is_open() {
+            tr("report.issue_open")
+        } else {
+            tr("report.issue_closed")
+        };
+        let toggle = Button::new(SharedString::from(format!("{scope}-{number}")))
+            .custom(
+                ButtonCustomVariant::new(cx)
+                    .color(if expanded {
+                        p.accent_hot.opacity(0.06)
+                    } else {
+                        p.background.opacity(0.)
+                    })
+                    .foreground(p.text)
+                    .hover(p.accent_hot.opacity(0.05))
+                    .active(p.accent_hot.opacity(0.08)),
+            )
+            .w_full()
+            .h_auto()
+            .py_1()
+            .px_1p5()
+            .gap_2()
+            .justify_start()
+            .rounded_sm()
+            .border_0()
+            .font_family(FONT_FAMILY)
+            .text_size(rems(12. / 13.))
+            .selected(expanded)
+            .accessibility_label(format!("#{number} {} ({state})", issue.title))
+            .on_click(cx.listener(move |this, _, _, cx| {
+                this.expanded = (this.expanded != Some(number)).then_some(number);
+                cx.notify();
+            }))
+            .child(
+                div()
+                    .flex_none()
+                    .font_family(MONO_FONT_FAMILY)
+                    .text_color(p.faint)
+                    .child(format!("{} #{number}", if expanded { "▾" } else { "▸" })),
+            )
+            .child(
+                div()
+                    .flex_1()
+                    .min_w_0()
+                    .truncate()
+                    .text_color(p.accent_hot)
+                    .child(issue.title.clone()),
+            )
+            .child(
+                div()
+                    .flex_none()
+                    .font_family(MONO_FONT_FAMILY)
+                    .text_size(rems(10. / 13.))
+                    .text_color(if issue.is_open() { p.positive } else { p.faint })
+                    .child(state),
+            );
+        div()
+            .flex()
+            .flex_col()
+            .child(toggle)
+            .when(expanded, |view| view.child(issue_details(scope, issue, cx)))
+    }
 }
 impl Render for ReportEditor {
     fn render(&mut self, window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+        if self.browsing {
+            return self
+                .layout(window, cx)
+                .child(self.issue_list(cx))
+                .child(self.issue_footer(cx));
+        }
         let p = cx.global::<TooltipTheme>();
         let locked = self.busy || self.sent;
         let validation = self.report(cx).validate().err();
@@ -315,6 +584,8 @@ impl Render for ReportEditor {
             p.positive
         } else if self.error.is_some() || self.endpoint.is_none() {
             p.negative
+        } else if !self.duplicates.is_empty() {
+            p.accent_hot
         } else {
             p.faint
         };
@@ -463,14 +734,11 @@ impl Render for ReportEditor {
                 ),
             );
         }
-        modal_layout(window)
-            .child(modal_header(
-                modal_eyebrow("bug-report-eyebrow", tr("report.feedback")),
-                tr("report.heading"),
-                Some(tr("report.subtitle").into()),
-                cx,
-            ))
+        self.layout(window, cx)
             .child(fields)
+            .when(!self.duplicates.is_empty() && !self.sent, |view| {
+                view.child(self.duplicate_warning(cx))
+            })
             .child(
                 modal_footer(cx)
                     .child(modal_status(status, status_color))
@@ -480,6 +748,8 @@ impl Render for ReportEditor {
                                 "report-send",
                                 if self.busy {
                                     tr("report.sending")
+                                } else if !self.duplicates.is_empty() {
+                                    tr("report.send_anyway")
                                 } else {
                                     tr("report.send")
                                 },
@@ -498,6 +768,54 @@ impl Render for ReportEditor {
                     }),
             )
     }
+}
+fn issue_details(scope: &str, issue: &Issue, cx: &App) -> Div {
+    let p = cx.global::<TooltipTheme>();
+    let details = issue.details();
+    let github = format!("{} (#{})", tr("report.issues_github"), issue.number);
+    div()
+        .ml_5()
+        .mb_1()
+        .pl_3()
+        .py_2()
+        .border_l_1()
+        .border_color(p.border)
+        .flex()
+        .flex_col()
+        .gap_2()
+        .text_color(p.text)
+        .child(if details.is_empty() {
+            div()
+                .text_color(p.faint)
+                .child(tr("report.issue_no_details"))
+                .into_any_element()
+        } else {
+            TextView::markdown(
+                SharedString::from(format!("{scope}-body-{}", issue.number)),
+                details,
+            )
+            .selectable(true)
+            .style(
+                TextViewStyle::default()
+                    .paragraph_gap(rems(0.5))
+                    .heading_font_size(|_, base| base),
+            )
+            .into_any_element()
+        })
+        .child(
+            div().flex().child(
+                Link::new(SharedString::from(format!(
+                    "{scope}-github-{}",
+                    issue.number
+                )))
+                .child(tr("report.issues_github"))
+                .href(issue.url.clone())
+                .text_color(p.accent_hot)
+                .underline()
+                .accessibility_label(github)
+                .open_with(|url, _, _, cx| cx.open_url(url)),
+            ),
+        )
 }
 fn field(label: &'static str, control: impl IntoElement, cx: &App) -> Div {
     div()

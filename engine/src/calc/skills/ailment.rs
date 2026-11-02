@@ -90,7 +90,15 @@ pub fn ailment_dps(
     scoped: &StatMap,
     apply_chances: &HashMap<String, f64>,
 ) -> f64 {
-    ailment_calculation(hit_avg, hits_per_second, stats, scoped, apply_chances, false).0
+    ailment_calculation(
+        hit_avg,
+        hits_per_second,
+        stats,
+        scoped,
+        apply_chances,
+        false,
+    )
+    .0
 }
 
 /// Same-skill sources share application chances and replace the active ailment.

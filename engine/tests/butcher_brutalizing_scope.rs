@@ -1,5 +1,7 @@
-use app_lib::calc::commands::{calc_build_performance, calc_build_stats, BuildPerformanceInput};
-use app_lib::calc::types::{CustomStat, EquippedItem};
+use hsplanner_engine::calc::commands::{
+    calc_build_performance, calc_build_stats, BuildPerformanceInput,
+};
+use hsplanner_engine::calc::types::{CustomStat, EquippedItem};
 
 fn build(node_rank: u32) -> BuildPerformanceInput {
     BuildPerformanceInput {
@@ -44,7 +46,7 @@ fn bucthering_skill_multiplies_only_brutalizing_intrinsic_attack_rating() {
 fn bucthering_skill_never_enters_global_attack_rating_or_crit_pool() {
     let baseline = calc_build_stats(build(0));
     let learned = calc_build_stats(build(5));
-    let global_pools = |stats: &app_lib::calc::stats::ComputedStats| {
+    let global_pools = |stats: &hsplanner_engine::calc::stats::ComputedStats| {
         ["attack_rating_pct", "crit_chance"]
             .map(|key| stats.stats.get(key).copied().unwrap_or_default())
     };

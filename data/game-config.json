@@ -3878,8 +3878,14 @@
       "format": "percent"
     },
     {
-      "key": "min_weapon_damage",
-      "name": "Min Weapon Damage",
+      "key": "min_weapon_damage_flat",
+      "name": "Added Minimum Weapon Damage",
+      "category": "offense",
+      "format": "flat"
+    },
+    {
+      "key": "max_weapon_damage_flat",
+      "name": "Added Maximum Weapon Damage",
       "category": "offense",
       "format": "flat"
     },

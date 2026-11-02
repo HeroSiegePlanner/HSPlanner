@@ -391,6 +391,19 @@ mod tests {
     use super::*;
 
     #[test]
+    fn every_runeword_rune_exists() {
+        for runeword in runewords() {
+            for rune in &runeword.runes {
+                assert!(
+                    get_rune(rune).is_some(),
+                    "{} uses unknown rune {rune}",
+                    runeword.id
+                );
+            }
+        }
+    }
+
+    #[test]
     fn completed_runeword_adds_its_granted_skill_to_the_item() {
         let base = get_item("armors_normal_steel_armor").unwrap();
         let item = EquippedItem {
@@ -648,8 +661,14 @@ mod tests {
         }
         // Hero_Siege.exe: start + per level × L.
         let staticshot = get_augment("staticshot").unwrap();
-        assert_eq!(staticshot.tier(7).unwrap().stats["flat_lightning_skill_damage"], 6500.);
-        assert_eq!(get_augment("gut_rippers_spikeball").unwrap().trigger, "on_attack");
+        assert_eq!(
+            staticshot.tier(7).unwrap().stats["flat_lightning_skill_damage"],
+            6500.
+        );
+        assert_eq!(
+            get_augment("gut_rippers_spikeball").unwrap().trigger,
+            "on_attack"
+        );
     }
 
     #[test]
@@ -659,9 +678,7 @@ mod tests {
             assert!(skill.condition.is_some(), "{name} applies without a toggle");
             let passive = skill.passive_stats.as_ref().expect(name);
             let get = |map: &Option<crate::calc::types::StatMap>| {
-                map.as_ref()
-                    .and_then(|m| m.get(key).copied())
-                    .unwrap_or(0.)
+                map.as_ref().and_then(|m| m.get(key).copied()).unwrap_or(0.)
             };
             get(&passive.base) + get(&passive.per_rank) * rank
         };

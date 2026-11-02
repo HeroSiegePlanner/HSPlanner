@@ -663,14 +663,24 @@ pub fn run(
                 reqwest_client::ReqwestClient::user_agent(crate::update::USER_AGENT)
                     .expect("http client"),
             ));
+            // KeyBinding::new panics on "secondary-" since gpui-pre 0.3.10.
+            macro_rules! secondary {
+                ($keys:literal) => {
+                    if cfg!(target_os = "macos") {
+                        concat!("cmd-", $keys)
+                    } else {
+                        concat!("ctrl-", $keys)
+                    }
+                };
+            }
             cx.bind_keys([
-                KeyBinding::new("secondary-s", Save, Some("Planner")),
-                KeyBinding::new("secondary-shift-s", SaveAs, Some("Planner")),
-                KeyBinding::new("secondary-z", Undo, Some("Planner")),
-                KeyBinding::new("secondary-shift-z", Redo, Some("Planner")),
-                KeyBinding::new("secondary-q", Quit, None),
+                KeyBinding::new(secondary!("s"), Save, Some("Planner")),
+                KeyBinding::new(secondary!("shift-s"), SaveAs, Some("Planner")),
+                KeyBinding::new(secondary!("z"), Undo, Some("Planner")),
+                KeyBinding::new(secondary!("shift-z"), Redo, Some("Planner")),
+                KeyBinding::new(secondary!("q"), Quit, None),
                 #[cfg(debug_assertions)]
-                KeyBinding::new("secondary-shift-d", ToggleDebugOverlay, None),
+                KeyBinding::new(secondary!("shift-d"), ToggleDebugOverlay, None),
             ]);
             let review_size = cfg!(debug_assertions)
                 .then(|| std::env::var("HSPLANNER_REVIEW_SIZE").ok())

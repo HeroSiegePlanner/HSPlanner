@@ -1,6 +1,6 @@
-use app_lib::calc::data;
-use app_lib::calc::stats::apply_set_bonuses;
-use app_lib::calc::types::{EquippedItem, Inventory};
+use hsplanner_engine::calc::data;
+use hsplanner_engine::calc::stats::apply_set_bonuses;
+use hsplanner_engine::calc::types::{EquippedItem, Inventory};
 use std::collections::HashMap;
 
 fn applied(item_ids: &[String], n: usize) -> usize {

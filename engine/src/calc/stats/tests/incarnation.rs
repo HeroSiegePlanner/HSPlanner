@@ -216,7 +216,11 @@ fn powerfunneled_lifespan_converts_the_attack_damage_stat() {
         );
         let result = compute_build_stats(&input);
         // Strength feeds the Attack Damage that Powerfunnel reads.
-        let atk = result.stats.get("attack_damage").copied().unwrap_or_default();
+        let atk = result
+            .stats
+            .get("attack_damage")
+            .copied()
+            .unwrap_or_default();
         let expected = (atk.0 * 0.075, atk.1 * 0.075);
         let actual = result
             .stats
@@ -801,7 +805,10 @@ fn tree_defense_scales_equipped_armor_and_feeds_hulking_colossus() {
     // half point (6.5 per Vitality), so the converted total can land one higher.
     let floored = (base.stats["life"].0 + defense * 0.025).floor();
     let life = result.stats["life"].0;
-    assert!(life == floored || life == floored + 1.0, "{life} vs {floored}");
+    assert!(
+        life == floored || life == floored + 1.0,
+        "{life} vs {floored}"
+    );
     let breakdown = compute_stat_breakdown(&result.stat_sources, "defense", None);
     assert!((breakdown.combined.0 - base.stats["defense"].0 * 1.13).abs() < 1e-8);
 }
@@ -1004,7 +1011,10 @@ fn delayed_recovery_compensates_tick_interval_in_its_per_second_rate() {
 #[test]
 fn citadel_scales_recovery_with_configured_colossus_stacks() {
     // Citadel is Increased Life Replenish: it shares Angel's Vibrance's pool (#216).
-    let custom = [("life_replenish", 100.0), ("life_replenish_increased", 45.0)];
+    let custom = [
+        ("life_replenish", 100.0),
+        ("life_replenish_increased", 45.0),
+    ];
     let base = audit_build(&[], &[], &custom);
     let increased = base.stats["life_replenish_increased"].0 / 100.0;
     let raw = base.stats["life_replenish"].0 / (1.0 + increased);

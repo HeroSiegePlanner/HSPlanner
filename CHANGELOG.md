@@ -1,3 +1,9 @@
+## Interface
+
+- Report a bug has an "Already reported" tab listing the reports tracked on GitHub, with open/closed state and search by title or #number; click an entry to read its description, with a link to its GitHub page.
+- Sending a report that looks like an existing one shows the similar reports first, each readable in place; Send anyway sends it, and editing the title or description checks again.
+- The gem, rune, runeword, affix and skill pickers in the gear editor look like the item list: a title says what you are picking (e.g. "Pick Gem or Rune for Socket 1") instead of the Items and Stash buttons, groups read "• Gems", and icons fill their slot. Hovering a gem or rune shows an item-style card with its kind, tier and socketed stats.
+
 ## Fixes
 
 - "+X to Melee, Ranged, Area of Effect and Orbit Skills" on items now raise the ranks of skills with that tag; before, they did nothing.
@@ -12,3 +18,7 @@
 - Scorching Aura deals damage in the calculation. Before, it was never counted because it is an aura, not an active skill. As in the game, it pulses every 61 frames (about once a second) whatever your cast speed, hitting each enemy once per pulse. Rapid Burning shortens the pulse instead of adding cast rate (16 frames at rank 5). Increased Damaging Aura Effectiveness multiplies the pulse. Sixt Degree Burns and Searing Burst raise its subtree multiplier instead of fire skill damage, and Burning Soul adds 6% per rank for every 100 maximum life to that multiplier. With Scorching Aura as your aura, its DPS adds to your skills' Combined DPS, it is listed under Active skills in the sidebar (× clears the aura slot) and it has its own card among the per-skill DPS. A build that plays only Scorching Aura, with no active skill picked, shows its DPS and leads the Stats view with it.
 - Runeword stats with a range can be set like item rolls: each ranged stat of the socketed runeword has its own slider under Stat Rolls, the calculation uses the chosen value instead of the whole range, and the item tooltip shows it. Changing the runeword clears the old values.
 - Text edit shows the item's runeword and its stats under "Runeword:"; writing a single value with [custom] on a runeword stat sets that roll.
+- Drax and the runewords made with it give Maximum Weapon Damage, as in the game, so they raise weapon attacks only; before, they added damage to spells too (#223). Hydrangea's added minimum and maximum damage is weapon damage too and no longer reaches spells.
+- Avatar of Fire gives Spell Critical Chance, as in the game, instead of Critical Chance (#221).
+- Scorching Aura is a Spell skill, as in Season 11, so Spell bonuses such as Manahunger's 25% more damage and spell critical chance reach it. Temporal Echo still does not repeat it, as an aura pulse is not a cast (#222).
+- Sorting items by DPS and the Incarnation tree suggestions count Scorching Aura; with the aura as your only damage, every item used to show a gain of 0 (#220).

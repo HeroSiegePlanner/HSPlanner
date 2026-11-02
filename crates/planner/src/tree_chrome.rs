@@ -110,7 +110,7 @@ impl TreeView {
                                             .cursor_tooltip(tr("tree.clear_search"))
                                             .on_click(cx.listener(|this, _, window, cx| {
                                                 this.search.update(cx, |input, cx| {
-                                                    input.set_value("", window, cx)
+                                                    input.clean(window, cx)
                                                 });
                                                 window.focus(
                                                     &this.search.read(cx).focus_handle(cx),
@@ -125,7 +125,7 @@ impl TreeView {
             .child(
                 gpui_kit::component::toolbar::Toolbar::new("tree-actions")
                     .p_0()
-                    .h_auto()
+                    .min_h_0()
                     .gap_1p5()
                     .when(self.scene.graph.kind == TreeKind::Ether, |toolbar| {
                         toolbar.content(

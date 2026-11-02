@@ -1,18 +1,8 @@
 [package]
-name = "HSPlanner"
-version = "0.9.1" # Compatibility package version; desktop versions belong to their app crates.
-description = "HSPlanner"
-authors = ["zium1337"]
-license = ""
-repository = ""
+name = "hsplanner-engine"
+version.workspace = true
 edition = "2021"
-rust-version = "1.82"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[lib]
-name = "app_lib"
-crate-type = ["staticlib", "cdylib", "rlib"]
+publish.workspace = true
 
 [[example]]
 name = "ocr_dump"

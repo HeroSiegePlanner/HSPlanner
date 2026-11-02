@@ -30,9 +30,10 @@ fn main() {
             continue;
         };
 
-        let input: app_lib::calc::commands::BuildPerformanceInput = serde_json::from_value(input_v)
-            .unwrap_or_else(|e| panic!("scenario '{name}': input deserialize failed: {e}"));
-        let result = app_lib::calc::commands::calc_build_performance(input);
+        let input: hsplanner_engine::calc::commands::BuildPerformanceInput =
+            serde_json::from_value(input_v)
+                .unwrap_or_else(|e| panic!("scenario '{name}': input deserialize failed: {e}"));
+        let result = hsplanner_engine::calc::commands::calc_build_performance(input);
         let output =
             serde_json::to_value(&result).expect("BuildPerformance must be JSON-serialisable");
 

@@ -54,10 +54,10 @@ pub fn unmet_requirement(
         Melee if ranged => Some("Requires a melee main-hand weapon"),
         Ranged if !ranged => Some("Requires a ranged main-hand weapon"),
         Shield
-            if !inventory
+            if inventory
                 .get("offhand")
                 .and_then(|item| data::get_item(&item.base_id))
-                .is_some_and(|item| item.base_type == "Shield") =>
+                .is_none_or(|item| item.base_type != "Shield") =>
         {
             Some("Requires a shield")
         }

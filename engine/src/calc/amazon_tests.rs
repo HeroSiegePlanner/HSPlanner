@@ -125,7 +125,9 @@ fn amazon_death_waves_are_separate_from_projectiles_and_rehit_interval() {
     };
     assert!((rate(&waves) - 0.25).abs() < 1e-9);
     let expected = 9.0 * rate(&waves) / rate(&base);
-    assert!((waves.avg_hit_dps_max.unwrap() / base.avg_hit_dps_max.unwrap() - expected).abs() < 1e-9);
+    assert!(
+        (waves.avg_hit_dps_max.unwrap() / base.avg_hit_dps_max.unwrap() - expected).abs() < 1e-9
+    );
 }
 
 #[test]
@@ -224,5 +226,3 @@ fn amazon_third_strike_bonus_changes_average_but_not_every_hit() {
     assert!(b.poison_avg_max > a.poison_avg_max);
     assert_eq!(a.projectile_count, b.projectile_count);
 }
-
-

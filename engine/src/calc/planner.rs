@@ -69,8 +69,8 @@ pub fn prepare_input(input: &PlannerInput) -> BuildPerformanceInput {
             continue;
         };
         for (name, _) in data::skill_bonus_entries(base, item) {
-            if let Some(condition) = data::get_item_granted_skill_by_name(name)
-                .and_then(|skill| skill.condition.clone())
+            if let Some(condition) =
+                data::get_item_granted_skill_by_name(name).and_then(|skill| skill.condition.clone())
             {
                 build.player_conditions.insert(condition, true);
             }
@@ -608,9 +608,14 @@ mod tests {
             .player_conditions
             .insert("hyper_activity_buff".into(), false);
         let prepared = prepare_input(&input);
-        assert_eq!(prepared.player_conditions.get("hyper_activity_buff"), Some(&true));
+        assert_eq!(
+            prepared.player_conditions.get("hyper_activity_buff"),
+            Some(&true)
+        );
         assert_ne!(
-            prepared.player_conditions.get("conjured_replenishment_buff"),
+            prepared
+                .player_conditions
+                .get("conjured_replenishment_buff"),
             Some(&true)
         );
     }
