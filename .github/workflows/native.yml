@@ -21,7 +21,7 @@ concurrency:
 
 jobs:
   test:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     env:
       CARGO_INCREMENTAL: '0'
     steps:
@@ -42,6 +42,7 @@ jobs:
       - uses: swatinem/rust-cache@v2
         with:
           workspaces: '. -> target'
+          key: ubuntu-22.04
       - name: Formatting
         run: cargo fmt --all --check
       - name: Clippy

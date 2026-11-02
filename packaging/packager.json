@@ -32,7 +32,7 @@
       "libxkbcommon0",
       "libvulkan1",
       "libfontconfig1",
-      "libasound2t64",
+      "libasound2t64 | libasound2",
       "libudev1",
       "libdbus-1-3"
     ]

@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ${{ fromJSON(inputs.include_macos && '["windows-2022", "ubuntu-24.04", "macos-15"]' || '["windows-2022", "ubuntu-24.04"]') }}
+        os: ${{ fromJSON(inputs.include_macos && '["windows-2022", "ubuntu-22.04", "macos-15"]' || '["windows-2022", "ubuntu-22.04"]') }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
@@ -48,12 +48,12 @@ jobs:
             libxcb-xfixes0-dev libxcb-xkb-dev
       - name: Linux packaging dependencies
         if: runner.os == 'Linux'
-        run: sudo apt-get install -y patchelf desktop-file-utils libfuse2t64
+        run: sudo apt-get install -y patchelf desktop-file-utils libfuse2
       - uses: dtolnay/rust-toolchain@stable
       - uses: swatinem/rust-cache@v2
         with:
           workspaces: '. -> target'
-          key: native-installers-${{ runner.os }}-${{ runner.arch }}
+          key: native-installers-${{ matrix.os }}
       - name: Install pinned packager
         run: cargo install cargo-packager --version 0.11.8 --locked
       - name: Build native installers

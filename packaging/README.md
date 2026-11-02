@@ -27,8 +27,9 @@ Formats are host-specific:
 | Windows 10/11 x64 | NSIS `.exe`, current-user installation |
 | Linux x64 | `.deb`, `.AppImage`, Pacman package + PKGBUILD |
 
-Linux requires native Wayland and a working Vulkan driver. Initial DEB dependencies
-target Ubuntu 24.04; other distributions need separate installation verification.
+Linux requires native Wayland and a working Vulkan driver. Linux packages are built
+on Ubuntu 22.04 (glibc 2.35) and DEB dependencies target Ubuntu 22.04 and newer;
+other distributions need separate installation verification.
 RPM packaging is not implemented by the pinned packager and remains a follow-up.
 
 ## GitHub workflow and signing
