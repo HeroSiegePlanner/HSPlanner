@@ -426,7 +426,12 @@ pub(crate) async fn read(mut response: Response<AsyncBody>) -> anyhow::Result<Ve
 }
 
 fn digest_matches(hasher: Sha256, expected_hex: &str) -> bool {
-    format!("{:x}", hasher.finalize()).eq_ignore_ascii_case(expected_hex)
+    let actual: String = hasher
+        .finalize()
+        .iter()
+        .map(|byte| format!("{byte:02x}"))
+        .collect();
+    actual.eq_ignore_ascii_case(expected_hex)
 }
 
 #[cfg(target_os = "macos")]
