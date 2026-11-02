@@ -2023,7 +2023,7 @@ impl GearView {
             .child(
                 gpui_kit::component::toolbar::Toolbar::new("gear-item-actions")
                     .p_0()
-                    .h_auto()
+                    .min_h_0()
                     .gap_2()
                     .when(base.is_some(), |v| {
                         v.content(

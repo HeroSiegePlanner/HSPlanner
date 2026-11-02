@@ -471,7 +471,7 @@ pub(crate) fn paint_mask(
         if !view.visible(top, bottom) {
             continue;
         }
-        for run in runs.chunks_exact(2) {
+        for run in runs.as_chunks::<2>().0 {
             paint_rect(
                 window,
                 [x(f32::from(run[0])), top, x(f32::from(run[1])), bottom],

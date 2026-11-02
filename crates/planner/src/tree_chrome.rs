@@ -125,7 +125,7 @@ impl TreeView {
             .child(
                 gpui_kit::component::toolbar::Toolbar::new("tree-actions")
                     .p_0()
-                    .h_auto()
+                    .min_h_0()
                     .gap_1p5()
                     .when(self.scene.graph.kind == TreeKind::Ether, |toolbar| {
                         toolbar.content(

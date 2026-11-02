@@ -961,7 +961,7 @@ impl GearView {
                                 .min_h(rems(STASH_MIN_HEIGHT_PX / 13.))
                                 // Reaches into the panel padding so the scrollbar sits at the border.
                                 .mr(-rems(1.))
-                                .on_scroll_wheel({
+                                .on_scroll({
                                     let list = self.stash_list.clone();
                                     // A list with somewhere to scroll keeps the wheel off the page.
                                     move |_, _, cx| {
