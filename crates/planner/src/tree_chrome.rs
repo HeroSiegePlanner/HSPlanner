@@ -110,7 +110,7 @@ impl TreeView {
                                             .cursor_tooltip(tr("tree.clear_search"))
                                             .on_click(cx.listener(|this, _, window, cx| {
                                                 this.search.update(cx, |input, cx| {
-                                                    input.set_value("", window, cx)
+                                                    input.clean(window, cx)
                                                 });
                                                 window.focus(
                                                     &this.search.read(cx).focus_handle(cx),
