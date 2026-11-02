@@ -1,8 +1,8 @@
 //! Equipped-item editor presentation; draft and calculation operations remain in GearView.
 use super::*;
 use crate::gear_sections::{
-    Section, Tone, chip, empty_note, eyebrow, ghost_button, header_action, hint, icon_button,
-    mono_summary, row_box, row_index, section_card, units,
+    Section, Tone, chip, empty_note, eyebrow, ghost_button, group_header, header_action, hint,
+    icon_button, mono_summary, row_box, row_index, section_card, units,
 };
 use crate::item_tooltip;
 use crate::skill_details::stat_name;
@@ -1655,7 +1655,6 @@ impl GearView {
         if matches!(self.picker, Picker::Items | Picker::Stash) {
             return self.item_picker(cx);
         }
-        let modifier = matches!(self.picker, Picker::Affix | Picker::Forge | Picker::Augment);
         let choices = div()
             .id("gear-choices")
             .flex_1()
@@ -1696,51 +1695,13 @@ impl GearView {
                                 .flex()
                                 .items_center()
                                 .gap_2()
-                                .when(!modifier, |view| {
-                                    view.child(self.picker_button(
-                                        "items",
-                                        tr("gear.items"),
-                                        Picker::Items,
-                                        cx,
-                                    ))
-                                    .when(
-                                        !self.is_relic_slot(),
-                                        |view| {
-                                            view.child(self.picker_button(
-                                                "stash",
-                                                tr("gear.stash"),
-                                                Picker::Stash,
-                                                cx,
-                                            ))
-                                        },
-                                    )
-                                })
-                                .when(modifier, |view| {
-                                    let title = match self.picker {
-                                        Picker::Forge => tr("gear.pick_satanic_affix"),
-                                        Picker::Augment => tr("gear.pick_angelic_augment"),
-                                        _ if self
-                                            .candidate
-                                            .as_ref()
-                                            .and_then(|item| data::get_item(&item.base_id))
-                                            .is_some_and(|base| {
-                                                base.random_affix_group_id.as_deref().is_some_and(
-                                                    hsplanner_build::gear::is_unholy_group,
-                                                )
-                                            }) =>
-                                        {
-                                            tr("gear.pick_unholy_affix")
-                                        }
-                                        _ => tr("gear.add_affix"),
-                                    };
-                                    view.child(
-                                        div()
-                                            .text_size(units(17.))
-                                            .font_weight(FontWeight::SEMIBOLD)
-                                            .text_color(cx.global::<TooltipTheme>().text)
-                                            .child(title),
-                                    )
-                                })
+                                .child(
+                                    div()
+                                        .text_size(units(17.))
+                                        .font_weight(FontWeight::SEMIBOLD)
+                                        .text_color(cx.global::<TooltipTheme>().text)
+                                        .child(self.picker_title()),
+                                )
                                 .child(div().flex_1())
                                 .child(
                                     ghost_button("back-to-configure", tr("gear.back"), cx)
@@ -1807,6 +1768,32 @@ impl GearView {
 }
 
 impl GearView {
+    /// What the open choice picker fills; the item picker has its own tabs instead.
+    fn picker_title(&self) -> String {
+        let unholy = || {
+            self.candidate
+                .as_ref()
+                .and_then(|item| data::get_item(&item.base_id))
+                .is_some_and(|base| {
+                    base.random_affix_group_id
+                        .as_deref()
+                        .is_some_and(hsplanner_build::gear::is_unholy_group)
+                })
+        };
+        match self.picker {
+            Picker::Socket(index) => trf("gear.pick_socket", &[("n", (index + 1).to_string())]),
+            Picker::Runeword => tr("gear.pick_runeword").to_owned(),
+            Picker::RandomElement => tr("gear.random_skill_element").to_owned(),
+            Picker::RandomSkill => tr("gear.random_skill").to_owned(),
+            Picker::Subskill => tr("gear.subskill_bonus").to_owned(),
+            Picker::Class => tr("gear.class_bonus").to_owned(),
+            Picker::Forge => tr("gear.pick_satanic_affix").to_owned(),
+            Picker::Augment => tr("gear.pick_angelic_augment").to_owned(),
+            Picker::Affix if unholy() => tr("gear.pick_unholy_affix").to_owned(),
+            Picker::Affix | Picker::Items | Picker::Stash => tr("gear.add_affix").to_owned(),
+        }
+    }
+
     fn render_choice(
         &mut self,
         index: usize,
@@ -1819,33 +1806,21 @@ impl GearView {
         let header =
             !row.group.is_empty() && (index == 0 || self.rows[index - 1].group != row.group);
         let current = self.current_pick();
-        let p = cx.global::<TooltipTheme>();
         div()
             .w_full()
             .when(header, |view| {
-                view.child(
-                    div()
-                        .px_4()
-                        .py_1()
-                        .border_b_1()
-                        .border_color(p.accent_deep.opacity(0.3))
-                        .bg(p.panel_secondary)
-                        .font_family(theme::MONO_FONT_FAMILY)
-                        .text_size(units(10.))
-                        .text_color(p.accent_hot.opacity(0.7))
-                        .child(
-                            match row.group {
-                                "Prefixes" => tr("gear.prefixes"),
-                                "Suffixes" => tr("gear.suffixes"),
-                                "Gems" => tr("gear.group_gems"),
-                                "Jewels" => tr("gear.group_jewels"),
-                                "Soulgems" => tr("gear.group_soulgems"),
-                                "Runes" => tr("gear.group_runes"),
-                                group => group,
-                            }
-                            .to_uppercase(),
-                        ),
-                )
+                view.child(group_header(
+                    match row.group {
+                        "Prefixes" => tr("gear.prefixes"),
+                        "Suffixes" => tr("gear.suffixes"),
+                        "Gems" => tr("gear.group_gems"),
+                        "Jewels" => tr("gear.group_jewels"),
+                        "Soulgems" => tr("gear.group_soulgems"),
+                        "Runes" => tr("gear.group_runes"),
+                        group => group,
+                    },
+                    cx,
+                ))
             })
             .child(self.choice_row(row, current.as_deref() == Some(row.id.as_str()), cx))
             .into_any_element()
@@ -1861,11 +1836,13 @@ impl GearView {
         let augment = (self.picker == Picker::Augment)
             .then(|| data::get_augment(&row.id))
             .flatten();
+        let socket = matches!(self.picker, Picker::Socket(_));
         div()
             .id(SharedString::from(format!("choice-{}", row.id)))
             .map(|view| match augment {
-                Some(augment) => {
-                    view.cursor_tooltip_view(crate::item_tooltip::augment_tooltip(augment))
+                Some(augment) => view.cursor_tooltip_view(item_tooltip::augment_tooltip(augment)),
+                None if socket => {
+                    view.cursor_tooltip_view(item_tooltip::socketable_tooltip(row.id.clone()))
                 }
                 None => view.cursor_tooltip_view(move |window, cx| {
                     gpui_kit::component::tooltip::Tooltip::new(description.clone())
@@ -1877,9 +1854,15 @@ impl GearView {
             .flex_none()
             .flex()
             .items_center()
-            .gap(units(14.))
+            .gap_3()
             .px_4()
-            .py_1p5()
+            .map(|view| {
+                if row.icon.is_some() {
+                    view.py_2p5()
+                } else {
+                    view.py_1p5()
+                }
+            })
             .border_b_1()
             .border_color(border)
             .cursor_pointer()
@@ -1905,8 +1888,9 @@ impl GearView {
                         .items_center()
                         .justify_center()
                         .map(|view| match row.icon.clone() {
-                            Some(icon) => view
-                                .child(img(icon).size(units(24.)).object_fit(ObjectFit::ScaleDown)),
+                            Some(icon) => {
+                                view.child(img(icon).size_full().object_fit(ObjectFit::Contain))
+                            }
                             None => view.child(
                                 div()
                                     .size(units(20.))
@@ -1947,7 +1931,7 @@ impl GearView {
                     })
                     .min_w_0()
                     .truncate()
-                    .text_size(units(13.))
+                    .text_size(units(12.))
                     .font_weight(FontWeight::MEDIUM)
                     .text_color(row.tone.unwrap_or(text))
                     .child(row.label.clone()),

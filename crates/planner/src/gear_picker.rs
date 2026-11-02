@@ -1,6 +1,6 @@
 //! Item picker (Change item): search, sort, rarity groups, tooltips.
 use super::*;
-use crate::gear_sections::{chip, ghost_button, icon_button, units};
+use crate::gear_sections::{chip, ghost_button, group_header, icon_button, units};
 use crate::item_tooltip;
 use crate::skill_details::stat_name;
 use gpui_kit::component::select::{Select, SelectEvent, SelectState};
@@ -601,26 +601,10 @@ impl GearView {
             .as_ref()
             .is_some_and(|item| item.base_id == row.base_id);
         let equipped_ids = item_tooltip::equipped_ids(&self.session.read(cx).snapshot().inventory);
-        let p = cx.global::<TooltipTheme>();
         div()
             .w_full()
             .when(header, |view| {
-                view.child(
-                    div()
-                        .flex()
-                        .items_center()
-                        .gap_2()
-                        .px_4()
-                        .py_1p5()
-                        .border_b_1()
-                        .border_color(p.border)
-                        .bg(p.panel_secondary)
-                        .text_size(units(11.))
-                        .font_weight(FontWeight::MEDIUM)
-                        .text_color(p.muted)
-                        .child(div().size_1().rounded_full().bg(p.accent))
-                        .child(editor::rarity_label(&row.rarity)),
-                )
+                view.child(group_header(editor::rarity_label(&row.rarity), cx))
             })
             .child(self.item_row(row, selected, &equipped_ids, cx))
             .into_any_element()

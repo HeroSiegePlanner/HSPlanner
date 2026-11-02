@@ -177,6 +177,25 @@ pub(crate) fn section_card(
         })
 }
 
+/// Group heading in picker lists: "• Unholy", "• Gems".
+pub(crate) fn group_header(label: impl Into<SharedString>, cx: &App) -> Div {
+    let p = cx.global::<TooltipTheme>();
+    div()
+        .flex()
+        .items_center()
+        .gap_2()
+        .px_4()
+        .py_1p5()
+        .border_b_1()
+        .border_color(p.border)
+        .bg(p.panel_secondary)
+        .text_size(units(11.))
+        .font_weight(FontWeight::MEDIUM)
+        .text_color(p.muted)
+        .child(div().size_1().rounded_full().bg(p.accent))
+        .child(label.into())
+}
+
 pub(crate) fn mono_summary(text: impl Into<String>, color: Hsla) -> Div {
     div()
         .font_family(theme::MONO_FONT_FAMILY)

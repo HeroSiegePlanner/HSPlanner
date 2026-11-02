@@ -1198,6 +1198,63 @@ pub(crate) fn augment_tooltip(
     move |_, cx| cx.new(|_| ItemTooltip::new(augment_model(augment))).into()
 }
 
+/// A gem, jewel, soulgem or rune: what it adds when socketed.
+fn socketable_model(id: &str) -> Option<ItemTooltipModel> {
+    let data = data::data();
+    let (name, tier, stats, kind) = match (data.gems.get(id), data.runes.get(id)) {
+        (Some(gem), _) => {
+            let kind = match crate::gear::gem_group(&gem.name) {
+                "Soulgems" => "jewelry.kind_soulgem",
+                "Jewels" => "jewelry.kind_jewel",
+                _ => "jewelry.kind_gem",
+            };
+            (&gem.name, gem.tier, &gem.stats, kind)
+        }
+        (None, Some(rune)) => (&rune.name, rune.tier, &rune.stats, "jewelry.kind_rune"),
+        (None, None) => return None,
+    };
+    let mut type_line = tr(kind).to_owned();
+    // Gems run tier 1–5 and runes 1–3; soulgems sit outside the ladder.
+    if (1..=5).contains(&tier) {
+        type_line.push_str(" · ");
+        type_line.push_str(&trf("item.tier_short", &[("tier", tier.to_string())]));
+    }
+    let mut keys: Vec<&String> = stats.keys().collect();
+    keys.sort();
+    let lines = if keys.is_empty() {
+        vec![Line::Text {
+            text: tr("item.socketable_no_stats").to_owned(),
+            style: LineStyle::Muted,
+            custom: false,
+        }]
+    } else {
+        keys.into_iter()
+            .map(|key| Line::Text {
+                text: stat_line(key, (stats[key], stats[key])),
+                style: LineStyle::Implicit,
+                custom: false,
+            })
+            .collect()
+    };
+    Some(ItemTooltipModel {
+        name: name.clone(),
+        tone: "neutral".to_owned(),
+        type_line,
+        image_id: id.to_owned(),
+        icon: socketable_icon(name),
+        sections: vec![Section::plain(lines)],
+        footer: None,
+    })
+}
+
+/// Picker rows for gems and runes: the item card instead of a text tooltip.
+pub(crate) fn socketable_tooltip(id: String) -> impl Fn(&mut Window, &mut App) -> AnyView {
+    move |_, cx| match socketable_model(&id) {
+        Some(model) => cx.new(|_| ItemTooltip::new(model)).into(),
+        None => cx.new(|_| EmptyTooltip).into(),
+    }
+}
+
 fn type_line(
     base: &ItemBase,
     equipped: Option<&EquippedItem>,
@@ -2329,6 +2386,35 @@ mod tests {
                 .as_ref()
                 .is_some_and(|(title, _, _)| title == "At full stacks")
         }));
+    }
+
+    #[::core::prelude::v1::test]
+    fn socketable_tooltip_names_kind_tier_and_socketed_stats() {
+        let lines = |id: &str| -> Vec<String> {
+            socketable_model(id)
+                .unwrap()
+                .sections
+                .iter()
+                .flat_map(|section| &section.lines)
+                .filter_map(|line| match line {
+                    Line::Text { text, .. } => Some(text.clone()),
+                    _ => None,
+                })
+                .collect()
+        };
+        let ruby = socketable_model("gem_chipped_ruby").unwrap();
+        assert_eq!(ruby.type_line, "Gem · T1");
+        assert_eq!(lines("gem_chipped_ruby").len(), 2);
+        assert_eq!(
+            socketable_model("gem_anubis_soulgem").unwrap().type_line,
+            "Soulgem"
+        );
+        assert_eq!(
+            socketable_model("rune_drax").unwrap().type_line,
+            "Rune · T3"
+        );
+        assert_eq!(lines("gem_chipped_skull"), ["No stats the planner counts"]);
+        assert!(socketable_model("not_a_gem").is_none());
     }
 
     #[::core::prelude::v1::test]

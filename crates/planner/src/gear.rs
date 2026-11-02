@@ -104,7 +104,7 @@ impl Row {
 }
 
 /// Picker group for a socketable; runes are grouped by the caller.
-fn gem_group(name: &str) -> &'static str {
+pub(crate) fn gem_group(name: &str) -> &'static str {
     if name.contains("Soul") {
         "Soulgems"
     } else if name.ends_with("Jewel") {

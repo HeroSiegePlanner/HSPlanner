@@ -2,6 +2,7 @@
 
 - Report a bug has an "Already reported" tab listing the reports tracked on GitHub, with open/closed state and search by title or #number; click an entry to read its description, with a link to its GitHub page.
 - Sending a report that looks like an existing one shows the similar reports first, each readable in place; Send anyway sends it, and editing the title or description checks again.
+- The gem, rune, runeword, affix and skill pickers in the gear editor look like the item list: a title says what you are picking (e.g. "Pick Gem or Rune for Socket 1") instead of the Items and Stash buttons, groups read "• Gems", and icons fill their slot. Hovering a gem or rune shows an item-style card with its kind, tier and socketed stats.
 
 ## Fixes
 
