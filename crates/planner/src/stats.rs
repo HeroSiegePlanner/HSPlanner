@@ -457,7 +457,7 @@ impl StatsView {
         rows.sort_unstable();
         rows.dedup();
         for row in rows.into_iter().filter(|row| *row < self.list.item_count()) {
-            self.list.splice(row..row + 1, 1);
+            self.list.remeasure_items(row..row + 1);
         }
     }
     pub fn set_active(&mut self, active: bool, cx: &mut Context<Self>) {
@@ -504,7 +504,7 @@ impl StatsView {
         }
         let row = self.row_for_key(key);
         if row < self.list.item_count() {
-            self.list.splice(row..row + 1, 1);
+            self.list.remeasure_items(row..row + 1);
         }
         cx.notify();
     }
