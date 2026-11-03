@@ -5,3 +5,7 @@
 - Items, runewords and item skills: the listed nerfs and buffs (Fury of Tarethiel, Eternity, Rakhul's Legion Crusher, Dragon's Blessing, Grief, Commander's Sentry Blaster, Tactical Flak Jacket, St. Aaron's Eternal Rage and the rest). St. Neri's Rainbow Lance converts 20% of Lightning Resistance into Lightning Skill Damage. Celestial Might converts half of each elemental skill damage bonus to arcane. Light Radius and Intelligence Added as Magic Skill Damage no longer scale with star levels, and Spectral Scatter no longer gains star ranks.
 - Mechanics: Magic Find diminishes with a power of 0.8 (was 0.9); Physical and Magic Damage Reduction diminish past 40% (power 0.85); DoT frequency diminishes past 50% (power 0.75); Jagged Gauntlet lowers critical chance by 25% instead of halving it; Blender gets a third of every other area of effect bonus (Increased and More) while its own Industrial Sized counts fully; Maelstrom of Frost hits every 0.8 seconds.
 - Not in yet: new items, Tarot cards, the Meteor, Homing Missile and Benediction subskill trees, new Incarnation and Ether nodes, rearranged subskill trees and changes the notes give without numbers (e.g. Shockwave's area scaling, projectile speeds, St. Soloyolo's Holy Bow), Lightning Fury's spell critical strikes and Blazing Trail's spell duration.
+
+## Interface
+
+- When HSPlanner crashes, a window opens with the crash log (error, file and line, backtrace), saved as crash.log in the data folder: Copy log puts it on the clipboard for a bug report and Restart starts HSPlanner again.

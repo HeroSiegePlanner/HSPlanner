@@ -738,6 +738,10 @@ pub fn run(
             )
             .expect("open HSPlanner window");
             cx.activate(true);
+            #[cfg(debug_assertions)]
+            if std::env::var_os("HSPLANNER_CRASH_TEST").is_some() {
+                cx.defer(|_| panic!("HSPLANNER_CRASH_TEST"));
+            }
         });
 }
 
