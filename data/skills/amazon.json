@@ -657,7 +657,7 @@
       {
         "source": "Noxious Strike",
         "stat": "poison_skill_damage",
-        "value": 8,
+        "value": 12,
         "per": "skill_level"
       },
       {
@@ -1003,7 +1003,7 @@
     },
     "damageFormula": {
       "base": 0,
-      "perLevel": 15.5
+      "perLevel": 18
     },
     "proc": {
       "chance": 20,
@@ -1032,7 +1032,7 @@
       {
         "source": "Intelligence",
         "stat": "poison_skill_damage",
-        "value": 7.75,
+        "value": 9,
         "per": "attribute_point"
       }
     ],
@@ -1314,7 +1314,7 @@
       "row": 4,
       "col": 0
     },
-    "damageFormula": { "base": 0, "perLevel": 24 },
+    "damageFormula": { "base": 0, "perLevel": 28 },
     "passiveStats": {
       "base": {
         "extra_damage_poisoned": 50
@@ -2751,7 +2751,7 @@
         "manaCost": 4
       }
     ],
-    "damageFormula": { "base": 0, "perLevel": 12.5 },
+    "damageFormula": { "base": 0, "perLevel": 20 },
     "manaCostFormula": {
       "base": 3.5,
       "perLevel": 0.75,
@@ -2786,7 +2786,7 @@
       {
         "source": "Intelligence",
         "stat": "lightning_skill_damage",
-        "value": 8.5,
+        "value": 9.5,
         "per": "attribute_point"
       }
     ],
@@ -2933,13 +2933,13 @@
       {
         "id": "arc_lightning",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.5, 3.5, 4.5], "per": "use", "note": "1 + [603] extra Amazon_Thunder_Fury_obj per bolt hit with [603] = 2r + 2 (SUB base field s6 = 2, coordinator lead), i.e. 2r + 3 extra bolts (spread 10 deg, start on the target, active after 2 frames, mask reaches 37 px past the point: each hits once, rule 15); per use = (2r + 3) * lam with the same placeholder lam = 0.5 (W not in card; I). Arc bolts do not carry [603]/[207]"}, {"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD += 25 %/r on the bolt part"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 1.0 = one main hit (weapon W + lightning V1' lumped, as in planner); a lightning bolt is a hit of ratio lam = V1'/(W + V1'), placeholder lam = 0.5 (W not in card; I)] R4 coordinator lead (fields with a base value) + body table p11 (+(2r+3) hits [205]). Was (1 + r) bolts.", "plannerFix": "planner has secondary_projectile_count 2 + 2r (= [603]) and LSSD; card R4: 1 + [603] = 2r + 3 extra bolts per bolt hit, each an extra hit of the bolt damage, value depends on lam = V1'/(W + V1')"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.5, 2, 2.5], "per": "use", "note": "1 + [603] extra Amazon_Thunder_Fury_obj per bolt hit with [603] = 2r + 2 (SUB base field s6 = 2, coordinator lead), i.e. 2r + 3 extra bolts (spread 10 deg, start on the target, active after 2 frames, mask reaches 37 px past the point: each hits once, rule 15); per use = (2r + 3) * lam with the same placeholder lam = 0.5 (W not in card; I). Arc bolts do not carry [603]/[207]"}, {"kind": "damage_pct", "byRank": [40, 80, 120], "note": "LSSD += 25 %/r on the bolt part"}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); per use; base 1.0 = one main hit (weapon W + lightning V1' lumped, as in planner); a lightning bolt is a hit of ratio lam = V1'/(W + V1'), placeholder lam = 0.5 (W not in card; I)] R4 coordinator lead (fields with a base value) + body table p11 (+(2r+3) hits [205]). Was (1 + r) bolts. S11: [603] = r + 1, so r + 2 extra bolts per use at lam = 0.5; LSSD 40 %/r.", "plannerFix": "planner has secondary_projectile_count 2 + 2r (= [603]) and LSSD; card R4: 1 + [603] = 2r + 3 extra bolts per bolt hit, each an extra hit of the bolt damage, value depends on lam = V1'/(W + V1')"},
         "name": "Arc Lightning",
         "description": "Thunder bolts unleash an arc of additional bolts behind the target on hit.",
         "maxRank": 3,
         "effects": {
-          "base": {"elemental_subtree_damage": 0, "secondary_projectile_count": 2, "subtree_damage": 0},
-          "perRank": {"elemental_subtree_damage": 25, "secondary_projectile_count": 2, "subtree_damage": 25}
+          "base": {"elemental_subtree_damage": 0, "secondary_projectile_count": 1, "subtree_damage": 0},
+          "perRank": {"elemental_subtree_damage": 40, "secondary_projectile_count": 1, "subtree_damage": 40}
         },
         "calculationNote": "Secondary damage and repeat contacts are not included in DPS until their collision timing and inheritance are verified."
       },

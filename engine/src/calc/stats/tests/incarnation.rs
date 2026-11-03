@@ -530,7 +530,7 @@ fn resistance_conversions_sum_elements_and_respect_sign_and_caps() {
     ];
     // Vital Resistance and Feast of the Elements raise life by a percentage in game.
     for (node, target, expected) in [
-        (1152, "increased_life", 15.6),
+        (1152, "increased_life", 10.4),
         (641, "increased_life", 14.0),
         (643, "damage", 2.8),
     ] {
@@ -869,9 +869,9 @@ fn spacial_conversion_preserves_radius_and_benefits_non_spell_area_skills() {
         &[],
         &[("area_of_effect", 40.0), ("area_of_effect_more", 50.0)],
     );
-    // (1 + 40%) × (1 + 50%) - 1 = 110%, copied without consuming radius.
+    // (1 + 40%) × (1 + 50%) - 1 = 110%; half is copied without consuming radius.
     assert_eq!(result.stats_combined["area_of_effect"], (110.0, 110.0));
-    assert_eq!(result.stats["area_skill_damage"], (110.0, 110.0));
+    assert_eq!(result.stats["area_skill_damage"], (55.0, 55.0));
     for tags in [
         vec!["Melee", "Area of Effect"],
         vec!["Spell", "Area of Effect"],
@@ -883,7 +883,7 @@ fn spacial_conversion_preserves_radius_and_benefits_non_spell_area_skills() {
                 &tags,
                 &result.stats,
             ),
-            (110.0, 110.0)
+            (55.0, 55.0)
         );
     }
     assert!(!result.stats.contains_key("spell_aoe_damage"));
@@ -1026,7 +1026,7 @@ fn citadel_scales_recovery_with_configured_colossus_stacks() {
             &[],
             &[("colossus", count)],
         );
-        let expected = raw * (1.0 + increased + 2.5 * f64::from(count.min(5)));
+        let expected = raw * (1.0 + increased + 0.4 * f64::from(count.min(5)));
         assert!(
             (r.stats["life_replenish"].0 - expected).abs() < 1e-9,
             "{count} stacks: {:?}",
@@ -1122,7 +1122,7 @@ fn agitation_scales_movement_speed_with_up_to_ten_stacks() {
 #[test]
 fn colossus_grants_total_damage_per_stack_and_has_one_base_stack() {
     for nodes in [&[579][..], &[579, 580, 581, 582][..]] {
-        let rate = nodes.len() as f64;
+        let rate = nodes.len() as f64 * 0.5;
         let cap = nodes.len() as u32 + 1;
         for count in [0, 1, cap, 99] {
             let result = audit_build_with_conditions(nodes, &[], &[], &[], &[("colossus", count)]);

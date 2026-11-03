@@ -2,6 +2,15 @@ use super::calculation::{number, scalar, CalculationStep};
 use std::collections::HashMap;
 
 use super::{r_max, rg, StatMap};
+use crate::calc::stats::diminished_value;
+use crate::calc::types::DiminishDef;
+
+// Season 11: DoT frequency diminishes past 50% with a power of 0.75.
+const DOT_FREQUENCY_DIMINISH: DiminishDef = DiminishDef {
+    threshold: 50.0,
+    power: 0.75,
+    cap: None,
+};
 
 pub struct Ailment {
     pub state: &'static str,
@@ -175,11 +184,13 @@ pub(crate) fn ailment_calculation(
             }
             let uptime = 1.0 - (1.0 - chance).powf(hits);
             let damage_pct = total_pct(stats, scoped, a.damage_key) + all_damage;
-            let frequency_pct = a
-                .frequency_key
-                .map(|k| total_pct(stats, scoped, k))
-                .unwrap_or(0.0)
-                + all_frequency;
+            let frequency_pct = diminished_value(
+                a.frequency_key
+                    .map(|k| total_pct(stats, scoped, k))
+                    .unwrap_or(0.0)
+                    + all_frequency,
+                &DOT_FREQUENCY_DIMINISH,
+            );
             let contribution = hit_avg * (fraction + skill_damage_added) * (1.0 + damage_pct / 100.0) * (1.0 + frequency_pct / 100.0) * uptime;
             trace.push(CalculationStep::new(format!("{} uptime", a.state), format!("1 − (1 − clamp({}% stat + {}% subtree, 0, 100) / 100)^({} hits/s)", number(from_stat), number(from_procs), number(hits_per_second)), scalar(uptime)));
             trace.push(CalculationStep::new(format!("{} DPS", a.state), format!("{} average hit × ({} base fraction + {} skill damage added) × (1 + {}% damage / 100) × (1 + {}% frequency / 100) × {} uptime", number(hit_avg), number(fraction), number(skill_damage_added), number(damage_pct), number(frequency_pct), number(uptime)), scalar(contribution)));
@@ -435,6 +446,27 @@ mod tests {
         assert!((faster - base * 1.5).abs() < 1e-9);
         let halved = ailment_dps(1000.0, 1.0, &empty, &empty, &chances(&[("bleeding", 50.0)]));
         assert!((halved - base * 0.5).abs() < 1e-9);
+    }
+
+    // Season 11: 150% frequency counts as 50 + 100^0.75 = 81.62%.
+    #[test]
+    fn frequency_diminishes_past_fifty_percent() {
+        let empty = StatMap::new();
+        let bleeding = chances(&[("bleeding", 100.0)]);
+        let base = ailment_dps(1000.0, 1.0, &empty, &empty, &bleeding);
+        let faster = ailment_dps(
+            1000.0,
+            1.0,
+            &stats(&[("increased_ailment_frequency", 50.0)]),
+            &stats(&[("increased_bleeding_frequency", 100.0)]),
+            &bleeding,
+        );
+        let expected = 1.0 + (50.0 + 100f64.powf(0.75)) / 100.0;
+        assert!(
+            (faster / base - expected).abs() < 1e-9,
+            "x{}",
+            faster / base
+        );
     }
 
     #[test]

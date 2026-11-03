@@ -3876,8 +3876,8 @@
     "twoHanded": false,
     "skillBonuses": {
       "Master Poisoner": [
-        14,
-        24
+        10,
+        20
       ]
     },
     "stats": {
@@ -3898,10 +3898,7 @@
         25,
         55
       ],
-      "increased_poisoned_frequency": [
-        10,
-        20
-      ],
+      "increased_poisoned_frequency": 10,
       "ignore_poison_res": [
         20,
         25
@@ -3963,10 +3960,7 @@
         100,
         125
       ],
-      "increased_poisoned_frequency": [
-        15,
-        25
-      ],
+      "increased_poisoned_frequency": 10,
       "ignore_poison_res": [
         30,
         35

@@ -5,6 +5,7 @@ mod bug_report_issues;
 mod bug_report_transport;
 mod changelog;
 mod chrome;
+mod crash;
 mod loadouts;
 mod release_notes;
 mod settings;
@@ -19,12 +20,17 @@ fn main() {
         eprintln!("HSPlanner requires a native Wayland session.");
         std::process::exit(1);
     }
+    if let Some((log, language)) = crash::report_request(std::env::args_os().skip(1)) {
+        crash::show(log, language);
+        return;
+    }
     #[cfg(debug_assertions)]
     hsplanner_ui::debug_log::install();
     let directory = hsplanner_build::storage::data_directory().unwrap_or_else(|error| {
         eprintln!("{error}");
         std::process::exit(1)
     });
+    crash::install(directory.join(crash::LOG_NAME));
     let loaded = hsplanner_build::storage::Writer::open(directory.clone());
     shell::run(directory, loaded);
 }

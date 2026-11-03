@@ -509,8 +509,8 @@
     "position": { "row": 1, "col": 2 },
     "ranks": [{ "rank": 1 }],
     "passiveStats": {
-      "base": { "damage": 20, "life_replenish_more": -95, "life_steal_more": -95 },
-      "perRank": { "damage": 1.5, "life_replenish_more": 0, "life_steal_more": 0 }
+      "base": { "damage": 19.5, "life_replenish_more": -95, "life_steal_more": -95 },
+      "perRank": { "damage": 1, "life_replenish_more": 0, "life_steal_more": 0 }
     }
   },
   {
@@ -565,8 +565,8 @@
     "position": { "row": 3, "col": 0 },
     "ranks": [{ "rank": 1 }],
     "passiveStats": {
-      "base": { "life_steal": 5, "attack_damage": 1.5 },
-      "perRank": { "life_steal": 1, "attack_damage": 1.5 }
+      "base": { "life_steal": 5, "attack_damage": 1 },
+      "perRank": { "life_steal": 1, "attack_damage": 1 }
     }
   },
   {
@@ -585,8 +585,8 @@
     "position": { "row": 3, "col": 1 },
     "ranks": [{ "rank": 1 }],
     "passiveStats": {
-      "base": { "attack_damage": 20 },
-      "perRank": { "attack_damage": 7 }
+      "base": { "attack_damage": 18 },
+      "perRank": { "attack_damage": 5 }
     }
   },
   {
@@ -608,8 +608,8 @@
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "passiveStats": {
-      "base": { "effectiveness": 1 },
-      "perRank": { "effectiveness": 0.25 }
+      "base": { "effectiveness": 0.9 },
+      "perRank": { "effectiveness": 0.15 }
     }
   },
   {
@@ -1118,8 +1118,8 @@
     "position": { "row": 1, "col": 2 },
     "ranks": [{ "rank": 1 }],
     "passiveStats": {
-      "base": { "extra_damage_bleeding": 1.25 },
-      "perRank": { "extra_damage_bleeding": 1.25 }
+      "base": { "extra_damage_bleeding": 0.75 },
+      "perRank": { "extra_damage_bleeding": 0.75 }
     }
   },
   {
@@ -1900,13 +1900,13 @@
       {
         "id": "ragefueled_energy",
         "positionIndex": 4,
-        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [15, 30, 45, 60, 75], "note": "blade life destroyTimer 300 frames x(1+0.15r); hits per blade = theta(T)/360 grow ~quadratically (r5: 9.47 instead of 4.52 per blade at 5 s base, card value)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=155px] card table p4 (T = 300*(1+15 %/r))"},
+        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [8, 16, 24, 32, 40], "note": "blade life destroyTimer 300 frames x(1+0.15r); hits per blade = theta(T)/360 grow ~quadratically (r5: 9.47 instead of 4.52 per blade at 5 s base, card value)"}], "confidence": "C", "note": "[dummy hits relative to planner base, convention: in-zone <=155px] card table p4 (T = 300*(1+15 %/r))"},
         "name": "Ragefueled Energy",
         "description": "Increases the duration of blender.",
         "maxRank": 5,
         "effects": {
           "base": {"skill_duration": 0},
-          "perRank": {"skill_duration": 15}
+          "perRank": {"skill_duration": 8}
         }
       },
       {
@@ -1930,7 +1930,7 @@
         "maxRank": 5,
         "effects": {
           "base": {"skill_crit_damage": 0},
-          "perRank": {"skill_crit_damage": 32.5}
+          "perRank": {"skill_crit_damage": 24}
         }
       },
       {
@@ -1997,28 +1997,28 @@
       {
         "id": "blenderang",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD 50 %/r"}, {"kind": "cooldown_pct", "byRank": [-25, -50, -75], "note": "cooldown 8 s x(1-0.25r) (6/4/2 s)"}, {"kind": "set_hits", "byRank": [4, 4, 4], "note": "blenderang: spin speed doubled (8 deg/frame), centre flies 12 px/frame out to 320*(1+0.3r) px and back; blade life drops to ~0.9-1.7 s, ~2 hits per blade on a dummy on the line at 160 px (2 blades = 4 total per use, card value)"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone <=155px] card table p12 (Alarm_0 doubles spinSpeed)", "plannerFix": "planner keeps the 5 s blade life and the full-spin hit count; card: blades last ~1-1.7 s with doubled spin, about 2 hits per blade (set_hits 4 total)"},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [75, 150, 225], "note": "LSSD 50 %/r"}, {"kind": "cooldown_pct", "byRank": [-25, -50, -75], "note": "cooldown 8 s x(1-0.25r) (6/4/2 s)"}, {"kind": "set_hits", "byRank": [4, 4, 4], "note": "blenderang: spin speed doubled (8 deg/frame), centre flies 12 px/frame out to 320*(1+0.3r) px and back; blade life drops to ~0.9-1.7 s, ~2 hits per blade on a dummy on the line at 160 px (2 blades = 4 total per use, card value)"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone <=155px] card table p12 (Alarm_0 doubles spinSpeed)", "plannerFix": "planner keeps the 5 s blade life and the full-spin hit count; card: blades last ~1-1.7 s with doubled spin, about 2 hits per blade (set_hits 4 total)"},
         "name": "Blenderang",
         "description": "Throw a traveling blender towards target location returning back to you shortly. Blender cooldown is reduced.",
         "maxRank": 3,
         "effects": {
           "base": {"skill_range": 0, "cooldown_reduction_pct": 0, "physical_skill_damage": 0},
-          "perRank": {"skill_range": 30, "cooldown_reduction_pct": 25, "physical_skill_damage": 50}
+          "perRank": {"skill_range": 30, "cooldown_reduction_pct": 25, "physical_skill_damage": 75}
         }
       },
       {
         "id": "attachable_microblades",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.506, 1.275, 2.306], "per": "hit", "note": "chance 5r % per blade hit spawns a microblade group in place of the dummy (3 blades, 2 s, damage floor(d0*(1+0.35r))), ~7.5 hits per proc: per blade hit 0.05r*7.5*(1+0.35r) main-hit units"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone <=155px] card table p13 ([840] = [0.35r, 5r], handler L82, Nanoblades_obj microBlades = 1)", "plannerFix": "planner adds physical_skill_damage 35 %/r to the whole cut; the card gives a microblade group at the dummy (chance 5r % per blade hit, ~7.5 hits of d0*(1+0.35r) per proc)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.2812, 0.675, 1.1812], "per": "hit", "note": "chance 5r % per blade hit spawns a microblade group in place of the dummy (3 blades, 2 s, damage floor(d0*(1+0.35r))), ~7.5 hits per proc: per blade hit 0.05r*7.5*(1+0.35r) main-hit units"}], "confidence": "I", "note": "[dummy hits relative to planner base, convention: in-zone <=155px] card table p13 ([840] = [0.35r, 5r], handler L82, Nanoblades_obj microBlades = 1) S11: [840] = [0.25r, 3r]: 0.03r*7.5*(1+0.25r) per blade hit.", "plannerFix": "planner adds physical_skill_damage 35 %/r to the whole cut; the card gives a microblade group at the dummy (chance 5r % per blade hit, ~7.5 hits of d0*(1+0.35r) per proc)"},
         "name": "Attachable Microblades",
         "description": "Chance to conjure a small blender at target location on hit dealing additional damage for a short duration.",
         "maxRank": 3,
         "proc": {
           "trigger": "on_hit",
-          "chance": { "base": 0, "perRank": 5 },
+          "chance": { "base": 0, "perRank": 3 },
           "effects": {
             "base": { "physical_skill_damage": 0 },
-            "perRank": { "physical_skill_damage": 35 }
+            "perRank": { "physical_skill_damage": 25 }
           }
         }
       },

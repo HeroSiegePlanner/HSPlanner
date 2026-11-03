@@ -313,6 +313,11 @@ fn item_stat_conversions_add_shares_of_attributes_and_stats() {
             "cold_resistance_converted_to_cold_damage".to_string(),
             (25.0, 25.0),
         ),
+        ("lightning_resistance".to_string(), (60.0, 60.0)),
+        (
+            "lightning_resistance_converted_to_lightning_damage".to_string(),
+            (20.0, 20.0),
+        ),
     ]);
     let mut sources = SourceMap::new();
     let touched = apply_item_stat_conversions(&attributes, &stats, &mut sources);
@@ -325,7 +330,16 @@ fn item_stat_conversions_add_shares_of_attributes_and_stats() {
         sum_contributions(&sources["cold_skill_damage"]),
         (20.0, 20.0)
     );
-    let expected = ["magic_skill_damage", "damage", "cold_skill_damage"];
+    assert_eq!(
+        sum_contributions(&sources["lightning_skill_damage"]),
+        (12.0, 12.0)
+    );
+    let expected = [
+        "magic_skill_damage",
+        "damage",
+        "cold_skill_damage",
+        "lightning_skill_damage",
+    ];
     assert_eq!(touched, expected.map(String::from).into_iter().collect());
 }
 
@@ -705,17 +719,26 @@ fn apply_diminishing_returns_skips_unconfigured_and_absent_keys() {
     assert!(!stats.contains_key("gold_find"));
 }
 
-// S10 config: four original curves, FCR, deadly blow, skill haste, six Ignore Resistance caps.
+// Season 11 config: four original curves, FCR, deadly blow, skill haste,
+// physical/magic damage reduction and six Ignore Resistance caps.
 #[test]
-fn diminishing_returns_config_has_s10_curves() {
-    let s10 = crate::calc::data::data()
+fn diminishing_returns_config_has_season_curves() {
+    let curves = crate::calc::data::data()
         .game_config
         .diminishing_returns
         .as_ref()
         .unwrap();
-    assert_eq!(s10.len(), 13);
-    let db = &s10["deadly_blow"];
+    assert_eq!(curves.len(), 15);
+    let db = &curves["deadly_blow"];
     assert_eq!((db.threshold, db.power, db.cap), (50.0, 0.75, Some(100.0)));
+    assert_eq!(curves["magic_find"].power, 0.8);
+    for key in ["physical_damage_reduction", "magic_damage_reduction"] {
+        let curve = &curves[key];
+        assert_eq!(
+            (curve.threshold, curve.power, curve.cap),
+            (40.0, 0.85, None)
+        );
+    }
 }
 
 #[test]

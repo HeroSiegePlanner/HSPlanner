@@ -1151,19 +1151,19 @@
       {
         "id": "concentrated_fury",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [11.25, 13.5, 15.75], "per": "use", "note": "Concentrated Fury: each cast makes a Concentration sphere (1.4 s) that fires 9 lightning chains (3 series of 3 chains at 120 deg, steps 1, 32, 63; R3 verified). Each chain = damage[4] = floor(V1' * (1 + 0.25r)) = (1 + 0.25r) main hits, 1 hit on the dummy each (N0). Expected per use = 9 * (1 + 0.25r). Not LSSD"}], "confidence": "C", "note": "card Lightning Fury p12 (L449; R3 148#0 correction: 9 chains, not about 3)", "plannerFix": "planner adds lightning_skill_damage 25r to the whole skill (LSSD-type); card: not LSSD, 9 separate chain hits per cast each of (1+0.25r) damage"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [10.8, 12.6, 14.4], "per": "use", "note": "Concentrated Fury: each cast makes a Concentration sphere (1.4 s) that fires 9 lightning chains (3 series of 3 chains at 120 deg, steps 1, 32, 63; R3 verified). Each chain = damage[4] = floor(V1' * (1 + 0.25r)) = (1 + 0.25r) main hits, 1 hit on the dummy each (N0). Expected per use = 9 * (1 + 0.25r). Not LSSD"}], "confidence": "C", "note": "card Lightning Fury p12 (L449; R3 148#0 correction: 9 chains, not about 3)", "plannerFix": "planner adds lightning_skill_damage 25r to the whole skill (LSSD-type); card: not LSSD, 9 separate chain hits per cast each of (1+0.25r) damage"},
         "name": "Concentrated Fury",
         "description": "Summon an orb of lightning orbiting you and zapping nearby monsters.",
         "maxRank": 3,
         "effects": {
           "base": {"lightning_skill_damage": 0},
-          "perRank": {"lightning_skill_damage": 25}
+          "perRank": {"lightning_skill_damage": 20}
         }
       },
       {
         "id": "ionizing_fury",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "other", "byRank": [0.96, 0.92, 0.88], "note": "Ionizing Fury: per-cast roll with chance 8r % replaces V1 by V1 * 0.5 (strike lightning, chain and [200]). Value = expected lightning multiplier 1 - 0.5 * 0.08r on the lightning part. Also adds shock DoT floor(V1'_half * 0.75r) (buff 61) with chance-based DoT, modelled as DoT outside the dummy hit count (see reports/dot_debuffs.md); [201] += 4r chains give 0 on a lone dummy"}], "confidence": "C", "note": "card Lightning Fury p13 (L358)", "plannerFix": "planner models increased_stasis_damage 75r with on_hit chance 8r % and bounces; card: lightning x0.5 with chance per cast and a shock DoT, without damage increase"},
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.925, 0.85, 0.775], "note": "Ionizing Fury: per-cast roll with chance 8r % replaces V1 by V1 * 0.5 (strike lightning, chain and [200]). Value = expected lightning multiplier 1 - 0.5 * 0.08r on the lightning part. Also adds shock DoT floor(V1'_half * 0.75r) (buff 61) with chance-based DoT, modelled as DoT outside the dummy hit count (see reports/dot_debuffs.md); [201] += 4r chains give 0 on a lone dummy"}], "confidence": "C", "note": "card Lightning Fury p13 (L358)", "plannerFix": "planner models increased_stasis_damage 75r with on_hit chance 8r % and bounces; card: lightning x0.5 with chance per cast and a shock DoT, without damage increase"},
         "name": "Ionizing Fury",
         "description": "Chance on hit to halve the damage but double the amount of bounces and inflicting stasis.",
         "maxRank": 3,
@@ -1173,7 +1173,7 @@
         },
         "proc": {
           "trigger": "on_hit",
-          "chance": { "base": 0, "perRank": 8 },
+          "chance": { "base": 0, "perRank": 15 },
           "effects": {
             "base": { "projectile_bounces": 0 },
             "perRank": { "projectile_bounces": 4 }
@@ -1278,13 +1278,13 @@
     "position": { "row": 0, "col": 2 },
     "hitModel": { "object": "Paladin_Holy_Bolt_Step", "tickFrequency": 0.5, "lifetime": 1.25 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 11, "perLevel": 11.5 },
+    "damageFormula": { "base": 11, "perLevel": 15 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Fist of the Heavens", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
       { "source": "Light's Embrace", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
       { "source": "Holy Nova", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
-      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.35, "per": "attribute_point" }
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.5, "per": "attribute_point" }
     ],
     "subskills": [
       {
@@ -1315,7 +1315,7 @@
       },
       {
         "id": "heavens_help",
-        "positionIndex": 2,
+        "positionIndex": 7,
         "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Heaven's Help: bolt speed x(1 + 0.15r): changes range (300 px base) but not the hit count at 160 px; 0 on DPS"}], "confidence": "C", "note": "card Holy Bolt p2; planner projectile_speed 15/r matches the speed change"},
         "name": "Heaven's Help",
         "description": "Increases projectile speed.",
@@ -1339,7 +1339,7 @@
       },
       {
         "id": "bolt_rampage",
-        "positionIndex": 4,
+        "positionIndex": 6,
         "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5], "note": "Bolt Rampage: n = XSP(1 + r) bolts per cast (1 extra projectile per rank), damage x0.5 for all bolts incl. [18]; the explicit hit numbers are given in the extra_hits effect below (replacesProjectileHits)"}, {"kind": "extra_hits", "byRank": [0.0, 0.0, 0.0, 0.0, 0.0], "per": "use", "replacesProjectileHits": true, "note": "Bolt Rampage, main horizontal aim (Resztki D): total = 0.5*H(1 + r) with H(2..6) = 2, 2, 2, 2, 2, so the added hits per use = 0.5*H(n) - 1 = 0 for every rank (the base bolt is halved too). Vertical aim: H(2..6) = 2, 3, 2, 3, 2 -> [0.0, 0.5, 0.0, 0.5, 0.0]; average over the aiming direction x1.0 / 1.19 / 1.0 / 1.19 / 1.0. Was [0.0, 0.5, 1.0, 0.5, 1.0] (AABB), superseded"}], "confidence": "I", "note": "card Holy Bolt p4 (L667-669) + Resztki D (p4 horizontal x1.0 x5); H(n) inputs C, 2.3 px margin of the +-8 deg bolts I", "plannerFix": "planner models +1 projectile per rank at the average slope (0.5 hits per extra) and does not halve the damage; card: explicit H(n) table with x0.5 per bolt"},
         "name": "Bolt Rampage",
         "description": "Unleash multiple holy bolts with halved damage.",
@@ -1367,7 +1367,7 @@
       },
       {
         "id": "call_of_justice",
-        "positionIndex": 6,
+        "positionIndex": 4,
         "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Call of Justice: on hit, a bolt redirects to a second-nearest enemy within 280 px ([552] = 40 %/r damage). With a lone dummy the second-nearest clamp returns the struck dummy itself, and the card reads this as 0 extra hits on the dummy (I: the redirect-to-self case is not confirmed)"}], "confidence": "I", "note": "card Holy Bolt p6 ([552], line not given); card gives 0 on the dummy (C/I)", "plannerFix": "planner applies arcane_skill_damage 40/r on proc (on_hit chance 4r); card: 0 extra hits on the lone dummy (second-nearest clamp returns the struck dummy)"},
         "name": "Call of Justice",
         "description": "Chance to ricochet into a nerby monster with increased damage on hit.",
@@ -1383,7 +1383,7 @@
       },
       {
         "id": "strengthened_will",
-        "positionIndex": 7,
+        "positionIndex": 2,
         "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "Strengthened Will: LSSD += 10 %/r on the bolt damage"}], "confidence": "C", "note": "card Holy Bolt p7"},
         "name": "Strengthened Will",
         "description": "Increases damage dealt by holy bolt.",
@@ -1769,13 +1769,13 @@
     "tree": "Lionheart",
     "position": { "row": 2, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0, "perLevel": 9.5 },
+    "damageFormula": { "base": 0, "perLevel": 14 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Light's Embrace", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
       { "source": "Holy Aura", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
       { "source": "Holy Retribution", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
-      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.5, "per": "attribute_point" }
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.5, "per": "attribute_point" }
     ],
     "subskills": [
       {
@@ -1920,13 +1920,21 @@
       {
         "id": "divine_lightning",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.45, 1.9, 2.35], "per": "hit", "note": "Divine Lightning: every hit spawns Paladin_Lightning_Fury_obj with floor(d1 * (1 + 0.45r)) (arcane) and max_bounces 3r: a chain is N0 (1 hit), so 1 hit of damage (1 + 0.45r) per base hit"}], "confidence": "I", "note": "card Holy Hammer p11 ([559]); card marks C/I", "plannerFix": "planner has arcane_skill_damage 45/r (LSSD-type) and projectile_bounces 3/r; card: one chain hit of damage (1 + 0.45r) per base hit, bounces add nothing (N0)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.175, 0.5, 0.975], "per": "hit", "note": "Divine Lightning: every hit spawns Paladin_Lightning_Fury_obj with floor(d1 * (1 + 0.45r)) (arcane) and max_bounces 3r: a chain is N0 (1 hit), so 1 hit of damage (1 + 0.45r) per base hit"}], "confidence": "I", "note": "card Holy Hammer p11 ([559]); card marks C/I S11: the chain now procs with 10 %*r per hit at (1 + 0.75r): 0.1r*(1 + 0.75r) hits per base hit.", "plannerFix": "planner has arcane_skill_damage 45/r (LSSD-type) and projectile_bounces 3/r; card: one chain hit of damage (1 + 0.45r) per base hit, bounces add nothing (N0)"},
         "name": "Divine Lightning",
         "description": "Hammers unleash a chain of divine lightning on hit.",
         "maxRank": 3,
         "effects": {
-          "base": {"arcane_skill_damage": 0, "projectile_bounces": 0},
-          "perRank": {"arcane_skill_damage": 45, "projectile_bounces": 3}
+          "base": {"projectile_bounces": 0},
+          "perRank": {"projectile_bounces": 3}
+        },
+        "proc": {
+          "trigger": "on_hit",
+          "chance": {"base": 0, "perRank": 10},
+          "effects": {
+            "base": {"arcane_skill_damage": 0},
+            "perRank": {"arcane_skill_damage": 75}
+          }
         }
       },
       {
@@ -2010,7 +2018,7 @@
       { "source": "Holy Aura", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
       { "source": "The Venerated One", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
       { "source": "Holy Bolt", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
-      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.5, "per": "attribute_point" }
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 9, "per": "attribute_point" }
     ],
     "subskills": [
       {
@@ -2046,7 +2054,7 @@
       },
       {
         "id": "punish_the_sinners",
-        "positionIndex": 3,
+        "positionIndex": 9,
         "dummy": {"effects": [{"kind": "other", "note": "Punish the Sinners: per-cast roll with chance 3r % applies arcane break 15 %/r for 5 s (damage taken x(1 + 0.15r) while active). Uptime not quantified; no hit count"}], "confidence": "C", "note": "card Fist of the Heavens p3 (L900)", "plannerFix": "planner models on_hit chance 3r % with arcane_break 15/r; card: chance rolled per cast"},
         "name": "Punish the Sinners",
         "description": "Chance to inflict arcane break on hit.",
@@ -2102,14 +2110,14 @@
       },
       {
         "id": "divine_reach",
-        "positionIndex": 7,
-        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [5, 10, 15, 20, 25], "note": "Divine Reach: cast speed +5 %/r (TalentUseSetSpeed case 161, with RSS106)"}], "confidence": "C", "note": "card Fist of the Heavens p7"},
+        "positionIndex": 10,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [8, 16, 24, 32, 40], "note": "Divine Reach: cast speed +5 %/r (TalentUseSetSpeed case 161, with RSS106)"}], "confidence": "C", "note": "card Fist of the Heavens p7"},
         "name": "Divine Reach",
         "description": "Increases cast rate when using fist of the heavens.",
         "maxRank": 5,
         "effects": {
           "base": {"faster_cast_rate": 0},
-          "perRank": {"faster_cast_rate": 5}
+          "perRank": {"faster_cast_rate": 8}
         }
       },
       {
@@ -2130,19 +2138,19 @@
       },
       {
         "id": "halting_luminosity",
-        "positionIndex": 9,
+        "positionIndex": 3,
         "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Halting Luminosity: slow [53] = 3 s, [54] = 10 %/r slow (utility/CC); slow adds no hits on the dummy"}], "confidence": "C", "note": "card Fist of the Heavens p9"},
         "name": "Halting Luminosity",
         "description": "Inflicts slow on hit.",
-        "maxRank": 5,
+        "maxRank": 3,
         "effects": {
           "base": {"slow_target": 0},
-          "perRank": {"slow_target": 10}
+          "perRank": {"slow_target": 15}
         }
       },
       {
         "id": "blessed_one",
-        "positionIndex": 10,
+        "positionIndex": 7,
         "dummy": {"effects": [{"kind": "set_hits", "byRank": [0.3, 0.6, 0.9, 1.2, 1.5], "note": "Blessed One (replaces the fan): blessedOne > 0 skips the bolt loop; one Holynova at the impact point with floor(d1 * n * 0.1r) = 1 hit of n * 0.1r = 0.3r main hits (n = 3 at p1 rank 0; with One with the Faith the damage grows with n)"}], "confidence": "C", "note": "card Fist of the Heavens p10 (asm 0x148e6b9cd; rules 19, 22)", "plannerFix": "planner has of_total_damage 10/r on top of the bolts; card: the bolts are replaced by one nova of n * 0.1r * d1"},
         "name": "Blessed One",
         "description": "Fist of the heavens no longer fires holy bolts. Instead unleash a holy nova scaling its damage based on projectile amount.",
@@ -2186,13 +2194,13 @@
       {
         "id": "immaculate_warrior",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [120, 240, 360], "note": "Immaculate Warrior (transformation): Warrior object at the player with damage[1] = floor(V1 * (1 + LSSD + n * 0.4r)); n = 3 at p1 rank 0 gives +120 %/r. Arcane break 50 %/r ([979]). The bolts are replaced by the warrior object"}, {"kind": "set_hits", "byRank": [0, 0, 0], "note": "Immaculate Warrior (transformation): the warrior strike is Paladin_Fist_of_Heavens_Divine_Explosion_obj (index 0xd16 @0x148e73248) at (host.x, host.y+6), scale 1.25, precise mask 224x224 (radius 112*1.25 = 140 px): the dummy edge (148 +- 6 px) is outside the reach 140 + 12 = 152 < 154-166, so 0 hits at the 160 px convention; it hits only a dummy within ~150 px of the player. The bolts are replaced by the warrior (the base salvo does not exist). Two warriors with p8"}], "confidence": "I", "note": "card Fist p13 + R4 161#3 (zawezone: C code, I thresholds) + Resztki E (explosion at (host.x, host.y+6), 154-166 px from the centre, unchanged); was effect \"other\" (reach-dependent, not quantified)", "plannerFix": "planner has arcane 40/r and arcane_break 50/r; card: warrior object (transformation, damage with n * 0.4r) replacing the bolts, reach-dependent hits"},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [150, 300, 450], "note": "Immaculate Warrior (transformation): Warrior object at the player with damage[1] = floor(V1 * (1 + LSSD + n * 0.4r)); n = 3 at p1 rank 0 gives +120 %/r. Arcane break 50 %/r ([979]). The bolts are replaced by the warrior object"}, {"kind": "set_hits", "byRank": [0, 0, 0], "note": "Immaculate Warrior (transformation): the warrior strike is Paladin_Fist_of_Heavens_Divine_Explosion_obj (index 0xd16 @0x148e73248) at (host.x, host.y+6), scale 1.25, precise mask 224x224 (radius 112*1.25 = 140 px): the dummy edge (148 +- 6 px) is outside the reach 140 + 12 = 152 < 154-166, so 0 hits at the 160 px convention; it hits only a dummy within ~150 px of the player. The bolts are replaced by the warrior (the base salvo does not exist). Two warriors with p8"}], "confidence": "I", "note": "card Fist p13 + R4 161#3 (zawezone: C code, I thresholds) + Resztki E (explosion at (host.x, host.y+6), 154-166 px from the centre, unchanged); was effect \"other\" (reach-dependent, not quantified) S11: n * 0.5r per projectile, +150 %/r at n = 3.", "plannerFix": "planner has arcane 40/r and arcane_break 50/r; card: warrior object (transformation, damage with n * 0.4r) replacing the bolts, reach-dependent hits"},
         "name": "Immaculate Warrior",
         "description": "Smash with the fist dealing increased damage based on projectile amount inflicting arcane break and knocking back targets.",
         "maxRank": 3,
         "effects": {
           "base": {"arcane_break": 0, "subtree_damage": 0},
-          "perRank": {"arcane_break": 50, "subtree_damage": 120}
+          "perRank": {"arcane_break": 50, "subtree_damage": 150}
         },
         "proc": {
           "trigger": "on_hit",

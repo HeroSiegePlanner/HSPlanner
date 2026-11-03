@@ -489,7 +489,7 @@ pub fn apply_tree_conversions(
 }
 
 /// Item "X% of A converted to B" stats: (item stat, A, whether A is an attribute, B).
-const ITEM_STAT_CONVERSIONS: [(&str, &str, bool, &str); 16] = [
+const ITEM_STAT_CONVERSIONS: [(&str, &str, bool, &str); 17] = [
     (
         "intelligence_converted_to_magic_skill_dmg",
         "intelligence",
@@ -573,6 +573,12 @@ const ITEM_STAT_CONVERSIONS: [(&str, &str, bool, &str); 16] = [
         "poison_resistance",
         false,
         "poison_skill_damage",
+    ),
+    (
+        "lightning_resistance_converted_to_lightning_damage",
+        "lightning_resistance",
+        false,
+        "lightning_skill_damage",
     ),
     (
         "faster_cast_rate_percent_converted_to_movement_speed",

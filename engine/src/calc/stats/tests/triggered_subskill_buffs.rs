@@ -567,7 +567,7 @@ fn rage_trance_adds_to_existing_reduction_pools_before_separate_ehp_layers() {
     let buffs = HashMap::from([(rage, true), (hellsent, true), ("holy_form".into(), true)]);
     let custom = [
         ("physical_damage_reduction", "10"),
-        ("magic_damage_reduction", "20"),
+        ("magic_damage_reduction", "10"),
         ("all_damage_taken_reduced_pct", "5"),
         ("fire_resistance", "25"),
     ]
@@ -594,7 +594,7 @@ fn rage_trance_adds_to_existing_reduction_pools_before_separate_ehp_layers() {
         input.main_skill_id = Some("slicing_throw");
         let result = compute_build_stats(&input);
         assert_eq!(result.stats["physical_damage_reduction"], (34.0, 34.0));
-        assert_eq!(result.stats["magic_damage_reduction"], (44.0, 44.0));
+        assert_eq!(result.stats["magic_damage_reduction"], (34.0, 34.0));
         assert_eq!(result.stats["all_damage_taken_reduced_pct"], (5.0, 5.0));
         assert_eq!(result.stats["damage_mitigation"], (15.0, 15.0));
         assert_eq!(result.stats["phasing"], (1.0, 1.0));
@@ -628,7 +628,7 @@ fn rage_trance_adds_to_existing_reduction_pools_before_separate_ehp_layers() {
         let life = result.stats["life"].1;
         for (damage_type, expected_multiplier) in [
             ("physical", 0.66 * 0.85 * 0.95),
-            ("fire", 0.75 * 0.56 * 0.85 * 0.95),
+            ("fire", 0.75 * 0.66 * 0.85 * 0.95),
         ] {
             let entry = ehp
                 .entries

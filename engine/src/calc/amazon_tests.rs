@@ -9,13 +9,13 @@ fn amazon_neutral_elemental_hits_match_executable_coefficients() {
         ("caustic_spearhead", [13, 125, 250]),
         ("leaping_ambush", [28, 280, 560]),
         ("death_from_above", [22, 220, 440]),
-        ("toxic_remains", [16, 155, 310]),
-        ("envenom", [24, 240, 480]),
+        ("toxic_remains", [18, 180, 360]),
+        ("envenom", [28, 280, 560]),
         ("astropes_gift", [18, 90, 170]),
         ("rebound", [8, 75, 149]),
         ("spearnage", [15, 150, 300]),
         ("storm_dash", [13, 125, 250]),
-        ("thunder_fury", [13, 125, 250]),
+        ("thunder_fury", [20, 200, 400]),
     ] {
         let spec = data::get_skills_by_class("amazon")
             .iter()
@@ -184,7 +184,7 @@ fn amazon_envenova_keeps_its_retained_damage_in_own_proc_scope() {
         conversion_skill_damage_pct: 0.0,
     })
     .unwrap();
-    assert_eq!(damage.hit_max, 168); // 24*10*0.70, not 24*10*1.70.
+    assert_eq!(damage.hit_max, 196); // 28*10*0.70, not 28*10*1.70.
 }
 
 #[test]

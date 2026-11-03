@@ -1911,16 +1911,16 @@
       {
         "id": "interstellar_radiation",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.014, 0.056, 0.126, 0.224, 0.35], "per": "hit", "note": "cosmic flare on each tick with chance 4r% and dmg*35r% (flare hits dummy at spawn, AABB 86x56 from (71,30)); value = 0.04r*0.35r per tick"}], "confidence": "C", "note": "card 361 table p5 (L37-53); direction random (I)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.01, 0.04, 0.09, 0.16, 0.25], "per": "hit", "note": "cosmic flare on each tick with chance 4r% and dmg*35r% (flare hits dummy at spawn, AABB 86x56 from (71,30)); value = 0.04r*0.35r per tick"}], "confidence": "C", "note": "card 361 table p5 (L37-53); direction random (I)"},
         "name": "Interstellar Radiation",
         "description": "Chance to unleash cosmic flares from the center of the black hole towards targets on hit dealing a portion of its damage.",
         "maxRank": 5,
         "proc": {
           "trigger": "on_hit",
-          "chance": { "base": 0, "perRank": 4 },
+          "chance": { "base": 0, "perRank": 2 },
           "effects": {
             "base": { "of_total_damage": 0 },
-            "perRank": { "of_total_damage": 35 }
+            "perRank": { "of_total_damage": 50 }
           }
         }
       },
@@ -1998,16 +1998,16 @@
       {
         "id": "galaxy_devouring_growth",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [7.632, 12.528, 20.688], "note": "transformation: tick x1.5 (0.6 s), duration x0.75 (3.375 s) = 6 ticks; each tick damage x(1+0.32r*0.15r*floor(t/0.25)) expected; sum = 6 + 34*(0.048 r^2) = 7.63/12.53/20.69 main-hit units (r3 ~ 20.7 per card). Replaces base 12 ticks"}], "confidence": "I", "note": "card 361 table p11 (Step_0 L27-36, C/I per card)", "plannerFix": "planner gives cold +32%/r on hits and projectile_size; game transforms the hole into 6 ticks whose damage grows every 0.25 s (sum 7.6/12.5/20.7 hits per use)"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [6.87, 9.482, 13.834], "note": "transformation: tick x1.5 (0.6 s), duration x0.75 (3.375 s) = 6 ticks; each tick damage x(1+0.32r*0.15r*floor(t/0.25)) expected; sum = 6 + 34*(0.048 r^2) = 7.63/12.53/20.69 main-hit units (r3 ~ 20.7 per card). Replaces base 12 ticks"}], "confidence": "I", "note": "card 361 table p11 (Step_0 L27-36, C/I per card) S11: chance 8r %, growth 8 %/tick: sum = 6 + 34*(0.0256 r^2).", "plannerFix": "planner gives cold +32%/r on hits and projectile_size; game transforms the hole into 6 ticks whose damage grows every 0.25 s (sum 7.6/12.5/20.7 hits per use)"},
         "name": "Galaxy Devouring Growth",
         "description": "Chance to frequently grow larger over time gaining increased damage. Black hole duration is decreased.",
         "maxRank": 3,
         "proc": {
           "trigger": "on_hit",
-          "chance": { "base": 0, "perRank": 15 },
+          "chance": { "base": 0, "perRank": 8 },
           "effects": {
             "base": { "cold_skill_damage": 0, "projectile_size": 0 },
-            "perRank": { "cold_skill_damage": 32, "projectile_size": 12 }
+            "perRank": { "cold_skill_damage": 32, "projectile_size": 8 }
           }
         }
       },

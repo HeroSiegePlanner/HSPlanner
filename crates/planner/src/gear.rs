@@ -987,9 +987,14 @@ impl Render for GearView {
 }
 
 fn roll_slider_state((lo, hi): (f64, f64), value: f64) -> SliderState {
-    SliderState::new()
-        .max(hi as f32)
-        .min(lo as f32)
+    // Each bound clamps against the other at once (default 0..100), so an
+    // all-negative range needs `min` first and any other range `max` first.
+    let state = if hi < 0. {
+        SliderState::new().min(lo as f32).max(hi as f32)
+    } else {
+        SliderState::new().max(hi as f32).min(lo as f32)
+    };
+    state
         .step(if lo.fract() == 0. && hi.fract() == 0. {
             1.
         } else {
@@ -1341,5 +1346,20 @@ mod control_tests {
         sync_roll_slider_bounds(&mut state, (5., 10.), 15.);
         assert_eq!(state.max_value(), 10.);
         assert_eq!(state.value().start(), 10.);
+    }
+
+    // Chronobreakers' -150..-90 Projectile Speed set max -90 under the default min 0.
+    #[::core::prelude::v1::test]
+    fn roll_slider_accepts_ranges_beyond_the_default_bounds() {
+        for (bounds, value) in [
+            ((-150., -90.), -120.),
+            ((-20., 30.), 0.),
+            ((500., 900.), 700.),
+        ] {
+            let state = roll_slider_state(bounds, value);
+            assert_eq!(state.min_value(), bounds.0 as f32);
+            assert_eq!(state.max_value(), bounds.1 as f32);
+            assert_eq!(state.value().start(), value as f32);
+        }
     }
 }

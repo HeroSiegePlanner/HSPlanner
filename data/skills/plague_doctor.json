@@ -1437,7 +1437,7 @@
       },
       {
         "id": "crippling_poison_vial",
-        "positionIndex": 5,
+        "positionIndex": 6,
         "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "chance 3r% once per cast: stun 3 s ([51]); a stun is CC (zero DPS), but it enables p10 (concussive) on the dummy"}], "confidence": "C", "note": "card 288 p5 (stun is CC, see p10 for the damage link)"},
         "name": "Crippling Poison Vial",
         "description": "Chance on hit to stun enemies.",
@@ -1450,7 +1450,7 @@
       },
       {
         "id": "escalating_illness",
-        "positionIndex": 6,
+        "positionIndex": 5,
         "dummy": {"effects": [{"kind": "dot", "byRank": [10, 20, 30, 40, 50], "note": "poison tick frequency [1] = 10%/r: ticks x 1/(1 - 0.1r); DoT only, no direct hits"}], "confidence": "C", "note": "card 288 p6"},
         "name": "Escalating Illness",
         "description": "Increases the tick frequency of poisoned from plague master.",
@@ -1754,13 +1754,13 @@
       {
         "id": "blood_infused_leeches",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "other", "byRank": [1, 2, 3], "note": "LSSD += 1%/r * Vitality/100 (scales with player Vitality; value = per-rank factor, multiply by Vit/100); life cost floor(HP*3r%) per cast is not DPS"}], "confidence": "C", "note": "card 287 p12"},
+        "dummy": {"effects": [{"kind": "other", "byRank": [3, 6, 9], "note": "LSSD += 1%/r * Vitality/100 (scales with player Vitality; value = per-rank factor, multiply by Vit/100); life cost floor(HP*3r%) per cast is not DPS"}], "confidence": "C", "note": "card 287 p12"},
         "name": "Blood-infused Leeches",
         "description": "Increases leech damage, size and area of effect radius based on your vitality. Jar of leeches consumes a portion of your maximum life per cast.",
         "maxRank": 3,
         "effects": {
           "base": {"conversion_vitality": 0, "life_drain_pct": 0},
-          "perRank": {"conversion_vitality": 1, "life_drain_pct": 3}
+          "perRank": {"conversion_vitality": 3, "life_drain_pct": 3}
         }
       },
       {

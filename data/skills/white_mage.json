@@ -625,7 +625,7 @@
     "movementDuringUse": 85,
     "range": 320,
     "baseCastRate": 1.75,
-    "damageFormula": { "base": 0, "perLevel": 11 },
+    "damageFormula": { "base": 0, "perLevel": 14 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -652,7 +652,7 @@
       {
         "source": "Intelligence",
         "stat": "arcane_skill_damage",
-        "value": 6.25,
+        "value": 7.25,
         "per": "attribute_point"
       }
     ],
@@ -779,19 +779,19 @@
       {
         "id": "shattering_spirits",
         "positionIndex": 9,
-        "dummy": {"effects": [{"kind": "other", "byRank": [30, 60, 90, 120, 150], "note": "arcane break % applied with chance 3r % per CAST (value = break %)"}], "confidence": "C", "note": "card table p9 ([979])", "plannerFix": "planner rolls 3r % on_hit; card rolls once per cast"},
+        "dummy": {"effects": [{"kind": "other", "byRank": [37.5, 75, 112.5, 150], "note": "arcane break % applied with chance 3r % per CAST (value = break %)"}], "confidence": "C", "note": "card table p9 ([979])", "plannerFix": "planner rolls 3r % on_hit; card rolls once per cast"},
         "name": "Shattering Spirits",
         "description": "Chance to inflict arcane break on hit.",
-        "maxRank": 5,
+        "maxRank": 4,
         "effects": {
           "base": {"arcane_break": 0},
-          "perRank": {"arcane_break": 30}
+          "perRank": {"arcane_break": 37.5}
         },
         "proc": {
           "trigger": "on_hit",
-          "chance": { "base": 0, "perRank": 3 },
+          "chance": { "base": 0, "perRank": 5 },
           "appliesStates": [
-            { "state": "arcane_break", "amount": { "base": 0, "perRank": 30 } }
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 37.5 } }
           ]
         }
       },
@@ -1499,13 +1499,13 @@
       {
         "id": "dark_gathering",
         "positionIndex": 1,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9, 12, 15], "note": "extra waves: ExtraSpellProj(10+3r); perExtraProjectile 5 hits per wave"}], "confidence": "C", "note": "card table p1 (planner label summon_max_amount +3r = same count)"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6, 8, 10], "note": "extra waves: ExtraSpellProj(10+3r); perExtraProjectile 5 hits per wave"}], "confidence": "C", "note": "card table p1 (planner label summon_max_amount +3r = same count)"},
         "name": "Dark Gathering",
         "description": "Increases the amount of cultists.",
         "maxRank": 5,
         "effects": {
           "base": {"summon_max_amount": 0},
-          "perRank": {"summon_max_amount": 3}
+          "perRank": {"summon_max_amount": 2}
         }
       },
       {
@@ -1517,7 +1517,7 @@
         "maxRank": 5,
         "effects": {
           "base": {"movement_speed": 0},
-          "perRank": {"movement_speed": 15}
+          "perRank": {"movement_speed": 10}
         }
       },
       {
@@ -1646,7 +1646,7 @@
         "maxRank": 3,
         "effects": {
           "base": {"of_total_damage": 0},
-          "perRank": {"of_total_damage": 40}
+          "perRank": {"of_total_damage": 25}
         }
       },
       {
@@ -2597,7 +2597,7 @@
         "immortality_duration": 1.5
       },
       "perRank": {
-        "immortality_duration": 0.2
+        "immortality_duration": 0.1
       }
     },
     "tree": "Divine Being",
@@ -2817,7 +2817,7 @@
       },
       {
         "id": "burst_of_energy",
-        "positionIndex": 3,
+        "positionIndex": 6,
         "dummy": {"effects": [{"kind": "crit", "byRank": [3, 6, 9, 12, 15], "note": "spell crit chance %; crit damage = RSS20 energy * 10 %/r (energy dependent, not fixed)"}], "confidence": "C", "note": "card table p3 ([1004], [1003])", "plannerFix": "planner gives crit damage as conversion_energy 10r; card: crit damage from energy*10r"},
         "name": "Burst of Energy",
         "description": "Chance to critically hit dealing increased critical strike damage according to your energy.",
@@ -2860,7 +2860,7 @@
       },
       {
         "id": "meditation",
-        "positionIndex": 6,
+        "positionIndex": 3,
         "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-8, -16, -24, -32, -40], "note": "cooldown -8 %/r (B = p6.s9)"}], "confidence": "C", "note": "card table p6"},
         "name": "Meditation",
         "description": "Reduces the cooldown of mana orb.",
@@ -2872,7 +2872,7 @@
       },
       {
         "id": "mages_might",
-        "positionIndex": 7,
+        "positionIndex": 10,
         "dummy": {"effects": [{"kind": "utility", "note": "orb and pulse scale +15 %/r; hit count unchanged"}], "confidence": "C", "note": "card table p7"},
         "name": "Mage's Might",
         "description": "Increases the area of effect radius of mana orb.",
@@ -2912,7 +2912,7 @@
       },
       {
         "id": "energy_fountain",
-        "positionIndex": 10,
+        "positionIndex": 7,
         "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "Energy Fountain: +10 %/r vs stunned; the mana orb sets no stun, so 0"}], "confidence": "C", "note": "card table p10 ([179])"},
         "name": "Energy Fountain",
         "description": "Increases damage dealt to stunned targets.",
@@ -2925,13 +2925,13 @@
       {
         "id": "energy_orbit",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 3, 5], "note": "ExtraSpellProj(1+2r) orbs on player orbit (r 102 px); orb count = 1+2r"}, {"kind": "extra_hits", "byRank": [3, 5, 7], "per": "use", "replacesProjectileHits": true, "note": "extra orb pulses reach the dummy ~20 % of the time: (1+2r) orbs x 5 pulses x 0.2 hits per use"}, {"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD += 50 %/r x RSS20 energy (energy dependent; shown at energy 100 %)"}], "confidence": "I", "note": "card table p11 (C/I)", "plannerFix": "planner projectile_count 2r with perExtraProjectile 0 (no hits); card: extra orbs hit ~20 % of pulses"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [0, 1, 2], "note": "ExtraSpellProj(1+2r) orbs on player orbit (r 102 px); orb count = 1+2r"}, {"kind": "extra_hits", "byRank": [2, 3, 4], "per": "use", "replacesProjectileHits": true, "note": "extra orb pulses reach the dummy ~20 % of the time: (1+2r) orbs x 5 pulses x 0.2 hits per use"}, {"kind": "damage_pct", "byRank": [35, 70, 105], "note": "LSSD += 50 %/r x RSS20 energy (energy dependent; shown at energy 100 %)"}], "confidence": "I", "note": "card table p11 (C/I) S11: orb count 1 + r, LSSD 35 %/r x energy.", "plannerFix": "planner projectile_count 2r with perExtraProjectile 0 (no hits); card: extra orbs hit ~20 % of pulses"},
         "name": "Energy Orbit",
         "description": "Summon multiple mana orbs orbitting you and dealing damage based on your energy. Consumes all of your mana on cast.",
         "maxRank": 3,
         "effects": {
           "base": {"conversion_energy": 0, "projectile_count": 0, "subtree_damage": 0},
-          "perRank": {"conversion_energy": 50, "projectile_count": 2, "subtree_damage": 50}
+          "perRank": {"conversion_energy": 35, "projectile_count": 1, "subtree_damage": 35}
         }
       },
       {
