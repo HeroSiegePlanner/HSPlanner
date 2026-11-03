@@ -2370,8 +2370,8 @@ fn unholy_form_stats_and_damage_follow_rank_and_activation() {
         let on = run(1, true, skill);
         let high = run(20, true, skill);
         let unlearned = run(0, true, skill);
-        assert_eq!(on.stats.get("damage"), Some(&(20.0, 20.0)));
-        assert_eq!(high.stats.get("damage"), Some(&(39.0, 39.0)));
+        assert_eq!(on.stats.get("damage"), Some(&(19.5, 19.5)));
+        assert_eq!(high.stats.get("damage"), Some(&(38.5, 38.5)));
         for key in ["life_replenish", "life_steal"] {
             let factor = on.stats.get(key).unwrap().0 / off.stats.get(key).unwrap().0;
             assert!((factor - 0.05).abs() < 1e-9, "{key}: {factor}");
@@ -2380,11 +2380,11 @@ fn unholy_form_stats_and_damage_follow_rank_and_activation() {
         }
         let ratio = on.avg_hit_dps_max.unwrap() / off.avg_hit_dps_max.unwrap();
         // Floored hits near 30 move the ratio by up to 1/30.
-        assert!((ratio - 1.2).abs() < 0.04, "{skill}: {ratio}");
+        assert!((ratio - 1.195).abs() < 0.04, "{skill}: {ratio}");
         assert!(high.avg_hit_dps_max > on.avg_hit_dps_max);
         assert_eq!(off.avg_hit_dps_max, unlearned.avg_hit_dps_max);
-        assert!((on.proc_dps_min / off.proc_dps_min - 1.2).abs() < 1e-9);
-        assert!((on.proc_dps_max / off.proc_dps_max - 1.2).abs() < 1e-9);
+        assert!((on.proc_dps_min / off.proc_dps_min - 1.195).abs() < 1e-9);
+        assert!((on.proc_dps_max / off.proc_dps_max - 1.195).abs() < 1e-9);
         assert_eq!(off.proc_dps_max, unlearned.proc_dps_max);
     }
 }

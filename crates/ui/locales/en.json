@@ -1412,6 +1412,7 @@
   "planner.stat.increased_stasis_damage": "Increased Stasis Damage",
   "planner.stat.increased_stasis_frequency": "Increased Stasis Frequency",
   "planner.stat.increased_strength": "Increased Strength",
+  "planner.stat.increased_strength_more": "Increased Total Strength",
   "planner.stat.increased_vitality": "Increased Vitality",
   "planner.stat.intelligence_based_on_level": "to Intelligence (Based on Level)",
   "planner.stat.intelligence_converted_to_arcane_skill_dmg": "Intelligence Converted To Arcane Skill Damage",

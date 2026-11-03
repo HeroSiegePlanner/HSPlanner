@@ -1125,13 +1125,13 @@
       {
         "id": "penetrating_trail",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p14: [56]=1 pierce, [130]=40/r; no effect on a single dummy", "plannerFix": "piercing and [130] add nothing on a lone target; planner adds fire_skill_damage 40/r and size 40/r"},
+        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p14: [56]=1 pierce, [130]=40/r; no effect on a single dummy S11: [130] = 40/r was applied as hitbox size; fixed in game, it is damage only.", "plannerFix": "piercing and [130] add nothing on a lone target; planner adds fire_skill_damage 40/r and size 40/r"},
         "name": "Penetrating Trail",
         "description": "Explosive bullet now pierces and sticks explosives to all monsters hit.",
         "maxRank": 3,
         "effects": {
-          "base": {"fire_skill_damage": 0, "projectile_size": 0},
-          "perRank": {"fire_skill_damage": 40, "projectile_size": 40}
+          "base": {"fire_skill_damage": 0},
+          "perRank": {"fire_skill_damage": 40}
         }
       }
     ]

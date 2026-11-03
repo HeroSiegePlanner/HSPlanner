@@ -509,7 +509,7 @@
     "position": { "row": 1, "col": 2 },
     "ranks": [{ "rank": 1 }],
     "passiveStats": {
-      "base": { "damage": 20, "life_replenish_more": -95, "life_steal_more": -95 },
+      "base": { "damage": 19.5, "life_replenish_more": -95, "life_steal_more": -95 },
       "perRank": { "damage": 1, "life_replenish_more": 0, "life_steal_more": 0 }
     }
   },
@@ -585,7 +585,7 @@
     "position": { "row": 3, "col": 1 },
     "ranks": [{ "rank": 1 }],
     "passiveStats": {
-      "base": { "attack_damage": 20 },
+      "base": { "attack_damage": 18 },
       "perRank": { "attack_damage": 5 }
     }
   },
@@ -608,7 +608,7 @@
     "ranks": [{ "rank": 1, "manaCost": 5 }],
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "passiveStats": {
-      "base": { "effectiveness": 1 },
+      "base": { "effectiveness": 0.9 },
       "perRank": { "effectiveness": 0.15 }
     }
   },

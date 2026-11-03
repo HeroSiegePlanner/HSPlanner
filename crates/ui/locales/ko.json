@@ -1412,6 +1412,7 @@
   "planner.stat.increased_stasis_damage": "정체 피해 증가",
   "planner.stat.increased_stasis_frequency": "정체 피해 발생 빈도 증가",
   "planner.stat.increased_strength": "힘 증가",
+  "planner.stat.increased_strength_more": "총 힘 증가",
   "planner.stat.increased_vitality": "활력 증가",
   "planner.stat.intelligence_based_on_level": "레벨에 따른 지능",
   "planner.stat.intelligence_converted_to_arcane_skill_dmg": "지능을 비전 스킬 피해로 전환",

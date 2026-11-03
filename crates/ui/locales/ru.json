@@ -1412,6 +1412,7 @@
   "planner.stat.increased_stasis_damage": "Увеличение урона стазиса",
   "planner.stat.increased_stasis_frequency": "Увеличение частоты урона стазиса",
   "planner.stat.increased_strength": "Увеличение силы",
+  "planner.stat.increased_strength_more": "Увеличение общей силы",
   "planner.stat.increased_vitality": "Увеличение живучести",
   "planner.stat.intelligence_based_on_level": "Интеллект (от уровня)",
   "planner.stat.intelligence_converted_to_arcane_skill_dmg": "Интеллект преобразуется в урон тайных навыков",

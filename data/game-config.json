@@ -357,6 +357,12 @@
       "format": "percent"
     },
     {
+      "key": "increased_strength_more",
+      "name": "Increased Total Strength",
+      "category": "base",
+      "format": "percent"
+    },
+    {
       "key": "increased_dexterity",
       "name": "Increased Dexterity",
       "category": "base",

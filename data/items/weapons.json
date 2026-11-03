@@ -728,7 +728,7 @@
       "defense_ignored": 75,
       "to_strength": 75,
       "max_crushing_blow_stacks": 1,
-      "increased_strength": 10
+      "increased_strength_more": 10
     },
     "uniqueEffects": [
       "Attacks can hit multiple enemies"

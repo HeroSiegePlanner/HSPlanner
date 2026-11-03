@@ -2733,7 +2733,7 @@ mod tests {
                 "defense_ignored",
                 "to_strength",
                 "max_crushing_blow_stacks",
-                "increased_strength",
+                "increased_strength_more",
             ]
         );
         let values = HashMap::from([("extra_z".into(), 1), ("extra_a".into(), 2)]);

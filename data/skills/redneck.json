@@ -738,13 +738,13 @@
       {
         "id": "donuts",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1.04, 1.04, 1.04], "note": "spiral crosses the 160 px dummy: 1.04 hits at r2 = 0 (radius 160 px reached at frame ~132, first angle crossing at frames ~117-121 at radius 141-149 px; ~4 % of directions give a second hit after the map clear). PoR4 (rule 38, aim through the dummy centre) 1.04 / ~0 / 0 / 1.00 / 1.03 / 1.03 for r2 = 0..5 (p2 effect in its own entry); cursor (x, y-24) variant 1.04 / 0.03 / 0 / 0.57. Very sensitive to the dummy distance"}, {"kind": "damage_pct", "byRank": [0, 0, 0], "note": "game bug, C (asm 0x144b4abdd): the Donuts branch adds SUB(p12, s9) = 2%*r12 instead of its own 50%/r; p12 and p13 exclude each other as transformations (I), so r12 = 0 and Donuts gets no own LSSD"}, {"kind": "other", "note": "fire break 40r% for 5 s ([970]) not quantified"}], "confidence": "I", "note": "card 95 p13; R4 95#1 (LSSD C) + 95#2 (spiral) + PoR4 (a)", "plannerFix": "planner fire_skill_damage 50/r (+250 % at r5) is 0 in game (bug, SUB(p12, s9)); spiral gives 1.04 hits at r2 = 0 and depends on p2"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1.04, 1.04, 1.04], "note": "spiral crosses the 160 px dummy: 1.04 hits at r2 = 0 (radius 160 px reached at frame ~132, first angle crossing at frames ~117-121 at radius 141-149 px; ~4 % of directions give a second hit after the map clear). PoR4 (rule 38, aim through the dummy centre) 1.04 / ~0 / 0 / 1.00 / 1.03 / 1.03 for r2 = 0..5 (p2 effect in its own entry); cursor (x, y-24) variant 1.04 / 0.03 / 0 / 0.57. Very sensitive to the dummy distance"}, {"kind": "damage_pct", "byRank": [50, 100, 150], "note": "game bug, C (asm 0x144b4abdd): the Donuts branch adds SUB(p12, s9) = 2%*r12 instead of its own 50%/r; p12 and p13 exclude each other as transformations (I), so r12 = 0 and Donuts gets no own LSSD"}, {"kind": "other", "note": "fire break 40r% for 5 s ([970]) not quantified"}], "confidence": "I", "note": "card 95 p13; R4 95#1 (LSSD C) + 95#2 (spiral) + PoR4 (a) S11: the game now adds Donuts' own 50 %/r instead of p12.s9.", "plannerFix": "planner fire_skill_damage 50/r (+250 % at r5) is 0 in game (bug, SUB(p12, s9)); spiral gives 1.04 hits at r2 = 0 and depends on p2"},
         "name": "Donuts",
         "description": "Tires now spiral outwards inflicting fire break on hit.",
         "maxRank": 3,
         "effects": {
           "base": {"fire_break": 0, "subtree_damage": 0},
-          "perRank": {"fire_break": 40, "subtree_damage": 0.0}
+          "perRank": {"fire_break": 40, "subtree_damage": 50}
         },
         "proc": {
           "trigger": "on_hit",

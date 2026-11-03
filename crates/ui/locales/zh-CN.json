@@ -1412,6 +1412,7 @@
   "planner.stat.increased_stasis_damage": "停滞伤害提高",
   "planner.stat.increased_stasis_frequency": "停滞伤害频率提高",
   "planner.stat.increased_strength": "力量提高",
+  "planner.stat.increased_strength_more": "总力量提高",
   "planner.stat.increased_vitality": "活力提高",
   "planner.stat.intelligence_based_on_level": "智力（基于等级）",
   "planner.stat.intelligence_converted_to_arcane_skill_dmg": "智力转化为奥术技能伤害",

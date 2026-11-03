@@ -238,7 +238,7 @@ fn awakening_fury_requires_learned_active_buff_and_ignores_forms() {
                         (sum.0 + source.value.0, sum.1 + source.value.1)
                     });
                 let expected = if learned && active {
-                    (20.0, 30.0)
+                    (18.0, 28.0)
                 } else {
                     (0.0, 0.0)
                 };
@@ -259,7 +259,7 @@ fn awakening_fury_requires_learned_active_buff_and_ignores_forms() {
 fn audited_butcher_talents_return_zero_at_nonpositive_effective_rank() {
     for (id, key, rank_one) in [
         ("ending_fate", "life_replenish_more", 50.0),
-        ("awakening_fury", "attack_damage", 20.0),
+        ("awakening_fury", "attack_damage", 18.0),
         ("hunger_for_blood", "extra_damage_bleeding", 0.75),
         ("fuel_to_fire", "damage", 20.0),
         ("enraged_mania", "melee_attack_size_offset", 8.0),
@@ -398,7 +398,7 @@ fn insatiable_hunger_replaces_form_payloads_with_the_actual_runtime_selectors() 
                 assert_eq!(
                     exact_total("damage"),
                     if unholy_learned {
-                        (26.338, 28.448)
+                        (25.806, 27.912)
                     } else if holy_learned && ordinary_toggles {
                         (-50.0, -50.0)
                     } else {
@@ -408,7 +408,7 @@ fn insatiable_hunger_replaces_form_payloads_with_the_actual_runtime_selectors() 
                 assert_eq!(
                     exact_total("life_replenish_more"),
                     if holy_learned && unholy_learned {
-                        (40.52, 50.8)
+                        (40.48, 50.75)
                     } else if holy_learned && ordinary_toggles {
                         (52.0, 68.0)
                     } else {
@@ -417,7 +417,7 @@ fn insatiable_hunger_replaces_form_payloads_with_the_actual_runtime_selectors() 
                 );
                 let steal = exact_total("life_steal_more");
                 let expected = if holy_learned && unholy_learned {
-                    (-30.8, -30.65)
+                    (-30.75, -30.6)
                 } else if holy_learned && ordinary_toggles {
                     (60.0, 70.0)
                 } else {
@@ -446,7 +446,7 @@ fn insatiable_hunger_replaces_form_payloads_with_the_actual_runtime_selectors() 
                 let mut final_stats = compute_final_stats(&stats);
                 apply_multipliers_pass(&mut final_stats);
                 let expected = if holy_learned && unholy_learned {
-                    (69.2, 69.35)
+                    (69.25, 69.4)
                 } else if holy_learned && ordinary_toggles {
                     (160.0, 170.0)
                 } else {
@@ -457,7 +457,7 @@ fn insatiable_hunger_replaces_form_payloads_with_the_actual_runtime_selectors() 
                 assert!((actual.1 - expected.1).abs() < 1e-9);
                 let actual = final_stats["life_replenish"];
                 let expected = if holy_learned && unholy_learned {
-                    (143.3304, 153.816)
+                    (143.2896, 153.765)
                 } else if holy_learned && ordinary_toggles {
                     (155.04, 171.36)
                 } else {
@@ -554,9 +554,9 @@ fn hunger_payload_zero_gate_handles_negative_rank_bonuses_and_mixed_endpoints() 
             let totals = compute_final_stats(&stats);
             let holy_low = |value: f64| if holy_active { value } else { 0.0 };
             for (key, low, high) in [
-                ("damage", holy_low(-50.0), 20.26),
-                ("life_replenish_more", holy_low(44.0), 40.52),
-                ("life_steal_more", holy_low(35.0), -50.65),
+                ("damage", holy_low(-50.0), 19.734),
+                ("life_replenish_more", holy_low(44.0), 40.48),
+                ("life_steal_more", holy_low(35.0), -50.6),
                 ("life_replenish", holy_low(2.0), 2.0),
                 ("increased_attack_speed", holy_low(24.0), 24.5),
                 ("crit_damage", 0.0, 10.0),
@@ -608,9 +608,9 @@ fn hunger_rank_range_includes_the_last_ordinary_form_value_before_activation() {
         &mut stats,
     );
     let totals = compute_final_stats(&stats);
-    assert_eq!(totals["life_replenish_more"], (116.495, 164.0));
-    assert_eq!(totals["life_steal_more"], (-50.725, 110.0));
-    assert_eq!(totals["damage"], (-50.0, 21.304));
+    assert_eq!(totals["life_replenish_more"], (116.38, 164.0));
+    assert_eq!(totals["life_steal_more"], (-50.675, 110.0));
+    assert_eq!(totals["damage"], (-50.0, 20.777));
     assert_eq!(totals["life_replenish"], (2.0, 2.0));
 }
 

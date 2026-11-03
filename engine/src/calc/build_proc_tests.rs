@@ -415,8 +415,8 @@ fn granted_proc_excludes_main_subtree_damage_but_retains_global_buffs() {
     assert_eq!(node.proc_dps_max, base.proc_dps_max);
     assert!(node.avg_hit_dps_max > base.avg_hit_dps_max);
     let unholy = run(true, true);
-    assert!((unholy.proc_dps_min / base.proc_dps_min - 1.2).abs() < 1e-9);
-    assert!((unholy.proc_dps_max / base.proc_dps_max - 1.2).abs() < 1e-9);
+    assert!((unholy.proc_dps_min / base.proc_dps_min - 1.195).abs() < 1e-9);
+    assert!((unholy.proc_dps_max / base.proc_dps_max - 1.195).abs() < 1e-9);
 }
 
 fn damage_trace(damage: &SkillDamageBreakdown, label: &str) -> Ranged {
