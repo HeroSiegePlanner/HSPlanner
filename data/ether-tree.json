@@ -7877,7 +7877,7 @@
     },
     "etherOwBig04": {
       "label": "Back to Basics",
-      "value": "35%",
+      "value": "30%",
       "desc": "Increased Total Magic Find in Overworld maps but you no longer spawn any mechanics in your maps."
     },
     "etherUrSmall01": {
@@ -8287,7 +8287,7 @@
     },
     "etherOwBig05": {
       "label": "Ready to Pop",
-      "value": "50%",
+      "value": "15%",
       "desc": "Chance for Colossal Chest Monsters to spawn with Bloating affix."
     },
     "etherOwBig06": {
@@ -8397,7 +8397,7 @@
     },
     "etherSRBig07": {
       "label": "Reaper’s Toll",
-      "value": "-75% / 20%",
+      "value": "-85% / 20%",
       "desc": "Dimensional Shard drop rates"
     },
     "etherSRSmall04": {

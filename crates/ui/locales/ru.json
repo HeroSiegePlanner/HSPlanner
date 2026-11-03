@@ -1453,6 +1453,7 @@
   "planner.stat.lightning_break": "Пробой молнии",
   "planner.stat.lightning_per_element": "Масштабирование урона молнией за каждый источник стихийного урона",
   "planner.stat.lightning_resistance": "Сопротивление молнии",
+  "planner.stat.lightning_resistance_converted_to_lightning_damage": "Сопротивление молнии преобразуется в урон навыков молнии",
   "planner.stat.lightning_skill_damage": "Урон навыков молнии",
   "planner.stat.lightning_skills": "к молниевым навыкам",
   "planner.stat.mage_guard_chance": "Шанс получить заряд Mage Guard при сотворении",

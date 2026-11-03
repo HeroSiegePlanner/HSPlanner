@@ -519,12 +519,12 @@
         12
       ],
       "to_strength": 50,
-      "projectile_speed_pct": 15,
       "enhanced_damage_based_on_level": 275,
       "ranged_skills": [
         6,
         12
-      ]
+      ],
+      "projectile_speed": 1
     },
     "sockets": 2,
     "maxSockets": 4,
@@ -3039,7 +3039,7 @@
         2,
         3
       ],
-      "light_radius": 8,
+      "light_radius": 3,
       "experience_gain": [
         1,
         5
@@ -3502,12 +3502,11 @@
         250,
         325
       ],
-      "all_skills": 3,
       "explosion_skills": [
         2,
         4
       ],
-      "faster_cast_rate": 20,
+      "faster_cast_rate": 30,
       "faster_hit_recovery": [
         125,
         150
@@ -3519,7 +3518,17 @@
       "explosion_damage": [
         10,
         20
-      ]
+      ],
+      "ignore_arcane_res": 20,
+      "to_intelligence": [
+        20,
+        30
+      ],
+      "to_energy": [
+        20,
+        30
+      ],
+      "all_skills_marksman": 3
     },
     "sockets": 4,
     "maxSockets": 6,
@@ -4181,10 +4190,14 @@
         6,
         12
       ],
-      "projectile_speed_pct": 15,
+      "projectile_speed_pct": [
+        5,
+        15
+      ],
       "to_strength": 50,
       "increased_dexterity": 6,
-      "enhanced_damage_based_on_level": 275
+      "enhanced_damage_based_on_level": 275,
+      "projectile_speed": 1
     },
     "procs": [
       {

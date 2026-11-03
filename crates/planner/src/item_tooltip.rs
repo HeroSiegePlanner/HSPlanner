@@ -2732,8 +2732,8 @@ mod tests {
                 "life_steal",
                 "defense_ignored",
                 "to_strength",
-                "life_per_kill",
                 "max_crushing_blow_stacks",
+                "increased_strength",
             ]
         );
         let values = HashMap::from([("extra_z".into(), 1), ("extra_a".into(), 2)]);

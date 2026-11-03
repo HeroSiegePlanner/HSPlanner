@@ -238,7 +238,7 @@
     "kind": "active",
     "description": "Flail a big chained spike ball dealing physical damage to monsters on its path.",
     "damageType": "physical",
-    "tags": ["Attack", "Active", "Melee", "Strike"],
+    "tags": ["Attack", "Active", "Melee", "Strike", "Projectile"],
     "movementDuringUse": 80,
     "range": 320,
     "maxRank": 20,
@@ -251,15 +251,15 @@
     "attackScaling": {
       "weaponBonusScaling": true,
       "weaponSubtreeScalesFullHit": false,
-      "weaponDamagePct": { "base": 134, "perLevel": 12 },
+      "weaponDamagePct": { "base": 134, "perLevel": 18 },
       "flatPhysicalMin": { "base": 1, "perLevel": 1 },
       "flatPhysicalMax": { "base": 7, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
     },
     "bonusSources": [
-      { "source": "Crazy Grapple", "stat": "attack_damage", "value": 3, "per": "skill_level" },
-      { "source": "Flail Mastery", "stat": "attack_damage", "value": 4, "per": "skill_level" },
-      { "source": "Force Overwhelming", "stat": "attack_damage", "value": 5, "per": "skill_level" }
+      { "source": "Crazy Grapple", "stat": "attack_damage", "value": 7, "per": "skill_level" },
+      { "source": "Flail Mastery", "stat": "attack_damage", "value": 7, "per": "skill_level" },
+      { "source": "Force Overwhelming", "stat": "attack_damage", "value": 8, "per": "skill_level" }
     ],
     "subskills": [
       {
@@ -290,7 +290,7 @@
         "maxRank": 5,
         "effects": {
           "base": {"projectile_speed_pct": 0},
-          "perRank": {"projectile_speed_pct": 10}
+          "perRank": {"projectile_speed_pct": 7}
         }
       },
       {
@@ -322,13 +322,13 @@
       {
         "id": "multi_wield",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4], "note": "+1 attack projectile per rank ([226] += r)"}, {"kind": "extra_hits", "byRank": [1, 2, 3, 2], "per": "use", "replacesProjectileHits": true, "note": "H(n)-H(1) from the R4 circle-mask table (r_p = 31.5 px) at 160 px: n = 2,3,4,5 -> 2,3,4,3 hits -> +1,+2,+3,+2 (was +1,0,+1,0); n = 1 + r"}], "confidence": "I", "note": "card p5 row (R4 254#1, circle mask r 31.5 px C) and 'Trafienia na kukle' table; flight range of the projectile to 160 px still I", "plannerFix": "planner perExtraProjectile (linear) cannot express the H(n) table; card (R4): n_traf(n, 160 px) = 1,2,3,4,3,4,3,4,3"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4], "note": "+1 attack projectile per rank ([226] += r)"}, {"kind": "extra_hits", "byRank": [2, 2], "per": "use", "replacesProjectileHits": true, "note": "H(n)-H(1) from the R4 circle-mask table (r_p = 31.5 px) at 160 px: n = 2,3,4,5 -> 2,3,4,3 hits -> +1,+2,+3,+2 (was +1,0,+1,0); n = 1 + r"}], "confidence": "I", "note": "card p5 row (R4 254#1, circle mask r 31.5 px C) and 'Trafienia na kukle' table; flight range of the projectile to 160 px still I S11: +2 projectiles per rank: n = 1 + 2r = 3, 5 -> H(n) - H(1) = 2, 2.", "plannerFix": "planner perExtraProjectile (linear) cannot express the H(n) table; card (R4): n_traf(n, 160 px) = 1,2,3,4,3,4,3,4,3"},
         "name": "Multi Wield",
         "description": "Increases the amount of heavy balls.",
-        "maxRank": 4,
+        "maxRank": 2,
         "effects": {
           "base": {"projectile_count": 0},
-          "perRank": {"projectile_count": 1}
+          "perRank": {"projectile_count": 2}
         }
       },
       {
@@ -359,7 +359,7 @@
         "maxRank": 5,
         "effects": {
           "base": {"skill_range": 0},
-          "perRank": {"skill_range": 7}
+          "perRank": {"skill_range": 10}
         }
       },
       {
@@ -481,7 +481,7 @@
     "tree": "Juggernaut",
     "position": { "row": 1, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0, "perLevel": 15 },
+    "damageFormula": { "base": 0, "perLevel": 13 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Bouncing Grenade", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
@@ -560,19 +560,19 @@
       {
         "id": "pyro_enthusiast",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "other", "byRank": [19.6, 53.2, 86.8, 118.7, 149.6], "note": "fire break B9 (%) expected on dummy: break 30r% x uptime, expected value = break% x uptime, uptime = 1-(1-0.04r)^26 (per-hit rolls, 3 hits/cast x 8.75 casts per 5 s); damage multiplier not determined"}], "confidence": "C", "note": "card p6 row", "plannerFix": "planner fire_break 30/rank on_hit 4r%: check per-hit rolls vs per-cast"},
+        "dummy": {"effects": [{"kind": "other", "byRank": [14.7, 37.4, 59.1, 79.8, 99.9], "note": "fire break B9 (%) expected on dummy: break 30r% x uptime, expected value = break% x uptime, uptime = 1-(1-0.04r)^26 (per-hit rolls, 3 hits/cast x 8.75 casts per 5 s); damage multiplier not determined"}], "confidence": "C", "note": "card p6 row S11: break 20r % with chance 5r %: 20r x (1-(1-0.05r)^26).", "plannerFix": "planner fire_break 30/rank on_hit 4r%: check per-hit rolls vs per-cast"},
         "name": "Pyro Enthusiast",
         "description": "Chance to inflict fire break on hit.",
         "maxRank": 5,
         "effects": {
           "base": {"fire_break": 0},
-          "perRank": {"fire_break": 30}
+          "perRank": {"fire_break": 20}
         },
         "proc": {
           "trigger": "on_hit",
-          "chance": { "base": 0, "perRank": 4 },
+          "chance": { "base": 0, "perRank": 5 },
           "appliesStates": [
-            { "state": "fire_break", "amount": { "base": 0, "perRank": 30 } }
+            { "state": "fire_break", "amount": { "base": 0, "perRank": 20 } }
           ]
         }
       },
@@ -610,13 +610,13 @@
       {
         "id": "more_heat",
         "positionIndex": 9,
-        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "note": "extra damage vs burning (B1) [180] = 15r%; applies only if dummy is burning (from p6/p8/p14/Bouncing)"}], "confidence": "C", "note": "card p9 row"},
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "extra damage vs burning (B1) [180] = 15r%; applies only if dummy is burning (from p6/p8/p14/Bouncing)"}], "confidence": "C", "note": "card p9 row"},
         "name": "More Heat!",
         "description": "Increases damage dealt to burning targets.",
         "maxRank": 5,
         "effects": {
           "base": {"extra_damage_burning": 0},
-          "perRank": {"extra_damage_burning": 15}
+          "perRank": {"extra_damage_burning": 10}
         }
       },
       {
@@ -670,19 +670,19 @@
       {
         "id": "molten_boom",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "dot", "byRank": [0.75, 1.5, 2.25], "per": "use", "note": "burning [18] += floor(dmg*75r%) always (per use, D fraction)"}, {"kind": "extra_hits", "byRank": [4.6, 9.2, 13.8], "per": "use", "note": "R4 257#1 (C structure, I mask): 2r trails of 9 segments (96x60 ellipse, life 60 frames, tick 30 frames -> 2 hits per overlapping segment, full damage[3]); expected overlapping segments per trail 1.15 for the cursor 29.5 px above (1.3 on the dummy, range 0.9-1.5) -> ~2.3 hits per trail -> 4.6*r hits per use (5.3*r with the cursor on the dummy)"}], "confidence": "I", "note": "card p14 row (R4 257#1 + Resztki E recomputation 4.6*r); the old entry did not count the trails"},
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.65, 1.3, 1.95], "per": "use", "note": "burning [18] += floor(dmg*75r%) always (per use, D fraction)"}, {"kind": "extra_hits", "byRank": [6.9, 9.2, 11.5], "per": "use", "note": "R4 257#1 (C structure, I mask): 2r trails of 9 segments (96x60 ellipse, life 60 frames, tick 30 frames -> 2 hits per overlapping segment, full damage[3]); expected overlapping segments per trail 1.15 for the cursor 29.5 px above (1.3 on the dummy, range 0.9-1.5) -> ~2.3 hits per trail -> 4.6*r hits per use (5.3*r with the cursor on the dummy)"}], "confidence": "I", "note": "card p14 row (R4 257#1 + Resztki E recomputation 4.6*r); the old entry did not count the trails S11: trails 2 + r (3, 4, 5) at ~2.3 hits each; burning 65r %."},
         "name": "Molten Boom",
         "description": "Unleashes multiple burning trails of fire in random directions after exploding.",
         "maxRank": 3,
         "effects": {
-          "base": {"increased_burning_damage": 0, "trail_count": 0},
-          "perRank": {"increased_burning_damage": 75, "trail_count": 2}
+          "base": {"increased_burning_damage": 0, "trail_count": 2},
+          "perRank": {"increased_burning_damage": 65, "trail_count": 1}
         },
         "proc": {
           "trigger": "on_hit",
           "chance": { "base": 100, "perRank": 0 },
           "appliesStates": [
-            { "state": "burning", "amount": { "base": 0, "perRank": 75 } }
+            { "state": "burning", "amount": { "base": 0, "perRank": 65 } }
           ]
         }
       }
@@ -1218,13 +1218,13 @@
       {
         "id": "icbm",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.4, 1.8, 2.2], "per": "use", "note": "ICBM (R4 261#1, I): the missile explodes <= 8 px from the target; 8 ICBM_Explosion_obj (centre + 7 in a 64 px ring) of scale 0.25 + explosionAOE, explosionAOE = (1+0.2r13+0.08r14)(1+0.15r9) = 1.08/1.16/1.24 for r14 = 1..3 -> scale 1.33-1.49 <= 1.5: through the dummy centre only 1 explosion overlaps the dummy (the 5-explosion cascades and the ring miss). Each overlapping explosion deals D plus an extra object floor(D*ICBM), ICBM = 0.4r -> 1 x (1 + 0.4r) = 1.4 / 1.8 / 2.2 (extra object assumed to hit the dummy like its explosion, I). Cursor (x, y-24) variant: 4 explosions for r9 <= 1 (8 for r9 >= 4) -> 5.6 / 7.2 / 8.8"}], "confidence": "I", "note": "card p14 row (R4 261#1: cascade of 5, scale 0.25 + explosionAOE and the ICBM field are C, explosion count and extra-object hit I); was +1 hit", "plannerFix": "planner of_total_damage 40/rank + area 8/rank; card: homing ICBM centre explosion adds 1 hit"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.25, 1.5, 1.75], "per": "use", "note": "ICBM (R4 261#1, I): the missile explodes <= 8 px from the target; 8 ICBM_Explosion_obj (centre + 7 in a 64 px ring) of scale 0.25 + explosionAOE, explosionAOE = (1+0.2r13+0.08r14)(1+0.15r9) = 1.08/1.16/1.24 for r14 = 1..3 -> scale 1.33-1.49 <= 1.5: through the dummy centre only 1 explosion overlaps the dummy (the 5-explosion cascades and the ring miss). Each overlapping explosion deals D plus an extra object floor(D*ICBM), ICBM = 0.4r -> 1 x (1 + 0.4r) = 1.4 / 1.8 / 2.2 (extra object assumed to hit the dummy like its explosion, I). Cursor (x, y-24) variant: 4 explosions for r9 <= 1 (8 for r9 >= 4) -> 5.6 / 7.2 / 8.8"}], "confidence": "I", "note": "card p14 row (R4 261#1: cascade of 5, scale 0.25 + explosionAOE and the ICBM field are C, explosion count and extra-object hit I); was +1 hit S11: ICBM = 0.25r, area 5 %/r: still one overlapping explosion -> 1 + 0.25r.", "plannerFix": "planner of_total_damage 40/rank + area 8/rank; card: homing ICBM centre explosion adds 1 hit"},
         "name": "ICBM",
         "description": "Launch an intercontinental ballistic missile towards target location dealing damage on a large radius leaving the ground blazing with flames dealing a portion of the damage over time.",
         "maxRank": 3,
         "effects": {
           "base": {"of_total_damage": 0, "area_of_effect": 0},
-          "perRank": {"of_total_damage": 40, "area_of_effect": 8}
+          "perRank": {"of_total_damage": 25, "area_of_effect": 5}
         }
       }
     ]

@@ -304,28 +304,28 @@
           "from": "fire_skill_damage",
           "to": "arcane_skill_damage",
           "pct": 0,
-          "basePct": 100,
+          "basePct": 50,
           "replaces": true
         },
         {
           "from": "cold_skill_damage",
           "to": "arcane_skill_damage",
           "pct": 0,
-          "basePct": 100,
+          "basePct": 50,
           "replaces": true
         },
         {
           "from": "lightning_skill_damage",
           "to": "arcane_skill_damage",
           "pct": 0,
-          "basePct": 100,
+          "basePct": 50,
           "replaces": true
         },
         {
           "from": "poison_skill_damage",
           "to": "arcane_skill_damage",
           "pct": 0,
-          "basePct": 100,
+          "basePct": 50,
           "replaces": true
         }
       ]
@@ -801,7 +801,7 @@
   {
     "id": "jagged_gauntlet",
     "name": "Jagged Gauntlet",
-    "description": "Spells and attacks have a chance to deal increased damage based on your critical strike damage. This effect does not count as a critical hit. Your critical chance is halved and your critical damage is capped.",
+    "description": "Spells and attacks have a chance to deal increased damage based on your critical strike damage. This effect does not count as a critical hit. Your critical chance is reduced by 25% and your critical damage is capped.",
     "passiveStats": {
       "base": {
         "jagged_gauntlet_max_crit_damage": 40
@@ -2172,7 +2172,8 @@
   {
     "id": "spectral_scatter",
     "name": "Spectral Scatter",
-    "description": "Your ranged projectiles fork after a short delay, dealing increased damage. Damage 25%, Projectiles 4"
+    "description": "Your ranged projectiles fork after a short delay, dealing increased damage. Damage 25%, Projectiles 4",
+    "starRankLocked": true
   },
   {
     "id": "demon_form",

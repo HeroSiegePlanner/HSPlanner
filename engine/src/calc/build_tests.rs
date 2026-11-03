@@ -781,7 +781,7 @@ fn subskill_tag_change_switches_skill_to_entity_rate() {
 }
 
 // marksman:gunner_drone "Rapidfire" is the drone's own rate of fire
-// (sentry_attack_speed 12.5/rank), not player FCR.
+// (sentry_attack_speed 20/rank), not player FCR.
 #[test]
 fn rapidfire_scales_the_drone_rate() {
     let base = perf("marksman", "gunner_drone", 10, &[], &[]);
@@ -790,8 +790,8 @@ fn rapidfire_scales_the_drone_rate() {
         panic!("expected dps for gunner_drone");
     };
     assert!(
-        (f / b - 1.5).abs() < 1e-9,
-        "rank 4 rapidfire = +50% drone rate, got x{}",
+        (f / b - 1.8).abs() < 1e-9,
+        "rank 4 rapidfire = +80% drone rate, got x{}",
         f / b
     );
 }
@@ -2172,6 +2172,35 @@ fn blender_conditional_critical_and_additive_damage_bonuses() {
     assert_eq!(mult, (3.9, 3.9)); // 40 + 25 + 225%, additive.
 }
 
+// Season 11: Blender keeps a third of every other area bonus in its contact
+// coverage; its own nodes count fully.
+#[test]
+fn blender_keeps_a_third_of_area_except_its_own_nodes() {
+    let dps = |nodes: &[(&str, u32)], custom: &[(&str, &str)]| {
+        perf_with_stats("butcher", "blender", 20, nodes, custom, 1.0)
+            .avg_hit_dps_max
+            .unwrap()
+    };
+    let base = dps(&[], &[]);
+    let sized = [("industrial_sized", 1)];
+    for (nodes, custom, area) in [
+        (&[][..], &[("area_of_effect", "30")][..], 0.33 * 30.0),
+        (&[][..], &[("area_of_effect_more", "50")][..], 0.33 * 50.0),
+        (&sized[..], &[][..], 17.5),
+        (
+            &sized[..],
+            &[("area_of_effect", "30")][..],
+            17.5 + 0.33 * 30.0,
+        ),
+    ] {
+        let ratio = dps(nodes, custom) / base;
+        assert!(
+            (ratio - (1.0 + area / 100.0)).abs() < 1e-9,
+            "{nodes:?} {custom:?}: x{ratio}"
+        );
+    }
+}
+
 #[test]
 fn blender_microblades_are_separate_non_recursive_and_scale_with_contacts() {
     let nodes = [
@@ -2179,7 +2208,7 @@ fn blender_microblades_are_separate_non_recursive_and_scale_with_contacts() {
         ("attachable_microblades", 3),
     ];
     let result = perf("butcher", "blender", 20, &nodes, &[]);
-    let expected = 0.15 * 2.05 * 3.0 * ((240.0 * 2.0 + 17.1 * 4.0) / 360.0) * 0.75;
+    let expected = 0.09 * 1.75 * 3.0 * ((240.0 * 2.0 + 17.1 * 4.0) / 360.0) * 0.75;
     assert!((result.proc_dps_max / result.avg_hit_dps_max.unwrap() - expected).abs() < 1e-9);
     let extra = perf(
         "butcher",
@@ -2342,7 +2371,7 @@ fn unholy_form_stats_and_damage_follow_rank_and_activation() {
         let high = run(20, true, skill);
         let unlearned = run(0, true, skill);
         assert_eq!(on.stats.get("damage"), Some(&(20.0, 20.0)));
-        assert_eq!(high.stats.get("damage"), Some(&(48.5, 48.5)));
+        assert_eq!(high.stats.get("damage"), Some(&(39.0, 39.0)));
         for key in ["life_replenish", "life_steal"] {
             let factor = on.stats.get(key).unwrap().0 / off.stats.get(key).unwrap().0;
             assert!((factor - 0.05).abs() < 1e-9, "{key}: {factor}");
@@ -2794,10 +2823,10 @@ fn colossus_total_damage_reaches_spells_and_weapon_hits() {
     for (class, skill) in [("pyromancer", "fireball"), ("viking", "zeal")] {
         let base = perf(class, skill, 20, &[], &[]);
         let boosted = perf_with_tree(class, skill, 20, &[], &[], &[579, 580, 581, 582]);
-        // Four 1% per-stack nodes, five stacks including the base capacity.
-        assert_eq!(boosted.stats["damage"], (20.0, 20.0));
+        // Four 0.5% per-stack nodes, five stacks including the base capacity.
+        assert_eq!(boosted.stats["damage"], (10.0, 10.0));
         let ratio = boosted.avg_hit_dps_max.unwrap() / base.avg_hit_dps_max.unwrap();
-        assert!((ratio - 1.2).abs() < 0.02, "{skill}: {ratio}");
+        assert!((ratio - 1.1).abs() < 0.02, "{skill}: {ratio}");
         assert_eq!(
             boosted.stats.get("enhanced_damage"),
             base.stats.get("enhanced_damage")

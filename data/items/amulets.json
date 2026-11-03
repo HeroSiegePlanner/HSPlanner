@@ -408,10 +408,7 @@
         35,
         50
       ],
-      "increased_intelligence": [
-        8,
-        15
-      ],
+      "increased_intelligence": 8,
       "intelligence_converted_to_magic_skill_dmg": [
         1,
         5
@@ -1563,10 +1560,7 @@
     "grade": "S",
     "requiresLevel": 78,
     "implicit": {
-      "increased_ailment_frequency": [
-        15,
-        30
-      ],
+      "increased_ailment_frequency": 10,
       "all_skills": [
         1,
         2

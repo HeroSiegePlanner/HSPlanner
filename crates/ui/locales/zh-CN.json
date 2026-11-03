@@ -1453,6 +1453,7 @@
   "planner.stat.lightning_break": "闪电击破",
   "planner.stat.lightning_per_element": "每种元素来源的闪电伤害增幅",
   "planner.stat.lightning_resistance": "闪电抗性",
+  "planner.stat.lightning_resistance_converted_to_lightning_damage": "闪电抗性转化为闪电技能伤害",
   "planner.stat.lightning_skill_damage": "闪电技能伤害",
   "planner.stat.lightning_skills": "闪电技能等级",
   "planner.stat.mage_guard_chance": "施法时获得Mage Guard层数的几率",

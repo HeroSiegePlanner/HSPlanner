@@ -598,7 +598,7 @@
     "tree": "Chronomancer",
     "position": { "row": 0, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 6.5, "perLevel": 7.5 },
+    "damageFormula": { "base": 6.5, "perLevel": 10 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       {
@@ -679,10 +679,10 @@
         "maxRank": 5,
         "proc": {
           "trigger": "on_hit",
-          "chance": { "base": 0, "perRank": 3 },
+          "chance": { "base": 0, "perRank": 5 },
           "effects": {
             "base": { "mana_replenish_pct": 0 },
-            "perRank": { "mana_replenish_pct": 1 }
+            "perRank": { "mana_replenish_pct": 2.5 }
           }
         }
       },
@@ -719,7 +719,7 @@
       },
       {
         "id": "additional_faith",
-        "positionIndex": 7,
+        "positionIndex": 9,
         "dummy": {"effects": [{"kind": "projectiles", "byRank": [0.125, 0.25], "note": "chance 12.5 %/r per cast for +1 beam (expected extra beams per cast = 0.125*r). The extra beam retargets nth_nearest(2), which returns the same dummy, and lands 7 pulses at full damage (no division without p12). Engine converts via perExtraProjectile = 7"}], "confidence": "C", "note": "card 317 table p7; Runda 3 (317#0) and rule 17", "plannerFix": "planner has an on_cast proc chance 12.5 %/r with no effect; card: extra beam with 7 full-damage pulses (projectile count)"},
         "name": "Additional Faith",
         "description": "Chance on cast to unleash an additional beam on a nearby monster.",
@@ -743,7 +743,7 @@
       },
       {
         "id": "burning_aging",
-        "positionIndex": 9,
+        "positionIndex": 7,
         "dummy": {"effects": [{"kind": "dot", "byRank": [0.5, 1.0, 1.5, 2.0, 2.5], "note": "shadow burn DoT (buff 62, 1 tick/s, 5 s) per impulse with chance 10 %/r per cast; tick = floor(D_a*50 %/r) (value = tick as multiple of D_a, = 0.5*r). Engine models DoT separately; not a hit on the dummy"}], "confidence": "C", "note": "card 317 table p9; reports/dot_debuffs.md; prob. of activity from chance 10 %/r", "plannerFix": "planner appliesStates also lists 'burning', the card shows only the shadow burn DoT (buff 62)"},
         "name": "Burning Aging",
         "description": "Chance to inflict shadow burning on hit.",
@@ -788,13 +788,13 @@
       {
         "id": "age_multiliferation",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD += 25 %/r"}, {"kind": "hits_mult", "byRank": [1, 1, 1], "note": "transformation: 1 + r beams (each targets the dummy), each beam damage ceil(LTD/(1+r))*(1+LSSD): total damage unchanged, so hit count in main-hit units stays 7 per cast. Not encoded as projectiles (that would double count the damage split)"}], "confidence": "C", "note": "card 317 table p12 + rule 17 (C)", "plannerFix": "planner maps the 25 %/r to arcane_skill_damage and gives max_targets +1/r; card: LSSD multiplier, beams split the damage (no extra hits), net gain (1+LSSD+0.25r)/(1+LSSD)"},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD += 25 %/r"}, {"kind": "hits_mult", "byRank": [1, 1, 1], "note": "transformation: 1 + r beams (each targets the dummy), each beam damage ceil(LTD/(1+r))*(1+LSSD): total damage unchanged, so hit count in main-hit units stays 7 per cast. Not encoded as projectiles (that would double count the damage split)"}], "confidence": "C", "note": "card 317 table p12 + rule 17 (C)", "plannerFix": "planner maps the 25 %/r to arcane_skill_damage and gives max_targets +1/r; card: LSSD multiplier, beams split the damage (no extra hits), net gain (1+LSSD+0.25r)/(1+LSSD)"},
         "name": "Age Multiliferation",
         "description": "Unleash age proliferation at multiple nearby monsters splitting the damage between beams.",
         "maxRank": 3,
         "effects": {
           "base": {"max_targets": 0, "subtree_damage": 0},
-          "perRank": {"max_targets": 1, "subtree_damage": 25}
+          "perRank": {"max_targets": 1, "subtree_damage": 50}
         }
       },
       {
@@ -1028,8 +1028,8 @@
         "description": "Unleash a shockwave of gravitation slams towards target direction with increased radius.",
         "maxRank": 3,
         "effects": {
-          "base": {"area_of_effect": 0, "projectile_count": 0, "arcane_skill_damage": 0},
-          "perRank": {"area_of_effect": 25, "projectile_count": 3, "arcane_skill_damage": 10}
+          "base": {"area_of_effect": 0, "projectile_count": 1, "arcane_skill_damage": 0},
+          "perRank": {"area_of_effect": 10, "projectile_count": 1, "arcane_skill_damage": 10}
         }
       },
       {

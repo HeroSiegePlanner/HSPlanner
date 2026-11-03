@@ -22,6 +22,7 @@ const SCENARIO_STATS: &[(&str, &str)] = &[
     ("chance_inflict_stasis", "50"),
     ("cold_resistance", "50"),
     ("poison_resistance", "50"),
+    ("lightning_resistance", "50"),
 ];
 const ENEMY_CONDITIONS: &[&str] = &[
     "cc_immune",

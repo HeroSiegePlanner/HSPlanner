@@ -67,7 +67,7 @@ fn burning_soul_adds_max_life_to_the_subtree_multiplier() {
     let (base, _) = hit_and_rate(&[], &[("life", 1000.0)]);
     let (soul, _) = hit_and_rate(&[("burning_soul", 1)], &[("life", 1000.0)]);
     let life = calc_build_performance(input(&[], &[("life", 1000.0)])).stats["life"].1;
-    let expected = 1.0 + 0.06 * life / 100.0;
+    let expected = 1.0 + 0.05 * life / 100.0;
     assert!(
         (soul / base - expected).abs() < 0.01,
         "{base} -> {soul}, life {life}"
@@ -108,7 +108,7 @@ fn manahunger_reaches_the_aura_through_its_spell_tag() {
     .hit_damage()
     .expect("Scorching Aura deals damage")
     .1;
-    assert!((hungry / base - 1.25).abs() < 0.01, "{base} -> {hungry}");
+    assert!((hungry / base - 1.15).abs() < 0.01, "{base} -> {hungry}");
 }
 
 #[test]

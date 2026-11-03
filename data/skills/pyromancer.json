@@ -839,7 +839,7 @@
     "manaCostFormula": { "base": 9, "perLevel": 1 },
     "buffUptime": { "duration": 40, "cooldown": 60 },
     "passiveStats": {
-      "base": { "increased_attack_speed": 30, "fire_skill_damage": 20, "spell_crit_damage": 20, "spell_crit_chance": 20 },
+      "base": { "increased_attack_speed": 30, "fire_skill_damage": 20, "spell_crit_damage": 20, "spell_crit_chance": 15 },
       "perRank": { "increased_attack_speed": 1.5, "fire_skill_damage": 2, "spell_crit_damage": 2.5, "spell_crit_chance": 0 }
     }
   },
@@ -1336,7 +1336,7 @@
     "tree": "Arsonist",
     "position": { "row": 1, "col": 0 },
     "ranks": [{ "rank": 1 }],
-    "damageFormula": { "base": 0, "perLevel": 18 },
+    "damageFormula": { "base": 0, "perLevel": 16 },
     "bonusSources": [
       { "source": "Fire Shield", "stat": "fire_skill_damage", "value": 10, "per": "skill_level" },
       { "source": "Phoenix Flight", "stat": "fire_skill_damage", "value": 12.5, "per": "skill_level" },
@@ -1402,7 +1402,7 @@
           "chance": { "base": 0, "perRank": 3 },
           "effects": {
             "base": { "fire_skill_damage": 0 },
-            "perRank": { "fire_skill_damage": 12 }
+            "perRank": { "fire_skill_damage": 10 }
           }
         }
       },
@@ -1503,7 +1503,7 @@
         "maxRank": 3,
         "effects": {
           "base": {"subtree_damage_per_100_max_life": 0},
-          "perRank": {"subtree_damage_per_100_max_life": 6}
+          "perRank": {"subtree_damage_per_100_max_life": 5}
         }
       },
       {

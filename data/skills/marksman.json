@@ -187,8 +187,8 @@
         "description": "Each bounce fires additional piercing projectiles.",
         "maxRank": 3,
         "effects": {
-          "base": {"projectile_count": 0, "subtree_damage": 0},
-          "perRank": {"projectile_count": 3, "subtree_damage": 25}
+          "base": {"projectile_count": 1, "subtree_damage": 0},
+          "perRank": {"projectile_count": 2, "subtree_damage": 25}
         }
       },
       {
@@ -235,7 +235,7 @@
     "kind": "active",
     "description": "Vault in the direction aimed unleashing arrows towards nearby monsters dealing increased damage.",
     "damageType": "physical",
-    "tags": ["Cast", "Active", "Movement", "Spell", "Strike", "Leap"],
+    "tags": ["Cast", "Active", "Movement", "Spell", "Strike", "Leap", "Ranged", "Projectile"],
     "movementDuringUse": 0,
     "baseCastRate": 3,
     "maxRank": 20,
@@ -1572,7 +1572,7 @@
       },
       {
         "id": "flash_bang",
-        "positionIndex": 7,
+        "positionIndex": 10,
         "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "stun 1 s per rank on hit ([51]); enables p8"}], "confidence": "C", "note": "Flash Bang, card table p7."},
         "name": "Flash Bang",
         "description": "Stun monsters on hit.",
@@ -1608,7 +1608,7 @@
       },
       {
         "id": "smell_of_burning",
-        "positionIndex": 10,
+        "positionIndex": 7,
         "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 20, "requires": "incendiary_grenade", "note": "+20 %*r vs burning (needs p5 or p13 burn); conditional"}], "confidence": "C", "note": "Smell of Burning, card table p10."},
         "name": "Smell of Burning",
         "description": "Increases damage dealt to burning targets.",
@@ -2429,7 +2429,7 @@
     "bonusSources": [
       { "source": "Master Mechanic", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
       { "source": "Frag Grenade", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
-      { "source": "Homing Missile", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Arrow Turret", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
       { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.15, "per": "attribute_point" }
     ],
     "subskills": [
@@ -2455,13 +2455,13 @@
       {
         "id": "rapidfire",
         "positionIndex": 2,
-        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-2.5, -5, -7.5, -10, -12.5, -15, -17.5, -20], "entity": true, "note": "shootAS += 12.5 %*r: T = 1.35 - 0.27*(AS) s, i.e. -0.03375 r s = -2.5 %*r of the 1.35 s volley interval"}], "confidence": "I", "note": "Rapidfire (maxRank 8), card table p2 (timer formula I)."},
+        "dummy": {"effects": [{"kind": "cooldown_pct", "byRank": [-4, -8, -12, -16, -20], "entity": true, "note": "shootAS += 12.5 %*r: T = 1.35 - 0.27*(AS) s, i.e. -0.03375 r s = -2.5 %*r of the 1.35 s volley interval"}], "confidence": "I", "note": "Rapidfire (maxRank 8), card table p2 (timer formula I)."},
         "name": "Rapidfire",
         "description": "Increases the rate of fire for drones.",
-        "maxRank": 8,
+        "maxRank": 5,
         "effects": {
           "base": {"sentry_attack_speed": 0},
-          "perRank": {"sentry_attack_speed": 12.5}
+          "perRank": {"sentry_attack_speed": 20}
         }
       },
       {
@@ -2571,10 +2571,10 @@
       {
         "id": "splitting_shot",
         "positionIndex": 10,
-        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 1}, {"kind": "extra_hits", "byRank": [0, 0, 0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "splitting bullets share the volley pack: 0 extra hits on the dummy"}, {"kind": "extra_hits", "byRank": [2, 4, 4, 4, 4], "per": "use", "requires": "nanodrones", "note": "only with p14 nanodrones: every volley bullet creates its own nanodrone at its own instance_place; the first bullet's nanodrone has the dummy in its cloned map (floor((4 + 1)/3) = 1 hit), the nanodrones of the other k - 1 bullets (pack-blocked, empty map) give H0 = 1 + floor((4 + 1)/3) = 2 hits each; k = bullets within +-8.6 deg of the dummy at 160 px, up to 3 (6 deg spacing) -> extra 2*(k-1) = 2 / 4 / 4 / 4 / 4 (upper bound k = min(1 + r, 3); a symmetric fan gives k = 2, 3, 2, 3, 2 -> 2 / 4 / 2 / 4 / 2)."}], "confidence": "I", "note": "Splitting Shot: the bullets of a volley share the player pack (0 extra hits on their own); R4 55#1 (narrowed, I): with p14 each bullet spawns a nanodrone, giving 2 hits for every bullet beyond the first that reaches the dummy. Was only the 0 entry.", "plannerFix": "planner adds projectile_count +1/r as hits; game: split bullets share one singleHitPackId (0 extra hits), except through p14 nanodrones (2 hits per additional bullet reaching the dummy)"},
+        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 1}, {"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "splitting bullets share the volley pack: 0 extra hits on the dummy"}, {"kind": "extra_hits", "byRank": [2, 4, 4], "per": "use", "requires": "nanodrones", "note": "only with p14 nanodrones: every volley bullet creates its own nanodrone at its own instance_place; the first bullet's nanodrone has the dummy in its cloned map (floor((4 + 1)/3) = 1 hit), the nanodrones of the other k - 1 bullets (pack-blocked, empty map) give H0 = 1 + floor((4 + 1)/3) = 2 hits each; k = bullets within +-8.6 deg of the dummy at 160 px, up to 3 (6 deg spacing) -> extra 2*(k-1) = 2 / 4 / 4 / 4 / 4 (upper bound k = min(1 + r, 3); a symmetric fan gives k = 2, 3, 2, 3, 2 -> 2 / 4 / 2 / 4 / 2)."}], "confidence": "I", "note": "Splitting Shot: the bullets of a volley share the player pack (0 extra hits on their own); R4 55#1 (narrowed, I): with p14 each bullet spawns a nanodrone, giving 2 hits for every bullet beyond the first that reaches the dummy. Was only the 0 entry.", "plannerFix": "planner adds projectile_count +1/r as hits; game: split bullets share one singleHitPackId (0 extra hits), except through p14 nanodrones (2 hits per additional bullet reaching the dummy)"},
         "name": "Splitting Shot",
         "description": "Gunner drones now fires multiple projectiles in an arc.",
-        "maxRank": 5,
+        "maxRank": 3,
         "effects": {
           "base": {"projectile_count": 0},
           "perRank": {"projectile_count": 1}
@@ -2583,13 +2583,13 @@
       {
         "id": "circuit_breaker",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 17.5, "note": "LSSD +17.5 %/r"}, {"kind": "extra_hits", "byRank": [-0.41, -0.41, -0.41], "per": "use", "note": "chain replaces the volley bullets: 1 hit when drone within 180 px of dummy (~59 % of orbit phases, I), else 0 -> 0.59 per volley instead of 1"}], "confidence": "I", "note": "Circuit Breaker (maxRank 3), card table p11 + druga runda (N0).", "plannerFix": "planner gives bounces 2/r and lightning break as hits; game: the chain replaces the volley (1 hit if drone <= 180 px from the dummy, ~59 %), lightning break 30 %*r"},
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 25, "note": "LSSD +17.5 %/r"}, {"kind": "extra_hits", "byRank": [-0.41, -0.41, -0.41], "per": "use", "note": "chain replaces the volley bullets: 1 hit when drone within 180 px of dummy (~59 % of orbit phases, I), else 0 -> 0.59 per volley instead of 1"}], "confidence": "I", "note": "Circuit Breaker (maxRank 3), card table p11 + druga runda (N0).", "plannerFix": "planner gives bounces 2/r and lightning break as hits; game: the chain replaces the volley (1 hit if drone <= 180 px from the dummy, ~59 %), lightning break 30 %*r"},
         "name": "Circuit Breaker",
         "description": "Drones now fire chain lightning dealing their damage as lightning and inflicting lightning break.",
         "maxRank": 3,
         "effects": {
           "base": {"lightning_break": 0, "projectile_bounces": 0, "subtree_damage": 0},
-          "perRank": {"lightning_break": 30, "projectile_bounces": 2, "subtree_damage": 17.5}
+          "perRank": {"lightning_break": 30, "projectile_bounces": 3, "subtree_damage": 25}
         },
         "proc": {
           "trigger": "on_hit",
@@ -2605,25 +2605,25 @@
       {
         "id": "c_y_c_l_o_p_s",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 100, "note": "LSSD +100 %/r"}, {"kind": "set_hits", "byRank": [5.4, 5.4, 5.4], "note": "C.Y.C.L.O.P.S. laser: 4 hits/s per drone (tick 0.25 s) x base volley interval 1.35 s = 5.4 hits per drone action (replaces the 1 volley hit)"}], "confidence": "C", "note": "C.Y.C.L.O.P.S. (maxRank 3), card table p12 (range +p12.s10 zero).", "plannerFix": "planner models only LSSD and range; the game replaces the volley with a laser ticking 4 times per second (about 5.4 hits per 1.35 s action)"},
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 80, "note": "LSSD +100 %/r"}, {"kind": "set_hits", "byRank": [5.4, 5.4, 5.4], "note": "C.Y.C.L.O.P.S. laser: 4 hits/s per drone (tick 0.25 s) x base volley interval 1.35 s = 5.4 hits per drone action (replaces the 1 volley hit)"}], "confidence": "C", "note": "C.Y.C.L.O.P.S. (maxRank 3), card table p12 (range +p12.s10 zero).", "plannerFix": "planner models only LSSD and range; the game replaces the volley with a laser ticking 4 times per second (about 5.4 hits per 1.35 s action)"},
         "name": "C.Y.C.L.O.P.S.",
         "description": "Drones now fire a constant laser beam that sticks onto monsters dealing arcane damage four times a second until they die.",
         "maxRank": 3,
         "effects": {
           "base": {"skill_range": 0, "sentry_attack_rate_fixed": 4, "subtree_damage": 0},
-          "perRank": {"skill_range": 15, "subtree_damage": 100}
+          "perRank": {"skill_range": 10, "subtree_damage": 80}
         }
       },
       {
         "id": "m_e_c_h_a",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "other", "byRank": [0.4, 0.8, 1.2], "note": "M.E.C.H.A.: one merged drone with damage = N * 0.4r * LTD (N drones in one); per action hits-equivalent 0.4r per drone-equivalent, entity count replaced by 1 (engine must not multiply by N); damage ratio approx 0.4r * N"}, {"kind": "cooldown_pct", "byRank": [-20, -40, -60], "entity": true, "note": "shootAS += 100 %*r: T = 1.35 - 0.27 r s (I)"}], "confidence": "I", "note": "M.E.C.H.A. (maxRank 3), card table p13 (transformation, C/I).", "plannerFix": "planner models of_total_damage 40/r with the normal drone count; the game merges the drones into one mech with damage N*0.4r and AS +100 %*r"},
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.4, 0.7, 1], "note": "M.E.C.H.A.: one merged drone with damage = N * 0.4r * LTD (N drones in one); per action hits-equivalent 0.4r per drone-equivalent, entity count replaced by 1 (engine must not multiply by N); damage ratio approx 0.4r * N"}, {"kind": "cooldown_pct", "byRank": [-20, -40, -60], "entity": true, "note": "shootAS += 100 %*r: T = 1.35 - 0.27 r s (I)"}], "confidence": "I", "note": "M.E.C.H.A. (maxRank 3), card table p13 (transformation, C/I).", "plannerFix": "planner models of_total_damage 40/r with the normal drone count; the game merges the drones into one mech with damage N*0.4r and AS +100 %*r"},
         "name": "M.E.C.H.A.",
         "description": "Now only spawn a single drone scaling its damage based on the amount of drones and shooting at an increased rate of fire.",
         "maxRank": 3,
         "effects": {
-          "base": {"of_total_damage": 0, "sentry_attack_speed": 0, "projectile_count": 0},
-          "perRank": {"of_total_damage": 40, "sentry_attack_speed": 100, "projectile_count": 2}
+          "base": {"of_total_damage": 10, "sentry_attack_speed": 0, "projectile_count": 1},
+          "perRank": {"of_total_damage": 30, "sentry_attack_speed": 100, "projectile_count": 1}
         }
       },
       {

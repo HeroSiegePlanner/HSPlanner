@@ -9,18 +9,18 @@
     "requiresLevel": 98,
     "implicit": {
       "enhanced_damage": [
-        45,
-        65
+        35,
+        50
       ],
       "physical_skills": [
         3,
-        5
+        4
       ],
-      "crushing_blow_chance": 25,
+      "crushing_blow_chance": 20,
       "defense_ignored": 25,
       "max_crushing_blow_stacks": [
-        4,
-        5
+        3,
+        4
       ]
     },
     "sockets": 0,
@@ -41,18 +41,15 @@
       ],
       "magic_skill_damage": [
         40,
-        50
+        60
       ],
       "life": 350,
       "mana_replenish_pct": 30,
       "magic_find": [
         40,
-        65
+        80
       ],
-      "ignore_all_res": [
-        15,
-        25
-      ]
+      "ignore_all_res": 25
     },
     "sockets": 0,
     "maxSockets": 0
@@ -322,7 +319,8 @@
       "ailment_crit_damage": [
         25,
         40
-      ]
+      ],
+      "increased_ailment_frequency": 10
     },
     "sockets": 0,
     "maxSockets": 0
@@ -539,14 +537,13 @@
     "grade": "SS",
     "requiresLevel": 100,
     "implicit": {
-      "all_attributes": 35,
+      "all_attributes": [
+        1,
+        35
+      ],
       "magic_find": [
         1,
-        150
-      ],
-      "experience_gain": [
-        1,
-        5
+        120
       ]
     },
     "sockets": 1,
@@ -1286,11 +1283,8 @@
         13,
         20
       ],
-      "poison_resistance": 50,
-      "increased_poisoned_frequency": [
-        8,
-        15
-      ]
+      "poison_resistance": 40,
+      "increased_poisoned_frequency": 10
     },
     "sockets": 0,
     "maxSockets": 0
@@ -1831,8 +1825,8 @@
     "skillBonuses": {
       "Freezing Touch": 1
     },
-    "sockets": 0,
-    "maxSockets": 0
+    "sockets": 1,
+    "maxSockets": 1
   },
   {
     "id": "s10_skeleton_crews_band",
@@ -1891,7 +1885,7 @@
     "procs": [
       {
         "trigger": "on_cast",
-        "chance": 8,
+        "chance": 12,
         "description": "cast Sanguine Leech Level 1",
         "details": "Summon a Sanguine Leech dealing damage and providing you increased life replenish for a short duration. Arcane Damage 12287, Life Replenish 800%"
       }

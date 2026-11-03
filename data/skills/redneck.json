@@ -1001,7 +1001,8 @@
     ],
     "tags": [
       "Active",
-      "Spell"
+      "Spell",
+      "Projectile"
     ],
     "tree": "Hillbilly",
     "position": {
@@ -1345,10 +1346,10 @@
         "dummy": {"effects": [{"kind": "zero_on_dummy", "note": "wider chain = area; in-zone dummy unchanged"}], "confidence": "C", "note": "card 101 p1 ([130] = 15r)"},
         "name": "Wider Chain",
         "description": "Increases the attack area of effect radius of chainslaw slash.",
-        "maxRank": 5,
+        "maxRank": 3,
         "effects": {
           "base": {"area_of_effect": 0},
-          "perRank": {"area_of_effect": 15}
+          "perRank": {"area_of_effect": 25}
         }
       },
       {
@@ -1381,7 +1382,7 @@
       },
       {
         "id": "rupturing_slash",
-        "positionIndex": 4,
+        "positionIndex": 6,
         "dummy": {"effects": [{"kind": "dot", "byRank": [0.15, 0.3, 0.45, 0.6, 0.75], "note": "bleed = floor(A*15r%); chance 3r% per attack"}], "confidence": "C", "note": "card 101 p4 (L683)", "plannerFix": "planner rolls bleed per hit; game rolls once per attack"},
         "name": "Rupturing Slash",
         "description": "Chance on inflict bleeding on hit.",
@@ -1416,7 +1417,7 @@
       },
       {
         "id": "the_motor_goes_brrrrr",
-        "positionIndex": 6,
+        "positionIndex": 4,
         "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [10, 20, 30, 40, 50], "note": "attack speed 'more' +10%/r"}], "confidence": "C", "note": "card 101 p6"},
         "name": "The Motor Goes BRRRRR!",
         "description": "Increases chainsaw slash attack speed while wielding a chainsaw.",
@@ -2127,13 +2128,13 @@
       {
         "id": "shredding_squad",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9], "note": "1 + 3r saws in an arc every 10 deg around the aim (n = 4 / 7 / 10); the 5-saw limit kills only one oldest saw per cast"}, {"kind": "set_hits", "byRank": [15.7, 23.0, 23.2], "note": "R4 108#1 (frame simulation, oriented rectangle) + PoR4 (c) rule 40 (saw lands ~14.4 px before the target) + Resztki E (target 6 px above the cursor), cursor above the dummy: total hits per cast 15.7 / 23.0 / 23.2 for n = 4 / 7 / 10 (r = 1..3; r4, r5: 24.6 / 23.2); each saw within ~85 px of the dummy gives 4 hits (4.0 / 6.0 / 6.2 saws hit it), saturating from r = 2; cursor on the dummy centre variant 15.8 / 26.2 / 23.2; goneWild = 0.01 (always flies off) adds ~+1 hit per saw (I, not included)"}, {"kind": "damage_pct", "byRank": [10, 20, 30], "note": "LSSD +10%/r"}], "confidence": "C", "note": "card 108 p12; R4 108#1 (arc geometry C, asm 0x1463a62e7/0x1463a6676) + PoR4 (c) + Resztki po R4 B/E (rg2.py reproduces to 0.1)", "plannerFix": "planner projectile_count +3/r does not reach the dummy per saw; in game the arc gives 15.7-23.2 hits per cast (x3.9 .. x5.9 vs the single saw)"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9], "note": "1 + 3r saws in an arc every 10 deg around the aim (n = 4 / 7 / 10); the 5-saw limit kills only one oldest saw per cast"}, {"kind": "set_hits", "byRank": [15.7, 23.0, 23.2], "note": "R4 108#1 (frame simulation, oriented rectangle) + PoR4 (c) rule 40 (saw lands ~14.4 px before the target) + Resztki E (target 6 px above the cursor), cursor above the dummy: total hits per cast 15.7 / 23.0 / 23.2 for n = 4 / 7 / 10 (r = 1..3; r4, r5: 24.6 / 23.2); each saw within ~85 px of the dummy gives 4 hits (4.0 / 6.0 / 6.2 saws hit it), saturating from r = 2; cursor on the dummy centre variant 15.8 / 26.2 / 23.2; goneWild = 0.01 (always flies off) adds ~+1 hit per saw (I, not included)"}, {"kind": "damage_pct", "byRank": [8, 16, 24], "note": "LSSD +10%/r"}], "confidence": "C", "note": "card 108 p12; R4 108#1 (arc geometry C, asm 0x1463a62e7/0x1463a6676) + PoR4 (c) + Resztki po R4 B/E (rg2.py reproduces to 0.1)", "plannerFix": "planner projectile_count +3/r does not reach the dummy per saw; in game the arc gives 15.7-23.2 hits per cast (x3.9 .. x5.9 vs the single saw)"},
         "name": "Shredding Squad",
         "description": "Launch multiple rogue chainsaws in an arc instead of throwing them on the ground.",
         "maxRank": 3,
         "effects": {
           "base": {"projectile_count": 0, "subtree_damage": 0},
-          "perRank": {"projectile_count": 3, "subtree_damage": 10}
+          "perRank": {"projectile_count": 3, "subtree_damage": 8}
         }
       },
       {

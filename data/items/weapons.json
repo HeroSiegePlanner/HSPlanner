@@ -134,7 +134,7 @@
       ],
       "all_skills": 3,
       "sentry_attack_speed": [
-        30,
+        25,
         40
       ],
       "sentry_damage": [
@@ -145,7 +145,7 @@
         4,
         6
       ],
-      "sentry_duration": 25
+      "ignore_all_res": 20
     },
     "skillBonuses": {
       "Gunner Drone": [
@@ -169,7 +169,7 @@
     "maxSockets": 4,
     "procs": [
       {
-        "trigger": "on_attack",
+        "trigger": "on_spell_hit",
         "chance": 8,
         "description": "cast Master Mechanic Level 20",
         "details": "Temporarily increase the attack speed and arcane damage of all your turrets and drones!"
@@ -420,7 +420,8 @@
         25,
         50
       ],
-      "dexterity_based_on_level": 125
+      "dexterity_based_on_level": 125,
+      "lightning_resistance_converted_to_lightning_damage": 20
     },
     "sockets": 3,
     "maxSockets": 4,
@@ -524,7 +525,10 @@
         "description": "cast Tree Trunk Triumph Level [125-150]",
         "details": "Summon a massive tree and cut it down on nearby monsters dealing increased damage and additional arcane damage."
       }
-    ]
+    ],
+    "skillBonuses": {
+      "Experienced Logger": 15
+    }
   },
   {
     "id": "polearm_angelic_st_draxis_pigstick",
@@ -560,8 +564,8 @@
       "to_armor": 55
     },
     "skillBonuses": {
-      "Crushing Lance": 15,
-      "Lance Thrust": 15
+      "Crushing Lance": 20,
+      "Lance Thrust": 20
     },
     "uniqueEffects": [
       "Attacks can hit multiple enemies"
@@ -723,8 +727,8 @@
       ],
       "defense_ignored": 75,
       "to_strength": 75,
-      "life_per_kill": 45,
-      "max_crushing_blow_stacks": 1
+      "max_crushing_blow_stacks": 1,
+      "increased_strength": 10
     },
     "uniqueEffects": [
       "Attacks can hit multiple enemies"
@@ -1766,6 +1770,9 @@
         "description": "cast Rapid Fire Level [25-40]",
         "details": "Temporarily increase your attack speed and physical damage."
       }
+    ],
+    "uniqueEffects": [
+      "Piercing Attack"
     ]
   },
   {
@@ -1852,7 +1859,8 @@
       "flat_arcane_skill_damage": [
         22,
         50
-      ]
+      ],
+      "ignore_arcane_res": 20
     },
     "skillBonuses": {
       "Holy Hammer": [
@@ -1953,7 +1961,8 @@
       "ignore_lightning_res": [
         25,
         40
-      ]
+      ],
+      "projectile_speed": 1
     },
     "skillBonuses": {
       "Ricochet": 1
@@ -2559,7 +2568,8 @@
       "ignore_all_res": [
         10,
         25
-      ]
+      ],
+      "increased_ailment_frequency": 10
     },
     "uniqueEffects": [
       "Unholy",
@@ -2586,8 +2596,8 @@
     "attackSpeed": 1.5,
     "implicit": {
       "enhanced_damage": [
-        660,
-        780
+        720,
+        840
       ],
       "increased_attack_speed": [
         40,
@@ -2609,7 +2619,7 @@
       {
         "trigger": "on_hit",
         "chance": 15,
-        "description": "cast Lance Thrust Level [35-45]",
+        "description": "cast Lance Thrust Level 60",
         "details": "Perform a long ranged lance attack piercing monsters in a line dealing physical damage. If the lance comes in contact with a commending banner you get dragged to the banner smashing the ground stunning monsters on impact."
       }
     ]
@@ -2736,7 +2746,7 @@
     "requiresLevel": 95,
     "damageMin": 160,
     "damageMax": 175,
-    "attackSpeed": 1,
+    "attackSpeed": 0.65,
     "implicit": {
       "all_skills": [
         4,
@@ -2860,7 +2870,7 @@
       {
         "trigger": "on_attack",
         "chance": 4,
-        "description": "cast Revved Up Level 30",
+        "description": "cast Revved Up Level 15",
         "details": "Chance: 4-7%. "
       }
     ]
@@ -2874,8 +2884,8 @@
     "grade": "SS",
     "twoHanded": true,
     "damageMin": 130,
-    "damageMax": 140,
-    "attackSpeed": 1.15,
+    "damageMax": 145,
+    "attackSpeed": 1,
     "implicit": {
       "enhanced_damage": [
         900,
@@ -2884,16 +2894,13 @@
       "all_skills": 5,
       "crit_chance": 50,
       "crit_damage": [
-        150,
-        200
+        120,
+        160
       ],
-      "projectile_speed": [
-        3,
-        4
-      ],
+      "projectile_speed": 2,
       "explosion_damage": [
-        75,
-        150
+        50,
+        100
       ],
       "explosion_aoe": [
         10,
@@ -3547,7 +3554,8 @@
       "melee_range": [
         10,
         20
-      ]
+      ],
+      "projectile_speed": 1
     },
     "skillBonuses": {
       "Ricochet": 1
@@ -3689,18 +3697,18 @@
         5
       ],
       "crushing_blow_chance": 30,
-      "defense_ignored": 75,
+      "defense_ignored": 50,
       "extra_damage_stunned": [
         40,
         80
       ],
       "to_strength": [
         150,
-        250
+        200
       ],
       "to_vitality": [
         75,
-        125
+        100
       ],
       "increased_attack_speed_more": -75
     },
@@ -4561,8 +4569,8 @@
       ],
       "increased_attack_speed_more": -60,
       "to_strength": [
-        150,
-        200
+        80,
+        140
       ],
       "deadly_blow": 75,
       "less_dmg_with_cd_skills": -85
@@ -6992,7 +7000,7 @@
     "implicit": {
       "all_skills": [
         2,
-        7
+        5
       ],
       "enhanced_damage": [
         820,
@@ -7005,7 +7013,7 @@
       ],
       "to_vitality": [
         50,
-        200
+        120
       ],
       "vitality_converted_to_attack_dmg": 15
     },
@@ -9741,8 +9749,8 @@
       ],
       "increased_attack_speed_more": -60,
       "to_strength": [
-        150,
-        200
+        80,
+        140
       ],
       "deadly_blow": 75,
       "less_dmg_with_cd_skills": -85
@@ -11062,7 +11070,7 @@
     "sockets": 0,
     "maxSockets": 3,
     "setId": "valkyrie_s_battle_gear",
-    "attackSpeed": 1.65,
+    "attackSpeed": 1.5,
     "damageMin": 48,
     "damageMax": 54,
     "implicit": {
@@ -11079,8 +11087,8 @@
         20
       ],
       "increased_attack_speed": [
-        30,
-        50
+        15,
+        25
       ],
       "additive_lightning_damage": [
         1255,

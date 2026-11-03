@@ -628,7 +628,7 @@
     "attackScaling": {
       "weaponBonusScaling": true,
       "weaponSubtreeScalesFullHit": false,
-      "weaponDamagePct": { "base": 100, "perLevel": 20 },
+      "weaponDamagePct": { "base": 100, "perLevel": 16 },
       "flatPhysicalMin": { "base": 2, "perLevel": 0 },
       "flatPhysicalMax": { "base": 6.5, "perLevel": 0.5 },
       "attackRatingPct": { "base": 0, "perLevel": 3.5 }
@@ -789,7 +789,7 @@
         "maxRank": 5,
         "effects": {
           "base": {"of_total_damage": 0, "subtree_damage": 0},
-          "perRank": {"of_total_damage": 2, "subtree_damage": 6}
+          "perRank": {"of_total_damage": 1.5, "subtree_damage": 6}
         }
       },
       {
@@ -819,13 +819,13 @@
       {
         "id": "mega_shot",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [50, 100, 150]}, {"kind": "extra_hits", "byRank": [1.3, 3.3, 5.4], "per": "hit", "note": "0.53 * 4r mega balls hit (2.3 / 4.3 / 6.4) minus the lost chain hit (-1)"}], "confidence": "I", "note": "card p13 row + R4 59#2: [1051] = 4r mega balls (same object_index, absolute directions 360/N*i, position = hitting ball + lengthdir(8, dir), deltaSpeed max(0, 0.5*deltaSpeed, 0.5*baseSpeed), projType 0, not copied -> no recursion) are deadly from f0+2 and do not return, so they hit only if still overlapping the dummy in that step: pixel simulation over aim angle and phase gives 0.53*N hits (N = 4r: 2.3 / 4.3 / 6.4 / 8.5 / 10.6 for r = 1..5 at scale 1.0, p6 = 0; p6 r5: 0.40*N; scale 1.75 (p8 r5): 0.87*N; +-1 frame of event order: 0.65*N / 0.45*N), I. Old model: 4r (too high ~2x). The mega balls' own shrapnel lands ~200 px away (0); the original ball's shrapnel is kept; [1051] > 0 replaces the chain (-1).", "plannerFix": "planner projectile_count 4/r is wedge balls; card: 4r mega balls start 8 px from the hitting ball, absolute directions 360/(4r)*i, ~0.53 of them reach the dummy, each a full hit; they replace the chain (-1)"},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [50, 75, 100]}, {"kind": "extra_hits", "byRank": [1.3, 2.8, 4.4], "per": "hit", "note": "0.53 * 4r mega balls hit (2.3 / 4.3 / 6.4) minus the lost chain hit (-1)"}], "confidence": "I", "note": "card p13 row + R4 59#2: [1051] = 4r mega balls (same object_index, absolute directions 360/N*i, position = hitting ball + lengthdir(8, dir), deltaSpeed max(0, 0.5*deltaSpeed, 0.5*baseSpeed), projType 0, not copied -> no recursion) are deadly from f0+2 and do not return, so they hit only if still overlapping the dummy in that step: pixel simulation over aim angle and phase gives 0.53*N hits (N = 4r: 2.3 / 4.3 / 6.4 / 8.5 / 10.6 for r = 1..5 at scale 1.0, p6 = 0; p6 r5: 0.40*N; scale 1.75 (p8 r5): 0.87*N; +-1 frame of event order: 0.65*N / 0.45*N), I. Old model: 4r (too high ~2x). The mega balls' own shrapnel lands ~200 px away (0); the original ball's shrapnel is kept; [1051] > 0 replaces the chain (-1). S11: N = 4, 7, 10 mega balls (4 + 3 per extra point); hits interpolated on the N table (I).", "plannerFix": "planner projectile_count 4/r is wedge balls; card: 4r mega balls start 8 px from the hitting ball, absolute directions 360/(4r)*i, ~0.53 of them reach the dummy, each a full hit; they replace the chain (-1)"},
         "name": "Mega Shot",
         "description": "Fire a mega cannon ball with increased damage unleashing additional cannonballs around the impact location.",
         "maxRank": 3,
         "effects": {
-          "base": {"projectile_size": 0, "projectile_count": 0, "subtree_damage": 0},
-          "perRank": {"projectile_size": 50, "projectile_count": 4, "subtree_damage": 50}
+          "base": {"projectile_size": 35, "projectile_count": 1, "subtree_damage": 25},
+          "perRank": {"projectile_size": 15, "projectile_count": 3, "subtree_damage": 25}
         }
       },
       {
@@ -1210,17 +1210,17 @@
       {
         "id": "napalm_powder",
         "positionIndex": 1,
-        "dummy": {"effects": [{"kind": "dot", "byRank": [20, 40, 60, 80, 100]}], "confidence": "C", "note": "card p1: 4%/r chance per cast, burn [18] = V1'*20%/r on puddles and explosions"},
+        "dummy": {"effects": [{"kind": "dot", "byRank": [20, 40, 60]}], "confidence": "C", "note": "card p1: 4%/r chance per cast, burn [18] = V1'*20%/r on puddles and explosions"},
         "name": "Napalm Powder",
         "description": "Chance to inflict burning on hit.",
-        "maxRank": 5,
+        "maxRank": 3,
         "effects": {
           "base": {"increased_burning_damage": 0},
           "perRank": {"increased_burning_damage": 20}
         },
         "proc": {
           "trigger": "on_hit",
-          "chance": { "base": 0, "perRank": 4 },
+          "chance": { "base": 0, "perRank": 15 },
           "appliesStates": [
             { "state": "burning", "amount": { "base": 0, "perRank": 20 } }
           ]
@@ -1277,13 +1277,13 @@
       {
         "id": "stacked_fumes",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [6, 12, 18, 24, 30]}], "confidence": "C", "note": "card p6: [389] = 3/r: buff 25 per barrel hit; stacks derived from cast 2.5 s and buff 5 s", "plannerFix": "buff 25 is a stack stat (3%/r per stack, max 10, 5 s): steady state ~2 stacks = 6%/r (derived, I); planner has a flat 3%/r"},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50]}], "confidence": "C", "note": "card p6: [389] = 3/r: buff 25 per barrel hit; stacks derived from cast 2.5 s and buff 5 s S11: [389] = 5/r per stack, steady state ~2 stacks = 10 %/r.", "plannerFix": "buff 25 is a stack stat (3%/r per stack, max 10, 5 s): steady state ~2 stacks = 6%/r (derived, I); planner has a flat 3%/r"},
         "name": "Stacked Fumes",
         "description": "Every time the barrel hits an enemy it gives you a stacking buff increasing fire skill damage.",
         "maxRank": 5,
         "effects": {
           "base": {"subtree_damage": 0},
-          "perRank": {"subtree_damage": 6}
+          "perRank": {"subtree_damage": 10}
         }
       },
       {
@@ -1351,7 +1351,7 @@
         "maxRank": 3,
         "effects": {
           "base": {"projectile_size": 0, "projectile_count": 0, "fire_skill_damage": 0},
-          "perRank": {"projectile_size": 45, "projectile_count": 5, "fire_skill_damage": 15}
+          "perRank": {"projectile_size": 45, "projectile_count": 5, "fire_skill_damage": 25}
         }
       },
       {
@@ -1677,11 +1677,13 @@
     "passiveStats": {
       "base": {
         "attack_rating": 2,
-        "crit_chance": 1.5
+        "crit_chance": 1,
+        "fire_skill_damage": 2
       },
       "perRank": {
         "attack_rating": 2,
-        "crit_chance": 1.5
+        "crit_chance": 1,
+        "fire_skill_damage": 2
       }
     }
   },
@@ -3111,13 +3113,13 @@
       {
         "id": "land_annihilation",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3.0, 3.0, 3.0], "note": "p1 = 0: 1 ring (rho = 32) of 3 balls, all hit the dummy (blast r ~ 106 px); with p1 = 1..5: r12 = 1: 6 / 6 / 9 / 12 / 15, r12 = 2-3: 3 / 6 / 6 / 9 / 9, r12 = 5: 3 / 3 / 6 / 6 / 9"}, {"kind": "damage_pct", "byRank": [100, 200, 300]}], "confidence": "I", "note": "card p12 + R4 73#1 (outside the question list) + PoR4: block RANK(12) (asm 0x146322b6b, 0x146322d52-0x146322d9d) sets rings = (15 + p1)*0.1*(1 + ...), adds 2 to the AOE variable (explosionAOE = 3 + 0.1*r4, blast r = 31.5*(3 + 0.1*r4) + 12 >= 106.5 px), reset threshold floor(200*(1 + p12.s10))/2 (cycle X*(1 + 0.3*r12)); la.py cycle simulation: E = 3.0 at p1 = 0 for every r12 = 1..5 and both cursors (Resztki E: unchanged by the 6 px shift). I: random angles, mean values. Old entry: only damage_pct 100r.", "plannerFix": "planner cold 100/r and area 30/r; card: transformation - rings x0.1 and balls 3x larger (AOE +2), LSSD +100%/r on the fire explosion"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3.0, 3.0, 3.0], "note": "p1 = 0: 1 ring (rho = 32) of 3 balls, all hit the dummy (blast r ~ 106 px); with p1 = 1..5: r12 = 1: 6 / 6 / 9 / 12 / 15, r12 = 2-3: 3 / 6 / 6 / 9 / 9, r12 = 5: 3 / 3 / 6 / 6 / 9"}, {"kind": "damage_pct", "byRank": [150, 300, 450]}], "confidence": "I", "note": "card p12 + R4 73#1 (outside the question list) + PoR4: block RANK(12) (asm 0x146322b6b, 0x146322d52-0x146322d9d) sets rings = (15 + p1)*0.1*(1 + ...), adds 2 to the AOE variable (explosionAOE = 3 + 0.1*r4, blast r = 31.5*(3 + 0.1*r4) + 12 >= 106.5 px), reset threshold floor(200*(1 + p12.s10))/2 (cycle X*(1 + 0.3*r12)); la.py cycle simulation: E = 3.0 at p1 = 0 for every r12 = 1..5 and both cursors (Resztki E: unchanged by the 6 px shift). I: random angles, mean values. Old entry: only damage_pct 100r.", "plannerFix": "planner cold 100/r and area 30/r; card: transformation - rings x0.1 and balls 3x larger (AOE +2), LSSD +100%/r on the fire explosion"},
         "name": "Land Annihilation",
         "description": "Drop a reduced amount of big bombs on a significantly larger radius. Land Ahoy! now has a cooldown.",
         "maxRank": 3,
         "effects": {
           "base": {"area_of_effect": 0, "subtree_damage": 0},
-          "perRank": {"area_of_effect": 30, "subtree_damage": 100}
+          "perRank": {"area_of_effect": 30, "subtree_damage": 150}
         }
       },
       {

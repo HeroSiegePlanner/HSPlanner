@@ -2958,7 +2958,7 @@
     "id": "maelstrom_of_frost",
     "activationKind": "cast",
     "speedPath": "cast",
-    "dummyHits": {"base": 30.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast (cooldown 40 s, duration 30 s; uptime 75 % without p11), area around the player so the dummy at 160 px is inside once the mask has grown: one Prophet_Maelstrom_obj (PDP, glued to the player, destroyTimer = 30*60 = 1800 frames, scale 0.1 -> maxScale 3.5 at +0.05/frame, mask ~134 px *scale, so a dummy at 160 px is reached at scale ~2.57 = frame ~49), tick_frequency = 60 frames (FPS*(1 - p6.s9%), overrides the 0.5 s of Create), one hit per map clear, each hit = d0 = floor(W*(1 + V2%)*(1+LSSD)) + d2 = floor(V1*(1+LSSD)) cold (one hit with two components, V1 = 15*L, V2 = 82 + 18*L) = 1.0 main hit. By tools/tick_hits.py (METODA rule 20; active frames = 1800 - 2 = 1798, T = 60, first overlap at frame 49 or 0 or 42): 30 hits (the card's 1 + floor(30/tick) = 31 is the older tick formula). perExtraProjectile 0: no projectile mechanism. A skill-duration bonus scales the tick count in the engine. p6 (shorter tick: more hits), p11 (permanent, mana drain), p1/p4/p5/p9 per-tick procs, p12 meteors, p14 ice blocks are subskill effects."},
+    "dummyHits": {"base": 37, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast (cooldown 40 s, duration 30 s; uptime 75 % without p11), area around the player so the dummy at 160 px is inside once the mask has grown: one Prophet_Maelstrom_obj (PDP, glued to the player, destroyTimer = 30*60 = 1800 frames, scale 0.1 -> maxScale 3.5 at +0.05/frame, mask ~134 px *scale, so a dummy at 160 px is reached at scale ~2.57 = frame ~49), tick_frequency = 60 frames (FPS*(1 - p6.s9%), overrides the 0.5 s of Create), one hit per map clear, each hit = d0 = floor(W*(1 + V2%)*(1+LSSD)) + d2 = floor(V1*(1+LSSD)) cold (one hit with two components, V1 = 15*L, V2 = 82 + 18*L) = 1.0 main hit. By tools/tick_hits.py (METODA rule 20; active frames = 1800 - 2 = 1798, T = 60, first overlap at frame 49 or 0 or 42): 30 hits (the card's 1 + floor(30/tick) = 31 is the older tick formula). perExtraProjectile 0: no projectile mechanism. A skill-duration bonus scales the tick count in the engine. p6 (shorter tick: more hits), p11 (permanent, mana drain), p1/p4/p5/p9 per-tick procs, p12 meteors, p14 ice blocks are subskill effects. S11: tick 48 frames (0.8 s), first overlap at frame 49: 37 hits per cast."},
     "weaponRequirement": "melee",
     "classId": "prophet",
     "name": "Maelstrom of Frost",
@@ -2983,7 +2983,7 @@
       "row": 2,
       "col": 2
     },
-    "hitModel": { "object": "Prophet_Maelstrom_Create", "tickFrequency": 1, "lifetime": 30 },
+    "hitModel": { "object": "Prophet_Maelstrom_Create", "tickFrequency": 0.8, "lifetime": 30 },
     "ranks": [
       {
         "rank": 1,
@@ -3074,7 +3074,7 @@
         "maxRank": 5,
         "effects": {
           "base": {"area_of_effect": 0},
-          "perRank": {"area_of_effect": 15}
+          "perRank": {"area_of_effect": 8}
         }
       },
       {
@@ -3185,10 +3185,10 @@
         "maxRank": 5,
         "proc": {
           "trigger": "on_hit",
-          "chance": { "base": 0, "perRank": 3 },
+          "chance": { "base": 0, "perRank": 1 },
           "effects": {
             "base": { "area_of_effect": 0 },
-            "perRank": { "area_of_effect": 4 }
+            "perRank": { "area_of_effect": 1 }
           }
         }
       },

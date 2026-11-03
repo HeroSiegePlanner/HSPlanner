@@ -1453,6 +1453,7 @@
   "planner.stat.lightning_break": "번개 파괴",
   "planner.stat.lightning_per_element": "원소 피해 유형당 번개 피해 증가량",
   "planner.stat.lightning_resistance": "번개 저항",
+  "planner.stat.lightning_resistance_converted_to_lightning_damage": "번개 저항을 번개 스킬 피해로 전환",
   "planner.stat.lightning_skill_damage": "번개 스킬 피해",
   "planner.stat.lightning_skills": "번개 스킬 레벨",
   "planner.stat.mage_guard_chance": "시전 시 Mage Guard 중첩 획득 확률",

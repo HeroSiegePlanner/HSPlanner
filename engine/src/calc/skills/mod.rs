@@ -514,7 +514,8 @@ pub(crate) struct CritFactors {
 }
 
 // St. Ahto's Diamond Hands (#217): a non-critical proc worth the critical damage,
-// at the cost of half the crit chance and a critical damage cap. ponytail: the
+// at the cost of a quarter of the crit chance (Season 11; was half) and a
+// critical damage cap. ponytail: the
 // proc formula follows HS Helper's ability text; no game code was traced.
 #[derive(Clone, Copy)]
 struct JaggedGauntlet {
@@ -572,7 +573,7 @@ pub(crate) fn crit_factors_with_tags(
         } else {
             "crit_chance"
         },
-    )) / if jagged.is_some() { 2.0 } else { 1.0 };
+    )) * if jagged.is_some() { 0.75 } else { 1.0 };
     let damage_pct = r_max(rg(
         stats,
         if is_spell {
@@ -646,6 +647,17 @@ mod tests {
             }
         }
         out
+    }
+
+    #[test]
+    fn jagged_gauntlet_cuts_a_quarter_of_the_crit_chance() {
+        let plain = stat("crit_chance", 40.0);
+        let jagged = merge(&[
+            plain.clone(),
+            stat("jagged_gauntlet_max_crit_damage", 100.0),
+        ]);
+        assert_eq!(crit_factors_with_tags(&plain, false, &[]).chance, 40.0);
+        assert_eq!(crit_factors_with_tags(&jagged, false, &[]).chance, 30.0);
     }
 
     #[test]

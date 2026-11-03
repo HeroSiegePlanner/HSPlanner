@@ -286,7 +286,7 @@
       },
       {
         "id": "deserts_spirit",
-        "positionIndex": 2,
+        "positionIndex": 7,
         "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [5, 10, 15, 20, 25], "note": "TalentUseSetSpeed: cast rate +5%/r"}], "confidence": "C", "note": "card row p2"},
         "name": "Desert's Spirit",
         "description": "Increases cast rate when using cloud of sand.",
@@ -346,7 +346,7 @@
       },
       {
         "id": "zephyr",
-        "positionIndex": 7,
+        "positionIndex": 2,
         "dummy": {"effects": [{"kind": "utility", "note": "cloud speed 8*(1+0.1r): shorter flight, not in cycle formula"}], "confidence": "C", "note": "card row p7"},
         "name": "Zephyr",
         "description": "Increases the projectile speed of cloud of sand.",
@@ -669,7 +669,7 @@
       {
         "id": "dune_warrior",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [7.5, 30.0, 67.5], "per": "use", "note": "burst on every 6th wave hit (5 stacks of buff 31, the 6th consumes them): 3r Orbiting_Tornado_obj created 8 px from the dummy centre, each hits once (wave has no hit pack, singleHitPackId = -1) for floor(d0_wave*3r*5) = 15r x the wave hit (value 3r x 5 stacks, no x0.01). Per attack: 0.5r tornadoes x 15r = 7.5r^2 main-hit units. Formula read from asm (C); I that BuffAdd stores the value 1:1 and the missing x0.01 is not a game bug (if it were, 0.075r^2)."}], "confidence": "I", "note": "R4 79#1 (card row p14): +0.5r hits per attack at 15r x d0; units and BuffAdd value are I", "plannerFix": "planner gives physical 3r and projectile_count 3r; card (R4): a burst every 6th wave hit makes 3r tornadoes that each hit the dummy once for floor(d0*3r*5)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.075, 0.3, 0.675], "per": "use", "note": "burst on every 6th wave hit (5 stacks of buff 31, the 6th consumes them): 3r Orbiting_Tornado_obj created 8 px from the dummy centre, each hits once (wave has no hit pack, singleHitPackId = -1) for floor(d0_wave*3r*5) = 15r x the wave hit (value 3r x 5 stacks, no x0.01). Per attack: 0.5r tornadoes x 15r = 7.5r^2 main-hit units. Formula read from asm (C); I that BuffAdd stores the value 1:1 and the missing x0.01 is not a game bug (if it were, 0.075r^2)."}], "confidence": "I", "note": "R4 79#1 (card row p14): +0.5r hits per attack at 15r x d0; units and BuffAdd value are I S11: the missing x0.01 was a game bug, fixed: 0.075r^2 main-hit units per attack.", "plannerFix": "planner gives physical 3r and projectile_count 3r; card (R4): a burst every 6th wave hit makes 3r tornadoes that each hit the dummy once for floor(d0*3r*5)"},
         "name": "Dune Warrior",
         "description": "Striking monsters adds a stack of dune warrior sending multiple tornados dealing additional damage in an arc upon reaching maximum stacks.",
         "maxRank": 3,
@@ -736,12 +736,12 @@
     "tree": "Wanderer",
     "position": { "row": 2, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 4 }],
-    "damageFormula": { "base": 0, "perLevel": 15 },
+    "damageFormula": { "base": 0, "perLevel": 18 },
     "manaCostFormula": { "base": 3.25, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "bonusSources": [
       { "source": "Sand Entombment", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
       { "source": "Sand Vortex", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
-      { "source": "Dissipating Tornado", "stat": "arcane_skill_damage", "value": 12, "per": "skill_level" },
+      { "source": "Oasis Aura", "stat": "arcane_skill_damage", "value": 12, "per": "skill_level" },
       { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.1, "per": "attribute_point" }
     ],
     "subskills": [
@@ -825,7 +825,7 @@
       },
       {
         "id": "gusting_winds",
-        "positionIndex": 6,
+        "positionIndex": 7,
         "dummy": {"effects": [{"kind": "utility", "note": "orbit/move speed 4.5*(1+0.15r) of tornadoes; hit count change not quantified (I)"}], "confidence": "I", "note": "card row p6"},
         "name": "Gusting Winds",
         "description": "Increases the speed of sand tornados.",
@@ -837,7 +837,7 @@
       },
       {
         "id": "desert_storm",
-        "positionIndex": 7,
+        "positionIndex": 6,
         "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4], "note": "+1 tornado per wave per rank (XSP 2+p7.s9); engine converts at perExtraProjectile 6.9 (= 18 waves x 0.38 at D<=20), card 6.84"}, {"kind": "damage_pct", "byRank": [4, 8, 12, 16], "note": "LSSD += 4%/r (p7.s10)"}], "confidence": "C", "note": "card row p7 (tornado count + LSSD)"},
         "name": "Desert Storm",
         "description": "Increases the amount of sand tornados.",
@@ -917,25 +917,25 @@
       {
         "id": "sand_tornado",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [45, 90, 135], "note": "LSSD += 45%/r on waves; tornado damage x(1+0.45r) too"}], "confidence": "C", "note": "card row p13"},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD += 45%/r on waves; tornado damage x(1+0.45r) too"}], "confidence": "C", "note": "card row p13"},
         "name": "Sand Tornado",
         "description": "Send out a sand tornado casting sand gush continuously.",
         "maxRank": 3,
         "effects": {
           "base": {"subtree_damage": 0},
-          "perRank": {"subtree_damage": 45}
+          "perRank": {"subtree_damage": 50}
         }
       },
       {
         "id": "dust_devils",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6], "note": "+2 tornadoes per wave per rank (XSP 2+p7.s9+p14.s10); tornado size x0.5 lowers per-tornado hit chance (not quantified)"}, {"kind": "damage_pct", "byRank": [65, 130, 195], "note": "LSSD += 65%/r"}], "confidence": "C", "note": "card row p14"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6], "note": "+2 tornadoes per wave per rank (XSP 2+p7.s9+p14.s10); tornado size x0.5 lowers per-tornado hit chance (not quantified)"}, {"kind": "damage_pct", "byRank": [75, 150, 225], "note": "LSSD += 65%/r"}], "confidence": "C", "note": "card row p14"},
         "name": "Dust Devils",
         "description": "Unleash small dust devils bouncing off of walls and unleashing a pulse of sand on hit.",
         "maxRank": 3,
         "effects": {
           "base": {"projectile_speed_pct": 0, "projectile_count": 0, "subtree_damage": 0},
-          "perRank": {"projectile_speed_pct": 10, "projectile_count": 2, "subtree_damage": 65}
+          "perRank": {"projectile_speed_pct": 10, "projectile_count": 2, "subtree_damage": 75}
         }
       }
     ]
@@ -982,8 +982,8 @@
     "position": { "row": 3, "col": 2 },
     "ranks": [{ "rank": 1 }],
     "passiveStats": {
-      "base": { "attack_rating_pct": 4, "movement_speed": 1, "arcane_skill_damage": 2 },
-      "perRank": { "attack_rating_pct": 4, "movement_speed": 1, "arcane_skill_damage": 2 }
+      "base": { "attack_rating_pct": 4, "movement_speed": 2, "arcane_skill_damage": 2 },
+      "perRank": { "attack_rating_pct": 4, "movement_speed": 2, "arcane_skill_damage": 2 }
     }
   },
   {
@@ -1068,7 +1068,7 @@
         "maxRank": 5,
         "effects": {
           "base": {"mana_replenish_pct": 0},
-          "perRank": {"mana_replenish_pct": 1}
+          "perRank": {"mana_replenish_pct": 2}
         }
       },
       {
@@ -1402,13 +1402,13 @@
       {
         "id": "brutalizing_cleave",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [2.25, 4.5, 6.75], "note": "LSSD += p12.s9*0.01 = 2.25 points per rank (game value; the 225 in the planner is a unit error)"}], "confidence": "C", "note": "card row p12 + Blade Strike Transformacje (unit error)", "plannerFix": "planner uses 225 per rank; card: LSSD += p12.s9 * 0.01 = 2.25 percent per rank"},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [225, 450, 675], "note": "LSSD += p12.s9*0.01 = 2.25 points per rank (game value; the 225 in the planner is a unit error)"}], "confidence": "C", "note": "card row p12 + Blade Strike Transformacje (unit error) S11: the double x0.01 was fixed in game, LSSD += 225 %/r as the tooltip says.", "plannerFix": "planner uses 225 per rank; card: LSSD += p12.s9 * 0.01 = 2.25 percent per rank"},
         "name": "Brutalizing Cleave",
         "description": "Gain increased attack range and damage slightly knocking enemies back stunning them.",
         "maxRank": 3,
         "effects": {
           "base": {"skill_range": 0, "subtree_damage": 0.0},
-          "perRank": {"skill_range": 50, "subtree_damage": 2.25}
+          "perRank": {"skill_range": 50, "subtree_damage": 225}
         }
       },
       {
@@ -2426,7 +2426,7 @@
     "tags": ["Cast", "Active", "Spell", "Sentry", "Strike"],
     "movementDuringUse": 85,
     "baseCastRate": 1.85,
-    "effectDuration": 5,
+    "effectDuration": 8,
     "maxRank": 20,
     "requiresLevel": 30,
     "tree": "Vagabond",
@@ -2460,13 +2460,13 @@
       {
         "id": "paranormal_activity",
         "positionIndex": 1,
-        "dummy": {"effects": [{"kind": "other", "byRank": [1, 2, 3, 4, 5], "note": "MORE ENTITIES, not more hits per action: ReturnSentryAmount(90) = 3 + p1.s9 + RSS362, so N0 = 4/5/6/7/8 blades at r1..5 (base 3, R4 90#0); the oldest is destroyed at the limit. Encode through the sentry count, not extra_hits. With continuous casting every 40 frames the attack rate per frame is A(L)/40, L = min(300, N0*40): N0 = 3 -> 0.050, 4 -> 0.050, 5 -> 0.075, 6 -> 0.075, 7 -> 0.075, 8 -> 0.100 (p2 = 0; was N/91: 0.033/0.044/0.055/0.066/0.077/0.088; I: continuous casting, kill order)."}], "confidence": "I", "note": "R4 90#0 + Resztki po R4 (A(L) rate); mapping to p1 C, continuous casting I", "plannerFix": "planner gives projectile_count 1r with perExtraProjectile 0; card: +1 blade per rank on a base of 3 blades (sentry count), attack rate A(L)/40"},
+        "dummy": {"effects": [{"kind": "other", "byRank": [2, 4, 6], "note": "MORE ENTITIES, not more hits per action: ReturnSentryAmount(90) = 3 + p1.s9 + RSS362, so N0 = 4/5/6/7/8 blades at r1..5 (base 3, R4 90#0); the oldest is destroyed at the limit. Encode through the sentry count, not extra_hits. With continuous casting every 40 frames the attack rate per frame is A(L)/40, L = min(300, N0*40): N0 = 3 -> 0.050, 4 -> 0.050, 5 -> 0.075, 6 -> 0.075, 7 -> 0.075, 8 -> 0.100 (p2 = 0; was N/91: 0.033/0.044/0.055/0.066/0.077/0.088; I: continuous casting, kill order)."}], "confidence": "I", "note": "R4 90#0 + Resztki po R4 (A(L) rate); mapping to p1 C, continuous casting I", "plannerFix": "planner gives projectile_count 1r with perExtraProjectile 0; card: +1 blade per rank on a base of 3 blades (sentry count), attack rate A(L)/40"},
         "name": "Paranormal Activity",
         "description": "Increases the maximum amount of phantom blades.",
-        "maxRank": 5,
+        "maxRank": 3,
         "effects": {
           "base": {"projectile_count": 0},
-          "perRank": {"projectile_count": 1}
+          "perRank": {"projectile_count": 2}
         }
       },
       {
@@ -2520,13 +2520,13 @@
       {
         "id": "essence_of_time",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [10, 20, 30, 40, 50], "note": "blade life 5 s*(1+0.1r): more attack actions"}], "confidence": "C", "note": "card row p6"},
+        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [15, 30, 45, 60, 75], "note": "blade life 5 s*(1+0.1r): more attack actions"}], "confidence": "C", "note": "card row p6"},
         "name": "Essence of Time",
         "description": "Increases the duration of phantom blade.",
         "maxRank": 5,
         "effects": {
           "base": {"skill_duration": 0},
-          "perRank": {"skill_duration": 10}
+          "perRank": {"skill_duration": 15}
         }
       },
       {
@@ -2538,19 +2538,19 @@
         "maxRank": 5,
         "effects": {
           "base": {"area_of_effect": 0},
-          "perRank": {"area_of_effect": 15}
+          "perRank": {"area_of_effect": 20}
         }
       },
       {
         "id": "twice_the_price",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use", "note": "Twice The Price: second hit with chance 3%*r per attack"}], "confidence": "I", "note": "card row p8"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.1, 0.15, 0.2, 0.25], "per": "use", "note": "Twice The Price: second hit with chance 3%*r per attack"}], "confidence": "I", "note": "card row p8"},
         "name": "Twice The Price",
         "description": "Chance for phantomblades to swing an additional time on hit.",
         "maxRank": 5,
         "proc": {
           "trigger": "on_hit",
-          "chance": { "base": 0, "perRank": 3 },
+          "chance": { "base": 0, "perRank": 5 },
           "effects": {
             "base": { "of_total_damage": 100 },
             "perRank": { "of_total_damage": 0 }
@@ -2560,38 +2560,38 @@
       {
         "id": "ghost_dimension",
         "positionIndex": 9,
-        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.1, 1.2, 1.3, 1.4, 1.5], "note": "arcane break 10%*r applies to the arcane d1 part only; upper bound (d1 share < 100%)"}], "confidence": "C", "note": "card row p9"},
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "note": "arcane break 10%*r applies to the arcane d1 part only; upper bound (d1 share < 100%)"}], "confidence": "C", "note": "card row p9"},
         "name": "Ghost Dimension",
         "description": "Inflicts arcane break on hit.",
         "maxRank": 5,
         "effects": {
           "base": {"arcane_break": 0},
-          "perRank": {"arcane_break": 10}
+          "perRank": {"arcane_break": 15}
         },
         "proc": {
           "trigger": "on_hit",
           "chance": { "base": 100, "perRank": 0 },
           "appliesStates": [
-            { "state": "arcane_break", "amount": { "base": 0, "perRank": 10 } }
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
           ]
         }
       },
       {
         "id": "psychosis",
         "positionIndex": 10,
-        "dummy": {"effects": [{"kind": "dot", "byRank": [15, 30, 45, 60, 75], "note": "bleed = floor((d0+d1)*15%*r) on hit (chance 100)"}], "confidence": "C", "note": "card row p10"},
+        "dummy": {"effects": [{"kind": "dot", "byRank": [25, 50, 75, 100], "note": "bleed = floor((d0+d1)*15%*r) on hit (chance 100)"}], "confidence": "C", "note": "card row p10"},
         "name": "Psychosis",
         "description": "Inflicts bleeding on hit.",
-        "maxRank": 5,
+        "maxRank": 4,
         "effects": {
           "base": {"increased_bleeding_damage": 0},
-          "perRank": {"increased_bleeding_damage": 15}
+          "perRank": {"increased_bleeding_damage": 25}
         },
         "proc": {
           "trigger": "on_hit",
           "chance": { "base": 100, "perRank": 0 },
           "appliesStates": [
-            { "state": "bleeding", "amount": { "base": 0, "perRank": 15 } }
+            { "state": "bleeding", "amount": { "base": 0, "perRank": 25 } }
           ]
         }
       },

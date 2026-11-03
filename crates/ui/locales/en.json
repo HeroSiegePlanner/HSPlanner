@@ -1453,6 +1453,7 @@
   "planner.stat.lightning_break": "Lightning Break",
   "planner.stat.lightning_per_element": "Lightning Damage Scaling per Elemental Source",
   "planner.stat.lightning_resistance": "Lightning Resistance",
+  "planner.stat.lightning_resistance_converted_to_lightning_damage": "of Lightning Resistance is Converted to Lightning Skill Damage",
   "planner.stat.lightning_skill_damage": "Lightning Skill Damage",
   "planner.stat.lightning_skills": "to Lightning Skills",
   "planner.stat.mage_guard_chance": "Chance to Gain Mage Guard Stack on Cast",
