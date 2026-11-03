@@ -9,3 +9,4 @@
 ## Interface
 
 - When HSPlanner crashes, a window opens with the crash log (error, file and line, backtrace), saved as crash.log in the data folder: Copy log puts it on the clipboard for a bug report and Restart starts HSPlanner again.
+- The item Text edit editor numbers its lines and marks every line with a problem in the gutter and on the scrollbar: amber for warnings, red for errors.
