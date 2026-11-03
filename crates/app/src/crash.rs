@@ -199,9 +199,12 @@ fn report(message: &str, location: Option<String>, thread: &str, backtrace: &str
     if let Some(location) = location {
         text.push_str(&format!("Location: {location}\n"));
     }
-    let recent = hsplanner_ui::debug_log::lines();
-    if !recent.is_empty() {
-        text.push_str(&format!("\nRecent log:\n{}\n", recent.join("\n")));
+    #[cfg(debug_assertions)]
+    {
+        let recent = hsplanner_ui::debug_log::lines();
+        if !recent.is_empty() {
+            text.push_str(&format!("\nRecent log:\n{}\n", recent.join("\n")));
+        }
     }
     text.push_str(&format!("\nBacktrace:\n{backtrace}"));
     text
