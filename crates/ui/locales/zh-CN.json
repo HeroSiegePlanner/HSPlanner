@@ -912,6 +912,7 @@
   "planner.skills.hit_interval": "命中间隔",
   "planner.skills.preview": "预览",
   "planner.skills.preview_hits": "每次使用命中 {hits} 次 · 假人距离 {distance} px",
+  "planner.skills.preview_walking": "按照规划器的假设，玩家会从假人身上走过一次；城镇背景中的玩家仍是站立的。",
   "planner.skills.inspect": "查看{0}",
   "planner.skills.kind_active": "主动",
   "planner.skills.kind_aura": "光环",

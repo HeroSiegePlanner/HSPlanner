@@ -1,4 +1,4 @@
-use super::drops;
+use super::{WALK, drops};
 use crate::skill_mods::Mods;
 use crate::skill_mods::parity_tests as parity;
 use crate::skill_motion::Trail;
@@ -78,6 +78,21 @@ fn pulses(patch: &Spawn) -> Option<&Trail> {
     chain.into_iter().find(|t| t.spawn.object == NOVA)
 }
 
+#[test]
+fn the_engine_follows_the_nodes_a_walking_player_plays_together() {
+    let mut together: Vec<Vec<(&str, u32)>> = Vec::new();
+    for fork in 1..=3 {
+        let crackling = (1..=5).map(|rank| ("crackling_heat", rank));
+        together.extend(crackling.map(|k| vec![("forking_flames", fork), k]));
+    }
+    together.push(vec![("fueled_flames", 5), ("forking_flames", 3)]);
+    together.push(vec![("expanded_flames", 3), ("fueled_flames", 4)]);
+    together.push(vec![("crackling_heat", 5), ("trail_of_comets", 2)]);
+    together.push(vec![("trail_of_comets", 1), ("detonation_field", 3)]);
+    let wrong = disagree(&together);
+    assert!(wrong.is_empty(), "\n{}", wrong.join("\n"));
+}
+
 fn fork(patch: &Spawn) -> Option<&Trail> {
     let chain = std::iter::successors(patch.trail.as_deref(), |t| t.next.as_deref());
     chain.into_iter().find(|t| t.spawn.object == FORK_STEP)
@@ -104,23 +119,26 @@ fn toward(from: [f32; 2], to: [f32; 2]) -> f32 {
 }
 
 #[test]
-fn a_standing_player_leaves_no_patch_for_the_controllers_five_seconds() {
-    let base = spawns(&[]);
-    let [controller] = base.as_slice() else {
-        panic!("one controller");
+fn without_circle_of_fire_the_player_walks_once_through_the_dummy() {
+    let walkers = walkers(&spawns(&[]));
+    let [walker] = walkers.as_slice() else {
+        panic!("one controller on the walking player");
     };
-    assert_eq!(controller.object, CONTROLLER);
-    assert_eq!((controller.speed, controller.life), (0., Some(301)));
-    let timeline = play(&base);
-    assert!(timeline.hits.is_empty(), "{:?}", timeline.hits);
-    assert_eq!(timeline.frames.len(), 301);
-    assert!(
-        timeline
-            .frames
-            .iter()
-            .flatten()
-            .all(|s| s.object.name == CONTROLLER)
-    );
+    assert_eq!(walker.object, CONTROLLER);
+    assert_eq!(walker.turn.map(|turn| turn - 90.), Some(0.));
+    assert_eq!((walker.speed, walker.life), (WALK, Some(301)));
+    // Only the two patches around the dummy cover it, six ticks each, as on Circle of Fire's 0° ray.
+    assert_eq!(trail(&[]).hits.len(), 12);
+}
+
+#[test]
+fn a_walking_players_patches_fork_into_the_half_above_them() {
+    // Alarm_0 runs before the player's next Step, 6 px above the patch: point_direction 90°.
+    let spawns = lucky(&[("forking_flames", 1)], |s| forking(s).is_some());
+    let (_, moves, patch) = forking(&spawns).unwrap();
+    let at = [WALK * moves as f32, 6.];
+    let along = toward([0., 0.], at) + fork(&patch).unwrap().spawn.turn.unwrap();
+    assert!((0. ..=180.).contains(&along.rem_euclid(360.)), "{along}");
 }
 
 #[test]
@@ -139,7 +157,7 @@ fn a_controller_drops_once_over_floor_42_times_its_scale_from_its_last_drop() {
 
 #[test]
 fn timed_fire_stretches_the_controllers_timer() {
-    assert_eq!(spawns(&[("timed_fire", 1)])[0].life, Some(331));
+    assert_eq!(walkers(&spawns(&[("timed_fire", 1)]))[0].life, Some(331));
     let walkers = walkers(&spawns(&[("circle_of_fire", 1), ("timed_fire", 5)]));
     assert!(walkers.iter().all(|w| w.life == Some(181)));
     let last = dropped(&walkers[0]).last().map(|(moves, _)| *moves);
@@ -205,10 +223,8 @@ fn nodes_that_only_burn_break_slow_or_add_damage_change_no_object() {
     ] {
         let with = trail(&[(node, 1)]);
         assert_eq!(with.frames.len(), base.frames.len(), "{node}");
-        assert!(
-            with.hits.is_empty() && with.effects.buffed.is_none(),
-            "{node}"
-        );
+        assert_eq!(with.hits, base.hits, "{node}");
+        assert!(with.effects.buffed.is_none(), "{node}");
     }
     let circle = trail(&[("circle_of_fire", 1)]);
     let burning = trail(&[("circle_of_fire", 1), ("combusting_flames", 5)]);
@@ -374,14 +390,14 @@ fn disagree(together: &[Vec<(&str, u32)>]) -> Vec<String> {
 #[test]
 fn the_engines_subskill_hits_follow_the_sim() {
     let (sim, base) = (expected(&[]), engine(&[]));
-    assert!(sim == 0. && base == 0., "sim {sim}, engine {base}");
+    assert!(sim == 12. && base == 12., "sim {sim}, engine {base}");
     let wrong = parity::misses(CLASS, SKILL, expected, engine, 0.01);
     assert!(wrong.is_empty(), "\n{}", wrong.join("\n"));
 }
 
 #[test]
 fn the_engine_follows_every_node_with_circle_of_fires_controllers() {
-    // A standing player drops nothing: every node needs Circle of Fire's walking controllers.
+    // Circle of Fire's controllers walk on their own, so each node reads them, not the player.
     let mut together = Vec::new();
     for circle in 1..=3 {
         let walking = ("circle_of_fire", circle);

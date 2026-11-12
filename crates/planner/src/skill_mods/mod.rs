@@ -141,6 +141,11 @@ impl Mods {
     }
 }
 
+/// Whether `skill_id`'s use follows the walking player rather than the standing one.
+pub(crate) fn player_walks(skill_id: &str, mods: &Mods) -> bool {
+    skill_id == "blazing_trail" && blazing_trail::player_walks(mods)
+}
+
 /// Whether the preview follows this skill's modifiers.
 pub(crate) fn models(skill_id: &str) -> bool {
     modelled(skill_id).is_some()

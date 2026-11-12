@@ -145,6 +145,8 @@ struct Now {
     clock: usize,
     camera: Camera,
     wait: Duration,
+    /// The use follows the walking player, whom the town shows standing.
+    walks: bool,
 }
 
 /// Classes whose skills show a Preview: every subskill of theirs is read from the game.
@@ -184,6 +186,7 @@ impl Now {
             clock: t,
             camera: Camera::GAME,
             wait,
+            walks: skill_mods::player_walks(&skill.id, &mods),
         })
     }
 
@@ -248,6 +251,7 @@ pub(crate) fn block(details: &DetailsContext, cx: &App) -> Option<Div> {
             ("distance", format!("{:.0}", now.uses[0].dummy[0])),
         ],
     );
+    let walking = now.walks.then(|| tr("planner.skills.preview_walking"));
     let view = div()
         .relative()
         .w_full()
@@ -297,9 +301,12 @@ pub(crate) fn block(details: &DetailsContext, cx: &App) -> Option<Div> {
         .child(
             div()
                 .mt_1p5()
+                .flex()
+                .flex_col()
                 .text_size(units(11.))
                 .text_color(p.muted)
-                .child(summary),
+                .child(summary)
+                .children(walking),
         ),
     )
 }
@@ -651,5 +658,20 @@ mod tests {
     fn only_exo_and_pyromancer_skills_show_a_preview() {
         assert!(super::previews("exo") && super::previews("pyromancer"));
         assert!(!super::previews("stormweaver"));
+    }
+
+    #[test]
+    fn only_blazing_trail_without_circle_of_fire_walks_the_player() {
+        let walks = |skill: &str, ranks: &[(&str, u32)]| {
+            let ranks = ranks
+                .iter()
+                .map(|(node, rank)| (format!("{skill}:{node}"), *rank))
+                .collect();
+            let mods = crate::skill_mods::Mods::of(skill, &ranks);
+            crate::skill_mods::player_walks(skill, &mods)
+        };
+        assert!(walks("blazing_trail", &[]));
+        assert!(!walks("blazing_trail", &[("circle_of_fire", 1)]));
+        assert!(!walks("fire_nova", &[]));
     }
 }

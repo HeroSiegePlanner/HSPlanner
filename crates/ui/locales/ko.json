@@ -912,6 +912,7 @@
   "planner.skills.hit_interval": "적중 간격",
   "planner.skills.preview": "미리보기",
   "planner.skills.preview_hits": "사용당 {hits}회 적중 · 허수아비 {distance} px",
+  "planner.skills.preview_walking": "플래너의 가정대로 플레이어가 허수아비를 한 번 지나갑니다. 마을 배경에는 서 있는 모습으로 보입니다.",
   "planner.skills.inspect": "{0} 살펴보기",
   "planner.skills.kind_active": "활성",
   "planner.skills.kind_aura": "오라",

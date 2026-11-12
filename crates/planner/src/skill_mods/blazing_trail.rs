@@ -28,7 +28,9 @@ const CIRCLE_TIMER: f32 = 120.;
 const TICK: f32 = 30.;
 /// L0x3c: BuffAdd 307 for GetTalentInfo(20, 25), 5 s.
 const BUFF_FRAMES: u32 = 300;
-/// L0x7c-L0x7f: rays 360 / n° apart from 0°, walking deltaSpeed 5 px a frame.
+/// L0x7c-L0x7f: rays 360 / n° apart from 0°, walking deltaSpeed 5 px a frame. Without Circle of
+/// Fire the planner walks the player so, once through the dummy (ponytail: its own speed only
+/// moves where the patches land).
 const WALK: f32 = 5.;
 const FULL_TURN: f32 = 360.;
 /// Controller Step_0 L0xd-L0x29: a drop at (x, y + 6) once that is over floor(42 × skillScale)
@@ -68,21 +70,18 @@ const MINE_HALF: f32 = 16.;
 const DUMMY_HALF: f32 = 12.;
 const MINE_BLAST: f32 = 4.;
 
+/// Whether its controller drops where the player walks: no Circle of Fire to walk on its own.
+pub(super) fn player_walks(mods: &super::Mods) -> bool {
+    mods.rank(CIRCLE) == 0
+}
+
 pub(super) fn apply(spawns: &[Spawn], tree: &Tree) -> Vec<Spawn> {
     let [controller] = spawns else {
         return spawns.to_vec();
     };
     let cast = Cast::new(tree);
-    if cast.rays == 0 {
-        let standing = Spawn {
-            life: Some(cast.timer + 1),
-            buff: cast.buff(),
-            ..controller.clone()
-        };
-        return vec![standing];
-    }
     let mut dice = Dice::of_cast(tree.cast);
-    let walkers = (0..cast.rays)
+    let walkers = (0..cast.walkers())
         .map(|i| cast.walker(controller, i, &mut dice))
         .collect();
     vec![Spawn {
@@ -177,9 +176,32 @@ impl<'a> Cast<'a> {
         })
     }
 
+    /// Circle of Fire's controllers, else the one on the player.
+    fn walkers(&self) -> u32 {
+        self.rays.max(1)
+    }
+
+    /// Controller `i`'s heading: Circle of Fire's rays 360 / n° apart, else the player walking
+    /// toward the cursor on the dummy.
+    fn heading(&self, i: u32) -> f32 {
+        if self.rays == 0 {
+            return 0.;
+        }
+        FULL_TURN / self.rays as f32 * i as f32
+    }
+
+    /// Where the player is when a patch at `at` rolls its fork (Alarm_0, a frame after the drop,
+    /// before the player's Step): still at the cast with Circle of Fire, else 6 px above the patch.
+    fn host(&self, at: [f32; 2]) -> [f32; 2] {
+        if self.rays > 0 {
+            return [0., 0.];
+        }
+        [at[0], at[1] - BELOW]
+    }
+
     /// Controller `i` (L0x7c-L0x7f) walking from (0, 6), so its drops sit where Step_0 makes them.
     fn walker(&self, controller: &Spawn, i: u32, dice: &mut Dice) -> Spawn {
-        let heading = FULL_TURN / self.rays as f32 * i as f32;
+        let heading = self.heading(i);
         let start = [0., BELOW];
         let drops: Vec<(u32, Spawn)> = drops(heading, self.scale, self.timer)
             .into_iter()
@@ -210,7 +232,7 @@ impl<'a> Cast<'a> {
     fn patch(&self, at: [f32; 2], max: f32, dice: &mut Dice) -> Spawn {
         let fork = self.fork.filter(|&(chance, _)| dice.roll(chance));
         let heading = fork.map(|_| {
-            let back = pyro::toward(at, [0., 0.]);
+            let back = pyro::toward(at, self.host(at));
             back - FORK_TURN + pyro::irandom(dice, FORK_SPREAD)
         });
         let crackles = dice.roll(self.crackle);

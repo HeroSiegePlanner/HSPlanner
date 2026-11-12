@@ -1,7 +1,7 @@
 //! The game's dummy hits for the engine's parity tests: every patch's fork heading enumerated at
 //! its odds, the patches' rolls counted at theirs and every object replayed apart, so the drawn
 //! preview's 256-object cap cuts nothing.
-use super::{BELOW, Cast, FORK_SPREAD, FORK_TURN, FULL_TURN, Leaves, SKILL, WALK, drops, pyro};
+use super::{BELOW, Cast, FORK_SPREAD, FORK_TURN, Leaves, SKILL, WALK, drops, pyro};
 use crate::skill_mods::parity_tests as parity;
 use crate::skill_sim::{Placement, Spawn, Timeline};
 use std::collections::HashMap;
@@ -24,13 +24,8 @@ pub(super) fn uncapped(ranks: &[(&str, u32)]) -> f32 {
         cast: 0,
     };
     let cast = Cast::new(&tree);
-    if cast.rays == 0 {
-        let made = parity::rewritten(CLASS, SKILL, ranks, 0, super::apply);
-        return parity::weighted(&play(&made));
-    }
     let mut game = Game::new(&cast);
-    let headings = (0..cast.rays).map(|i| FULL_TURN / cast.rays as f32 * i as f32);
-    headings.map(|heading| game.ray(heading)).sum()
+    (0..cast.walkers()).map(|i| game.ray(cast.heading(i))).sum()
 }
 
 /// One cast's objects counted apart, with what they land where.
@@ -87,9 +82,10 @@ impl<'a> Game<'a> {
         let Some((chance, _)) = self.cast.fork else {
             return plain;
         };
-        let key = format!("{spot:?} {max} {}", self.key());
+        let host = self.cast.host(spot);
+        let key = format!("{spot:?} {max} {host:?} {}", self.key());
         let [ticks, pulses] = cached(key, || {
-            let back = pyro::toward(spot, [0., 0.]) - FORK_TURN;
+            let back = pyro::toward(spot, host) - FORK_TURN;
             let headings = (0..=FORK_SPREAD).map(|turn| back + turn as f32);
             let all = headings.fold([0.; 2], |[t, p], heading| {
                 let [ticks, pulses] = self.forks(spot, max, heading);

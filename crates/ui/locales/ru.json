@@ -912,6 +912,7 @@
   "planner.skills.hit_interval": "Интервал попаданий",
   "planner.skills.preview": "Предпросмотр",
   "planner.skills.preview_hits": "Попаданий за применение: {hits} · манекен на {distance} px",
+  "planner.skills.preview_walking": "Игрок один раз проходит через манекен, как предполагает планировщик; на фоне города он стоит.",
   "planner.skills.inspect": "Осмотреть {0}",
   "planner.skills.kind_active": "активный",
   "planner.skills.kind_aura": "аура",

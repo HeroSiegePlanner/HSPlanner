@@ -912,6 +912,7 @@
   "planner.skills.hit_interval": "Hit interval",
   "planner.skills.preview": "Preview",
   "planner.skills.preview_hits": "Hits per use: {hits} · dummy at {distance} px",
+  "planner.skills.preview_walking": "The player walks once through the dummy, as the planner assumes; the town shows them standing.",
   "planner.skills.inspect": "Inspect {0}",
   "planner.skills.kind_active": "active",
   "planner.skills.kind_aura": "aura",
