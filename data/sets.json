@@ -2952,6 +2952,62 @@
     ]
   },
   {
+    "id": "orbital_gravity",
+    "name": "Orbital Gravity",
+    "items": [
+      {
+        "slot": "Charm",
+        "name": "Telescope",
+        "itemId": "charm_satanic_telescope"
+      },
+      {
+        "slot": "Charm",
+        "name": "Tiny Planet",
+        "itemId": "charm_satanic_tiny_planet"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "orbital_skill_damage": 30
+        },
+        "descriptions": [
+          "+30% Orbital Skill Damage"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "sniper_s_kit",
+    "name": "Sniper's Kit",
+    "items": [
+      {
+        "slot": "Charm",
+        "name": "Bull's Eye",
+        "itemId": "charm_satanic_bulls_eye"
+      },
+      {
+        "slot": "Charm",
+        "name": "Sniper's Scope",
+        "itemId": "charm_satanic_snipers_scope"
+      }
+    ],
+    "bonuses": [
+      {
+        "pieces": 2,
+        "stats": {
+          "attack_rating": 66666,
+          "light_radius": -6
+        },
+        "descriptions": [
+          "+66666 to Attack Rating",
+          "-6 to Light Radius"
+        ]
+      }
+    ]
+  },
+  {
     "id": "earth_shaper_s_pride",
     "name": "Earth Shaper's Pride",
     "items": [

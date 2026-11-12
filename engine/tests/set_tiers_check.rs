@@ -80,5 +80,5 @@ fn thresholds_unlock_progressively() {
         checked += 1;
     }
     println!("sprawdzone sety: {checked}");
-    assert_eq!(checked, 65);
+    assert_eq!(checked, 67);
 }
