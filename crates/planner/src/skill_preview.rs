@@ -147,9 +147,18 @@ struct Now {
     wait: Duration,
 }
 
+/// Classes whose skills show a Preview: every subskill of theirs is read from the game.
+const CLASSES: [&str; 2] = ["exo", "pyromancer"];
+
+/// Whether skills of `class_id` show a Preview.
+fn previews(class_id: &str) -> bool {
+    CLASSES.contains(&class_id)
+}
+
 impl Now {
     fn of(details: &DetailsContext) -> Option<Self> {
         let skill = details.skill;
+        previews(&skill.class_id).then_some(())?;
         let computed = details.performance.map(|result| &result.computed);
         let mut mods = Mods::for_build(&skill.id, details.snapshot, computed);
         // A NaN would miss the timeline cache on every frame and restart the loop.
@@ -634,4 +643,13 @@ fn box_rect(view: &View, shape: &Shape) -> Option<[f32; 4]> {
     let x = |v: f32| view.center[0] + (v - object.origin[0]) * shape.scale[0] * view.zoom;
     let y = |v: f32| view.center[1] + (v - object.origin[1]) * shape.scale[1] * view.zoom;
     Some([x(x0), y(y0), x(x1 + 1.), y(y1 + 1.)])
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn only_exo_and_pyromancer_skills_show_a_preview() {
+        assert!(super::previews("exo") && super::previews("pyromancer"));
+        assert!(!super::previews("stormweaver"));
+    }
 }
