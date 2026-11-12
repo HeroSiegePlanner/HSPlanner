@@ -987,14 +987,9 @@ impl Render for GearView {
 }
 
 fn roll_slider_state((lo, hi): (f64, f64), value: f64) -> SliderState {
-    // Each bound clamps against the other at once (default 0..100), so an
-    // all-negative range needs `min` first and any other range `max` first.
-    let state = if hi < 0. {
-        SliderState::new().min(lo as f32).max(hi as f32)
-    } else {
-        SliderState::new().max(hi as f32).min(lo as f32)
-    };
-    state
+    SliderState::new()
+        .min(lo as f32)
+        .max(hi as f32)
         .step(if lo.fract() == 0. && hi.fract() == 0. {
             1.
         } else {
