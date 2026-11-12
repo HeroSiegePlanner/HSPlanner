@@ -910,6 +910,8 @@
   "planner.skills.enabled": "✓ 已启用",
   "planner.skills.five_at_time": "每次5点",
   "planner.skills.hit_interval": "命中间隔",
+  "planner.skills.preview": "预览",
+  "planner.skills.preview_hits": "每次使用命中 {hits} 次 · 假人距离 {distance} px",
   "planner.skills.inspect": "查看{0}",
   "planner.skills.kind_active": "主动",
   "planner.skills.kind_aura": "光环",

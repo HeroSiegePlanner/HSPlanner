@@ -11,7 +11,7 @@ use std::{
 
 include!(concat!(env!("OUT_DIR"), "/icons.rs"));
 
-fn render_image(mut rgba: image::RgbaImage) -> Arc<RenderImage> {
+pub(crate) fn render_image(mut rgba: image::RgbaImage) -> Arc<RenderImage> {
     // GPUI's sprite atlas consumes BGRA pixels.
     for pixel in rgba.pixels_mut() {
         pixel.0.swap(0, 2);

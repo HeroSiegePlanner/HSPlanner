@@ -1572,12 +1572,12 @@ fn orb_of_frost_rate_follows_cooldown_and_skill_haste() {
     );
 }
 
-// Black Hole lives 4.5 s and re-arms every 0.4 s; the dummy hit model (dps_cards,
-// rule 20 tick_hits) gives 11 hits per cast, and DPS is hit × 11 × uses/s.
+// Black Hole lives 4.5 s plus a 20-frame fade that still hits and re-arms every 0.4 s;
+// the dummy hit model (rule 20 tick_hits) gives 12 hits per cast, DPS = hit × 12 × uses/s.
 #[test]
 fn hit_model_multiplies_dps_by_hits_per_cast() {
     let hole = perf("exo", "black_hole", 10, &[], &[]);
-    assert_eq!(hole.hits_per_cast, Some((11.0, 11.0)));
+    assert_eq!(hole.hits_per_cast, Some((12.0, 12.0)));
     let (Some(dps), Some(damage)) = (hole.avg_hit_dps_max, hole.damage.as_ref()) else {
         panic!("expected dps for black_hole");
     };
@@ -1589,8 +1589,8 @@ fn hit_model_multiplies_dps_by_hits_per_cast() {
         .value()
         .1;
     assert!(
-        (dps / damage.avg_max as f64 - 11.0 * rate).abs() < 1e-9,
-        "11 hits per cast at {rate} casts/s, got x{}",
+        (dps / damage.avg_max as f64 - 12.0 * rate).abs() < 1e-9,
+        "12 hits per cast at {rate} casts/s, got x{}",
         dps / damage.avg_max as f64
     );
 
@@ -1602,8 +1602,8 @@ fn hit_model_multiplies_dps_by_hits_per_cast() {
     );
 }
 
-// +50% Skill Duration stretches Black Hole from 4.5 s to 6.75 s: rule 20 gives
-// 17 map clears worth of hits instead of 11, and the dummy model scales with it.
+// +50% Skill Duration stretches Black Hole from 4.5 s to 6.75 s (the fade stays 20
+// frames): rule 20 gives 17 hits instead of 12, and the dummy model scales with it.
 #[test]
 fn skill_duration_buys_extra_ticks() {
     let base = perf("exo", "black_hole", 10, &[], &[]);
@@ -1620,8 +1620,8 @@ fn skill_duration_buys_extra_ticks() {
         panic!("expected dps for black_hole");
     };
     assert!(
-        (long_dps / base_dps - 17.0 / 11.0).abs() < 1e-9,
-        "17 hits over 11, got x{}",
+        (long_dps / base_dps - 17.0 / 12.0).abs() < 1e-9,
+        "17 hits over 12, got x{}",
         long_dps / base_dps
     );
 }

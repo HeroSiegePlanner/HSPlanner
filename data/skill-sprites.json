@@ -1,0 +1,641 @@
+{
+  "source": "skill-sprites.zip from hsextract (sprite-fx.json, same build as data/skill-fx.json): Draw events, sprite origins and animation speeds. speed = sprite frames per game frame; lift = px drawn above the object (yy); ground = shadow under a falling object; slant = drawn at x + height (Comet's diagonal fall); heightScale/heightAlpha = added per px of height; add = bm_add; fades = alpha runs out with the object's fade. Left out: rotation (aim is 0), random start frames (0), Explosion_Item_obj's random -30..30 turn and pulse ring, Fire Ball trails, Meteor shreds, Volcano fragments, Storm Cloud's lightning ring and its cloud 180 px up (outside the view).",
+  "ground": "Town_01_Ground",
+  "dummy": {
+    "idle": "Dummy_Still_spr",
+    "hit": "Dummy_Hit_Right_spr",
+    "speed": 0.2
+  },
+  "origins": {
+    "Dummy_Hit_Right_spr": [
+      32,
+      56
+    ],
+    "Dummy_Still_spr": [
+      32,
+      56
+    ],
+    "Exo_Asteroid_spr": [
+      75,
+      107
+    ],
+    "Exo_Black_Hole_spr": [
+      170,
+      169
+    ],
+    "Exo_Explosion_spr": [
+      74,
+      67
+    ],
+    "Exo_Supernova_Effect_spr": [
+      160,
+      160
+    ],
+    "Exo_Tsunami_Down_spr": [
+      140,
+      140
+    ],
+    "Hit_Impact_Fire_spr": [
+      33,
+      34
+    ],
+    "Jotunn_Breath_of_Ice_spr": [
+      -8,
+      71
+    ],
+    "Jotunn_Freezing_Leap_spr": [
+      123,
+      122
+    ],
+    "Marksman_Explosion_spr": [
+      74,
+      67
+    ],
+    "Marksman_Landmine_spr": [
+      16,
+      16
+    ],
+    "Necromancer_Bone_Spear_spr": [
+      0,
+      6
+    ],
+    "Nomad_Sand_Vortex_spr": [
+      95,
+      95
+    ],
+    "Paladin_Holy_Bolt_spr": [
+      52,
+      24
+    ],
+    "Paladin_Nova_Dissolve_Effect_spr": [
+      115,
+      115
+    ],
+    "Pirate_Explosion_spr": [
+      74,
+      68
+    ],
+    "Pirate_Grenado_spr": [
+      8,
+      11
+    ],
+    "Plague_Doctor_Toxic_Flask_Cloud_spr": [
+      61,
+      64
+    ],
+    "Plague_Doctor_Toxic_Flask_spr": [
+      10,
+      10
+    ],
+    "Pyromancer_Armageddon_spr": [
+      17,
+      47
+    ],
+    "Pyromancer_Breath_of_Fire_spr": [
+      19,
+      43
+    ],
+    "Pyromancer_Comet_spr": [
+      33,
+      33
+    ],
+    "Pyromancer_Explosion_spr": [
+      74,
+      67
+    ],
+    "Pyromancer_Fire_Ball_spr": [
+      60,
+      16
+    ],
+    "Pyromancer_Hit_Fire_spr": [
+      33,
+      34
+    ],
+    "Pyromancer_Hydra_Attack_Down_spr": [
+      16,
+      38
+    ],
+    "Pyromancer_Hydra_Down_spr": [
+      16,
+      38
+    ],
+    "Pyromancer_Meteor_spr": [
+      16,
+      15
+    ],
+    "Pyromancer_Nova_Effect_spr": [
+      142,
+      118
+    ],
+    "Pyromancer_Volcano_spr": [
+      40,
+      45
+    ],
+    "Samurai_Empires_Slash_spr": [
+      99,
+      60
+    ],
+    "Samurai_Explosion_spr": [
+      74,
+      67
+    ],
+    "Samurai_Explosive_Kunai_spr": [
+      20,
+      5
+    ],
+    "Shaman_Tornado_spr": [
+      33,
+      34
+    ],
+    "Shield_Lancer_Crushing_Lance_AOE_spr": [
+      112,
+      112
+    ],
+    "Shield_Lancer_Crushing_Lance_spr": [
+      5,
+      64
+    ],
+    "Shield_Lancer_Lance_Thrust_spr": [
+      1,
+      4
+    ],
+    "Stormweaver_Apocalyptic_Thunder_spr": [
+      98,
+      382
+    ],
+    "Stormweaver_Explosion_Lightning_spr": [
+      65,
+      67
+    ],
+    "Stormweaver_Lightning_Surge_spr": [
+      110,
+      38
+    ],
+    "Stormweaver_Storm_Bolt_spr": [
+      61,
+      43
+    ],
+    "Stormweaver_Storm_Cloud_Indicator_spr": [
+      45,
+      45
+    ],
+    "Viking_Odins_Fury_spr": [
+      106,
+      106
+    ],
+    "White_Mage_Holy_Fire_spr": [
+      27,
+      53
+    ]
+  },
+  "skills": {
+    "fireball": {
+      "Pyromancer_Fire_Ball_obj": [
+        {
+          "sprite": "Pyromancer_Fire_Ball_spr",
+          "speed": 0.1667,
+          "lift": 20
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Pyromancer_Explosion_spr",
+          "speed": 0.5,
+          "lift": 8,
+          "add": true
+        }
+      ]
+    },
+    "breath_of_fire": {
+      "Pyromancer_Breath_of_Fire_obj": [
+        {
+          "sprite": "Pyromancer_Breath_of_Fire_spr",
+          "speed": 0.3333,
+          "lift": 12,
+          "add": true,
+          "fades": true
+        }
+      ]
+    },
+    "meteor": {
+      "Pyromancer_Meteor_obj": [
+        {
+          "sprite": "Pyromancer_Meteor_spr",
+          "speed": 0.35,
+          "ground": true,
+          "tint": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0.75
+        },
+        {
+          "sprite": "Pyromancer_Meteor_spr",
+          "speed": 0.35
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Pyromancer_Explosion_spr",
+          "speed": 0.5,
+          "lift": 8,
+          "add": true
+        }
+      ]
+    },
+    "comet": {
+      "Pyromancer_Comet_obj": [
+        {
+          "sprite": "Pyromancer_Comet_spr",
+          "speed": 0.25,
+          "ground": true,
+          "slant": true,
+          "heightScale": -0.01,
+          "heightAlpha": -0.005,
+          "tint": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0.75
+        },
+        {
+          "sprite": "Pyromancer_Comet_spr",
+          "speed": 0.25,
+          "slant": true,
+          "heightScale": 0.01
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Pyromancer_Explosion_spr",
+          "speed": 0.5,
+          "lift": 8,
+          "add": true
+        }
+      ]
+    },
+    "fire_nova": {
+      "Pyromancer_Firenova_obj": [
+        {
+          "sprite": "Pyromancer_Nova_Effect_spr",
+          "speed": 0.3333,
+          "add": true
+        }
+      ]
+    },
+    "volcano": {
+      "Pyromancer_Volcano_obj": [
+        {
+          "sprite": "Pyromancer_Volcano_spr",
+          "speed": 0.1667
+        },
+        {
+          "sprite": "Hit_Impact_Fire_spr",
+          "speed": 0.25,
+          "lift": 20,
+          "add": true
+        }
+      ]
+    },
+    "storm_cloud": {
+      "Stormweaver_Storm_Cloud_obj": [
+        {
+          "sprite": "Stormweaver_Storm_Cloud_Indicator_spr",
+          "scale": [
+            1.325,
+            1.325
+          ],
+          "tint": [
+            58,
+            224,
+            255
+          ],
+          "alpha": 0.75,
+          "add": true,
+          "fades": true
+        }
+      ]
+    },
+    "sand_vortex": {
+      "Sand_Vortex_obj": [
+        {
+          "sprite": "Nomad_Sand_Vortex_spr",
+          "speed": 0.1667,
+          "add": true,
+          "fades": true
+        }
+      ]
+    },
+    "black_hole": {
+      "Exo_Black_Hole_obj": [
+        {
+          "sprite": "Exo_Black_Hole_spr",
+          "speed": 0.1667,
+          "alpha": 0.75,
+          "fades": true
+        }
+      ]
+    },
+    "supernova": {
+      "Exo_Supernova_obj": [
+        {
+          "sprite": "Exo_Supernova_Effect_spr",
+          "add": true,
+          "fades": true
+        }
+      ]
+    },
+    "tsunami": {
+      "Exo_Tsunami_obj": [
+        {
+          "sprite": "Exo_Tsunami_Down_spr",
+          "speed": 0.3,
+          "add": true
+        }
+      ]
+    },
+    "asteroid": {
+      "Exo_Asteroid_obj": [
+        {
+          "sprite": "Exo_Asteroid_spr",
+          "speed": 0.2
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Exo_Explosion_spr",
+          "speed": 0.375,
+          "add": true,
+          "lift": 8
+        }
+      ]
+    },
+    "breath_of_ice": {
+      "Jotunn_Breath_of_Ice_obj": [
+        {
+          "sprite": "Jotunn_Breath_of_Ice_spr",
+          "speed": 0.25,
+          "add": true,
+          "lift": 12
+        }
+      ]
+    },
+    "avalanche": {
+      "Jotunn_Avalanche_obj": [
+        {
+          "sprite": "Jotunn_Freezing_Leap_spr",
+          "speed": 0.5333,
+          "add": true
+        }
+      ]
+    },
+    "landmine": {
+      "Marksman_Landmine_obj": [
+        {
+          "sprite": "Marksman_Landmine_spr",
+          "speed": 0.1333
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Marksman_Explosion_spr",
+          "speed": 0.375,
+          "add": true,
+          "lift": 8
+        }
+      ]
+    },
+    "bone_spear": {
+      "Necromancer_Bone_Spear_obj": [
+        {
+          "sprite": "Necromancer_Bone_Spear_spr",
+          "speed": 0.4,
+          "lift": 20
+        }
+      ]
+    },
+    "holy_bolt": {
+      "Paladin_Holy_Bolt_obj": [
+        {
+          "sprite": "Paladin_Holy_Bolt_spr",
+          "speed": 0.2,
+          "add": true,
+          "lift": 16,
+          "fades": true
+        }
+      ]
+    },
+    "holy_nova": {
+      "Paladin_Holynova_obj": [
+        {
+          "sprite": "Paladin_Nova_Dissolve_Effect_spr",
+          "add": true
+        }
+      ]
+    },
+    "grenade_jump": {
+      "Pirate_Grenado_obj": [
+        {
+          "sprite": "Pirate_Grenado_spr",
+          "speed": 0.15
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Pirate_Explosion_spr",
+          "speed": 0.375,
+          "add": true,
+          "lift": 8
+        }
+      ]
+    },
+    "toxic_flask": {
+      "Plague_Doctor_Toxic_Flask_obj": [
+        {
+          "sprite": "Plague_Doctor_Toxic_Flask_spr",
+          "speed": 0.25
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Plague_Doctor_Toxic_Flask_Cloud_spr",
+          "speed": 0.1875,
+          "add": true,
+          "lift": 8
+        }
+      ]
+    },
+    "explosive_kunai": {
+      "Samurai_Explosive_Kunai_obj": [
+        {
+          "sprite": "Samurai_Explosive_Kunai_spr"
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Samurai_Explosion_spr",
+          "speed": 0.375,
+          "add": true,
+          "lift": 8
+        }
+      ]
+    },
+    "empires_slash": {
+      "Samurai_Empire_Slash_obj": [
+        {
+          "sprite": "Samurai_Empires_Slash_spr",
+          "speed": 0.5333,
+          "add": true
+        }
+      ]
+    },
+    "tornado": {
+      "Shaman_Tornado_obj": [
+        {
+          "sprite": "Shaman_Tornado_spr",
+          "speed": 0.25,
+          "add": true
+        }
+      ]
+    },
+    "crushing_lance": {
+      "Shield_Lancer_Crushing_Lance_obj": [
+        {
+          "sprite": "Shield_Lancer_Crushing_Lance_spr",
+          "speed": 0.0167
+        }
+      ],
+      "Shield_Lancer_Crushing_Lance_AOE_obj": [
+        {
+          "sprite": "Shield_Lancer_Crushing_Lance_AOE_spr",
+          "speed": 0.4,
+          "add": true
+        }
+      ]
+    },
+    "lance_thrust": {
+      "Shield_Lancer_Lance_Thrust_obj": [
+        {
+          "sprite": "Shield_Lancer_Lance_Thrust_spr",
+          "speed": 0.0167,
+          "lift": 12
+        }
+      ]
+    },
+    "lightning_surge": {
+      "Stormweaver_Lightning_Surge_obj": [
+        {
+          "sprite": "Stormweaver_Lightning_Surge_spr",
+          "speed": 0.3,
+          "add": true
+        }
+      ]
+    },
+    "apocalyptic_thunder": {
+      "Stormweaver_Apocalyptic_Thunder_obj": [
+        {
+          "sprite": "Stormweaver_Apocalyptic_Thunder_spr",
+          "speed": 0.2833,
+          "add": true
+        }
+      ]
+    },
+    "storm_bolt": {
+      "Stormweaver_Storm_Bolt_obj": [
+        {
+          "sprite": "Stormweaver_Storm_Bolt_spr",
+          "speed": 0.2667,
+          "add": true,
+          "lift": 20
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Stormweaver_Explosion_Lightning_spr",
+          "speed": 0.375,
+          "add": true,
+          "lift": 8
+        }
+      ]
+    },
+    "odins_fury": {
+      "Viking_Odins_Fury_obj": [
+        {
+          "sprite": "Viking_Odins_Fury_spr",
+          "add": true,
+          "alpha": 0.85,
+          "tint": [
+            160,
+            48,
+            48
+          ]
+        }
+      ]
+    },
+    "heavenly_fire": {
+      "White_Mage_Heavenly_Fire_obj": [
+        {
+          "sprite": "White_Mage_Holy_Fire_spr",
+          "speed": 0.3,
+          "add": true,
+          "alpha": 0.5,
+          "fades": true
+        }
+      ]
+    },
+    "armageddon": {
+      "Pyromancer_Armageddon_obj": [
+        {
+          "sprite": "Pyromancer_Armageddon_spr",
+          "speed": 0.3333,
+          "heightScale": 0.001
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Pyromancer_Hit_Fire_spr",
+          "speed": 0.375,
+          "lift": 8,
+          "add": true
+        }
+      ]
+    },
+    "hydra": {
+      "Pyromancer_Hydra_obj": [
+        {
+          "sprite": "Pyromancer_Hydra_Down_spr",
+          "speed": 0.1333,
+          "until": 13
+        },
+        {
+          "sprite": "Pyromancer_Hydra_Attack_Down_spr",
+          "speed": 0.1333,
+          "from": 13,
+          "until": 50
+        },
+        {
+          "sprite": "Pyromancer_Hydra_Down_spr",
+          "speed": 0.1333,
+          "from": 50
+        }
+      ],
+      "Pyromancer_Hydra_Fire_Ball_obj": [
+        {
+          "sprite": "Pyromancer_Fire_Ball_spr",
+          "speed": 0.1667,
+          "lift": 20
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Pyromancer_Explosion_spr",
+          "speed": 0.5,
+          "lift": 8,
+          "add": true
+        }
+      ]
+    }
+  }
+}

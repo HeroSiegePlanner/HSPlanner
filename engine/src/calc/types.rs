@@ -700,6 +700,9 @@ pub struct HitModelSpec {
     pub tick_frequency: Option<f64>,
     #[serde(default)]
     pub lifetime: Option<f64>,
+    /// Frames it keeps hitting after `lifetime` while it fades; Skill Duration does not stretch them.
+    #[serde(default)]
+    pub fade_frames: u32,
 }
 
 #[derive(Debug, Clone, Deserialize, Default)]
@@ -856,7 +859,7 @@ pub struct SubskillDummyEffect {
     /// `extra_hits` that already count this subskill's extra projectiles.
     #[serde(default)]
     pub replaces_projectile_hits: bool,
-    /// Applies only while this sibling subskill (planner id) is learned.
+    /// Applies only while this sibling subskill (planner id) is learned; `a|b` takes either.
     #[serde(default)]
     pub requires: Option<String>,
     #[serde(default)]

@@ -278,7 +278,7 @@
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "speedPath": "cast",
-    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.5, "confidence": "I", "note": "Per cast (period P = (ceil(72/S) + 1)/60 s with S = 1.75 + FCR/100 + 0.08 r_p7, engine side), dummy on the aim line at 160 px: one Stormweaver_Lightning_Surge_obj ray (Player_Damage_Parent, singleHit, no tick, no map clear) spawned 8 px from the player grows to image_xscale 1.0325 by frame 22 (front 324 px ahead of its origin, reach ~490 px from the player, width 30-35 px; R4 383#1 after the coordinator's correction) and hits the dummy once, in frame 10 for d = 160 px (hits for d <= 494 px) = 1 hit of damage[4] = D = the main hit. baseProjectiles = 1; perExtraProjectile = 0.5 (I; Resztki po R4 D, dummy horizontal from the player, the aim origin is 6 px below the launch point): extra rays in a 12 deg fan (angles -6n + 12i + 6, gear extras, yScaling 0.145) hit the dummy at 160 px as H(1..3) = 1, 2, 2 (n = 2 -> 2 hits up to 260 px unchanged; n = 3 -> 2 instead of 1 at 160 px; the old \"1 from 150 px\" border is +-10 px, I), slope (H(3) - H(1)) / 2 = 0.5 over the first two extras. Beyond n = 3 without p12 the card has no table; the p12 Supercharged table with the narrower ray gives 2 / 2 / 2 for n = 4 / 5 / 6 horizontally (2 / 1 / 2 vertically; the old values were 2 / 1 / 2), so the slope is taken from n <= 3 (I). A vertical dummy keeps the old table (n = 5 -> 1). The passive Chain Lightning (385: +0.18 hits of d4*(1 + 4L %) per ray hit, N0 chain) is not included. p10 (+0.04r*r hits of 0.35r D), p11 (return ray: 0 at 160 px, it only reaches d <= 145 px), p13 Tether (tick 0.4 s, summed damage), p14 tornado (1 hit, disables p11/p13), p12 fan with 0.5r damage are subskill effects."},
+    "dummyHits": {"base": 1.0, "baseProjectiles": 1, "perExtraProjectile": 0.5, "confidence": "I", "note": "Per cast (period P = (ceil(72/S) + 1)/60 s with S = 1.75 + FCR/100 + 0.08 r_p7, engine side), dummy on the aim line at 160 px: one Stormweaver_Lightning_Surge_obj ray (Player_Damage_Parent, singleHit, no tick, no map clear) spawned 8 px from the player keeps image_xscale 0.2 (its growth block never runs, image_yscale 1.55 >= maxScale), stands still in frame 1, then moves 4.5 px/frame and thins by 0.1 yscale per frame until it is destroyed in frame 16; it can hit in frames 2-16 with its rotated bbox front at 8 + 4.5*(f - 2) + 62.8 px, at most 133.8 px, so it reaches a dummy centre at most 145.8 px away (hsextract 2026-10-29; the old growing-ray reading of ~490 px is superseded). IN-ZONE per rule 24 (the player stands within that range): 1 hit of damage[4] = D = the main hit; at the strict 160 px it misses (0). baseProjectiles = 1; perExtraProjectile = 0.5 (I; Resztki po R4 D, dummy horizontal from the player, the aim origin is 6 px below the launch point): extra rays in a 12 deg fan (angles -6n + 12i + 6, gear extras, yScaling 0.145) hit the dummy at 160 px as H(1..3) = 1, 2, 2 (n = 2 -> 2 hits up to 260 px unchanged; n = 3 -> 2 instead of 1 at 160 px; the old \"1 from 150 px\" border is +-10 px, I), slope (H(3) - H(1)) / 2 = 0.5 over the first two extras. This fan table (and the p12 one) was computed with the old growing ray at 160 px; with the short ray it can only hold in-zone and is unverified (I). Beyond n = 3 without p12 the card has no table; the p12 Supercharged table with the narrower ray gives 2 / 2 / 2 for n = 4 / 5 / 6 horizontally (2 / 1 / 2 vertically; the old values were 2 / 1 / 2), so the slope is taken from n <= 3 (I). A vertical dummy keeps the old table (n = 5 -> 1). The passive Chain Lightning (385: +0.18 hits of d4*(1 + 4L %) per ray hit, N0 chain) is not included. p10 (+0.04r*r hits of 0.35r D), p11 (return ray: 0 at 160 px, it only reaches d <= 145 px), p13 Tether (tick 0.4 s, summed damage), p14 tornado (1 hit, disables p11/p13), p12 fan with 0.5r damage are subskill effects."},
     "damageFormula": { "base": 0, "perLevel": 9.25 },
     "classId": "stormweaver",
     "name": "Lightning Surge",
@@ -293,7 +293,7 @@
     "tree": "Storm Conjurer",
     "position": { "row": 1, "col": 2 },
     "icon": "https://herosiege.wiki.gg/images/Stormweaver_Lightning_Surge.png?a7fb06",
-    "hitModel": { "object": "Stormweaver_Lightning_Surge_Tether_Create", "tickFrequency": 0.4, "lifetime": 2 },
+    "hitModel": { "object": "Stormweaver_Lightning_Surge_Tether_Create", "lifetime": 2 },
     "ranks": [
       { "rank": 1 }
     ],
@@ -837,7 +837,7 @@
     "id": "storm_cloud",
     "activationKind": "cast",
     "speedPath": "cast",
-    "dummyHits": {"base": 16.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast (cooldown 3 s, cloud lasts 8 s, so clouds of consecutive casts overlap on the dummy without a limit and each has its own hit map; engine side), placed at T = (x, y-30) (Resztki po R4 E: P + lengthdir(tupm[6], tupm[7]) from the player y, i.e. 6 px above the cursor (x, y-24)), 30 px from the dummy centre, cloud radius ~128 px (covers the dummy with margin; hits unchanged) (scale 2 on Aura_Hitbox_spr 128x128; the 160 px convention is the same): Stormweaver_Storm_Cloud_obj (Player_Damage_Parent, tick_frequency 30 frames, destroyTimer 8 s = 480 frames + up to 20 fade frames) - tools/tick_hits.py (rule 20): tick_hits(498 active frames, T = 30) = 16 hits of damage[4] = D = the main hit = 16.0 per cast (the old 1 + floor(498/30) = 17 is superseded). baseProjectiles = 1; perExtraProjectile = 0: no projectile count for gear (p9 is a 3 %/r chance of a second cloud, p11 Orbiting Tempest makes 1 + r clouds orbiting at 140 px, each ~31 % of the time over the dummy = ~5 hits per cloud - a different model, not 16 per cloud). p1 (tick 24/18/12 frames -> 20 / 27 / 39 hits), p7 (duration -> 20 / 24 / 28), p13 Aftershock (a second weaker cloud: +20 hits of 0.3r D), p4/p5/p8/p12/p14 procs are subskill effects."},
+    "dummyHits": {"base": 17.0, "baseProjectiles": 1, "perExtraProjectile": 0.0, "confidence": "C", "note": "Per cast (cooldown 3 s, cloud lasts 8 s, so clouds of consecutive casts overlap on the dummy without a limit and each has its own hit map; engine side), placed at T = (x, y-30) (Resztki po R4 E: P + lengthdir(tupm[6], tupm[7]) from the player y, i.e. 6 px above the cursor (x, y-24)), 30 px from the dummy centre, cloud radius 64 px (its own Aura_Hitbox_spr 128x128 at scale 1, set by TalentsStormWeaver: x2 with p12 Storm Front = 128 px, +15 %/r with p6 Maelstorm, then + the build's size bonus in Player_Damage_Parent_obj Alarm_11; covers the dummy either way, hits unchanged; the 160 px convention is the same); Skill Duration stretches destroyTimer in the same Alarm_11 (x (1 + %), + flat s), so hitModel carries the 8 s lifetime: Stormweaver_Storm_Cloud_obj (Player_Damage_Parent, tick_frequency 30 frames, destroyTimer 8 s = 480 frames + up to 20 fade frames) - tools/tick_hits.py (rule 20): the destroyTimer runs out on frame 480, alarm[10] = 1 on 481 and Alarm_10 starts the 20-frame fade on 482 (hsextract 2026-10-30), so tick_hits(500 active frames, T = 30) = 17 hits of damage[4] = D = the main hit, on frames 2, 35, 65, 95, 128, ..., 500 = 17.0 per cast. baseProjectiles = 1; perExtraProjectile = 0: no projectile count for gear (p9 is a 3 %/r chance of a second cloud, p11 Orbiting Tempest makes 1 + r clouds orbiting at 140 px, each ~31 % of the time over the dummy = ~5 hits per cloud - a different model, not 17 per cloud). p1 (tick 24/18/12 frames -> 20 / 27 / 39 hits), p7 (duration -> 20 / 24 / 28), p13 Aftershock (a second weaker cloud: +20 hits of 0.3r D), p4/p5/p8/p12/p14 procs are subskill effects."},
     "classId": "stormweaver",
     "name": "Storm Cloud",
     "kind": "active",
@@ -853,7 +853,7 @@
     "tree": "Storm Conjurer",
     "position": { "row": 3, "col": 1 },
     "icon": "https://herosiege.wiki.gg/images/Stormweaver_Storm_Cloud.png?544344",
-    "hitModel": { "object": "Stormweaver_Storm_Cloud_Create", "tickFrequency": 0.5 },
+    "hitModel": { "object": "Stormweaver_Storm_Cloud_Create", "tickFrequency": 0.5, "lifetime": 8, "fadeFrames": 20 },
     "ranks": [
       { "rank": 1 }
     ],
@@ -880,7 +880,7 @@
       {
         "id": "rapid_and_intense_glaciation",
         "positionIndex": 1,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [4, 11, 23], "per": "use", "note": "tick 30*(1-0.2r) frames (min 6): hits per cloud 20/27/39 (tick 24/18/12) vs base 16 at tick 30; tick_hits.py"}], "confidence": "C", "note": "card table p1 (reguła 20)", "plannerFix": "planner models p1 as faster_cast_rate 20r; in game it is the tick frequency of the cloud (30*(1-0.2r) frames): 20/27/39 hits per cloud"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [3, 10, 22], "per": "use", "note": "tick 30*(1-0.2r) frames (min 6): hits per cloud 20/27/39 (tick 24/18/12) vs base 17 at tick 30; tick_hits.py"}], "confidence": "C", "note": "card table p1 (reguła 20)", "plannerFix": "planner models p1 as faster_cast_rate 20r; in game it is the tick frequency of the cloud (30*(1-0.2r) frames): 20/27/39 hits per cloud"},
         "name": "Rapid and Intense Glaciation",
         "description": "Increases the tick frequency of storm cloud.",
         "maxRank": 3,
@@ -916,7 +916,7 @@
       {
         "id": "shocking_thunder",
         "positionIndex": 4,
-        "dummy": {"effects": [{"kind": "dot", "byRank": [0.15, 0.3, 0.45, 0.6, 0.75], "note": "Stasis floor(D*0.15r) (buff 61) per proc; chance 3r% per cloud tick hit (16 per cloud); value = damage ratio per proc; DoT per reports DoT case 26"}], "confidence": "C", "note": "card table p4"},
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.15, 0.3, 0.45, 0.6, 0.75], "note": "Stasis floor(D*0.15r) (buff 61) per proc; chance 3r% per cloud tick hit (17 per cloud); value = damage ratio per proc; DoT per reports DoT case 26"}], "confidence": "C", "note": "card table p4"},
         "name": "Shocking Thunder",
         "description": "Chance to inflict stasis on hit.",
         "maxRank": 5,
@@ -935,7 +935,7 @@
       {
         "id": "destructive_cloudburst",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5], "note": "chance 3r% per cloud tick hit: r Charged_Bolts_obj spawned at dummy position (no pack)"}, {"kind": "extra_hits", "byRank": [0.48, 1.92, 4.32, 7.68, 12.0], "per": "use", "replacesProjectileHits": true, "note": "expected per cloud = 16 ticks x 0.03r chance x r bolts x D = 0.48r^2 D per use; bolt hit count per bolt = 1 (I)"}], "confidence": "I", "note": "card table p5 (C mechanics, hit count I)", "plannerFix": "projectile_count on proc adds no dummy hits (perExtraProjectile 0); game: 16*0.03r*r extra bolt hits per cloud at the dummy"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5], "note": "chance 3r% per cloud tick hit: r Charged_Bolts_obj spawned at dummy position (no pack)"}, {"kind": "extra_hits", "byRank": [0.51, 2.04, 4.59, 8.16, 12.75], "per": "use", "replacesProjectileHits": true, "note": "expected per cloud = 17 ticks x 0.03r chance x r bolts x D = 0.51r^2 D per use; bolt hit count per bolt = 1 (I)"}], "confidence": "I", "note": "card table p5 (C mechanics, hit count I)", "plannerFix": "projectile_count on proc adds no dummy hits (perExtraProjectile 0); game: 16*0.03r*r extra bolt hits per cloud at the dummy"},
         "name": "Destructive Cloudburst",
         "description": "Chance to unleash multiple charged bolts on hit.",
         "maxRank": 5,
@@ -951,7 +951,7 @@
       {
         "id": "maelstorm",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "utility", "note": "cloud scale +15%/r radius; all 16 ticks already on a centred dummy, no hit change"}], "confidence": "C", "note": "card table p6"},
+        "dummy": {"effects": [{"kind": "utility", "note": "cloud scale +15%/r radius; all 17 ticks already on a centred dummy, no hit change"}], "confidence": "C", "note": "card table p6"},
         "name": "Maelstorm",
         "description": "Increases the area of effect radius of storm cloud.",
         "maxRank": 5,
@@ -963,7 +963,7 @@
       {
         "id": "supercell_storm",
         "positionIndex": 7,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [4, 8, 12], "per": "use", "note": "duration 8 s*(1+0.25r): active frames 480*(1+0.25r)+18 at tick 30 -> 20/24/28 hits per cloud"}], "confidence": "C", "note": "card table p7 (reguła 20)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [3, 7, 11], "per": "use", "note": "duration 8 s*(1+0.25r): active frames 480*(1+0.25r)+20 at tick 30 -> 20/24/28 hits per cloud vs base 17"}], "confidence": "C", "note": "card table p7 (reguła 20)"},
         "name": "Supercell Storm",
         "description": "Increases the duration of storm cloud.",
         "maxRank": 3,
@@ -975,7 +975,7 @@
       {
         "id": "heatcharged_lightning",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "dot", "byRank": [0.25, 0.5, 0.75, 1.0, 1.25], "note": "flames (Storm_Cloud_Flames 3 s, tick 0.5 s, ~6 ticks) floor(D*0.25r) per proc; chance 3r% per cloud tick hit (16 per cloud)"}], "confidence": "I", "note": "card table p8 (C/I, ~6 flame ticks)"},
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.25, 0.5, 0.75, 1.0, 1.25], "note": "flames (Storm_Cloud_Flames 3 s, tick 0.5 s, ~6 ticks) floor(D*0.25r) per proc; chance 3r% per cloud tick hit (17 per cloud)"}], "confidence": "I", "note": "card table p8 (C/I, ~6 flame ticks)"},
         "name": "Heatcharged Lightning",
         "description": "Chance to leave the ground on flames on hit dealing damage over time.",
         "maxRank": 5,
@@ -991,7 +991,7 @@
       {
         "id": "thunders_roar",
         "positionIndex": 9,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.48, 0.96, 1.44, 1.92, 2.4], "per": "use", "note": "chance 3r% per cast -> second cloud (16 hits): x(1+0.03r) on 16 hits = +0.48r hits per use"}], "confidence": "C", "note": "card table p9"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.51, 1.02, 1.53, 2.04, 2.55], "per": "use", "note": "chance 3r% per cast -> second cloud (17 hits): x(1+0.03r) on 17 hits = +0.51r hits per use"}], "confidence": "C", "note": "card table p9"},
         "name": "Thunder´s Roar",
         "description": "Chance on cast to unleash an additional storm cloud.",
         "maxRank": 5,
@@ -1019,7 +1019,7 @@
       {
         "id": "orbiting_tempest",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [10, 15, 20], "note": "transformation: 1+r clouds orbit player (card '1+1/r' read as 1+r, planner projectile_count 1r); dummy under cloud ~31% of time -> ~5 hits per cloud; total per use (1+r)*5; replaces the static 16"}], "confidence": "I", "note": "card table p11 (C/I, angular geometry I)", "plannerFix": "projectile_count of orbit clouds adds no hits (perExtraProjectile 0); game: orbiting clouds replace the static cloud, about (1+r)*5 hits per cast on the dummy"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [10, 15, 20], "note": "transformation: 1+r clouds orbit player (card '1+1/r' read as 1+r, planner projectile_count 1r); dummy under cloud ~31% of time -> ~5 hits per cloud; total per use (1+r)*5; replaces the static 17"}], "confidence": "I", "note": "card table p11 (C/I, angular geometry I)", "plannerFix": "projectile_count of orbit clouds adds no hits (perExtraProjectile 0); game: orbiting clouds replace the static cloud, about (1+r)*5 hits per cast on the dummy"},
         "name": "Orbiting Tempest",
         "description": "Conjure multiple storm clouds orbitting around you.",
         "maxRank": 3,
@@ -1031,7 +1031,7 @@
       {
         "id": "storm_front",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [4.992, 14.848, 29.568], "per": "use", "note": "chance 8r% per cloud tick hit (16/cloud) x 2 hits of Apocalyptic_Thunder object with damage floor(D*(1+0.95r)): 16*0.08r*2*(1+0.95r)"}], "confidence": "I", "note": "card table p12 (C/I, 2 hits I)", "plannerFix": "planner adds 95r% to LSSD on all hits; game spawns a separate Apocalyptic Thunder with damage D*(1+0.95r), 2 hits per proc, chance 8r% per tick"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [5.304, 15.776, 31.416], "per": "use", "note": "chance 8r% per cloud tick hit (17/cloud) x 2 hits of Apocalyptic_Thunder object with damage floor(D*(1+0.95r)): 17*0.08r*2*(1+0.95r)"}], "confidence": "I", "note": "card table p12 (C/I, 2 hits I)", "plannerFix": "planner adds 95r% to LSSD on all hits; game spawns a separate Apocalyptic Thunder with damage D*(1+0.95r), 2 hits per proc, chance 8r% per tick"},
         "name": "Storm Front",
         "description": "Unleash a large storm cloud with a chance of striking monsters with lightning bolts dealing heavy damage.",
         "maxRank": 3,
@@ -1059,7 +1059,7 @@
       {
         "id": "apocalyptic_event",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.6, 3.2, 4.8], "per": "use", "note": "chance 5r% per cloud tick hit (16/cloud) -> Apocalyptic_Thunder with damage ~D (add, not multiply) and 2 hits: 16*0.05r*2 = 1.6r per use; execute 2.5r% no hit change; enemyType<2 satisfied (dummy enemyType 0)"}], "confidence": "C", "note": "card table p14 (R4 387#1)", "plannerFix": "planner models LSSD +75r% with chance 5r%; game adds an Apocalyptic Thunder of ~D (2 hits per proc) per tick proc; no 0.75r multiplier"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.7, 3.4, 5.1], "per": "use", "note": "chance 5r% per cloud tick hit (17/cloud) -> Apocalyptic_Thunder with damage ~D (add, not multiply) and 2 hits: 17*0.05r*2 = 1.7r per use; execute 2.5r% no hit change; enemyType<2 satisfied (dummy enemyType 0)"}], "confidence": "C", "note": "card table p14 (R4 387#1)", "plannerFix": "planner models LSSD +75r% with chance 5r%; game adds an Apocalyptic Thunder of ~D (2 hits per proc) per tick proc; no 0.75r multiplier"},
         "name": "Apocalyptic Event",
         "description": "Chance to unleash apocalyptic thunder on hit dealing additional damage executing targets with life below a threshold.",
         "maxRank": 3,
@@ -1508,7 +1508,7 @@
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "speedPath": "cast",
-    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.25, "confidence": "I", "note": "Per cast (period P = (ceil(72/c) + 1)/60 s, engine side), dummy on the aim line at 160 px: one Stormweaver_Storm_Bolt_obj (projType 1, 8 px/frame, mask 54x37 x 0.75) hits the dummy by mask contact = hit 1 of damage[4] = D = the main hit; when its origin enters the dummy's mask (rule 33, StepDamageParentCheckCollisions) it snaps to the dummy and 3 frames later Destroy_0 creates an Explosion_Item_obj (r 24 px, active after 4 frames, damage[4] = the bolt's damage[4], full modifiers) = hit 2 -> 2.0 per bolt (R3 390#0 C). The passive Loaded Pulse (392: a 3rd hit D*(1 + 0.03L) when the bolt vanishes early) is not included. baseProjectiles = 1; perExtraProjectile = 0.25 (I, derived from the card's geometry; Resztki po R4 D, dummy horizontal from the player, the aim origin is 6 px below the launch point): n = ExtraSpellProj(1 [+ p5]) bolts are fired in series 0.1 s apart; for n <= 2 all fly on the axis (2 hits each), for n > 2 they fan out 0, +8, +16, -16, -8 deg: the 0 deg bolt gives 2 hits; the +-8 deg bolts pass the dummy centre at 16.3 / 28.2 px (was 22.3 px on both sides), both miss the origin-in-mask test (rule 33) and keep flying, but the bitmap mask 54x37 x 0.75 (lateral reach <= 25.9 px) touches only the nearer one = 1 hit for the pair instead of 2 (I: bitmap shape); a +-16 deg bolt 0 -> H(n) = 2, 4, 2.5, 2.5, 3 for n = 1..5 (n = 3, 4 contain only the +8 bolt and the card does not say which side is the nearer one, so the midpoint of 2 / 3 is taken; the old H was 2, 4, 3, 3, 4), slope 0.25 per extra bolt over the first 2-4 extras (was 0.5); the 0 deg bolt of n = 6 repeats (H(6) = 5, I). p11 Pulsating Bolt (pierces: 1 hit + pulses), p12 Bouncing Charge (pierces: 1 hit, no explosion), p13 Storm Claw (+0.48r^2 D per bolt), p14 Magnetize (+2 hits of D*(1 + 0.4r)), p8/p9 procs are subskill effects."},
+    "dummyHits": {"base": 2.0, "baseProjectiles": 1, "perExtraProjectile": 0.25, "confidence": "I", "note": "Per cast (period P = (ceil(72/c) + 1)/60 s, engine side), dummy on the aim line at 160 px: one Stormweaver_Storm_Bolt_obj (projType 1, 8 px/frame, mask 54x37 x 0.75) hits the dummy by mask contact = hit 1 of damage[4] = D = the main hit; when its origin enters the dummy's mask (rule 33, StepDamageParentCheckCollisions) it snaps to the dummy and 3 frames later Destroy_0 creates an Explosion_Item_obj 32 px ahead of the bolt along its direction (Destroy_0 L0x6, hsextract 2026-10-29), still within 48 + 12 px of the dummy centre (scale 1.5 = image_yscale 0.75 + 0.75, r 48 px, life 21 frames, active after 4 frames, damage[4] = the bolt's damage[4], full modifiers) = hit 2 -> 2.0 per bolt (R3 390#0 C). The passive Loaded Pulse (392: a 3rd hit D*(1 + 0.03L) when the bolt vanishes early) is not included. baseProjectiles = 1; perExtraProjectile = 0.25 (I, derived from the card's geometry; Resztki po R4 D, dummy horizontal from the player, the aim origin is 6 px below the launch point): n = ExtraSpellProj(1 [+ p5]) bolts are fired in series 0.1 s apart; for n <= 2 all fly on the axis (2 hits each), for n > 2 they fan out 0, +8, +16, -16, -8 deg: the 0 deg bolt gives 2 hits; the +-8 deg bolts pass the dummy centre at 16.3 / 28.2 px (was 22.3 px on both sides), both miss the origin-in-mask test (rule 33) and keep flying, but the bitmap mask 54x37 x 0.75 (lateral reach <= 25.9 px) touches only the nearer one = 1 hit for the pair instead of 2 (I: bitmap shape); a +-16 deg bolt 0 -> H(n) = 2, 4, 2.5, 2.5, 3 for n = 1..5 (n = 3, 4 contain only the +8 bolt and the card does not say which side is the nearer one, so the midpoint of 2 / 3 is taken; the old H was 2, 4, 3, 3, 4), slope 0.25 per extra bolt over the first 2-4 extras (was 0.5); the 0 deg bolt of n = 6 repeats (H(6) = 5, I). p11 Pulsating Bolt (pierces: 1 hit + pulses), p12 Bouncing Charge (pierces: 1 hit, no explosion), p13 Storm Claw (+0.48r^2 D per bolt), p14 Magnetize (+2 hits of D*(1 + 0.4r)), p8/p9 procs are subskill effects."},
     "classId": "stormweaver",
     "name": "Storm Bolt",
     "kind": "active",

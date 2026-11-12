@@ -289,12 +289,10 @@ fn subskill_dummy_adjustment(
         }
         for e in &dummy.effects {
             if let Some(req) = e.requires.as_deref() {
-                if subskill_ranks
-                    .get(&subskill_key(&spec.id, req))
-                    .copied()
-                    .unwrap_or(0)
-                    == 0
-                {
+                let learned = |id: &str| {
+                    subskill_ranks.get(&subskill_key(&spec.id, id)).copied().unwrap_or(0) > 0
+                };
+                if !req.split('|').any(learned) {
                     continue;
                 }
             }
@@ -352,8 +350,12 @@ fn hits_per_cast(spec: Option<&SkillSpec>, duration_bonus: Ranged) -> Ranged {
         return (1.0, 1.0);
     }
     // An object always lands at least one hit, even below -100% duration.
+    // A destroyTimer that runs out sets alarm[10] = 1; Alarm_10 starts the fade 2 frames later.
+    let fade_delay = if model.fade_frames > 0 { 2.0 } else { 0.0 };
     let hits = |bonus: f64| {
-        let life_frames = (lifetime * (1.0 + bonus / 100.0) * 60.0).round();
+        let life_frames = (lifetime * (1.0 + bonus / 100.0) * 60.0).round()
+            + fade_delay
+            + f64::from(model.fade_frames);
         let active = (life_frames - 2.0).max(1.0) as u32;
         (tick_hits(active, tick * 60.0, 0, 0) as f64).max(1.0)
     };
@@ -1455,7 +1457,7 @@ pub(crate) fn performance_from_stats(
         let converted = (n - base_n - sub.covered_projectiles).max(0.0);
         let per_hit_base = match sub.set_hits {
             Some(set) => set,
-            None => dh.base + dh.per_extra_projectile * converted.min(n - base_n),
+            None => (dh.base + dh.per_extra_projectile * converted.min(n - base_n)).max(0.0),
         };
         // A card transformation already counts every wave of the use.
         let waves = if sub.set_hits.is_some() {

@@ -194,6 +194,16 @@
           "bonus": 1.0,
           "growth": "max",
           "reach": 23.0
+        },
+        {
+          "name": "Explosion_Item_obj",
+          "origin": [32, 32],
+          "scale": [1.0, 1.0],
+          "mask": "12813",
+          "at": [0, 0],
+          "growth": "add",
+          "explosion": true,
+          "reach": 32.1
         }
       ],
       "circles": [170.0]

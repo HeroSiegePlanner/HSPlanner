@@ -910,6 +910,8 @@
   "planner.skills.enabled": "✓ 활성",
   "planner.skills.five_at_time": "한 번에 5점",
   "planner.skills.hit_interval": "적중 간격",
+  "planner.skills.preview": "미리보기",
+  "planner.skills.preview_hits": "사용당 {hits}회 적중 · 허수아비 {distance} px",
   "planner.skills.inspect": "{0} 살펴보기",
   "planner.skills.kind_active": "활성",
   "planner.skills.kind_aura": "오라",

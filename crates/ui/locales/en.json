@@ -910,6 +910,8 @@
   "planner.skills.enabled": "✓ Active",
   "planner.skills.five_at_time": "5 points at a time",
   "planner.skills.hit_interval": "Hit interval",
+  "planner.skills.preview": "Preview",
+  "planner.skills.preview_hits": "Hits per use: {hits} · dummy at {distance} px",
   "planner.skills.inspect": "Inspect {0}",
   "planner.skills.kind_active": "active",
   "planner.skills.kind_aura": "aura",

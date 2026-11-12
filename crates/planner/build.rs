@@ -110,6 +110,49 @@ fn main() {
     }
     fs::write(output.join("socket-icons.rs"), source).unwrap();
     skill_visuals(&root, &output);
+    skill_sprites(&root, &output);
+}
+
+/// The preview's game sprites: one folder per sprite, frames named 0.png, 1.png, …
+fn skill_sprites(root: &std::path::Path, output: &std::path::Path) {
+    let directory = root.join("assets/skill-fx");
+    println!("cargo:rerun-if-changed={}", directory.display());
+    let mut sprites: Vec<_> = fs::read_dir(&directory)
+        .unwrap()
+        .map(|entry| entry.unwrap().path())
+        .filter(|path| path.is_dir())
+        .collect();
+    sprites.sort();
+    let mut source = String::from("pub const SKILL_SPRITES: &[(&str, &[&[u8]])] = &[\n");
+    for sprite in sprites {
+        println!("cargo:rerun-if-changed={}", sprite.display());
+        let mut frames: Vec<_> = fs::read_dir(&sprite)
+            .unwrap()
+            .map(|entry| entry.unwrap().path())
+            .filter(|path| path.extension().is_some_and(|extension| extension == "png"))
+            .collect();
+        frames.sort_by_key(|path| {
+            path.file_stem()
+                .unwrap()
+                .to_str()
+                .unwrap()
+                .parse::<u32>()
+                .unwrap()
+        });
+        source.push_str(&format!(
+            "({:?}, &[\n",
+            sprite.file_name().unwrap().to_str().unwrap()
+        ));
+        for frame in frames {
+            source.push_str(&format!(
+                "include_bytes!({:?}),\n",
+                frame.canonicalize().unwrap()
+            ));
+        }
+        source.push_str("]),\n");
+    }
+    source.push_str("];\n");
+    fs::write(output.join("skill-sprites.rs"), source).unwrap();
 }
 
 fn skill_visuals(root: &std::path::Path, output: &std::path::Path) {

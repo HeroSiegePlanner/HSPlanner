@@ -910,6 +910,8 @@
   "planner.skills.enabled": "✓ Активен",
   "planner.skills.five_at_time": "По 5 очков",
   "planner.skills.hit_interval": "Интервал попаданий",
+  "planner.skills.preview": "Предпросмотр",
+  "planner.skills.preview_hits": "Попаданий за применение: {hits} · манекен на {distance} px",
   "planner.skills.inspect": "Осмотреть {0}",
   "planner.skills.kind_active": "активный",
   "planner.skills.kind_aura": "аура",
