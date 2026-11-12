@@ -25,6 +25,7 @@
 - Panels that scroll inside a dialog take the mouse wheel: the gear slot's Comparison scrolls to every Build Stats change instead of hiding them below the dialog's footer.
 - The gear slot's Comparison shortens large numbers with the number scale setting, such as 5.2M–19.7M instead of 5180534.3-19693443.2.
 - The Active Skills list shows each skill's Combined DPS, crits and ailments included, so the skills add up to the Combined DPS below them. It showed their Hit DPS, which leaves crits out.
+- Item tooltips print Total multipliers with their percent sign, such as Amethyst Knight's Amulet's +[2-4]% Total Faster Cast Rate.
 
 ## Calculations
 
