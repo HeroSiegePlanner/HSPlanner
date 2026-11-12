@@ -226,8 +226,30 @@ pub struct ItemBase {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RandomSkillPool {
-    pub class_id: String,
-    pub tree: String,
+    #[serde(default)]
+    pub class_id: Option<String>,
+    #[serde(default)]
+    pub tree: Option<String>,
+    #[serde(default)]
+    pub tag: Option<String>,
+}
+
+impl RandomSkillPool {
+    /// A pool without a class draws from the build's class.
+    pub fn accepts(&self, skill: &SkillSpec, build_class: Option<&str>) -> bool {
+        self.class_id
+            .as_deref()
+            .or(build_class)
+            .is_none_or(|id| id == skill.class_id)
+            && self
+                .tree
+                .as_deref()
+                .is_none_or(|tree| skill.tree.as_deref() == Some(tree))
+            && self
+                .tag
+                .as_ref()
+                .is_none_or(|tag| skill.tags.as_ref().is_some_and(|tags| tags.contains(tag)))
+    }
 }
 
 // ---------- item set ----------
@@ -1295,8 +1317,8 @@ mod item_presentation_metadata_tests {
             .iter()
             .find_map(|base| base.random_skill_pool.as_ref())
             .unwrap();
-        assert_eq!(pool.class_id, "marksman");
-        assert_eq!(pool.tree, "Engineer");
+        assert_eq!(pool.class_id.as_deref(), Some("marksman"));
+        assert_eq!(pool.tree.as_deref(), Some("Engineer"));
         let weapons: Vec<ItemBase> =
             serde_json::from_str(include_str!("../../../data/items/weapons.json")).unwrap();
         let proc = &weapons

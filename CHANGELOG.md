@@ -26,6 +26,7 @@
 - The gear slot's Comparison shortens large numbers with the number scale setting, such as 5.2M–19.7M instead of 5180534.3-19693443.2.
 - The Active Skills list shows each skill's Combined DPS, crits and ailments included, so the skills add up to the Combined DPS below them. It showed their Hit DPS, which leaves crits out.
 - Item tooltips print Total multipliers with their percent sign, such as Amethyst Knight's Amulet's +[2-4]% Total Faster Cast Rate.
+- Face of Existence's Random Buff Skill can be set in the gear editor to the buff skill it rolled, such as Fuel to Fire, and its +[20-30] ranks count.
 
 ## Calculations
 

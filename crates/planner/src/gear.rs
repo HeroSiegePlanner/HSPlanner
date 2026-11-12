@@ -1063,13 +1063,9 @@ fn selector_accepts_skill(
     skill: &hsplanner_engine::calc::types::SkillSpec,
 ) -> bool {
     match picker {
-        Picker::RandomSkill => {
-            base.and_then(|b| b.random_skill_pool.as_ref())
-                .is_some_and(|pool| {
-                    pool.class_id == skill.class_id
-                        && skill.tree.as_deref() == Some(pool.tree.as_str())
-                })
-        }
+        Picker::RandomSkill => base
+            .and_then(|b| b.random_skill_pool.as_ref())
+            .is_some_and(|pool| pool.accepts(skill, class_id)),
         Picker::Subskill => {
             skill
                 .subskills
@@ -1305,21 +1301,21 @@ mod control_tests {
         let base = data::data()
             .items
             .values()
-            .find(|base| base.random_skill_pool.is_some())
+            .find(|base| {
+                base.random_skill_pool
+                    .as_ref()
+                    .is_some_and(|pool| pool.class_id.is_some())
+            })
             .unwrap();
         let pool = base.random_skill_pool.as_ref().unwrap();
-        let selected = data::get_skills_by_class(&pool.class_id)
+        let selected = data::get_skills_by_class(pool.class_id.as_deref().unwrap())
             .iter()
             .filter(|skill| {
                 selector_accepts_skill(Picker::RandomSkill, Some(base), Some("stormweaver"), skill)
             })
             .collect::<Vec<_>>();
         assert!(!selected.is_empty());
-        assert!(
-            selected
-                .iter()
-                .all(|skill| skill.tree.as_deref() == Some(pool.tree.as_str()))
-        );
+        assert!(selected.iter().all(|skill| skill.tree == pool.tree));
         for skill in data::data().skills_by_class.values().flatten() {
             assert_eq!(
                 selector_accepts_skill(Picker::Subskill, None, None, skill),
