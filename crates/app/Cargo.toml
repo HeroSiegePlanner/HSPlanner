@@ -15,6 +15,7 @@ hsplanner-planner.workspace = true
 hsplanner-build.workspace = true
 hsplanner-ui.workspace = true
 hsplanner-library.workspace = true
+hsplanner-installer.workspace = true
 gpui-kit.workspace = true
 log.workspace = true
 hsplanner-notes.workspace = true
@@ -28,3 +29,7 @@ reqwest_client = { package = "gpui-pre-reqwest-client", version = "=0.3.12" }
 
 image = { version = "0.25", default-features = false, features = ["png", "jpeg", "webp", "gif"] }
 uuid = { version = "1", features = ["v4"] }
+
+# Embeds the executable's icon; the version GPUI already builds with.
+[target.'cfg(windows)'.build-dependencies]
+embed-resource = "3"

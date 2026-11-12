@@ -55,34 +55,47 @@ jobs:
           workspaces: '. -> target'
           key: native-installers-${{ matrix.os }}
       - name: Install pinned packager
+        if: runner.os != 'Windows'
         run: cargo install cargo-packager --version 0.11.8 --locked
+      # Installs and removes a scratch copy through the real shell and registry calls.
+      - name: Verify Windows setup
+        if: runner.os == 'Windows'
+        run: cargo test -p hsplanner-installer --locked --release
       - name: Build native installers
         shell: bash
         run: |
           set -euo pipefail
           case "$RUNNER_OS" in
             macOS) formats='["app","dmg"]'; export MACOSX_DEPLOYMENT_TARGET=15.0 ;;
-            Windows) formats='["nsis"]' ;;
             Linux) formats='["deb","appimage","pacman"]' ;;
           esac
           cargo build -p hsplanner --locked --release
-          # cargo-packager is a native Windows program there, so it needs Windows paths.
-          root=$(cygpath -m "$PWD" 2>/dev/null || echo "$PWD")
+          root=$PWD
           out=target/packages/release
           mkdir -p "$out"
           version=$(tr -d '\r' < Cargo.toml | sed -n '/^\[workspace.package\]/,/^\[/ s/^version = "\(.*\)"/\1/p')
           test -n "$version"
-          jq --arg version "$version" --arg root "$root" --argjson formats "$formats" '
-            .version = $version
-            | .icons = [.icons[] | "\($root)/packaging/\(.)"]
-            | .resources = [.resources[] | .src = "\($root)/packaging/\(.src)"]
-            | .binariesDir = "\($root)/target/release"
-            | .outDir = "\($root)/target/packages/release"
-            | .formats = $formats
-            | if (env.HSPLANNER_MACOS_SIGNING_IDENTITY // "") != "" then .macos.signingIdentity = env.HSPLANNER_MACOS_SIGNING_IDENTITY else . end
-            | if (env.HSPLANNER_WINDOWS_SIGN_COMMAND // "") != "" then .windows = {signCommand: env.HSPLANNER_WINDOWS_SIGN_COMMAND} else . end
-          ' packaging/packager.json > "$out/packager.json"
-          cargo-packager --config "$out/packager.json"
+          if [[ $RUNNER_OS == Windows ]]; then
+            # The setup program is the application: a file named "…-setup.exe" installs itself.
+            setup="$out/hsplanner_${version}_x64-setup.exe"
+            cp target/release/hsplanner.exe "$setup"
+            if [[ -n ${HSPLANNER_WINDOWS_SIGN_COMMAND:-} ]]; then
+              # Split on spaces with %1 as the file, as the packager did; never evaluated by a shell.
+              read -ra sign <<< "${HSPLANNER_WINDOWS_SIGN_COMMAND//%1/$(cygpath -w "$setup")}"
+              "${sign[@]}"
+            fi
+          else
+            jq --arg version "$version" --arg root "$root" --argjson formats "$formats" '
+              .version = $version
+              | .icons = [.icons[] | "\($root)/packaging/\(.)"]
+              | .resources = [.resources[] | .src = "\($root)/packaging/\(.src)"]
+              | .binariesDir = "\($root)/target/release"
+              | .outDir = "\($root)/target/packages/release"
+              | .formats = $formats
+              | if (env.HSPLANNER_MACOS_SIGNING_IDENTITY // "") != "" then .macos.signingIdentity = env.HSPLANNER_MACOS_SIGNING_IDENTITY else . end
+            ' packaging/packager.json > "$out/packager.json"
+            cargo-packager --config "$out/packager.json"
+          fi
           cd "$out"
           # makepkg rejects a hyphen in pkgver ("1.2.2-beta.1"); Arch uses an underscore instead.
           [[ ! -f PKGBUILD ]] || sed -i '/^pkgver=/ s/-/_/g' PKGBUILD

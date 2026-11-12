@@ -24,13 +24,42 @@ Formats are host-specific:
 | Host | Output |
 |---|---|
 | macOS 15+, Apple Silicon | `.app`, `.dmg` |
-| Windows 10/11 x64 | NSIS `.exe`, current-user installation |
+| Windows 10/11 x64 | `…_x64-setup.exe`: the application itself, see *Windows setup* |
 | Linux x64 | `.deb`, `.AppImage`, Pacman package + PKGBUILD |
 
 Linux requires native Wayland and a working Vulkan driver. Linux packages are built
 on Ubuntu 22.04 (glibc 2.35) and DEB dependencies target Ubuntu 22.04 and newer;
 other distributions need separate installation verification.
 RPM packaging is not implemented by the pinned packager and remains a follow-up.
+
+## Windows setup
+
+There is no separate installer. The release asset `hsplanner_<version>_x64-setup.exe`
+is `hsplanner.exe` under another name (`crates/installer`, window in
+`crates/app/src/setup.rs`):
+
+- A file whose name contains `setup`, or `--install`, opens the setup window. It copies
+  itself to `%LOCALAPPDATA%\HSPlanner\hsplanner.exe` (or the folder an earlier setup
+  recorded), writes `licenses\`, a Start menu
+  shortcut, an optional desktop shortcut and the `HSPlanner` entry under
+  `HKCU\Software\Microsoft\Windows\CurrentVersion\Uninstall`. These are the folder and
+  the entry of the earlier NSIS installer, so it updates those installations in place
+  and removes their `uninstall.exe` and Start menu folder.
+- `--uninstall` (the entry's `UninstallString`) removes exactly those files, shortcuts
+  and the entry. Builds and settings in `%APPDATA%\com.zium.hsplanner\gpui` stay.
+- `--update [--wait-pid <pid>]` is the windowless install behind in-app updates.
+
+The program file is swapped through renames, so a running HSPlanner never blocks setup
+and a failed copy leaves the old version in place. Debug builds on any platform rehearse
+the window against a scratch folder:
+
+```sh
+HSPLANNER_SETUP_DIR=/tmp/hsplanner-setup cargo run -p hsplanner -- --install
+```
+
+The **Verify Windows setup** step of the workflow runs `cargo test -p hsplanner-installer`
+on the Windows runner: it installs and removes a scratch copy through the real shortcut
+and registry calls. The executable's icon is embedded by `crates/app/build.rs`.
 
 ## GitHub workflow and signing
 
@@ -50,7 +79,7 @@ The release workflow:
    change when needed, and atomically pushes the selected branch and `v<version>`
    tag. It does not force-push or update dependency versions. Branch/tag rules
    must allow the workflow's `GITHUB_TOKEN` to perform these writes.
-2. Tests that exact commit and builds Windows x64 NSIS, Linux x64 DEB/AppImage/
+2. Tests that exact commit and builds the Windows x64 setup program, Linux x64 DEB/AppImage/
    Pacman, and macOS Apple Silicon DMG packages through the existing workflows.
 3. Verifies every package checksum and produces one combined `SHA256SUMS`,
    including the Pacman `PKGBUILD`.
@@ -79,8 +108,9 @@ itself is the feed:
   without one, so upload through the GitHub UI, `gh release upload` or the API.
 
 macOS replaces the running `.app` bundle in place and relaunches; if the bundle is not
-writable the DMG is opened in Finder instead. Windows starts the NSIS installer and
-the app quits. Linux users get the release page (deb/AppImage/pacman cannot be told
+writable the DMG is opened in Finder instead. Windows starts the downloaded setup program with
+`--update --wait-pid <pid>` and quits; setup replaces the program without a window and
+starts the new version (a failure opens the setup window with the error). Linux users get the release page (deb/AppImage/pacman cannot be told
 apart). Failed checks on startup stay silent; the footer button opens the update
 dialog, which shows the release body as notes, download progress and a retry on errors.
 Debug builds read `HSPLANNER_UPDATE_FEED` (a release JSON URL) instead of GitHub, so a

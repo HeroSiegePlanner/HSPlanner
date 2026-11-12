@@ -5,6 +5,8 @@ fn main() {
         println!("cargo:rerun-if-env-changed={key}");
     }
     let root = PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").unwrap()).join("../..");
+    #[cfg(windows)]
+    embed_icon(&root);
     let file = root.join(".env");
     println!("cargo:rerun-if-changed={}", file.display());
     let dotenv = fs::read_to_string(file).unwrap_or_default();
@@ -40,4 +42,18 @@ fn main() {
         ),
     )
     .unwrap();
+}
+
+/// Explorer shows the icon on the setup file and the shortcuts; GPUI loads resource 1
+/// for the window.
+#[cfg(windows)]
+fn embed_icon(root: &std::path::Path) {
+    let icon = root.join("packaging/icons/icon.ico");
+    println!("cargo:rerun-if-changed={}", icon.display());
+    let script = PathBuf::from(env::var_os("OUT_DIR").unwrap()).join("hsplanner.rc");
+    let path = icon.display().to_string().replace('\\', "/");
+    fs::write(&script, format!("1 ICON \"{path}\"\n")).unwrap();
+    embed_resource::compile(&script, embed_resource::NONE)
+        .manifest_optional()
+        .unwrap();
 }

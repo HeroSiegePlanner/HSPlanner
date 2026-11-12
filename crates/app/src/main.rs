@@ -9,6 +9,7 @@ mod crash;
 mod loadouts;
 mod release_notes;
 mod settings;
+mod setup;
 mod shell;
 mod startup;
 mod update;
@@ -22,6 +23,15 @@ fn main() {
     }
     if let Some((log, language)) = crash::report_request(std::env::args_os().skip(1)) {
         crash::show(log, language);
+        return;
+    }
+    // Windows installs from the program itself; debug builds rehearse it anywhere.
+    if cfg!(any(windows, debug_assertions))
+        && let Ok(executable) = std::env::current_exe()
+        && let Some(request) =
+            hsplanner_installer::request(&executable, std::env::args_os().skip(1))
+    {
+        setup::run(request);
         return;
     }
     #[cfg(debug_assertions)]

@@ -524,7 +524,11 @@ fn bundle_of(exe: &Path) -> Option<PathBuf> {
 
 #[cfg(target_os = "windows")]
 fn install(installer: &Path) -> anyhow::Result<()> {
+    // The setup program waits for this process, replaces it and starts the new one.
     std::process::Command::new(installer)
+        .arg(hsplanner_installer::UPDATE_FLAG)
+        .arg(hsplanner_installer::WAIT_FLAG)
+        .arg(std::process::id().to_string())
         .spawn()
         .context("starting the installer")?;
     Ok(())

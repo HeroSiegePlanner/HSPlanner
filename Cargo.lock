@@ -2899,10 +2899,12 @@ name = "hsplanner"
 version = "1.2.2-beta.5"
 dependencies = [
  "anyhow",
+ "embed-resource",
  "futures",
  "gpui-kit",
  "gpui-pre-reqwest-client",
  "hsplanner-build",
+ "hsplanner-installer",
  "hsplanner-library",
  "hsplanner-notes",
  "hsplanner-planner",
@@ -2946,6 +2948,15 @@ dependencies = [
  "rten",
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "hsplanner-installer"
+version = "1.2.2-beta.5"
+dependencies = [
+ "anyhow",
+ "windows 0.62.2",
+ "windows-registry 0.6.1",
 ]
 
 [[package]]

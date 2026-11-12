@@ -23,9 +23,6 @@
   "macos": {
     "minimumSystemVersion": "15.0"
   },
-  "nsis": {
-    "installMode": "currentUser"
-  },
   "deb": {
     "depends": [
       "libwayland-client0",
