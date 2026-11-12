@@ -1771,7 +1771,16 @@
   {
     "id": "jonnen_valinta",
     "name": "Jonnen Valinta",
-    "description": ""
+    "description": "",
+    "condition": "jonnen_valinta_buff",
+    "passiveStats": {
+      "base": {
+        "increased_energy": -4
+      },
+      "perRank": {
+        "increased_energy": 4
+      }
+    }
   },
   {
     "id": "karp_head",

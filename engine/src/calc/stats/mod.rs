@@ -620,6 +620,15 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
         stat_sources.entry(key).or_default().extend(sources);
     }
 
+    // 8a. Item-granted skill passives, before the attribute passes; ranks reused in step 19.
+    let item_granted_ranks = apply_item_granted_passive_stats(
+        input.inventory,
+        input.granted_skill_ranks,
+        input.player_conditions,
+        &mut attr_sources,
+        &mut stat_sources,
+    );
+
     // 8b. Light radius folded into increased all attributes %, before the
     // attribute passes read that key.
     apply_light_radius_to_attributes(&mut stat_sources);
@@ -666,15 +675,6 @@ pub fn compute_build_stats_core(input: &BuildStatsInput) -> ComputedStats {
     apply_attribute_divided_stats(&attributes, &mut stat_sources);
     apply_strength_to_life(&attributes, &mut stat_sources);
     apply_charge_attribute_damage(&attributes, &mut stat_sources);
-
-    // 15. Item-granted skill bonuses → passive stats; ranks reused in step 19.
-    let item_granted_ranks = apply_item_granted_passive_stats(
-        input.inventory,
-        input.granted_skill_ranks,
-        input.player_conditions,
-        &mut attr_sources,
-        &mut stat_sources,
-    );
 
     // 15b. Class-scoped "+X to All Skills (Class)" folds into all_skills.
     apply_class_scoped_all_skills(input.class_id, &mut stat_sources);
