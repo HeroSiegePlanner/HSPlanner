@@ -1043,13 +1043,17 @@
     "id": "power_of_the_ancients",
     "name": "Power of the Ancients",
     "description": "Gain additional cold skill damage based on your mana.",
-    "passiveStats": {
-      "base": {
-        "cold_skill_damage": 0.6
-      },
-      "perRank": {
-        "cold_skill_damage": 0.2
-      }
+    "passiveConverts": {
+      "perRank": [
+        {
+          "from": "mana",
+          "to": "cold_skill_damage",
+          "basePct": 0.6,
+          "pct": 0.2,
+          "per": 90,
+          "perStep": 5
+        }
+      ]
     }
   },
   {

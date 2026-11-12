@@ -410,6 +410,19 @@ pub struct PassiveConvert {
     /// skill only grants Y on top, which is what "a portion of X" mods do.
     #[serde(default)]
     pub replaces: bool,
+    /// "per N points of X": N = per + per_step * rank replaces the 100 the pct divides by.
+    #[serde(default)]
+    pub per: Option<f64>,
+    #[serde(default)]
+    pub per_step: f64,
+}
+
+impl PassiveConvert {
+    /// Fraction of `from` added to `to` at `rank`.
+    pub fn share(&self, rank: f64) -> f64 {
+        let per = self.per.map_or(100.0, |per| per + self.per_step * rank);
+        (self.base_pct + self.pct * rank) / per
+    }
 }
 
 #[derive(Debug, Clone, Deserialize, Default)]

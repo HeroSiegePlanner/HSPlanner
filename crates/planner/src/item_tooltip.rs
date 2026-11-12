@@ -1383,8 +1383,7 @@ fn granted_skill_entries(
         let mut lines = Vec::new();
         if let Some(converts) = &skill.passive_converts {
             for convert in &converts.per_rank {
-                let pct =
-                    |rank: f64| ((convert.base_pct + convert.pct * rank) * 100.).round() / 100.;
+                let pct = |rank: f64| (convert.share(rank) * 10_000.).round() / 100.;
                 let (a, b) = (pct(rank_min), pct(rank_max));
                 let pct_text = if a == b {
                     format!("{}%", num(a))
