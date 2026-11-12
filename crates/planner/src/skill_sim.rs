@@ -1,5 +1,10 @@
 //! Frame-by-frame skill simulation against a training dummy (data/skill-fx.json).
 use crate::hitbox::{self, HitObject, Mask, SkillHitbox};
+use crate::skill_effects::{
+    Buff, Dice, Drain, Effects, Frostbite, Orbit, Proc, Pull, Ramp, Scatter, Stacks, Swell,
+};
+use crate::skill_mods::{self, Mods};
+use crate::skill_motion::{Accel, Course, Rebound, Trail};
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::sync::{Arc, LazyLock, Mutex};
@@ -7,7 +12,7 @@ use std::sync::{Arc, LazyLock, Mutex};
 /// The dummy's collision circle, as the dps cards count it.
 const DUMMY_RADIUS: i32 = 12;
 /// Cursor skills appear 6 px above the cursor, which sits 24 px above the dummy.
-const TARGET_ABOVE: f32 = 30.;
+pub(crate) const TARGET_ABOVE: f32 = 30.;
 /// After a contact a damage object checks collision again only every 3 frames.
 const CHECK_EVERY: u32 = 3;
 /// Damage objects turn deadly and start falling 2 frames after creation (parent Alarm_11).
@@ -18,6 +23,8 @@ const FADE_DELAY: u32 = 2;
 const ANIMATION_LIFE: u32 = 30;
 /// Safety stop for objects that end only on landing or contact.
 const MAX_FRAMES: u32 = 3600;
+/// Live objects of a use at most: what procs make past it is left out, to keep cascades drawable.
+const MAX_LIVE: usize = 256;
 
 #[derive(Deserialize)]
 struct SkillFxFile {
@@ -31,6 +38,9 @@ pub(crate) struct SkillFx {
     /// Degrees between the projectiles of one volley, centred on the aim.
     #[serde(default)]
     pub fan: f32,
+    /// Degrees a volley of more than one turns past its centre.
+    #[serde(default)]
+    pub skew: f32,
     /// The engine counts an average over random layouts; `spawn` replays one of them.
     #[cfg(test)]
     #[serde(default)]
@@ -38,27 +48,42 @@ pub(crate) struct SkillFx {
     pub spawn: Vec<Spawn>,
 }
 
-#[derive(Deserialize, Default)]
+#[derive(Deserialize, Default, Clone)]
 #[serde(rename_all = "camelCase", default)]
 pub(crate) struct Spawn {
     pub object: String,
-    /// Frames after the use at which it is created.
+    /// Frames after the use, or after its creator makes it, at which it is created.
     pub frame: u32,
+    /// Rolled once per use, or each time its creator ends: made, with all it makes, if it comes up.
+    pub chance: Option<f32>,
+    /// Created at a random distance and direction from where it would be.
+    pub scatter: Option<Scatter>,
     /// Created at the cursor instead of in front of the player.
     pub target: bool,
     /// Turned toward the dummy from where it is created.
     pub aim: bool,
     /// One instance per entry instead of one per projectile.
     pub layout: Vec<Placement>,
+    /// Projectiles it adds to the use's volley, fanned out with them.
+    pub extra: u32,
     /// Created at the enemy its parent touched.
     pub at_enemy: bool,
-    /// Distance in front of the player along the aim.
+    /// Made by another: created at the player instead of where its creator is.
+    pub at_player: bool,
+    /// Distance in front of the player along the aim; made by another, out from its creator
+    /// along its own direction.
     pub offset: f32,
+    /// Made by another: flies this many degrees from the line from the player through its creator.
+    pub turn: Option<f32>,
     /// px per frame along the aim.
     pub speed: f32,
+    /// Starts slower and speeds up to `speed`.
+    pub accel: Option<Accel>,
     pub fall: Option<Fall>,
     /// Bounces off the first enemy it touches.
     pub bounce: Option<Bounce>,
+    pub rebound: Option<Rebound>,
+    pub trail: Option<Box<Trail>>,
     pub scale: Option<[f32; 2]>,
     pub grow: Option<Grow>,
     pub life: Option<u32>,
@@ -74,6 +99,31 @@ pub(crate) struct Spawn {
     pub ability: bool,
     pub ends_on_contact: bool,
     pub on_end: Vec<Spawn>,
+    /// Height under which a falling object creates `on_low`, once.
+    pub low: f32,
+    pub on_low: Vec<Spawn>,
+    /// Circles the player instead of flying: one instance per `count`, evenly spread.
+    pub orbit: Option<Orbit>,
+    /// Chance rolls on each of its hits that create another object.
+    pub procs: Vec<Proc>,
+    /// Chance rolls that raise its maximum scale while it lives.
+    pub swell: Option<Swell>,
+    /// Share of the skill's hit each of its hits deals; 1 when unset.
+    pub share: Option<f32>,
+    /// Grows its hits, and the hits of all it creates, while it lives.
+    pub ramp: Option<Ramp>,
+    /// Rolled once per use; then each of its hits frostbites the enemy.
+    pub frostbite: Option<Frostbite>,
+    /// Extra share of its hits on a frostbitten enemy.
+    pub vs_frostbitten: f32,
+    /// Mana it takes from the player while it lives.
+    pub drain: Option<Drain>,
+    /// A buff the player gets when it is created.
+    pub buff: Option<Buff>,
+    /// Pulls the enemy each of its hits touches.
+    pub pull: Option<Pull>,
+    /// Made by a proc only on the hit that finds the player's stacks full.
+    pub stacks: Option<Stacks>,
 }
 
 #[derive(Deserialize, Clone, Copy)]
@@ -153,8 +203,8 @@ impl HitClock {
     }
 }
 
-struct Instance {
-    spawn: &'static Spawn,
+struct Instance<'a> {
+    spawn: &'a Spawn,
     object: &'static HitObject,
     pos: [f32; 2],
     /// Degrees, counter-clockwise with y down, as GameMaker turns sprites.
@@ -164,6 +214,17 @@ struct Instance {
     /// Height above the ground, its speed and the gravity pulling it.
     fall: Option<[f32; 3]>,
     bounced: bool,
+    /// The scale it grows toward, raised by a swell.
+    max: Option<f32>,
+    /// Share of the skill's hit a swell added to its hits.
+    bonus: f32,
+    /// Growth its creator's hits had when it made it.
+    carry: f32,
+    /// Whether this use's frostbite roll came up.
+    frostbites: bool,
+    /// Whether it already fell under its `low` height.
+    lowered: bool,
+    course: Course,
     age: u32,
     end: u32,
     clock: HitClock,
@@ -173,6 +234,8 @@ struct Frame {
     hit: bool,
     /// Able to hit in this frame.
     active: bool,
+    /// Fell under its `low` height in this frame.
+    low: bool,
     /// Gone after this frame; true when it ended on touching the dummy.
     ended: Option<bool>,
 }
@@ -182,6 +245,8 @@ struct Frame {
 pub(crate) struct Shape {
     pub object: &'static HitObject,
     pub pos: [f32; 2],
+    /// Degrees it is turned, counter-clockwise with y down.
+    pub angle: f32,
     /// Height above the ground of a falling object.
     pub height: f32,
     pub scale: [f32; 2],
@@ -197,11 +262,12 @@ pub(crate) struct Timeline {
     pub dummy: [f32; 2],
     pub frames: Vec<Vec<Shape>>,
     pub hits: Vec<u32>,
+    pub effects: Effects,
 }
 
-impl Instance {
+impl<'a> Instance<'a> {
     fn new(
-        spawn: &'static Spawn,
+        spawn: &'a Spawn,
         hitbox: &'static SkillHitbox,
         pos: [f32; 2],
         angle: f32,
@@ -224,15 +290,35 @@ impl Instance {
             spawn,
             object,
             pos,
-            angle,
+            angle: spawn.orbit.map_or(angle, |orbit| orbit.facing(angle)),
             scale: spawn.scale.unwrap_or(object.scale.map(|s| s as f32)),
-            speed: spawn.speed,
+            speed: spawn.accel.map_or(spawn.speed, |accel| accel.from),
             fall,
             bounced: false,
+            max: spawn.grow.and_then(|grow| grow.max),
+            bonus: 0.,
+            carry: 1.,
+            frostbites: false,
+            lowered: false,
+            course: Course::new(spawn, angle),
             age: 0,
             end,
             clock: HitClock::default(),
         })
+    }
+
+    /// GameMaker's lengthdir around the player, recomputed every frame.
+    fn circle(&mut self, orbit: Orbit) {
+        let forgets = self
+            .course
+            .orbit(orbit, self.age, &mut self.pos, &mut self.angle);
+        self.clock.hit_map &= !forgets;
+    }
+
+    /// The growth of its hits in this step: what its creator handed down and its own ramp.
+    fn grown(&self) -> f32 {
+        let steps = self.age.saturating_sub(1);
+        self.carry * self.spawn.ramp.map_or(1., |ramp| ramp.growth(steps))
     }
 
     fn advance(&mut self) {
@@ -241,21 +327,25 @@ impl Instance {
             self.pos[0] + cos * self.speed,
             self.pos[1] - sin * self.speed,
         ];
+        if let Some(accel) = self.spawn.accel {
+            self.speed = accel.next(self.speed, self.spawn.speed);
+        }
         let gravity_from = if self.spawn.ability { 1 } else { ACTIVATION };
-        if self.age >= gravity_from {
-            if let Some(fall) = self.fall.as_mut() {
-                fall[1] -= fall[2];
-                fall[0] += fall[1];
-            }
+        if self.age >= gravity_from
+            && let Some(fall) = self.fall.as_mut()
+        {
+            fall[1] -= fall[2];
+            fall[0] += fall[1];
         }
         let spawn = self.spawn;
         let fading = fade_from(spawn).is_some_and(|from| self.age >= from);
         if fading && spawn.shrink > 0. {
             self.scale = self.scale.map(|s| (s - spawn.shrink).max(0.));
         } else if let Some(grow) = spawn.grow.filter(|_| !fading) {
+            let max = self.max;
             let next = |s: f32| {
-                let s = s + grow.step + grow.max.map_or(0., |m| (m - s) * grow.lerp);
-                grow.max.map_or(s, |m| s.min(m))
+                let s = s + grow.step + max.map_or(0., |m| (m - s) * grow.lerp);
+                max.map_or(s, |m| s.min(m))
             };
             self.scale = if grow.x_only {
                 [next(self.scale[0]), self.scale[1]]
@@ -265,26 +355,47 @@ impl Instance {
         }
     }
 
-    fn step(&mut self, dummy: [f32; 2]) -> Frame {
+    fn step(&mut self, dummy: [f32; 2], dice: &mut Dice) -> Frame {
+        if let Some(orbit) = self.spawn.orbit {
+            self.circle(orbit);
+        }
         if self.age > 0 {
             self.advance();
         }
+        self.angle = self.course.home(self.pos, dummy, self.angle, &mut self.end);
+        if let (Some(swell), Some(max)) = (self.spawn.swell, self.max.as_mut())
+            && self.age > 0
+            && self.age.is_multiple_of(swell.every.max(1))
+            && dice.roll(swell.chance)
+        {
+            *max += swell.step;
+            self.bonus += swell.damage;
+        }
         let spawn = self.spawn;
         let landed = self.fall.is_some_and(|[height, ..]| height <= 0.);
+        let low = !self.lowered
+            && !spawn.on_low.is_empty()
+            && self.fall.is_some_and(|[height, ..]| height < spawn.low);
+        self.lowered |= low;
         let active = self.age >= spawn.active_from.unwrap_or(ACTIVATION)
             && spawn.deadly.is_none_or(|deadly| self.age <= deadly + 1);
         let looks = (active && (!spawn.ability || spawn.ends_on_contact))
             || (spawn.bounce.is_some() && !self.bounced);
         let overlap = looks && overlaps(self.object, self.scale, self.pos, self.angle, dummy);
-        if overlap && !self.bounced {
-            if let (Some(bounce), Some(fall)) = (spawn.bounce, self.fall.as_mut()) {
-                self.bounced = true;
-                self.speed *= bounce.speed_mult;
-                fall[1] = bounce.z_speed;
-                fall[2] = bounce.gravity;
-            }
+        if overlap
+            && !self.bounced
+            && let (Some(bounce), Some(fall)) = (spawn.bounce, self.fall.as_mut())
+        {
+            self.bounced = true;
+            self.speed *= bounce.speed_mult;
+            fall[1] = bounce.z_speed;
+            fall[2] = bounce.gravity;
         }
         let hit = active && !spawn.ability && self.clock.frame(overlap, spawn.tick);
+        if self.course.react(spawn, self.pos, dummy, hit, dice) {
+            self.angle = aim(self.pos, dummy);
+            self.clock.hit_map = false;
+        }
         self.age += 1;
         let ended = if spawn.ends_on_contact && active && overlap {
             Some(true)
@@ -294,6 +405,7 @@ impl Instance {
         Frame {
             hit,
             active: active && !spawn.ability,
+            low,
             ended,
         }
     }
@@ -308,6 +420,7 @@ impl Instance {
         Shape {
             object: self.object,
             pos: self.pos,
+            angle: self.angle,
             height: self.fall.map_or(0., |[height, ..]| height.max(0.)),
             scale: self.scale,
             active,
@@ -368,49 +481,171 @@ fn on_mask(mask: &Mask, x: f32, y: f32) -> bool {
     }
     let col = x as u16;
     mask.rows.get(y as usize).is_some_and(|runs| {
-        runs.chunks_exact(2)
-            .any(|run| run[0] <= col && col < run[1])
+        runs.as_chunks::<2>()
+            .0
+            .iter()
+            .any(|&[start, end]| start <= col && col < end)
     })
 }
 
 fn known(spawns: &[Spawn], hitbox: &SkillHitbox) -> bool {
     spawns.iter().all(|spawn| {
-        hitbox.objects.iter().any(|o| o.name == spawn.object) && known(&spawn.on_end, hitbox)
+        hitbox.objects.iter().any(|o| o.name == spawn.object)
+            && known(&spawn.on_end, hitbox)
+            && known(&spawn.on_low, hitbox)
+            && spawn
+                .trail
+                .iter()
+                .all(|t| known(std::slice::from_ref(&t.spawn), hitbox))
+            && spawn
+                .procs
+                .iter()
+                .all(|proc| known(std::slice::from_ref(&proc.spawn), hitbox))
     })
+}
+
+/// GameMaker's point_direction from `from` to `to`.
+fn aim(from: [f32; 2], to: [f32; 2]) -> f32 {
+    (from[1] - to[1]).atan2(to[0] - from[0]).to_degrees()
+}
+
+/// An object another creates: at the enemy it hit or where the creator is, turned to the dummy
+/// when it aims or from the creator's throw when it turns, with the use's frostbite roll and the
+/// growth of the creator's hits.
+fn child<'a>(
+    spawn: &'a Spawn,
+    hitbox: &'static SkillHitbox,
+    creator: &Instance,
+    dummy: [f32; 2],
+    on_enemy: bool,
+) -> Option<Instance<'a>> {
+    let at = if spawn.at_enemy && on_enemy {
+        dummy
+    } else if spawn.at_player {
+        [0., 0.]
+    } else {
+        creator.pos
+    };
+    let angle = match spawn.turn {
+        Some(turn) => aim([0., 0.], creator.pos) + turn,
+        None if spawn.aim => aim(at, dummy),
+        None => 0.,
+    };
+    let (sin, cos) = angle.to_radians().sin_cos();
+    let at = [at[0] + cos * spawn.offset, at[1] - sin * spawn.offset];
+    let mut instance = Instance::new(spawn, hitbox, at, angle, 0)?;
+    instance.frostbites = creator.frostbites;
+    instance.carry = creator.grown();
+    Some(instance)
 }
 
 /// Frames in which one use with `projectiles` projectiles hits the dummy.
 #[cfg(test)]
 pub(crate) fn simulate(skill_id: &str, projectiles: u32) -> Option<Vec<u32>> {
-    run(skill_id, projectiles).map(|timeline| timeline.hits)
+    run(skill_id, &Mods::default(), projectiles).map(|timeline| timeline.hits)
 }
 
-static TIMELINES: LazyLock<Mutex<HashMap<String, Arc<Timeline>>>> =
+/// Uses replayed with other dice when chance plays a part in a use.
+const CHANCY_USES: u64 = 8;
+
+/// The modifiers uses were simulated with, and the uses.
+type Simulated = (Mods, Arc<[Timeline]>);
+
+/// The last uses simulated per skill.
+static TIMELINES: LazyLock<Mutex<HashMap<String, Simulated>>> =
     LazyLock::new(|| Mutex::new(HashMap::new()));
 
-/// The base use of a skill with motion data, simulated once and kept for the preview.
-pub(crate) fn timeline(skill_id: &str) -> Option<Arc<Timeline>> {
+/// Uses of a skill with motion data under the build's modifiers, kept until they change: one, or
+/// several rolled with other dice when chance plays a part.
+pub(crate) fn uses(skill_id: &str, mods: &Mods) -> Option<Arc<[Timeline]>> {
     let mut cache = TIMELINES
         .lock()
         .unwrap_or_else(|poisoned| poisoned.into_inner());
-    if let Some(timeline) = cache.get(skill_id) {
-        return Some(timeline.clone());
+    if let Some((cached, uses)) = cache.get(skill_id)
+        && cached == mods
+    {
+        return Some(uses.clone());
     }
-    let timeline = Arc::new(run(skill_id, 1)?);
-    cache.insert(skill_id.to_string(), timeline.clone());
-    Some(timeline)
+    let spawns = skill_mods::apply(skill_id, &skill(skill_id)?.spawn, mods);
+    let count = skill_mods::casts(skill_id, if chancy(&spawns) { CHANCY_USES } else { 1 });
+    let uses: Arc<[Timeline]> = (0..count)
+        .map(|n| play(skill_id, mods, 1, n))
+        .collect::<Option<_>>()?;
+    cache.insert(skill_id.to_string(), (mods.clone(), uses.clone()));
+    Some(uses)
 }
 
-fn run(skill_id: &str, projectiles: u32) -> Option<Timeline> {
+/// Whether chance plays a part in a use: procs, swells, scatters, frostbite or creation rolls.
+fn chancy(spawns: &[Spawn]) -> bool {
+    spawns.iter().any(|spawn| {
+        !spawn.procs.is_empty()
+            || spawn.swell.is_some()
+            || spawn.frostbite.is_some()
+            || spawn.chance.is_some()
+            || spawn.scatter.is_some()
+            || chancy(&spawn.on_end)
+            || chancy(&spawn.on_low)
+    })
+}
+
+#[cfg(test)]
+pub(crate) fn run(skill_id: &str, mods: &Mods, projectiles: u32) -> Option<Timeline> {
+    play(skill_id, mods, projectiles, 0)
+}
+
+/// The `n`-th use, rolled with its own dice.
+fn play(skill_id: &str, mods: &Mods, projectiles: u32, n: u64) -> Option<Timeline> {
     let fx = skill(skill_id)?;
     let hitbox = hitbox::skill(skill_id)?;
-    if !known(&fx.spawn, hitbox) {
-        return None;
-    }
+    let spawns = skill_mods::apply_cast(skill_id, &fx.spawn, mods, n);
+    known(&spawns, hitbox).then(|| replay_use(fx, hitbox, &spawns, projectiles, n))
+}
+
+/// The `n`-th use of these spawns against the skill's dummy.
+pub(crate) fn replay_use(
+    fx: &SkillFx,
+    hitbox: &'static SkillHitbox,
+    spawns: &[Spawn],
+    projectiles: u32,
+    n: u64,
+) -> Timeline {
+    let mut dice = Dice::of_use(n);
+    let pending = place(spawns, hitbox, fx, projectiles.max(1), &mut dice);
+    replay(pending, hitbox, [fx.dummy, 0.], &mut dice)
+}
+
+/// Where a scattered spawn lands instead of `at`.
+fn scattered(at: [f32; 2], spawn: &Spawn, dice: &mut Dice) -> [f32; 2] {
+    spawn.scatter.map_or(at, |scatter| {
+        let [x, y] = scatter.offset(dice);
+        [at[0] + x, at[1] + y]
+    })
+}
+
+/// Every instance of the spawns and the frame it is created on; the use rolls frostbite once.
+fn place<'a>(
+    spawns: &'a [Spawn],
+    hitbox: &'static SkillHitbox,
+    fx: &SkillFx,
+    n: u32,
+    dice: &mut Dice,
+) -> Vec<(u32, Instance<'a>)> {
     let dummy = [fx.dummy, 0.];
-    let n = projectiles.max(1);
     let mut pending = Vec::new();
-    for spawn in &fx.spawn {
+    let frostbites = spawns
+        .iter()
+        .find_map(|spawn| spawn.frostbite)
+        .is_some_and(|f| dice.roll(f.chance));
+    for spawn in spawns {
+        if spawn.chance.is_some_and(|chance| !dice.roll(chance)) {
+            continue;
+        }
+        let created = |instance: Option<Instance<'a>>, frame: u32| {
+            instance.map(|mut instance| {
+                instance.frostbites = frostbites;
+                (frame, instance)
+            })
+        };
         let base = if spawn.target {
             [fx.dummy, -TARGET_ABOVE]
         } else {
@@ -418,128 +653,143 @@ fn run(skill_id: &str, projectiles: u32) -> Option<Timeline> {
         };
         for (i, place) in spawn.layout.iter().enumerate() {
             let at = [base[0] + place.offset[0], base[1] + place.offset[1]];
-            let instance = Instance::new(spawn, hitbox, at, 0., i as u32);
-            pending.extend(instance.map(|instance| (place.frame, instance)));
+            let at = scattered(at, spawn, dice);
+            pending.extend(created(
+                Instance::new(spawn, hitbox, at, 0., i as u32),
+                place.frame,
+            ));
         }
-        for i in (0..n).filter(|_| spawn.layout.is_empty()) {
-            let angle = if spawn.aim {
-                (base[1] - dummy[1]).atan2(dummy[0] - base[0]).to_degrees()
+        let count = spawn
+            .orbit
+            .map_or(n + spawn.extra, |orbit| orbit.count.max(1));
+        for i in (0..count).filter(|_| spawn.layout.is_empty()) {
+            let angle = if spawn.orbit.is_some() {
+                360. * i as f32 / count as f32
+            } else if spawn.aim {
+                aim(base, dummy)
             } else {
-                fx.fan * (i as f32 - (n - 1) as f32 / 2.)
+                fx.fanned(i, count)
             };
             let (sin, cos) = angle.to_radians().sin_cos();
             let at = [base[0] + cos * spawn.offset, base[1] - sin * spawn.offset];
-            let instance = Instance::new(spawn, hitbox, at, angle, i);
-            pending.extend(instance.map(|instance| (spawn.frame, instance)));
+            let at = scattered(at, spawn, dice);
+            pending.extend(created(
+                Instance::new(spawn, hitbox, at, angle, i),
+                spawn.frame,
+            ));
         }
     }
-    let mut live = Vec::new();
-    let mut hits = Vec::new();
-    let mut frames = Vec::new();
+    pending
+}
+
+/// The instances played frame by frame against the dummy.
+fn replay(
+    mut pending: Vec<(u32, Instance)>,
+    hitbox: &'static SkillHitbox,
+    dummy: [f32; 2],
+    dice: &mut Dice,
+) -> Timeline {
+    let (mut live, mut frames) = (Vec::new(), Vec::new());
+    let mut stage = Stage {
+        hitbox,
+        dummy,
+        dice,
+        effects: Effects::default(),
+        hits: Vec::new(),
+    };
     for frame in 0..MAX_FRAMES {
         let (due, later): (Vec<_>, Vec<_>) = pending.into_iter().partition(|(at, _)| *at <= frame);
         pending = later;
-        live.extend(due.into_iter().map(|(_, instance)| instance));
+        for (_, instance) in due {
+            stage.effects.created(frame, instance.spawn);
+            live.push(instance);
+        }
         if live.is_empty() && pending.is_empty() {
             break;
         }
         let mut born = Vec::new();
         let mut shapes = Vec::with_capacity(live.len());
         live.retain_mut(|instance| {
-            let step = instance.step(dummy);
+            let step = instance.step(dummy, stage.dice);
             shapes.push(instance.shape(step.active));
-            if step.hit {
-                hits.push(frame);
-            }
-            let Some(by_contact) = step.ended else {
-                return true;
-            };
-            for child in &instance.spawn.on_end {
-                let at = if child.at_enemy && by_contact {
-                    dummy
-                } else {
-                    instance.pos
-                };
-                born.extend(Instance::new(child, hitbox, at, 0., 0));
-            }
-            false
+            stage.effects.alive(frame, instance.spawn, instance.age);
+            stage.leaves(frame, instance, &step, &mut born);
+            step.ended.is_none()
         });
         frames.push(shapes);
-        live.extend(born);
+        let room = MAX_LIVE.saturating_sub(live.len() + pending.len());
+        for instance in born.into_iter().take(room) {
+            match instance.spawn.frame {
+                0 => {
+                    stage.effects.created(frame, instance.spawn);
+                    live.push(instance);
+                }
+                delay => pending.push((frame + 1 + delay, instance)),
+            }
+        }
     }
-    Some(Timeline {
+    Timeline {
         dummy,
         frames,
-        hits,
-    })
+        hits: stage.hits,
+        effects: stage.effects,
+    }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::{FX, simulate};
-    use hsplanner_engine::calc::data;
+/// What the replay keeps while instances step: the hitboxes, the dummy, the dice and the record.
+struct Stage<'d> {
+    hitbox: &'static SkillHitbox,
+    dummy: [f32; 2],
+    dice: &'d mut Dice,
+    effects: Effects,
+    hits: Vec<u32>,
+}
 
-    /// The engine's base dummy hits of a skill, whatever its class.
-    fn engine_hits(skill: &str) -> f64 {
-        let classes = std::fs::read_dir(concat!(env!("CARGO_MANIFEST_DIR"), "/../../data/skills"))
-            .expect("class skill files");
-        classes
-            .filter_map(|entry| Some(entry.ok()?.path().file_stem()?.to_str()?.to_owned()))
-            .find_map(|class| {
-                data::get_skills_by_class(&class)
-                    .iter()
-                    .find(|s| s.id == skill)
-                    .and_then(|s| s.dummy_hits.as_ref())
-                    .map(|d| d.base)
-            })
-            .unwrap_or(f64::NAN)
-    }
-
-    fn sorted_skills() -> Vec<&'static String> {
-        let mut skills: Vec<_> = FX.skills.keys().collect();
-        skills.sort();
-        skills
-    }
-
-    #[test]
-    fn simulated_hits_match_the_engine_dummy_counts() {
-        let off: Vec<String> = sorted_skills()
-            .into_iter()
-            .filter_map(|skill| {
-                let got = simulate(skill, 1).expect(skill).len() as f64;
-                let engine = engine_hits(skill);
-                // A random layout replays one case of the engine's average.
-                let off = if FX.skills[skill].random {
-                    (got - engine).abs() >= 0.5
-                } else {
-                    got != engine
-                };
-                off.then(|| format!("{skill}: sim {got}, engine {engine}"))
-            })
-            .collect();
-        assert!(off.is_empty(), "{off:#?}");
-    }
-
-    #[test]
-    fn breath_of_fire_grows_until_its_fade_starts() {
-        let timeline = super::timeline("breath_of_fire").expect("breath of fire");
-        let widest = timeline
-            .frames
-            .iter()
-            .flatten()
-            .map(|shape| shape.scale[0])
-            .fold(0., f32::max);
-        assert!((widest - 1.55).abs() < 1e-3, "widest x scale {widest}");
-    }
-
-    #[test]
-    #[ignore]
-    fn print_hits_per_projectile_count() {
-        for skill in sorted_skills() {
-            let counts: Vec<usize> = (1..=5)
-                .map(|n| simulate(skill, n).map_or(0, |h| h.len()))
-                .collect();
-            eprintln!("{skill}: {counts:?} engine {}", engine_hits(skill));
+impl Stage<'_> {
+    /// What one step of an instance leaves: its hit with its pull and procs, then what it creates
+    /// on falling low and on ending.
+    fn leaves<'a>(
+        &mut self,
+        frame: u32,
+        instance: &Instance<'a>,
+        step: &Frame,
+        born: &mut Vec<Instance<'a>>,
+    ) {
+        let (spawn, dummy) = (instance.spawn, self.dummy);
+        if step.hit {
+            self.hits.push(frame);
+            let grown = instance.grown();
+            self.effects
+                .hit(frame, spawn, instance.bonus, grown, instance.frostbites);
+            if let Some(pull) = spawn.pull {
+                self.effects.pull(frame, pull, instance.pos, dummy);
+            }
+            let piled = self.effects.pile(spawn, instance.course.hits());
+            for proc in Proc::of_hit(&spawn.procs, instance.course.hits(), piled) {
+                if !self.dice.roll(proc.chance) {
+                    continue;
+                }
+                born.extend(child(&proc.spawn, self.hitbox, instance, dummy, true));
+                if let Some(pull) = proc.pull {
+                    self.effects.pull(frame, pull, instance.pos, dummy);
+                }
+            }
+        }
+        let moves = instance.age.saturating_sub(1);
+        if let Some(drop) = Trail::dropped(spawn, moves) {
+            born.extend(child(drop, self.hitbox, instance, dummy, false));
+        }
+        let low = spawn.on_low.iter().filter(|_| step.low);
+        born.extend(low.filter_map(|low| child(low, self.hitbox, instance, dummy, false)));
+        if let Some(by_contact) = step.ended {
+            let ends = spawn.on_end.iter().filter(|end| self.dice.comes_up(end));
+            born.extend(
+                ends.filter_map(|end| child(end, self.hitbox, instance, dummy, by_contact)),
+            );
         }
     }
 }
+
+#[cfg(test)]
+#[path = "skill_sim_tests.rs"]
+mod tests;

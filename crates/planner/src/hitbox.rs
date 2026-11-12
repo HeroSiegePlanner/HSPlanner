@@ -80,6 +80,9 @@ pub(crate) struct HitObject {
     /// A passive's object: the skills whose cast modifiers it carries.
     #[serde(default)]
     pub from: Vec<String>,
+    /// Created only by this subskill, such as a proc's flare; the hit area diagram leaves it out.
+    #[serde(default)]
+    pub subskill: Option<String>,
 }
 
 /// What the object's own Step does with the size bonus.
@@ -448,7 +451,7 @@ pub(crate) fn preview(
     };
     // Allocated passives whose objects this skill creates carry its modifiers (InheritModifiers).
     let mut objects: Vec<&'static HitObject> = hitbox
-        .map(|h| h.objects.iter().collect())
+        .map(|h| h.objects.iter().filter(|o| o.subskill.is_none()).collect())
         .unwrap_or_default();
     let mut companions = Vec::new();
     for passive in data::get_skills_by_class(class) {
@@ -682,6 +685,7 @@ mod tests {
             spins: false,
             explosion: false,
             from: Vec::new(),
+            subskill: None,
         };
         let add = object(Growth::Add, 1., None, None);
         assert_eq!(object_scale(&add, 0., 0.5, 0.), [1.5, 1.5]);
