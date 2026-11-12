@@ -80,3 +80,4 @@
 - Shredder Trap gains the right number of ticks from Skill Duration: its 4-second life now stretches to 15 hits at +50% instead of 13.3, as in the game.
 - Bone Barrage hits 19 times per cast instead of 8.6, and once more per extra bone: as in the game, the bones fly at -12, -6, then 0 and +6 degrees, and their 38 px tall mask catches the dummy on every line but the first.
 - Plague of Rats hits 1.48 times per cast instead of 2, and 0.39 per extra rat instead of 0.6: the rats are smaller than assumed (24 px), so the side rats miss more often, as in the game.
+- Mana Orb's Amplified Magic speeds up the orb's pulses instead of adding Faster Cast Rate to the character, which did nothing for the orb.

@@ -2885,13 +2885,13 @@
       {
         "id": "amplified_magic",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 1, 2, 3, 5], "per": "use", "note": "pulse period pf = 1 s x(1-10 %/r): N = 6/6/7/8/10 vs 5 (r5: 0.5 s -> 10 pulses)"}], "confidence": "C", "note": "card table p8", "plannerFix": "planner models 10 %/r as faster_cast_rate; card: pulse period 1 s x(1-0.1r) gives more pulses"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 1, 2, 3, 5], "per": "use", "note": "pulse period pf = 1 s x(1-10 %/r): N = 6/6/7/8/10 vs 5 (r5: 0.5 s -> 10 pulses)"}], "confidence": "C", "note": "card table p8"},
         "name": "Amplified Magic",
         "description": "Increases the tick frequency of mana orb.",
         "maxRank": 5,
         "effects": {
-          "base": {"faster_cast_rate": 0},
-          "perRank": {"faster_cast_rate": 10}
+          "base": {"aura_pulse_speed": 0},
+          "perRank": {"aura_pulse_speed": 10}
         }
       },
       {

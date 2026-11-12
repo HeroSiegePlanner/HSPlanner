@@ -1512,6 +1512,28 @@ fn item_granted_proc_damage_adds_proc_dps() {
 }
 
 #[test]
+fn amplified_magic_speeds_mana_orb_pulses_not_cast_speed() {
+    let base = perf_with_stats("white_mage", "mana_orb", 10, &[], &[], 1.0);
+    let amplified = perf_with_stats(
+        "white_mage",
+        "mana_orb",
+        10,
+        &[("amplified_magic", 5)],
+        &[],
+        1.0,
+    );
+    let fcr = |p: &BuildPerformance| p.stats.get("faster_cast_rate").copied();
+    assert_eq!(
+        fcr(&amplified),
+        fcr(&base),
+        "Amplified Magic is not cast speed"
+    );
+    // Pulse every 1 s × (1 - 50%): 10 pulses per orb instead of 5.
+    let hits = |p: &BuildPerformance| p.hits_per_cast.map(|h| h.1);
+    assert_eq!(hits(&amplified), hits(&base).map(|h| h * 2.0));
+}
+
+#[test]
 fn orb_of_frost_rate_follows_cooldown_and_skill_haste() {
     let base = perf_with_stats("jotunn", "orb_of_frost", 10, &[], &[], 1.0);
     let with_fcr = perf_with_stats(
