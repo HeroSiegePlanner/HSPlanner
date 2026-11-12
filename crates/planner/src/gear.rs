@@ -987,14 +987,9 @@ impl Render for GearView {
 }
 
 fn roll_slider_state((lo, hi): (f64, f64), value: f64) -> SliderState {
-    // Each bound clamps against the other at once (default 0..100), so an
-    // all-negative range needs `min` first and any other range `max` first.
-    let state = if hi < 0. {
-        SliderState::new().min(lo as f32).max(hi as f32)
-    } else {
-        SliderState::new().max(hi as f32).min(lo as f32)
-    };
-    state
+    SliderState::new()
+        .min(lo as f32)
+        .max(hi as f32)
         .step(if lo.fract() == 0. && hi.fract() == 0. {
             1.
         } else {
@@ -1068,13 +1063,9 @@ fn selector_accepts_skill(
     skill: &hsplanner_engine::calc::types::SkillSpec,
 ) -> bool {
     match picker {
-        Picker::RandomSkill => {
-            base.and_then(|b| b.random_skill_pool.as_ref())
-                .is_some_and(|pool| {
-                    pool.class_id == skill.class_id
-                        && skill.tree.as_deref() == Some(pool.tree.as_str())
-                })
-        }
+        Picker::RandomSkill => base
+            .and_then(|b| b.random_skill_pool.as_ref())
+            .is_some_and(|pool| pool.accepts(skill, class_id)),
         Picker::Subskill => {
             skill
                 .subskills
@@ -1310,21 +1301,21 @@ mod control_tests {
         let base = data::data()
             .items
             .values()
-            .find(|base| base.random_skill_pool.is_some())
+            .find(|base| {
+                base.random_skill_pool
+                    .as_ref()
+                    .is_some_and(|pool| pool.class_id.is_some())
+            })
             .unwrap();
         let pool = base.random_skill_pool.as_ref().unwrap();
-        let selected = data::get_skills_by_class(&pool.class_id)
+        let selected = data::get_skills_by_class(pool.class_id.as_deref().unwrap())
             .iter()
             .filter(|skill| {
                 selector_accepts_skill(Picker::RandomSkill, Some(base), Some("stormweaver"), skill)
             })
             .collect::<Vec<_>>();
         assert!(!selected.is_empty());
-        assert!(
-            selected
-                .iter()
-                .all(|skill| skill.tree.as_deref() == Some(pool.tree.as_str()))
-        );
+        assert!(selected.iter().all(|skill| skill.tree == pool.tree));
         for skill in data::data().skills_by_class.values().flatten() {
             assert_eq!(
                 selector_accepts_skill(Picker::Subskill, None, None, skill),

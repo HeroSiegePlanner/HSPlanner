@@ -4,7 +4,7 @@ use crate::{
         editor::rarity_label,
         presentation::{augment_icon, item_icon, socketable_icon},
     },
-    skill_details::{stat_name, units},
+    skill_details::{is_percent, stat_name, units},
 };
 use gpui_kit::{prelude::*, *};
 use hsplanner_engine::calc::{
@@ -271,14 +271,6 @@ fn plain(value: f64) -> String {
     } else {
         format!("{rounded}")
     }
-}
-
-fn is_percent(key: &str) -> bool {
-    data::game_config()
-        .stats
-        .iter()
-        .find(|s| s.key == key)
-        .is_some_and(|s| s.format.as_deref() == Some("percent"))
 }
 
 // `formatValue`: "+12%", "+[3-5]" for ranges; an empty key means no suffix.
@@ -1391,8 +1383,7 @@ fn granted_skill_entries(
         let mut lines = Vec::new();
         if let Some(converts) = &skill.passive_converts {
             for convert in &converts.per_rank {
-                let pct =
-                    |rank: f64| ((convert.base_pct + convert.pct * rank) * 100.).round() / 100.;
+                let pct = |rank: f64| (convert.share(rank) * 10_000.).round() / 100.;
                 let (a, b) = (pct(rank_min), pct(rank_max));
                 let pct_text = if a == b {
                     format!("{}%", num(a))
@@ -2773,6 +2764,11 @@ mod tests {
         );
         assert_eq!(range_token(1., 3.), "[1-3]");
         assert_eq!(range_token(2., 2.), "2");
+    }
+
+    #[::core::prelude::v1::test]
+    fn total_multipliers_read_as_percent() {
+        assert_eq!(format_ranged((2., 4.), "faster_cast_rate_more"), "+[2-4]%");
     }
 
     #[::core::prelude::v1::test]

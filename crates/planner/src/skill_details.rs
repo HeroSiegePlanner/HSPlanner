@@ -72,11 +72,8 @@ pub(crate) fn stat_name(key: &str) -> String {
     key.split('_').map(capitalize).collect::<Vec<_>>().join(" ")
 }
 
-fn is_percent(key: &str) -> bool {
-    data::game_config()
-        .stats
-        .iter()
-        .find(|s| s.key == key)
+pub(crate) fn is_percent(key: &str) -> bool {
+    hsplanner_engine::calc::stats::stat_def(key)
         .is_some_and(|s| s.format.as_deref() == Some("percent"))
 }
 

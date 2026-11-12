@@ -934,6 +934,37 @@ fn granted_skill_ranks_from_input_apply_passive_stats() {
 }
 
 #[test]
+fn es_energy_raises_energy_while_its_buff_is_on() {
+    let allocated = HashMap::from([("energy".to_string(), 100)]);
+    let relic = EquippedItem {
+        base_id: "relic_relic_es_energy".into(),
+        ..Default::default()
+    };
+    let inventory: Inventory = HashMap::from([("relic_1".to_string(), relic)]);
+    let (flags, ranks) = (HashMap::new(), HashMap::new());
+    let (tree, sockets) = (HashSet::new(), HashMap::new());
+    let energy = |conditions: &HashMap<String, bool>| {
+        let input = empty_input(
+            &allocated,
+            &inventory,
+            &ranks,
+            &flags,
+            &[],
+            &tree,
+            &sockets,
+            conditions,
+            &ranks,
+            &flags,
+        );
+        compute_build_stats(&input).attributes["energy"]
+    };
+    let off = energy(&HashMap::new());
+    let on = energy(&HashMap::from([("jonnen_valinta_buff".to_string(), true)]));
+    // Jonnen Valinta ranks 1-10: 4% increased energy per rank above the first.
+    assert_eq!(on, (off.0, (off.1 * 1.36).floor()));
+}
+
+#[test]
 fn compute_build_stats_class_seeds_attributes() {
     let allocated = HashMap::new();
     let inventory = HashMap::new();

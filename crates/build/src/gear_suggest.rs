@@ -237,9 +237,10 @@ fn choices(snapshot: &BuildSnapshot, base: &ItemBase) -> Vec<(Choice, Vec<String
         out.push((Choice::Element, ELEMENTS.map(String::from).to_vec()));
     }
     if let Some(pool) = &base.random_skill_pool {
-        let skills = data::get_skills_by_class(&pool.class_id)
+        let class_id = pool.class_id.as_deref().or(snapshot.class_id.as_deref());
+        let skills = data::get_skills_by_class(class_id.unwrap_or_default())
             .iter()
-            .filter(|skill| skill.tree.as_deref() == Some(pool.tree.as_str()))
+            .filter(|skill| pool.accepts(skill, class_id))
             .map(|skill| skill.id.clone())
             .collect();
         out.push((Choice::RandomSkill, skills));

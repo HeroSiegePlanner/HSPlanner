@@ -1512,6 +1512,28 @@ fn item_granted_proc_damage_adds_proc_dps() {
 }
 
 #[test]
+fn amplified_magic_speeds_mana_orb_pulses_not_cast_speed() {
+    let base = perf_with_stats("white_mage", "mana_orb", 10, &[], &[], 1.0);
+    let amplified = perf_with_stats(
+        "white_mage",
+        "mana_orb",
+        10,
+        &[("amplified_magic", 5)],
+        &[],
+        1.0,
+    );
+    let fcr = |p: &BuildPerformance| p.stats.get("faster_cast_rate").copied();
+    assert_eq!(
+        fcr(&amplified),
+        fcr(&base),
+        "Amplified Magic is not cast speed"
+    );
+    // Pulse every 1 s × (1 - 50%): 10 pulses per orb instead of 5.
+    let hits = |p: &BuildPerformance| p.hits_per_cast.map(|h| h.1);
+    assert_eq!(hits(&amplified), hits(&base).map(|h| h * 2.0));
+}
+
+#[test]
 fn orb_of_frost_rate_follows_cooldown_and_skill_haste() {
     let base = perf_with_stats("jotunn", "orb_of_frost", 10, &[], &[], 1.0);
     let with_fcr = perf_with_stats(
@@ -1572,12 +1594,12 @@ fn orb_of_frost_rate_follows_cooldown_and_skill_haste() {
     );
 }
 
-// Black Hole lives 4.5 s and re-arms every 0.4 s; the dummy hit model (dps_cards,
-// rule 20 tick_hits) gives 11 hits per cast, and DPS is hit × 11 × uses/s.
+// Black Hole lives 4.5 s plus a 20-frame fade that still hits and re-arms every 0.4 s;
+// the dummy hit model (rule 20 tick_hits) gives 12 hits per cast, DPS = hit × 12 × uses/s.
 #[test]
 fn hit_model_multiplies_dps_by_hits_per_cast() {
     let hole = perf("exo", "black_hole", 10, &[], &[]);
-    assert_eq!(hole.hits_per_cast, Some((11.0, 11.0)));
+    assert_eq!(hole.hits_per_cast, Some((12.0, 12.0)));
     let (Some(dps), Some(damage)) = (hole.avg_hit_dps_max, hole.damage.as_ref()) else {
         panic!("expected dps for black_hole");
     };
@@ -1589,8 +1611,8 @@ fn hit_model_multiplies_dps_by_hits_per_cast() {
         .value()
         .1;
     assert!(
-        (dps / damage.avg_max as f64 - 11.0 * rate).abs() < 1e-9,
-        "11 hits per cast at {rate} casts/s, got x{}",
+        (dps / damage.avg_max as f64 - 12.0 * rate).abs() < 1e-9,
+        "12 hits per cast at {rate} casts/s, got x{}",
         dps / damage.avg_max as f64
     );
 
@@ -1602,8 +1624,38 @@ fn hit_model_multiplies_dps_by_hits_per_cast() {
     );
 }
 
-// +50% Skill Duration stretches Black Hole from 4.5 s to 6.75 s: rule 20 gives
-// 17 map clears worth of hits instead of 11, and the dummy model scales with it.
+// The skill preview recasts Black Hole at the game use rate: Time Bender's 9% a rank shortens
+// the 6 s cooldown and Empowered Singularity drops it to the 0.5 s floor.
+#[test]
+fn black_hole_cooldown_nodes_quicken_its_use_rate() {
+    let rate = |subskills: &[(&str, u32)]| {
+        perf("exo", "black_hole", 10, subskills, &[])
+            .calculation()
+            .iter()
+            .find(|s| s.label() == "Game use rate")
+            .expect("game use rate step")
+            .value()
+            .1
+    };
+    let base = rate(&[]);
+    let bent = rate(&[("time_bender", 5)]);
+    let empowered = rate(&[("empowered_singularity", 1)]);
+    assert!((bent / base - 1. / 0.55).abs() < 0.05, "{base} -> {bent}");
+    assert!(empowered > bent, "{bent} -> {empowered}");
+}
+
+// Time != Space shortens Black Hole's 0.4 s tick by 15% a rank, down to 0.1 s; rule 20 over its
+// 290 deadly frames gives 14, 17, 20, 27 and 42 hits, as the preview's skill_sim does.
+#[test]
+fn time_space_ticks_follow_rule_20() {
+    let hits: Vec<_> = (1..=5)
+        .map(|rank| perf("exo", "black_hole", 10, &[("time_space", rank)], &[]).hits_per_cast)
+        .collect();
+    assert_eq!(hits, [14., 17., 20., 27., 42.].map(|h| Some((h, h))));
+}
+
+// +50% Skill Duration stretches Black Hole from 4.5 s to 6.75 s (the fade stays 20
+// frames): rule 20 gives 17 hits instead of 12, and the dummy model scales with it.
 #[test]
 fn skill_duration_buys_extra_ticks() {
     let base = perf("exo", "black_hole", 10, &[], &[]);
@@ -1620,8 +1672,8 @@ fn skill_duration_buys_extra_ticks() {
         panic!("expected dps for black_hole");
     };
     assert!(
-        (long_dps / base_dps - 17.0 / 11.0).abs() < 1e-9,
-        "17 hits over 11, got x{}",
+        (long_dps / base_dps - 17.0 / 12.0).abs() < 1e-9,
+        "17 hits over 12, got x{}",
         long_dps / base_dps
     );
 }

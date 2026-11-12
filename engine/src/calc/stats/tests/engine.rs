@@ -1346,6 +1346,26 @@ fn radiant_power_converts_mana_with_base_pct() {
 }
 
 #[test]
+fn power_of_the_ancients_scales_cold_skill_damage_with_mana() {
+    // StatColdSkillDamage: += mana / p2 × p1. An item rank r reads class rank
+    // r - 1, so p1 = 0.6 + 0.2r and p2 = 90 + 5r.
+    let mut ranks: HashMap<String, Ranged> = HashMap::new();
+    ranks.insert(normalize_skill_name("Power of the Ancients"), (20.0, 30.0));
+    let stats = HashMap::from([("mana".to_string(), (10_000.0, 10_000.0))]);
+    let mut sources: SourceMap = HashMap::new();
+    apply_item_granted_conversions(&ranks, &stats, &HashMap::new(), &mut sources);
+    let got = sum_contributions(sources.get("cold_skill_damage").unwrap());
+    assert!(
+        (got.0 - 10_000.0 * 4.6 / 190.0).abs() < 1e-9,
+        "rank 20: {got:?}"
+    );
+    assert!(
+        (got.1 - 10_000.0 * 6.6 / 240.0).abs() < 1e-9,
+        "rank 30: {got:?}"
+    );
+}
+
+#[test]
 fn absolute_zero_grants_cold_break_from_rank_one() {
     // Tooltip: 0% [+2% per level] Cold Break at rank 1 → 2 × (rank - 1).
     let inv: Inventory = HashMap::new();

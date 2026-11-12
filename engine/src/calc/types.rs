@@ -226,8 +226,30 @@ pub struct ItemBase {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RandomSkillPool {
-    pub class_id: String,
-    pub tree: String,
+    #[serde(default)]
+    pub class_id: Option<String>,
+    #[serde(default)]
+    pub tree: Option<String>,
+    #[serde(default)]
+    pub tag: Option<String>,
+}
+
+impl RandomSkillPool {
+    /// A pool without a class draws from the build's class.
+    pub fn accepts(&self, skill: &SkillSpec, build_class: Option<&str>) -> bool {
+        self.class_id
+            .as_deref()
+            .or(build_class)
+            .is_none_or(|id| id == skill.class_id)
+            && self
+                .tree
+                .as_deref()
+                .is_none_or(|tree| skill.tree.as_deref() == Some(tree))
+            && self
+                .tag
+                .as_ref()
+                .is_none_or(|tag| skill.tags.as_ref().is_some_and(|tags| tags.contains(tag)))
+    }
 }
 
 // ---------- item set ----------
@@ -388,6 +410,19 @@ pub struct PassiveConvert {
     /// skill only grants Y on top, which is what "a portion of X" mods do.
     #[serde(default)]
     pub replaces: bool,
+    /// "per N points of X": N = per + per_step * rank replaces the 100 the pct divides by.
+    #[serde(default)]
+    pub per: Option<f64>,
+    #[serde(default)]
+    pub per_step: f64,
+}
+
+impl PassiveConvert {
+    /// Fraction of `from` added to `to` at `rank`.
+    pub fn share(&self, rank: f64) -> f64 {
+        let per = self.per.map_or(100.0, |per| per + self.per_step * rank);
+        (self.base_pct + self.pct * rank) / per
+    }
 }
 
 #[derive(Debug, Clone, Deserialize, Default)]
@@ -667,10 +702,28 @@ pub struct DummyHitsSpec {
     pub base_projectiles: Option<u32>,
     #[serde(default)]
     pub per_extra_projectile: f64,
+    /// Hits at the base projectile count and at each one more, where a fan lands them unevenly;
+    /// `per_extra_projectile` carries on past the last.
+    #[serde(default)]
+    pub by_projectiles: Option<Vec<f64>>,
     #[serde(default)]
     pub confidence: Option<String>,
     #[serde(default)]
     pub note: Option<String>,
+}
+
+impl DummyHitsSpec {
+    /// Hits per use with `extra` projectiles past the base count; a fractional count takes the
+    /// expectation between its neighbours.
+    pub fn hits_with(&self, extra: f64) -> f64 {
+        let Some(table) = self.by_projectiles.as_deref().filter(|t| !t.is_empty()) else {
+            return self.base + self.per_extra_projectile * extra;
+        };
+        let at = extra.clamp(0.0, (table.len() - 1) as f64);
+        let i = at.floor() as usize;
+        let next = table.get(i + 1).copied().unwrap_or(table[i]);
+        table[i] + (next - table[i]) * (at - i as f64) + self.per_extra_projectile * (extra - at)
+    }
 }
 
 /// A use whose repeat period is set by a leap, charge or dash: the next use
@@ -700,6 +753,9 @@ pub struct HitModelSpec {
     pub tick_frequency: Option<f64>,
     #[serde(default)]
     pub lifetime: Option<f64>,
+    /// Frames it keeps hitting after `lifetime` while it fades; Skill Duration does not stretch them.
+    #[serde(default)]
+    pub fade_frames: u32,
 }
 
 #[derive(Debug, Clone, Deserialize, Default)]
@@ -824,6 +880,11 @@ impl SubskillNodeSpec {
                 .any(|e| matches!(e.kind.as_str(), "set_hits" | "hits_mult" | "extra_hits"))
         })
     }
+
+    /// The game keeps this node's damage to what its dummy effects count, or never reads it.
+    pub fn owns_damage(&self) -> bool {
+        self.dummy.as_ref().is_some_and(|d| d.own_damage)
+    }
 }
 
 /// Per-subskill dummy effects from the dps_cards analysis
@@ -833,6 +894,10 @@ impl SubskillNodeSpec {
 pub struct SubskillDummySpec {
     #[serde(default)]
     pub effects: Vec<SubskillDummyEffect>,
+    /// The node's `<element>_skill_damage` and `of_total_damage` stay out of the skill's pools:
+    /// the game gives them only to the node's own objects (its effects count them) or nowhere.
+    #[serde(default)]
+    pub own_damage: bool,
     #[serde(default)]
     pub confidence: Option<String>,
     #[serde(default)]
@@ -856,9 +921,31 @@ pub struct SubskillDummyEffect {
     /// `extra_hits` that already count this subskill's extra projectiles.
     #[serde(default)]
     pub replaces_projectile_hits: bool,
-    /// Applies only while this sibling subskill (planner id) is learned.
+    /// A proc (`extra_hits` per hit, or `hits_mult` on every hit) whose objects roll the skill's
+    /// other chain procs: InheritModifiers leaves out only the roll that made them.
+    #[serde(default)]
+    pub chain: bool,
+    /// A chain proc only the skill's own objects roll, never what another proc makes.
+    #[serde(default)]
+    pub base_only: bool,
+    /// The per-hit chain procs this effect's objects roll (a per-use source, or a chain proc whose
+    /// objects pass on fewer than the rest); empty: none.
+    #[serde(default)]
+    pub rolls: Option<Vec<String>>,
+    /// A chain proc whose damage the cast fixes, whatever hit rolled it.
+    #[serde(default)]
+    pub absolute: bool,
+    /// Hits a chain proc's objects roll on per rolling hit, when not its damage-weighted hits.
+    #[serde(default)]
+    pub count_by_rank: Option<Vec<f64>>,
+    /// Applies only while this sibling subskill (planner id) is learned, `a=n` at rank n; `a|b`
+    /// takes either, `!a|b` only while neither holds, and `&` joins clauses that must all hold.
     #[serde(default)]
     pub requires: Option<String>,
+    /// `use_frames` only: whether the floor(24/S) + 1 trigger frames come first; the skill's
+    /// own `usePeriod.trigger` when absent.
+    #[serde(default)]
+    pub trigger: Option<bool>,
     #[serde(default)]
     pub note: Option<String>,
 }
@@ -871,6 +958,12 @@ impl SubskillDummyEffect {
             return table[i];
         }
         self.base.unwrap_or(0.0) + self.per_rank.unwrap_or(0.0) * rank as f64
+    }
+
+    /// `countByRank` at `rank`, when the effect sets it.
+    pub fn count_at(&self, rank: u32) -> Option<f64> {
+        let table = self.count_by_rank.as_ref().filter(|t| !t.is_empty())?;
+        Some(table[(rank.max(1) as usize - 1).min(table.len() - 1)])
     }
 }
 
@@ -1237,8 +1330,8 @@ mod item_presentation_metadata_tests {
             .iter()
             .find_map(|base| base.random_skill_pool.as_ref())
             .unwrap();
-        assert_eq!(pool.class_id, "marksman");
-        assert_eq!(pool.tree, "Engineer");
+        assert_eq!(pool.class_id.as_deref(), Some("marksman"));
+        assert_eq!(pool.tree.as_deref(), Some("Engineer"));
         let weapons: Vec<ItemBase> =
             serde_json::from_str(include_str!("../../../data/items/weapons.json")).unwrap();
         let proc = &weapons

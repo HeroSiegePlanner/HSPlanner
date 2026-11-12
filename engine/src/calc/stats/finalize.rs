@@ -336,8 +336,8 @@ pub fn apply_item_granted_conversions(
                 .copied()
                 .unwrap_or((0.0, 0.0));
             let effective = combine_additive_and_more(from, from_more);
-            let share_min = (conv.base_pct + conv.pct * rank_min) / 100.0;
-            let share_max = (conv.base_pct + conv.pct * rank_max) / 100.0;
+            let share_min = conv.share(rank_min);
+            let share_max = conv.share(rank_max);
             let add_min = share_min * effective.0;
             let add_max = share_max * effective.1;
             if add_min == 0.0 && add_max == 0.0 {

@@ -1,0 +1,1117 @@
+{
+  "source": "Hero_Siege.exe build 2026-08-25, read with hsextract (emulation and annotated disassembly). px, frames at 60 FPS, degrees; rank 20 without sub-skills or build bonuses. Geometry joins data/skill-hitboxes.json by object name; dummy is the distance from the player at which the engine's dummyHits count holds.",
+  "skills": {
+    "fireball": {
+      "dummy": 160,
+      "fan": 12,
+      "skew": 6,
+      "spawn": [
+        {
+          "object": "Pyromancer_Fire_Ball_obj",
+          "offset": 16,
+          "speed": 10,
+          "life": 120,
+          "activeFrom": 1,
+          "scale": [0.25, 1],
+          "grow": {
+            "step": 0.05,
+            "max": 1,
+            "xOnly": true
+          },
+          "ability": true,
+          "endsOnContact": true,
+          "onEnd": [
+            {
+              "object": "Explosion_Item_obj",
+              "atEnemy": true,
+              "activeFrom": 4,
+              "life": 18
+            }
+          ]
+        }
+      ],
+      "src": "TalentsPyromancer#29 L0x205-L0x271 (L0x25f, Sep 16 exe 0x14625772f: the volley is centred on its extra balls only, so it turns 6 deg off-centre); Pyromancer_Fire_Ball_obj Create_0, Step_0, Alarm_2, Destroy_0; Explosion_Item_obj Create_0"
+    },
+    "breath_of_fire": {
+      "dummy": 160,
+      "fan": 15,
+      "spawn": [
+        {
+          "object": "Pyromancer_Breath_of_Fire_obj",
+          "offset": 16,
+          "life": 12,
+          "fade": 20,
+          "deadly": 15,
+          "scale": [0.25, 1.25],
+          "grow": {
+            "step": 0.1,
+            "max": 1.25,
+            "xOnly": true
+          }
+        }
+      ],
+      "src": "TalentsPyromancer#30 L0x2e6-L0x301; Pyromancer_Breath_of_Fire_obj Create_0, Step_0, Alarm_10 (Sep 16 exe: Step_0 grows image_xscale only up to growthSizeMax, 1.25 in Create_0 and case 30 L0x2e4)"
+    },
+    "meteor": {
+      "dummy": 240,
+      "fan": 12,
+      "spawn": [
+        {
+          "object": "Pyromancer_Meteor_obj",
+          "offset": 10,
+          "speed": 4,
+          "fall": {
+            "height": 12,
+            "zSpeed": 4,
+            "gravity": 0.15
+          },
+          "bounce": {
+            "zSpeed": 3,
+            "speedMult": 0.75,
+            "gravity": 0.25
+          },
+          "onEnd": [
+            {
+              "object": "Explosion_Item_obj",
+              "activeFrom": 4,
+              "life": 18
+            }
+          ]
+        }
+      ],
+      "src": "TalentsPyromancer#31 L0x31f-L0x324; Pyromancer_Meteor_obj Create_0, Step_0, Destroy_0"
+    },
+    "comet": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Pyromancer_Comet_obj",
+          "target": true,
+          "ability": true,
+          "fall": {
+            "height": 320,
+            "heightStep": 80,
+            "gravity": 0.25
+          },
+          "onEnd": [
+            {
+              "object": "Explosion_Item_obj",
+              "activeFrom": 4,
+              "life": 18
+            }
+          ]
+        }
+      ],
+      "src": "TalentsPyromancer#34 L0x402-L0x432; Pyromancer_Comet_obj Destroy_0"
+    },
+    "fire_nova": {
+      "dummy": 100,
+      "spawn": [
+        {
+          "object": "Pyromancer_Firenova_obj",
+          "life": 45,
+          "deadly": 15,
+          "scale": [0.1, 0.1],
+          "grow": {
+            "lerp": 0.075,
+            "max": 1
+          }
+        }
+      ],
+      "src": "TalentsPyromancer#35 L0x4a9-L0x4ad; Pyromancer_Firenova_obj Create_0, Step_0"
+    },
+    "volcano": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Pyromancer_Volcano_obj",
+          "target": true,
+          "tick": 30,
+          "life": 240,
+          "fade": 20,
+          "shrink": 0.05,
+          "scale": [0.1, 0.1],
+          "grow": {
+            "step": 0.05,
+            "max": 1
+          }
+        }
+      ],
+      "src": "TalentsPyromancer#36 L0x4ff-L0x54f; Pyromancer_Volcano_obj Create_0 (m_fadeIn, m_fadeDestroy), Alarm_0"
+    },
+    "storm_cloud": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Stormweaver_Storm_Cloud_obj",
+          "target": true,
+          "tick": 30,
+          "life": 480,
+          "fade": 20
+        }
+      ],
+      "src": "gml_Script_TalentsStormWeaver 0x1d5-0x23f; Stormweaver_Storm_Cloud_obj; Player_Damage_Parent_obj Alarm_11"
+    },
+    "sand_vortex": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Sand_Vortex_obj",
+          "target": true,
+          "tick": 19.8,
+          "life": 240,
+          "fade": 20,
+          "shrink": 0.025,
+          "scale": [0.1, 0.1],
+          "grow": {
+            "step": 0.05,
+            "max": 1
+          }
+        }
+      ],
+      "src": "TalentsNomad#82 L0x2f3-L0x369; Sand_Vortex_obj Create_0, Step_0, Alarm_10"
+    },
+    "black_hole": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Exo_Black_Hole_obj",
+          "target": true,
+          "tick": 24,
+          "life": 270,
+          "fade": 20,
+          "shrink": 0.025,
+          "scale": [0.1, 0.1],
+          "grow": {
+            "step": 0.1,
+            "max": 0.8
+          }
+        }
+      ],
+      "src": "TalentsExo#361 L0x47b-L0x4d3; Exo_Black_Hole_obj Create_0, Step_0, Alarm_10"
+    },
+    "soul_leech": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Demon_Slayer_Soul_Leech_obj",
+          "target": true,
+          "scale": [1.5, 1.5],
+          "life": 7,
+          "activeFrom": 2
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "impale": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Demonspawn_Impale_Hitbox_obj",
+          "target": true,
+          "scale": [3, 3],
+          "life": 16,
+          "activeFrom": 2
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "spinal_tap": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Demonspawn_Spinal_Tap_obj",
+          "target": true,
+          "scale": [5, 5],
+          "life": 8,
+          "activeFrom": 2
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "scorching_whip": {
+      "dummy": 160,
+      "fan": 15,
+      "spawn": [
+        {
+          "object": "Exo_Scorching_Whip_obj",
+          "offset": 10,
+          "life": 37,
+          "activeFrom": 3,
+          "scale": [2, 1]
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner; xScale 2 / yScale 1 from params"
+    },
+    "supernova": {
+      "dummy": 116,
+      "spawn": [
+        {
+          "object": "Exo_Supernova_obj",
+          "scale": [0.1, 0.1],
+          "grow": {
+            "lerp": 0.15,
+            "max": 1.5
+          },
+          "life": 40,
+          "fade": 40,
+          "activeFrom": 2
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "tsunami": {
+      "dummy": 160,
+      "fan": 18,
+      "spawn": [
+        {
+          "object": "Exo_Tsunami_obj",
+          "offset": 16,
+          "speed": 4.5,
+          "accel": { "from": 0.1, "step": 0.1, "rate": 0.05 },
+          "scale": [0.75, 0.75],
+          "life": 93,
+          "activeFrom": 2
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner; accel from Exo_Tsunami_obj Create_0 (deltaSpeed 0.1) and Step_0 (+0.1 + deltaSpeed x 0.05 up to maxSpeed)"
+    },
+    "asteroid": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Exo_Asteroid_obj",
+          "target": true,
+          "fall": {
+            "height": 320,
+            "zSpeed": 0,
+            "gravity": 0.25
+          },
+          "ability": true,
+          "scale": [0.66, 0.66],
+          "life": 52,
+          "onEnd": [
+            {
+              "object": "Explosion_Item_obj",
+              "activeFrom": 4,
+              "life": 24,
+              "scale": [1.221, 1.221]
+            }
+          ]
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "lunar_orbit": {
+      "dummy": 72,
+      "random": true,
+      "spawn": [
+        {
+          "object": "Exo_Lunar_Orbit_obj",
+          "orbit": { "radius": 48, "speed": 3, "count": 1, "below": 6, "clears": true },
+          "life": 300,
+          "fade": 15,
+          "shrink": 0.05
+        }
+      ],
+      "src": "TalentsExo#358 L0x36c, L0x3e8-L0x44a (ring 1 of playerEffect[91]: 48 px, 3 deg a frame); Exo_Lunar_Orbit_obj Create_0, Step_0 L0x15-L0x33 and L0x43-L0x49, Alarm_10"
+    },
+    "solar_flare": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Exo_Solar_Flare_obj",
+          "ability": true,
+          "scale": [0, 0],
+          "life": 0,
+          "onEnd": [
+            {
+              "object": "Exo_Solar_Flare_obj",
+              "atPlayer": true,
+              "turn": -12,
+              "offset": 24,
+              "speed": 4.05,
+              "ability": true,
+              "life": 600,
+              "onEnd": [{ "object": "Explosion_Item_obj", "activeFrom": 4, "life": 21 }]
+            },
+            {
+              "object": "Exo_Solar_Flare_obj",
+              "atPlayer": true,
+              "turn": 0,
+              "offset": 24,
+              "speed": 4.3,
+              "ability": true,
+              "life": 600,
+              "onEnd": [{ "object": "Explosion_Item_obj", "activeFrom": 4, "life": 21 }]
+            },
+            {
+              "object": "Exo_Solar_Flare_obj",
+              "atPlayer": true,
+              "turn": 12,
+              "offset": 24,
+              "speed": 4.55,
+              "ability": true,
+              "life": 600,
+              "onEnd": [{ "object": "Explosion_Item_obj", "activeFrom": 4, "life": 21 }]
+            }
+          ]
+        }
+      ],
+      "src": "TalentsExo#346 L0xa5, L0x116-L0x12d (3 flares 24 px out, 12 deg apart about the aim, 1.35 x 3 + 0.25 i px a frame; the cast is an unseen flare, scale 0, that ends at once so each flare keeps its own turn and speed); Exo_Solar_Flare_obj Create_0, Alarm_0 (target within 480 px, so no destroyTimer: life 600 only caps a flight that ends on contact), Step_0 L0x10-L0x22 (LoadHomingStep, position_meeting, then Explosion_Item_obj with Exo_Hit_Impact_Fire_spr)"
+    },
+    "solar_dash": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Draw_Player_Buff_obj",
+          "ability": true,
+          "layout": [{ "frame": 0, "offset": [0, 6] }],
+          "speed": 13,
+          "accel": { "from": 10, "step": -0.025, "rate": 0.025 },
+          "life": 39,
+          "trail": {
+            "every": 0,
+            "gap": 48,
+            "spawn": {
+              "object": "Exo_Solar_Dash_Flame_obj",
+              "tick": 30,
+              "life": 180,
+              "fade": 14,
+              "shrink": 0.075
+            }
+          },
+          "onEnd": [
+            {
+              "object": "Pyromancer_Scorching_Aura_obj",
+              "turn": 90,
+              "offset": 6,
+              "scale": [1.15, 1.15],
+              "tick": 30,
+              "life": 6
+            }
+          ]
+        }
+      ],
+      "src": "TalentsExo#348 L0x144-L0x198 (12 px a frame, playerEffect[12] = 0.75 of it, [13] = it, [154] = the aim, Charge_Controller_obj); skillsCharge L0x6d-L0x73 (each move is [12] + 1, then [12] grows 2.5 % up to [13]), L0xc4-L0x12d (348 passes through enemies; it stops only on Collision_Parent_obj, Enemy_Only_Passage_obj or inputState 4, [22] stays 0 so no distance or time limit), L0x29-L0x66 (with no distance, before each move it turns toward the cursor by at most 15 deg: the cursor held on the dummy, it passes it, loops once round it and the player cancels when it is back over it, 39 frames), L0x14-L0x1b and L0x154-L0x1f8 (an Exo_Solar_Dash_Flame_obj at (x, y + 6) once the player is 48 px past the last, tick projEffect[831] = max(0.5 s, 0.1 s)), stop case L0x4bc-L0x4c7 (Pyromancer_Scorching_Aura_obj at the player, 1.15 scale, alarm[10] at 0.1 s). The mover is the player's collision centre (Mask_Player_spr origin 12, 6), drawn as Draw_Player_Buff_obj's Exo_Solar_Dash_spr 8 px above the player"
+    },
+    "time_deceleration": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Illusionist_Time_Deceleration_obj",
+          "scale": [5, 5],
+          "life": 4
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "breath_of_ice": {
+      "dummy": 160,
+      "fan": 20,
+      "spawn": [
+        {
+          "object": "Jotunn_Breath_of_Ice_obj",
+          "offset": 8,
+          "life": 37,
+          "fade": 7,
+          "activeFrom": 2,
+          "tick": 30,
+          "scale": [0.75, 1],
+          "grow": {
+            "step": 0.035,
+            "xOnly": true
+          }
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner; xScaleStart 0.75 + 0.035/frame (yScaleStep 0.01 left out)"
+    },
+    "avalanche": {
+      "dummy": 125,
+      "spawn": [
+        {
+          "object": "Jotunn_Avalanche_obj",
+          "scale": [1.35, 1.35],
+          "life": 27,
+          "activeFrom": 2
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "landmine": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Marksman_Landmine_obj",
+          "target": true,
+          "ability": true,
+          "life": 76,
+          "onEnd": [
+            {
+              "object": "Explosion_Item_obj",
+              "activeFrom": 4,
+              "life": 24,
+              "scale": [2, 2]
+            }
+          ]
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner; detected at the first check (the dummy is within 32 px) and blown up after the 75-frame fuse"
+    },
+    "bone_spear": {
+      "dummy": 160,
+      "fan": 8,
+      "spawn": [
+        {
+          "object": "Necromancer_Bone_Spear_obj",
+          "offset": 8,
+          "speed": 12,
+          "scale": [1, 1],
+          "life": 151
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "holy_bolt": {
+      "dummy": 160,
+      "fan": 8,
+      "spawn": [
+        {
+          "object": "Paladin_Holy_Bolt_obj",
+          "offset": 8,
+          "speed": 4,
+          "scale": [0.1, 0.1],
+          "grow": {
+            "step": 0.1,
+            "max": 1
+          },
+          "life": 75,
+          "fade": 20,
+          "activeFrom": 2
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "holy_nova": {
+      "dummy": 64,
+      "spawn": [
+        {
+          "object": "Paladin_Holynova_obj",
+          "scale": [0.1, 0.1],
+          "grow": {
+            "lerp": 0.075,
+            "max": 1.0
+          },
+          "life": 40,
+          "activeFrom": 2,
+          "deadly": 15
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "grenade_jump": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Pirate_Grenado_obj",
+          "speed": 1,
+          "fall": {
+            "height": 20,
+            "zSpeed": 2,
+            "gravity": 1.0
+          },
+          "ability": true,
+          "life": 8,
+          "onEnd": [
+            {
+              "object": "Explosion_Item_obj",
+              "activeFrom": 4,
+              "life": 24,
+              "scale": [1.5, 1.5]
+            }
+          ]
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "toxic_flask": {
+      "dummy": 160,
+      "fan": 12,
+      "spawn": [
+        {
+          "object": "Plague_Doctor_Toxic_Flask_obj",
+          "offset": 8,
+          "speed": 4.665,
+          "fall": {
+            "height": 10,
+            "zSpeed": 4,
+            "gravity": 0.25
+          },
+          "ability": true,
+          "onEnd": [
+            {
+              "object": "Explosion_Item_obj",
+              "activeFrom": 4,
+              "life": 38,
+              "scale": [1.5, 1.5]
+            }
+          ]
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "explosive_kunai": {
+      "dummy": 160,
+      "fan": 8,
+      "spawn": [
+        {
+          "object": "Samurai_Explosive_Kunai_obj",
+          "offset": 8,
+          "speed": 10,
+          "fall": {
+            "height": 12,
+            "zSpeed": 2,
+            "gravity": 0.15
+          },
+          "endsOnContact": true,
+          "life": 33,
+          "onEnd": [
+            {
+              "object": "Explosion_Item_obj",
+              "activeFrom": 4,
+              "life": 24,
+              "scale": [1.5, 1.5]
+            }
+          ]
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "empires_slash": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Samurai_Empire_Slash_obj",
+          "offset": 12,
+          "scale": [0.85, 0.85],
+          "life": 16,
+          "activeFrom": 2
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "earth_bind": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Shaman_Earth_Bind_obj",
+          "target": true,
+          "scale": [4, 4],
+          "life": 300,
+          "activeFrom": 2
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "tornado": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Shaman_Tornado_obj",
+          "offset": 10,
+          "speed": 4.75,
+          "life": 141
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "fissures": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Shaman_Fissures_obj",
+          "target": true,
+          "tick": 15,
+          "life": 147
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner; life 147 from the engine note (the agent gives 'about 12 + 10 * 15')"
+    },
+    "crushing_lance": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Shield_Lancer_Crushing_Lance_obj",
+          "target": true,
+          "fall": {
+            "height": 300,
+            "zSpeed": 0,
+            "gravity": 0.625
+          },
+          "ability": true,
+          "scale": [0.75, 0.75],
+          "onEnd": [
+            {
+              "object": "Shield_Lancer_Crushing_Lance_AOE_obj",
+              "activeFrom": 2,
+              "life": 35,
+              "scale": [0.75, 0.75]
+            }
+          ]
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "lance_thrust": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Shield_Lancer_Lance_Thrust_obj",
+          "life": 9,
+          "fade": 4,
+          "activeFrom": 2
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "lightning_surge": {
+      "dummy": 120,
+      "fan": 12,
+      "spawn": [
+        {
+          "object": "Stormweaver_Lightning_Surge_obj",
+          "speed": 4.5,
+          "life": 16,
+          "activeFrom": 2,
+          "offset": 8,
+          "scale": [0.2, 1.55]
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner; xScale 0.2 / yScale 1.55 kept from params (its thinning is not simulated), in-zone dummy at 120 px (it reaches 145.8 px)"
+    },
+    "apocalyptic_thunder": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Stormweaver_Apocalyptic_Thunder_obj",
+          "target": true,
+          "life": 28,
+          "activeFrom": 2,
+          "tick": 15
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "storm_bolt": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Stormweaver_Storm_Bolt_obj",
+          "speed": 8,
+          "endsOnContact": true,
+          "scale": [0.75, 0.75],
+          "activeFrom": 2,
+          "onEnd": [
+            {
+              "object": "Explosion_Item_obj",
+              "activeFrom": 4,
+              "life": 21,
+              "scale": [1.5, 1.5]
+            }
+          ]
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "odins_fury": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Viking_Odins_Fury_obj",
+          "scale": [2.0, 2.0],
+          "life": 31,
+          "deadly": 15
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "soul_spurn": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "White_Mage_Soul_Spurn_AOE_obj",
+          "target": true,
+          "scale": [3, 3],
+          "life": 60,
+          "activeFrom": 2
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "heavenly_fire": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "White_Mage_Heavenly_Fire_obj",
+          "target": true,
+          "scale": [0.1, 0.1],
+          "grow": {
+            "step": 0.05,
+            "max": 1
+          },
+          "life": 180,
+          "fade": 20,
+          "tick": 30
+        }
+      ],
+      "src": "docs/skill-motion (hsextract 2026-10-29), converted by the planner"
+    },
+    "armageddon": {
+      "dummy": 160,
+      "random": true,
+      "spawn": [
+        {
+          "object": "Pyromancer_Armageddon_obj",
+          "target": true,
+          "ability": true,
+          "fall": {
+            "height": 320,
+            "gravity": 0.225
+          },
+          "layout": [
+            {
+              "frame": 1,
+              "offset": [-108.757, -50.714]
+            },
+            {
+              "frame": 7,
+              "offset": [-48.214, 19.48]
+            },
+            {
+              "frame": 13,
+              "offset": [46.748, -240.499]
+            },
+            {
+              "frame": 19,
+              "offset": [38.136, -25.723]
+            },
+            {
+              "frame": 25,
+              "offset": [-9.063, 4.226]
+            },
+            {
+              "frame": 31,
+              "offset": [-238.302, -148.907]
+            },
+            {
+              "frame": 37,
+              "offset": [-11.722, -27.615]
+            },
+            {
+              "frame": 43,
+              "offset": [18.555, 265.352]
+            },
+            {
+              "frame": 49,
+              "offset": [-142.995, -115.795]
+            },
+            {
+              "frame": 55,
+              "offset": [51.725, -71.193]
+            },
+            {
+              "frame": 61,
+              "offset": [-43.626, -126.699]
+            },
+            {
+              "frame": 67,
+              "offset": [11.025, 6.889]
+            },
+            {
+              "frame": 73,
+              "offset": [-100.376, -87.256]
+            },
+            {
+              "frame": 79,
+              "offset": [10.348, -98.458]
+            },
+            {
+              "frame": 85,
+              "offset": [-133.992, -83.727]
+            },
+            {
+              "frame": 91,
+              "offset": [-316.123, 55.741]
+            },
+            {
+              "frame": 97,
+              "offset": [28.283, 33.706]
+            },
+            {
+              "frame": 103,
+              "offset": [164.484, 50.288]
+            },
+            {
+              "frame": 109,
+              "offset": [-37.78, 194.362]
+            },
+            {
+              "frame": 115,
+              "offset": [-2.216, -126.981]
+            },
+            {
+              "frame": 121,
+              "offset": [-59.153, 111.251]
+            },
+            {
+              "frame": 127,
+              "offset": [101.116, -101.116]
+            },
+            {
+              "frame": 133,
+              "offset": [-249.482, -127.117]
+            },
+            {
+              "frame": 139,
+              "offset": [-2.572, -1.545]
+            },
+            {
+              "frame": 145,
+              "offset": [293.0, 0.0]
+            },
+            {
+              "frame": 151,
+              "offset": [-27.61, 156.584]
+            },
+            {
+              "frame": 157,
+              "offset": [-84.86, 50.989]
+            },
+            {
+              "frame": 163,
+              "offset": [126.962, 174.748]
+            },
+            {
+              "frame": 169,
+              "offset": [-112.609, 94.49]
+            },
+            {
+              "frame": 175,
+              "offset": [32.149, -228.752]
+            },
+            {
+              "frame": 181,
+              "offset": [-108.712, -48.402]
+            },
+            {
+              "frame": 187,
+              "offset": [122.388, -49.448]
+            },
+            {
+              "frame": 193,
+              "offset": [37.741, -16.02]
+            },
+            {
+              "frame": 199,
+              "offset": [180.786, 151.698]
+            },
+            {
+              "frame": 205,
+              "offset": [-12.463, 142.456]
+            },
+            {
+              "frame": 211,
+              "offset": [238.771, 132.353]
+            },
+            {
+              "frame": 217,
+              "offset": [240.853, 8.411]
+            },
+            {
+              "frame": 223,
+              "offset": [48.237, -168.221]
+            },
+            {
+              "frame": 229,
+              "offset": [82.904, -55.919]
+            },
+            {
+              "frame": 235,
+              "offset": [-47.465, -205.592]
+            }
+          ],
+          "onEnd": [
+            {
+              "object": "Explosion_Item_obj",
+              "activeFrom": 4,
+              "life": 21,
+              "scale": [1, 1]
+            }
+          ]
+        }
+      ],
+      "src": "skill-motion-pyromancer sim (hsextract 2026-10-30): 40 meteors at P + lengthdir(irandom(340), irandom(360)) every 6 frames, one replayable layout (seed 4 of Python random.Random, randint(0, 340) then randint(0, 360) a meteor: 4 hits; the engine's 4.4243 is the mean over every spot); Pyromancer_Armageddon_obj Create_0, Step_0; Explosion_Item_obj r 32, life 21"
+    },
+    "hydra": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Pyromancer_Hydra_obj",
+          "target": true,
+          "ability": true,
+          "scale": [0.1, 0.1],
+          "grow": {
+            "step": 0.05,
+            "max": 1
+          },
+          "life": 70,
+          "fade": 20,
+          "shrink": 0.05
+        },
+        {
+          "object": "Pyromancer_Hydra_Fire_Ball_obj",
+          "frame": 54,
+          "target": true,
+          "aim": true,
+          "offset": 16,
+          "speed": 12,
+          "activeFrom": 1,
+          "scale": [0.3, 0.3],
+          "grow": {
+            "step": 0.05,
+            "max": 1,
+            "xOnly": true
+          },
+          "life": 180,
+          "ability": true,
+          "endsOnContact": true,
+          "onEnd": [
+            {
+              "object": "Explosion_Item_obj",
+              "atEnemy": true,
+              "activeFrom": 4,
+              "life": 18
+            }
+          ]
+        }
+      ],
+      "src": "skill-motion-pyromancer sim (hsextract 2026-10-30), timing from the Sep 16 Pyromancer_Hydra_obj Step_0: the hydra's first attack only (the engine counts hits per attack): it counts its 0.2 s shot cooldown down only once grown (18 frames), attacks from frame 31 and sends the fire ball 16 px toward the enemy on frame 54; the preview's hydra shrinks away after it (in game it lives 480 frames and attacks 5 times)"
+    },
+    "inferno_slash": {
+      "dummy": 120,
+      "spawn": [
+        {
+          "object": "Visual_Effect_obj",
+          "ability": true,
+          "life": 22
+        },
+        {
+          "object": "Projectile_Player_obj",
+          "frame": 1,
+          "speed": 5,
+          "activeFrom": 1,
+          "life": 25
+        }
+      ],
+      "src": "TalentsPyromancer#23 (Sep 16 exe) L0x11c-L0x126 (Visual_Effect_obj with Pyromancer_Inferno_Slash_spr at the player: 0.85 x 0.92, alpha 0.65, yy 12, additive), L0x190-L0x1a4 (projEffect slots, [197] = 1 + Infernal Reach), attackClasses L0x195-L0x1a5 (1 + [76] Projectile_Player_obj per salvo at the player, 0 px out for a melee weapon, alarm[11] = 2 + [120] s per later salvo); its Alarm_11 runs LoadProjectileSettings, whose collision list holds 197: LoadProjectileInfernoSlash makes it attackType 1 (so LoadProjectileMeleeSettings never runs), Pyromancer_Inferno_Slash_Projectile_spr as sprite and mask, deltaSpeed 5 x [197], image_index 0, image_speed 1 and destroyAnim (Other_7 ends it with its 8-frame, 20 fps animation): created inactive, it moves 24 times 5 px from 2 frames after the attack. In-zone dummy at 120 px, the wave's own flight (its mask reaches the dummy up to 165 px)"
+    },
+    "phoenix_flight": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Draw_Player_Buff_obj",
+          "ability": true,
+          "layout": [
+            {
+              "frame": 0,
+              "offset": [
+                0,
+                0
+              ]
+            }
+          ],
+          "speed": 15,
+          "accel": {
+            "from": 5,
+            "step": -0.025,
+            "rate": 0.025
+          },
+          "life": 22,
+          "trail": {
+            "every": 0,
+            "gap": 48,
+            "spawn": {
+              "object": "Visual_Effect_obj",
+              "ability": true,
+              "life": 20
+            }
+          },
+          "onEnd": [
+            {
+              "object": "Pyromancer_Firenova_obj",
+              "scale": [
+                0.1,
+                0.1
+              ],
+              "grow": {
+                "lerp": 0.075,
+                "max": 2.5
+              },
+              "life": 45,
+              "deadly": 15
+            }
+          ]
+        }
+      ],
+      "src": "TalentsPyromancer#22 (Sep 16 exe) L0x93-L0xf8 (playerEffect[5] charge, [20] = 22, [12] = 4, [13] = 14 (x (1 + Swift Flight)), [22] = 0 (180 with Burning Wings), [154] = the cursor's direction, Charge_Controller_obj with damage[3] = floor(D x (1 + LSSD)) and projEffect[71] = 1 + Burning Screech); skillsCharge L0x29-L0x66 (no distance: steered at most 15 deg a frame toward the cursor, held on the dummy; a node that flies it through enemies makes it loop once round the cursor before the player cancels back over it), L0x6d-L0x73 (each move is [12] + 1, then [12] grows 2.5 % up to [13]), L0xc4-L0xde and L0x12d (22 stops before the move whose probe, ceil(move) ahead, would put the player's 12 px circle on an enemy with jump < 24, unless Searing Touch, Mental Heat, Collateral Burning, Seed of Fulmination or Wings of the Phoenix are learned: 21 moves, 129.7 px, 22 frames), L0x154-L0x22d (every 48 px a Visual_Effect_obj with Pyromancer_Phoenix_Flight_spr at the player, 1.25 big, turned with the flight, additive; it ends with its 6-frame, 18 fps animation), end block L0x2a8-L0x2c9 (one Pyromancer_Firenova_obj at the player with the controller's damage[3], maxScale (1 + [71]) x 1.25 = 2.5; it inherits only the controller's effects, so no size bonus reaches it); Firenova Create_0, Alarm_0 and Step_0 (0.1 big, closing 0.075 of the gap a frame, deadly 15 frames, gone with its animation)"
+    },
+    "blazing_trail": {
+      "dummy": 160,
+      "spawn": [
+        {
+          "object": "Pyromancer_Blazing_Trail_Controller_obj",
+          "ability": true,
+          "life": 301,
+          "trail": {
+            "every": 0,
+            "gap": 42,
+            "spawn": {
+              "object": "Pyromancer_Blazing_Trail_obj",
+              "scale": [
+                0.05,
+                0.05
+              ],
+              "grow": {
+                "step": 0.075,
+                "max": 1
+              },
+              "life": 150,
+              "fade": 20,
+              "tick": 30
+            }
+          }
+        }
+      ],
+      "src": "TalentsPyromancer#20 (Sep 16 exe) L0x1e-L0x82: skillTimer = GetTalentInfo(20, 25) = 5 s (2 s with Circle of Fire, L0x50) x (1 + Timed Fire), skillScale 1 + Expanded Flames, skillTickRate 0.5 s x (1 - Fueled Flames), BuffAdd 307 (Flaming Steps) for 5 s, then one Pyromancer_Blazing_Trail_Controller_obj at the player (5 x rank with Circle of Fire, 360/n deg apart from 0 deg at deltaSpeed 5, L0x68-L0x7f). Controller Create_0 puts xSpot/ySpot on its own spot and deltaSpeed 0; Step_0 makes a Pyromancer_Blazing_Trail_obj (Trail_of_Comets_obj with [315], Blazing_Detonation_Field_obj with [316]) at (x, y + 6) only once point_distance(x, y + 6, xSpot, ySpot) > floor(42 x skillScale), x and y being the host's unless circleOfFire, for skillTimer Steps. It never moves on its own, so a standing player leaves no patch (dummyHits.base 0): the unseen controller just lives its 300 Steps. Blazing_Trail_obj Create_0, Alarm_0 and Step_0: 0.05 big growing 0.075 a frame to maxScale = skillScale, destroyTimer 2.5 s, tick_frequency = skillTickRate, then a 20-frame fade"
+    },
+    "scorching_aura": {
+      "dummy": 120,
+      "spawn": [
+        {
+          "object": "Pyromancer_Scorching_Aura_obj",
+          "scale": [
+            2,
+            2
+          ],
+          "life": 6
+        },
+        {
+          "object": "Shadow_Parent_obj",
+          "ability": true,
+          "life": 61
+        }
+      ],
+      "src": "LoadAura case 32 (Sep 16 exe): BuffAdd 13 [floor(LTD(32)), Burnt Feet's speed]; skillsAura L0x15-L0x18 counts playerEffect[52] down a frame at a time and at 0 runs LoadAuraScorching, whose L0x8d restarts it at game_get_speed x (1 - LST(32, 5, 9) / 100): a pulse every ceil(60 x (1 - Rapid Burning)) + 1 frames (61). LoadAuraScorching L8-L0xf pulses only while distance_to_object(Enemy_Parent_obj) < 128 x (1 + area), area = (LST(32, 1, 9) + stat 544) / 100: Mask_Player_spr's and Mask_Circle_24x_spr's boxes are 137 px apart for a dummy 160 px out, so the base aura never pulses there; in-zone dummy at 120 px. L0x60-L0x72: one Pyromancer_Scorching_Aura_obj at (x, y + 6), image_x/yscale 2 x (1 + area + stat 544 / 100), damage floor(buff x (1 + LSSD)); Create_0: Aura_Hitbox_spr (a 128 px circle, invisible), singleHit, alarm[10] = 0.1 s; Step_0 puts it on its host each Step. A preview use is one pulse and the player's shadow (myShadow, at the player's x, y) lasts it, so the next pulse's takes over: LoadAuraTimer L0x38-L0x39 sets its sprite_index to LoadAuraSprite's Scorching_Aura sprite and L0x52-L0x6c circleSprite Scorching_Aura_Circle, circleRadius floor(128 x (1 + area)), circleSize floor(12 x (1 + area)) (Create_0: circleAlpha 0.25). Shadow_Parent_obj Draw_0 L5-L12 draws its sprite with bm_add, then L0x18-L0x22 adds 0.2 x roomSpd to circleIndex and, with bm_add, calls draw_sprite_circle(x, y, circleSize, circleSprite, circleIndex, c_white, circleAlpha, 64, circleRadius): a 64-step triangle strip circleSize px across that wraps the frame once round from the right (u = i / 64), its bottom row outside. The shadow's scale stands for 1 + area. The engine's dummyHits count one hit a pulse"
+    }
+  }
+}

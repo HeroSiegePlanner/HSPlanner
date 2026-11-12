@@ -39,14 +39,14 @@
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "speedPath": "cast",
-    "dummyHits": {"base": 3.0, "baseProjectiles": 1, "perExtraProjectile": 3.0, "confidence": "C", "note": "Per cast, aimed THROUGH the dummy centre (rule 38, directional skill; Po R4 (a), Resztki B): player to the side of the dummy, cursor on (x, y), so the aim line passes the centre. FIRST bolt (i = 0): White_Mage_Shadow_Bolt_obj starts 20 px from the player (x + lengthdir(20, dir), y WITHOUT +6; asm 0x1465c71c2 / 0x1465c721e), 4 px/frame, mask 59x35 x 0.75 rotated with the aim (oriented rectangle vs the precise r 12 dummy, rule 26a), tick_frequency 15 frames (clears at a + 15, +16, ...; rule 20), 2 s life; on first contact it brakes 0.1 px/frame^2 to 2 px/frame. Hits at frames 31, 34, 49 (Resztki B sb2.py; Po R4 card 31, 34, 52 - same count) = 3 hits of damage[1] = D = the main hit = 3.0 (Resztki B: confirmed C from Create_0 0x14b341f50, Alarm_0 0x14b3431d0, Step_0 0x14b3441d0, Step_1 0x14b344aa0; a sideways shift of 0-8 px changes none of the p6/p10 numbers; +-1 frame I). Variant cursor (x, y-24) (aim 8.53 deg, line passes 23.7 px from the centre): 2 hits per bolt (frames 32, 35 / 41, 44) - the old value, note only. baseProjectiles = 1 (n = ExtraSpellProj(ceil(1 + RSS394 %))); perExtraProjectile = 3.0: extra bolts (i >= 1, alarm[0] = 1 + 9 i) fly the same line and also hit 3 times (frames 40, 43, 58 for i = 1; was the midpoint 2.5). p6 (scale: 3, 3, 3, 3, 4, 4 hits for r = 0..5; Resztki B r4 = 4, not 3|4), p10 (speed: 3, 2, 2, 2, 1, 1), p11 (nova: 2 hits of D per bolt), p12 beams (+0.5r D on every hit), p13 wave (~1.6 hits), p14 cascade (3.00 / 3.20 / 3.53 / 4.01 / 4.76 / 6.17 hits per cast bolt, I), p1 shadow burn are subskill effects."},
+    "dummyHits": {"base": 3.0, "baseProjectiles": 1, "perExtraProjectile": 3.0, "confidence": "C", "note": "Per cast, aimed THROUGH the dummy centre (rule 38, directional skill; Po R4 (a), Resztki B): player to the side of the dummy, cursor on (x, y), so the aim line passes the centre. FIRST bolt (i = 0): White_Mage_Shadow_Bolt_obj starts 20 px from the player (x + lengthdir(20, dir), y WITHOUT +6; asm 0x1465c71c2 / 0x1465c721e), 4 px/frame, mask 59x35 x 0.75 rotated with the aim (oriented rectangle vs the precise r 12 dummy, rule 26a), tick_frequency 15 frames (clears at a + 15, +16, ...; rule 20), 2 s life (the hits all land while the bolt crosses the dummy, so hitModel carries no lifetime and Skill Duration adds no hit); on first contact it brakes 0.1 px/frame^2 to 2 px/frame. Hits at frames 31, 34, 49 (Resztki B sb2.py; Po R4 card 31, 34, 52 - same count) = 3 hits of damage[1] = D = the main hit = 3.0 (Resztki B: confirmed C from Create_0 0x14b341f50, Alarm_0 0x14b3431d0, Step_0 0x14b3441d0, Step_1 0x14b344aa0; a sideways shift of 0-8 px changes none of the p6/p10 numbers; +-1 frame I). Variant cursor (x, y-24) (aim 8.53 deg, line passes 23.7 px from the centre): 2 hits per bolt (frames 32, 35 / 41, 44) - the old value, note only. baseProjectiles = 1 (n = ExtraSpellProj(ceil(1 + RSS394 %))); perExtraProjectile = 3.0: extra bolts (i >= 1, alarm[0] = 1 + 9 i) fly the same line and also hit 3 times (frames 40, 43, 58 for i = 1; was the midpoint 2.5). p6 (scale: 3, 3, 3, 3, 4, 4 hits for r = 0..5; Resztki B r4 = 4, not 3|4), p10 (speed: 3, 2, 2, 2, 1, 1), p11 (nova: 2 hits of D per bolt), p12 beams (+0.5r D on every hit), p13 wave (~1.6 hits), p14 cascade (3.00 / 3.20 / 3.53 / 4.01 / 4.76 / 6.17 hits per cast bolt, I), p1 shadow burn are subskill effects."},
     "classId": "white_mage",
     "name": "Shadow Bolt",
     "kind": "active",
     "description": "Gather your inner darkness and unleash a powerful piercing shadow bolt that deals arcane damage to monsters on its path. The shadow bolt slows down after hitting a target.",
     "maxRank": 20,
     "requiresLevel": 1,
-    "hitModel": { "object": "White_Mage_Shadow_Bolt_Create", "tickFrequency": 0.25, "lifetime": 2 },
+    "hitModel": { "object": "White_Mage_Shadow_Bolt_Create", "tickFrequency": 0.25 },
     "ranks": [
       {
         "rank": 1,
@@ -1428,14 +1428,14 @@
     "usesExtraSpellProjectiles": true,
     "activationKind": "cast",
     "speedPath": "cast",
-    "dummyHits": {"base": 15.0, "baseProjectiles": 10, "perExtraProjectile": 1.5, "confidence": "I", "note": "Per cast (cooldown 14 s*(1 - 0.08 r3), engine side; abilityInstantCast - no rule-37 animation lock), placed at the cursor (x, y-24), player to the side (Resztki E: the controller spawns at T = player + lengthdir(tupm[6], tupm[7]) = 6 px above the cursor, asm 0x1465d6107; march direction from (x, y+6) to the cursor): White_Mage_Black_Mass_Controller_obj spawns skillAmount = ExtraSpellProj(10 + 3 r1) = 10 waves, one every 0.25 s; each wave is a row of floor(400/48) = 8 White_Mage_Black_Mass_Cultist_obj walking along the aim (1.5 px/frame, tick_frequency 21 frames, 5 s life; per-cultist offset 200 - 48 i + s with s = 0, +24, 0, -24 cycling). R4 CORRECTION of R3: the base skillSize is 1*(1 + p7), NOT 2 (the doubling sits inside the rank(p14) > 0 branch, asm 0x1465d1a7f / 0x1465d2dde), so the sprite Left mask is x -20..+12, y -38..+12 and covers the dummy (23.7 px across, 3.6 px along the march) for only 1-2 cultists per wave, each with 1 hit (contact shorter than the 21-frame tick): waves give 1 / 2 / 1 / 2 hits = 1.5 hits per wave (cursor (x, y): 2 / 1 / 2 / 1, also 1.5) x 10 waves = 15 hits of damage[1] = D = the main hit = 15.0 (was 50 with the wrong scale 2; the unmirrored mask at positive xscale and the player-to-the-side layout are I; Resztki E re-simulated bm3.py and left the base unchanged). baseProjectiles = 10 (waves; the planner has no baseProjectiles, unit = waves); perExtraProjectile = 1.5 = hits per extra wave (p1 Dark Gathering +3 waves per rank, gear extra projectiles). p2 (speed: 1.5 per wave for all r), p7 (scale: 1.5, 1.5, 2, 2, 2, 2.5 per wave for r = 0..5, Resztki E; cursor (x, y): 1.5, 1.5, 2, 2, 3, 4), p13 (static grid: 4 cultists cover the dummy at r1 = r7 = 0, 14 hits each = 56), p14 (one bishop, 0.5 s cooldown, 3 hits), p12 (convergence circle, not recomputed for scale 1), p5 and p8/p10 are subskill effects."},
+    "dummyHits": {"base": 15.0, "baseProjectiles": 10, "perExtraProjectile": 1.5, "confidence": "I", "note": "Per cast (cooldown 14 s*(1 - 0.08 r3), engine side; abilityInstantCast - no rule-37 animation lock), placed at the cursor (x, y-24), player to the side (Resztki E: the controller spawns at T = player + lengthdir(tupm[6], tupm[7]) = 6 px above the cursor, asm 0x1465d6107; march direction from (x, y+6) to the cursor): White_Mage_Black_Mass_Controller_obj spawns skillAmount = ExtraSpellProj(10 + 3 r1) = 10 waves, one every 0.25 s; each wave is a row of floor(400/48) = 8 White_Mage_Black_Mass_Cultist_obj walking along the aim (1.5 px/frame, tick_frequency 21 frames, 5 s life; per-cultist offset 200 - 48 i + s with s = 0, +24, 0, -24 cycling). R4 CORRECTION of R3: the base skillSize is 1*(1 + p7), NOT 2 (the doubling sits inside the rank(p14) > 0 branch, asm 0x1465d1a7f / 0x1465d2dde), so the sprite Left mask is x -20..+12, y -38..+12 and covers the dummy (23.7 px across, 3.6 px along the march) for only 1-2 cultists per wave, each with 1 hit (contact shorter than the 21-frame tick; the cultists march past, so hitModel carries no lifetime and Skill Duration adds no hit): waves give 1 / 2 / 1 / 2 hits = 1.5 hits per wave (cursor (x, y): 2 / 1 / 2 / 1, also 1.5) x 10 waves = 15 hits of damage[1] = D = the main hit = 15.0 (was 50 with the wrong scale 2; the unmirrored mask at positive xscale and the player-to-the-side layout are I; Resztki E re-simulated bm3.py and left the base unchanged). baseProjectiles = 10 (waves; the planner has no baseProjectiles, unit = waves); perExtraProjectile = 1.5 = hits per extra wave (p1 Dark Gathering +3 waves per rank, gear extra projectiles). p2 (speed: 1.5 per wave for all r), p7 (scale: 1.5, 1.5, 2, 2, 2, 2.5 per wave for r = 0..5, Resztki E; cursor (x, y): 1.5, 1.5, 2, 2, 3, 4), p13 (static grid: 4 cultists cover the dummy at r1 = r7 = 0, 14 hits each = 56), p14 (one bishop, 0.5 s cooldown, 3 hits), p12 (convergence circle, not recomputed for scale 1), p5 and p8/p10 are subskill effects."},
     "classId": "white_mage",
     "name": "Black Mass",
     "kind": "active",
     "description": "Summon all the coven's cultists to march in the name of satan inflicting arcane damage to monsters on their path.",
     "maxRank": 20,
     "requiresLevel": 30,
-    "hitModel": { "object": "White_Mage_Black_Mass_Cultist_Create", "tickFrequency": 0.35, "lifetime": 5 },
+    "hitModel": { "object": "White_Mage_Black_Mass_Cultist_Create", "tickFrequency": 0.35 },
     "ranks": [
       {
         "rank": 1,
@@ -2885,13 +2885,13 @@
       {
         "id": "amplified_magic",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 1, 2, 3, 5], "per": "use", "note": "pulse period pf = 1 s x(1-10 %/r): N = 6/6/7/8/10 vs 5 (r5: 0.5 s -> 10 pulses)"}], "confidence": "C", "note": "card table p8", "plannerFix": "planner models 10 %/r as faster_cast_rate; card: pulse period 1 s x(1-0.1r) gives more pulses"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 1, 2, 3, 5], "per": "use", "note": "pulse period pf = 1 s x(1-10 %/r): N = 6/6/7/8/10 vs 5 (r5: 0.5 s -> 10 pulses)"}], "confidence": "C", "note": "card table p8"},
         "name": "Amplified Magic",
         "description": "Increases the tick frequency of mana orb.",
         "maxRank": 5,
         "effects": {
-          "base": {"faster_cast_rate": 0},
-          "perRank": {"faster_cast_rate": 10}
+          "base": {"aura_pulse_speed": 0},
+          "perRank": {"aura_pulse_speed": 10}
         }
       },
       {
