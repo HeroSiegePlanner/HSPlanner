@@ -1495,6 +1495,7 @@ impl GearView {
                         "hit_dps" | "combined_dps" | "avg_hit"
                     )
                 };
+                let scale = &self.session.read(cx).state().settings.number_scale;
                 let damage_rows = rows.iter().filter(damage).collect::<Vec<_>>();
                 let stat_rows = rows.iter().filter(|row| !damage(row)).collect::<Vec<_>>();
                 for (id, title, changes) in [
@@ -1512,7 +1513,7 @@ impl GearView {
                                 .flex()
                                 .flex_col()
                                 .child(compare_heading(id, title, Some(&count), cx))
-                                .children(changes.into_iter().map(|row| diff_row(row, cx))),
+                                .children(changes.into_iter().map(|row| diff_row(row, scale, cx))),
                         );
                     }
                 }
@@ -2371,14 +2372,22 @@ fn verdict_badge(verdict: Option<Verdict>, cx: &App) -> Option<Div> {
     )
 }
 
-fn diff_row(row: &PerformanceDiff, cx: &App) -> Div {
+fn diff_value(value: (f64, f64), percent: bool, scale: &str) -> String {
+    if percent {
+        crate::build_panel::format_range(value, true)
+    } else {
+        hsplanner_ui::numbers::compact_range(value, scale)
+    }
+}
+
+fn diff_row(row: &PerformanceDiff, scale: &str, cx: &App) -> Div {
     let p = cx.global::<TooltipTheme>();
     let color = if row.delta() > 0. {
         p.positive
     } else {
         p.negative
     };
-    let format = |value: (f64, f64)| crate::build_panel::format_range(value, row.is_percent());
+    let format = |value: (f64, f64)| diff_value(value, row.is_percent(), scale);
     let sign = if row.delta() >= 0. { "+" } else { "" };
     let delta = match row.delta_pct() {
         Some(pct) => format!("{sign}{pct:.1}%"),
@@ -2593,6 +2602,13 @@ fn editor_button(id: &'static str, label: &'static str, primary: bool, cx: &App)
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[::core::prelude::v1::test]
+    fn comparison_values_follow_the_number_scale() {
+        let hit = diff_value((5_180_534.3, 19_693_443.2), false, "billions");
+        assert_eq!(hit.matches('M').count(), 2, "{hit}");
+        assert_eq!(diff_value((78., 170.), true, "billions"), "78%–170%");
+    }
 
     #[::core::prelude::v1::test]
     fn runeword_ranges_get_their_own_roll_sliders() {

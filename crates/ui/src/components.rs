@@ -107,7 +107,8 @@ pub fn modal_height(window: &Window) -> Pixels {
 pub fn modal_layout(window: &Window) -> Div {
     div()
         .size_full()
-        .max_h(modal_height(window))
+        // Taller than the space inside Dialog's 1 px border, its body scrolls and takes the wheel.
+        .max_h(modal_height(window) - px(2.))
         .flex()
         .flex_col()
 }
