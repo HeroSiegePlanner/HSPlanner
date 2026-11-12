@@ -84,7 +84,8 @@ fn temporal_echo_counts_six_player_uses_and_preserves_primary_and_mana() {
 fn temporal_echo_does_not_multicast_again_and_counts_projectiles_once() {
     let one = performance("pyromancer", "fireball", 10, &[874], &[], 1);
     let three = performance("pyromancer", "fireball", 10, &[874], &[], 3);
-    assert!((three.proc_dps_max - one.proc_dps_max * 3.0).abs() < 1e-8);
+    // Three balls leave 6 deg off-centre and two of them land on the dummy.
+    assert!((three.proc_dps_max - one.proc_dps_max * 2.0).abs() < 1e-8);
     let multicast = performance(
         "pyromancer",
         "fireball",

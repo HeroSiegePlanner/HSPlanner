@@ -1602,6 +1602,36 @@ fn hit_model_multiplies_dps_by_hits_per_cast() {
     );
 }
 
+// The skill preview recasts Black Hole at the game use rate: Time Bender's 9% a rank shortens
+// the 6 s cooldown and Empowered Singularity drops it to the 0.5 s floor.
+#[test]
+fn black_hole_cooldown_nodes_quicken_its_use_rate() {
+    let rate = |subskills: &[(&str, u32)]| {
+        perf("exo", "black_hole", 10, subskills, &[])
+            .calculation()
+            .iter()
+            .find(|s| s.label() == "Game use rate")
+            .expect("game use rate step")
+            .value()
+            .1
+    };
+    let base = rate(&[]);
+    let bent = rate(&[("time_bender", 5)]);
+    let empowered = rate(&[("empowered_singularity", 1)]);
+    assert!((bent / base - 1. / 0.55).abs() < 0.05, "{base} -> {bent}");
+    assert!(empowered > bent, "{bent} -> {empowered}");
+}
+
+// Time != Space shortens Black Hole's 0.4 s tick by 15% a rank, down to 0.1 s; rule 20 over its
+// 290 deadly frames gives 14, 17, 20, 27 and 42 hits, as the preview's skill_sim does.
+#[test]
+fn time_space_ticks_follow_rule_20() {
+    let hits: Vec<_> = (1..=5)
+        .map(|rank| perf("exo", "black_hole", 10, &[("time_space", rank)], &[]).hits_per_cast)
+        .collect();
+    assert_eq!(hits, [14., 17., 20., 27., 42.].map(|h| Some((h, h))));
+}
+
 // +50% Skill Duration stretches Black Hole from 4.5 s to 6.75 s (the fade stays 20
 // frames): rule 20 gives 17 hits instead of 12, and the dummy model scales with it.
 #[test]

@@ -865,8 +865,9 @@ fn skill_costs_for(
                 } else {
                     std::borrow::Cow::Borrowed(merged)
                 };
+            let learned = crate::calc::subskill::learned_use_period(s, input.subskill_ranks);
             let mut cost = skill_cost::compute_skill_cost(&SkillCostInput {
-                skill: s,
+                skill: &learned,
                 eff_rank: (allocated + bonus.0, allocated + bonus.1),
                 stats: &per_skill,
                 tags: &tags,

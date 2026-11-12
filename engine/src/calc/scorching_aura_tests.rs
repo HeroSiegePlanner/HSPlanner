@@ -55,6 +55,39 @@ fn rapid_burning_shortens_the_pulse_period() {
     }
 }
 
+fn hits_per_pulse(subskills: &[(&str, u32)]) -> f64 {
+    let perf = calc_build_performance(input(subskills, &[]));
+    perf.hits_per_cast.map_or(1.0, |hits| hits.1)
+}
+
+#[test]
+fn a_pulse_lands_its_dummy_hits_and_its_nodes_projectiles_add_none() {
+    // Searing Burst's bursts are the pulse's own objects: 12 of them land 0.372 hits, not 12.
+    let hits = hits_per_pulse(&[("searing_burst", 3)]);
+    assert!((hits - 1.372).abs() < 0.001, "{hits}");
+    let (_, rate_times_hits) = hit_and_rate(&[("searing_burst", 3)], &[]);
+    assert!(
+        close(rate_times_hits, 60.0 / 61.0 * hits),
+        "{rate_times_hits}"
+    );
+    let chaos = [("ignite_the_flames", 3), ("release_the_chaos", 3)];
+    let (_, chaos_rate) = hit_and_rate(&chaos, &[]);
+    assert!(
+        close(chaos_rate, 60.0 / 61.0 * hits_per_pulse(&chaos)),
+        "{chaos_rate}"
+    );
+}
+
+#[test]
+fn rapid_burning_speeds_the_pulses_and_leaves_their_hits() {
+    let fissure = [("flaming_fissure", 5)];
+    let faster = [("flaming_fissure", 5), ("rapid_burning", 5)];
+    assert!(close(hits_per_pulse(&faster), hits_per_pulse(&fissure)));
+    let (_, slow) = hit_and_rate(&fissure, &[]);
+    let (_, fast) = hit_and_rate(&faster, &[]);
+    assert!(close(fast / slow, 61.0 / 16.0), "{slow} -> {fast}");
+}
+
 #[test]
 fn damaging_aura_effectiveness_scales_the_pulse() {
     let (base, _) = hit_and_rate(&[], &[]);

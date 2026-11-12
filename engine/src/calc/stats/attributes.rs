@@ -348,8 +348,24 @@ pub(crate) fn skill_spec_to_subskill_owner(
     use crate::calc::subskill::{
         AmountSpec, AppliedStateSpec, SubskillEffect, SubskillNode, SubskillOwner, SubskillProc,
     };
-    use crate::calc::types::AppliedStateValue;
+    use crate::calc::types::{AppliedStateValue, StatMap, SubskillEffectSpec, SubskillNodeSpec};
 
+    let element_damage = format!(
+        "{}_skill_damage",
+        skill.damage_type.as_deref().unwrap_or_default()
+    );
+    let effect = |sub: &SubskillNodeSpec, e: &SubskillEffectSpec| {
+        let kept = |map: &Option<StatMap>| -> StatMap {
+            (map.iter().flatten())
+                .filter(|(key, _)| !sub.owns_damage() || **key != element_damage)
+                .map(|(key, value)| (key.clone(), *value))
+                .collect()
+        };
+        SubskillEffect {
+            base: kept(&e.base),
+            per_rank: kept(&e.per_rank),
+        }
+    };
     let subskills = skill
         .subskills
         .as_ref()
@@ -361,18 +377,12 @@ pub(crate) fn skill_spec_to_subskill_owner(
                         .effects
                         .as_ref()
                         .filter(|_| sub.triggered_buff.is_none())
-                        .map(|e| SubskillEffect {
-                            base: e.base.clone().unwrap_or_default(),
-                            per_rank: e.per_rank.clone().unwrap_or_default(),
-                        }),
+                        .map(|e| effect(sub, e)),
                     proc: sub.proc.as_ref().map(|p| SubskillProc {
                         trigger: p.trigger.clone(),
                         chance_base: p.chance.base.unwrap_or(0.0),
                         chance_per_rank: p.chance.per_rank.unwrap_or(0.0),
-                        effects: p.effects.as_ref().map(|e| SubskillEffect {
-                            base: e.base.clone().unwrap_or_default(),
-                            per_rank: e.per_rank.clone().unwrap_or_default(),
-                        }),
+                        effects: p.effects.as_ref().map(|e| effect(sub, e)),
                         applies_states: p
                             .applies_states
                             .as_ref()

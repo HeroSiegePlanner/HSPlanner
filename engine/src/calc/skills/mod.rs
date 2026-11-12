@@ -286,6 +286,9 @@ pub struct AttackSkillDamageBreakdown {
     pub effective_rank_max: f64,
     pub weapon_damage_pct_min: f64,
     pub weapon_damage_pct_max: f64,
+    /// The skill's multiplier on the physical swing: the neutral 100 % plus its scaled bonus.
+    pub weapon_multiplier_min: f64,
+    pub weapon_multiplier_max: f64,
     pub skill_flat_phys_min: f64,
     pub skill_flat_phys_max: f64,
     pub attack_rating_pct_min: f64,

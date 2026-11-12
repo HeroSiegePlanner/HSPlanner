@@ -1012,6 +1012,8 @@ fn compute_attack_skill_damage_with_rank(
         effective_rank_max: eff_max,
         weapon_damage_pct_min: skill_wdp_min,
         weapon_damage_pct_max: skill_wdp_max,
+        weapon_multiplier_min: skill_mult_min,
+        weapon_multiplier_max: skill_mult_max,
         skill_flat_phys_min: skill_flat_min,
         skill_flat_phys_max: skill_flat_max,
         attack_rating_pct_min: skill_arp_min,
@@ -1909,6 +1911,24 @@ mod tests {
         let out = breakdown_for(&s, &StatMap::new(), &extra, &SkillRanks::new(), 1, 0.0);
         assert_eq!(out.physical_hit_max, 220);
         assert_eq!(out.physical_avg_max, 275);
+    }
+
+    #[test]
+    fn the_breakdown_exposes_the_weapon_multiplier_of_the_physical_swing() {
+        let mut s = skill();
+        s.attack_scaling = Some(AttackSkillScaling {
+            weapon_bonus_scaling: true,
+            weapon_damage_pct: Some(DamageFormula {
+                base: 185.0,
+                per_level: 35.0,
+            }),
+            ..Default::default()
+        });
+        let scoped = stats(&[("subtree_damage", 8.0), ("weapon_subtree_damage", 4.0)]);
+        let out = breakdown_for(&s, &StatMap::new(), &scoped, &SkillRanks::new(), 1, 0.0);
+        // 1 + 1.20 × (1 + .08 + .04): the neutral weapon damage plus its scaled bonus.
+        assert!((out.weapon_multiplier_max - 2.344).abs() < 1e-9);
+        assert_eq!(out.physical_hit_max, 234);
     }
 
     #[test]
