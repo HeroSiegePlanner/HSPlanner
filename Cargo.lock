@@ -2967,7 +2967,7 @@ dependencies = [
 
 [[package]]
 name = "hsplanner"
-version = "1.2.2-beta.1"
+version = "1.2.2-beta.6"
 dependencies = [
  "anyhow",
  "futures",
@@ -2989,7 +2989,7 @@ dependencies = [
 
 [[package]]
 name = "hsplanner-build"
-version = "1.2.2-beta.1"
+version = "1.2.2-beta.6"
 dependencies = [
  "HSPlanner",
  "ammonia",
@@ -3008,7 +3008,7 @@ dependencies = [
 
 [[package]]
 name = "hsplanner-library"
-version = "1.2.2-beta.1"
+version = "1.2.2-beta.6"
 dependencies = [
  "HSPlanner",
  "anyhow",
@@ -3020,7 +3020,7 @@ dependencies = [
 
 [[package]]
 name = "hsplanner-notes"
-version = "1.2.2-beta.1"
+version = "1.2.2-beta.6"
 dependencies = [
  "gpui-kit",
  "hsplanner-build",
@@ -3029,7 +3029,7 @@ dependencies = [
 
 [[package]]
 name = "hsplanner-paste"
-version = "1.2.2-beta.1"
+version = "1.2.2-beta.6"
 dependencies = [
  "HSPlanner",
  "hsplanner-build",
@@ -3040,7 +3040,7 @@ dependencies = [
 
 [[package]]
 name = "hsplanner-planner"
-version = "1.2.2-beta.1"
+version = "1.2.2-beta.6"
 dependencies = [
  "HSPlanner",
  "gpui-kit",
@@ -3055,7 +3055,7 @@ dependencies = [
 
 [[package]]
 name = "hsplanner-ui"
-version = "1.2.2-beta.1"
+version = "1.2.2-beta.6"
 dependencies = [
  "gpui-kit",
  "log",
