@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["engine", "crates/app", "crates/build", "crates/planner", "crates/ui", "crates/library", "crates/notes"]
+members = ["engine", "crates/app", "crates/build", "crates/planner", "crates/ui", "crates/library", "crates/notes", "crates/paste"]
 default-members = ["crates/app"]
 exclude = ["legacy/src-tauri", "prototypes/gpui-tree", "tree-renderer"]
 

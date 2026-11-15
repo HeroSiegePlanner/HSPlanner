@@ -7,6 +7,7 @@ mod chrome;
 mod loadouts;
 mod release_notes;
 mod settings;
+mod share;
 mod shell;
 mod startup;
 mod update;

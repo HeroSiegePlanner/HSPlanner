@@ -307,7 +307,8 @@ impl Loadouts {
             }
         }
     }
-    pub(crate) fn apply_active(&self, snapshot: &mut BuildSnapshot) {
+    /// Writes the selected loadout of every kind into the snapshot.
+    pub fn apply_active(&self, snapshot: &mut BuildSnapshot) {
         for kind in LoadoutKind::ALL {
             self.apply(kind, snapshot);
         }
@@ -315,7 +316,8 @@ impl Loadouts {
     pub(crate) fn duplicate(&mut self, kind: LoadoutKind, name: &str) -> Result<(), String> {
         with_collection_mut!(self, kind, collection, collection.duplicate(name))
     }
-    pub(crate) fn select(&mut self, kind: LoadoutKind, id: &str) -> Result<(), String> {
+    /// Makes the loadout with this id the selected one of its kind.
+    pub fn select(&mut self, kind: LoadoutKind, id: &str) -> Result<(), String> {
         with_collection_mut!(self, kind, collection, collection.select(id))
     }
     pub(crate) fn rename(&mut self, kind: LoadoutKind, id: &str, name: &str) -> Result<(), String> {

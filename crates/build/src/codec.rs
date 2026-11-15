@@ -110,11 +110,12 @@ pub fn encode_loadouts(
     notes: &Notes,
     loadouts: &Loadouts,
 ) -> Result<String, String> {
-    encode_loadouts_with_stash(snapshot, notes, loadouts, &[])
+    encode_loadouts_with_stash(None, snapshot, notes, loadouts, &[])
 }
 
-/// Like [`encode_loadouts`], plus the build's stash items when there are any.
+/// Like [`encode_loadouts`], plus the build's name and stash items when there are any.
 pub fn encode_loadouts_with_stash(
+    name: Option<&str>,
     snapshot: &BuildSnapshot,
     notes: &Notes,
     loadouts: &Loadouts,
@@ -126,6 +127,9 @@ pub fn encode_loadouts_with_stash(
     let mut wire = json!({
         "v": 3, "snapshot": snapshot, "loadouts": loadouts, "n": notes.to_html(),
     });
+    if let Some(name) = name {
+        wire["name"] = json!(name);
+    }
     if !stash.is_empty() {
         let mut items =
             serde_json::to_value(stash.iter().map(|entry| &entry.item).collect::<Vec<_>>())
@@ -143,6 +147,41 @@ pub fn encode_loadouts_with_stash(
 pub fn decode_loadouts(input: &str) -> Result<(BuildSnapshot, Notes, Loadouts), String> {
     let wire = decompress(input)?;
     decode_loadout_value(&wire)
+}
+
+/// Everything a share code carries; older codes have no name.
+#[derive(Debug, Clone)]
+pub struct SharedBuild {
+    pub name: Option<String>,
+    pub snapshot: BuildSnapshot,
+    pub notes: Notes,
+    pub loadouts: Loadouts,
+    pub stash: Vec<EquippedItem>,
+}
+
+pub fn decode_shared(input: &str) -> Result<SharedBuild, String> {
+    let wire = decompress(input)?;
+    let (snapshot, notes, loadouts) = decode_loadout_value(&wire)?;
+    let name = wire["name"].as_str().and_then(|name| {
+        // Control, zero-width and bidi-override characters would let a shared name
+        // render as something other than what it says.
+        let hidden = |c: char| {
+            c.is_control()
+                || matches!(c, '\u{200B}'..='\u{200F}' | '\u{202A}'..='\u{202E}' | '\u{2066}'..='\u{2069}' | '\u{FEFF}')
+        };
+        let printable: String = name
+            .chars()
+            .map(|c| if hidden(c) { ' ' } else { c })
+            .collect();
+        crate::library::clean_name(&printable).ok()
+    });
+    Ok(SharedBuild {
+        name,
+        snapshot,
+        notes,
+        loadouts,
+        stash: stash_items(&wire)?,
+    })
 }
 
 fn decode_loadout_value(wire: &Value) -> Result<(BuildSnapshot, Notes, Loadouts), String> {
@@ -199,7 +238,10 @@ fn decode_loadout_value(wire: &Value) -> Result<(BuildSnapshot, Notes, Loadouts)
 
 /// Stash items carried by a share code; codes without a stash give none.
 pub fn decode_stash(input: &str) -> Result<Vec<EquippedItem>, String> {
-    let wire = decompress(input)?;
+    stash_items(&decompress(input)?)
+}
+
+fn stash_items(wire: &Value) -> Result<Vec<EquippedItem>, String> {
     let Some(items) = wire.get("stash").and_then(Value::as_array) else {
         return Ok(Vec::new());
     };
@@ -229,11 +271,10 @@ fn decompress(input: &str) -> Result<Value, String> {
     if code.len() > MAX_CODE_LENGTH {
         return Err("Build code is too large.".into());
     }
-    let utf16 =
-        lz_str::decompress_from_encoded_uri_component(&code).ok_or("Invalid build code.")?;
-    if utf16.len() > MAX_CODE_LENGTH {
-        return Err("Build code expands beyond the supported size.".into());
-    }
+    let utf16 = crate::lz::decompress_uri(&code, MAX_CODE_LENGTH).map_err(|error| match error {
+        crate::lz::Error::Invalid => "Invalid build code.",
+        crate::lz::Error::TooLarge => "Build code expands beyond the supported size.",
+    })?;
     let json = String::from_utf16(&utf16).map_err(|_| "Invalid text in build code.")?;
     let wire: Value = serde_json::from_str(&json).map_err(|_| "Invalid build data.")?;
     Ok(wire)
@@ -367,7 +408,8 @@ fn normalize_inventory(value: &mut Value) -> Result<(), String> {
     Ok(())
 }
 
-fn parse_input(input: &str) -> Result<String, String> {
+/// The bare share code inside pasted text, which may be a link carrying it as `b=`.
+pub fn parse_input(input: &str) -> Result<String, String> {
     let value = input.trim();
     if value.len() > MAX_CODE_LENGTH {
         return Err("Build code is too large.".into());

@@ -9,3 +9,7 @@ gpui-kit.workspace = true
 hsplanner-build.workspace = true
 hsplanner-ui.workspace = true
 hsplanner-engine.workspace = true
+futures = "0.3"
+
+[dev-dependencies]
+anyhow = "1"

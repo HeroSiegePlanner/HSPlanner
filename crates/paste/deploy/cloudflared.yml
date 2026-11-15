@@ -1,0 +1,10 @@
+# /etc/cloudflared/config.yml for a Cloudflare Tunnel in front of hspaste.
+# Replace <tunnel-id> with the id that `cloudflared tunnel create hspaste` prints.
+tunnel: <tunnel-id>
+credentials-file: /etc/cloudflared/<tunnel-id>.json
+ingress:
+  - hostname: hsplanner.app
+    service: http://127.0.0.1:8787
+  - hostname: www.hsplanner.app
+    service: http://127.0.0.1:8787
+  - service: http_status:404

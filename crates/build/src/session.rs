@@ -288,16 +288,53 @@ impl Session {
         Ok(())
     }
     pub fn new_build(&mut self, name: &str) -> Result<String, String> {
-        if self.state.settings.auto_save {
-            self.save_build()?;
-        }
-        let id = self.state.library.create(
+        self.add_build(
             name,
             &BuildSnapshot::default(),
             &Notes::default(),
             &[],
             None,
-        )?;
+            None,
+        )
+    }
+    /// A fresh build of `class_id` at `level` (clamped to the game's range), filed and opened.
+    pub fn create_build(
+        &mut self,
+        name: &str,
+        class_id: &str,
+        level: u32,
+        folder_id: Option<String>,
+    ) -> Result<String, String> {
+        if hsplanner_engine::calc::data::get_class(class_id).is_none() {
+            return Err("Unknown class.".into());
+        }
+        let mut snapshot = BuildSnapshot {
+            class_id: Some(class_id.into()),
+            ..Default::default()
+        };
+        snapshot.set_level(level);
+        self.add_build(name, &snapshot, &Notes::default(), &[], None, folder_id)
+    }
+    /// Files a new build and opens it.
+    fn add_build(
+        &mut self,
+        name: &str,
+        snapshot: &BuildSnapshot,
+        notes: &Notes,
+        stash: &[StashEntry],
+        loadouts: Option<Loadouts>,
+        folder_id: Option<String>,
+    ) -> Result<String, String> {
+        if self.state.settings.auto_save {
+            self.save_build()?;
+        }
+        let id = self
+            .state
+            .library
+            .create(name, snapshot, notes, stash, folder_id)?;
+        if let Some(loadouts) = loadouts {
+            self.state.library.build_mut(&id)?.loadouts = loadouts;
+        }
         self.open(&id)?;
         Ok(id)
     }
@@ -320,8 +357,28 @@ impl Session {
         Ok(id)
     }
     pub fn import_code(&mut self, code: &str) -> Result<String, String> {
-        let (snapshot, notes, loadouts) = codec::decode_loadouts(code)?;
-        let stash: Vec<StashEntry> = codec::decode_stash(code)?
+        let shared = codec::decode_shared(code)?;
+        let name = shared.name.clone().unwrap_or_else(|| {
+            shared
+                .snapshot
+                .class_id
+                .as_deref()
+                .and_then(hsplanner_engine::calc::data::get_class)
+                .map(|class| format!("Imported {}", class.name))
+                .unwrap_or_else(|| "Imported build".into())
+        });
+        let name = self.state.library.free_name(&name);
+        self.import_shared(shared, &name, None)
+    }
+    /// Files a decoded share code as `name` and opens it.
+    pub fn import_shared(
+        &mut self,
+        shared: codec::SharedBuild,
+        name: &str,
+        folder_id: Option<String>,
+    ) -> Result<String, String> {
+        let stash: Vec<StashEntry> = shared
+            .stash
             .into_iter()
             .map(|item| StashEntry {
                 id: crate::library::new_id("stash"),
@@ -329,19 +386,14 @@ impl Session {
                 item,
             })
             .collect();
-        let name = snapshot
-            .class_id
-            .as_deref()
-            .and_then(hsplanner_engine::calc::data::get_class)
-            .map(|class| format!("Imported {}", class.name))
-            .unwrap_or_else(|| "Imported build".into());
-        let id = self
-            .state
-            .library
-            .create(&name, &snapshot, &notes, &stash, None)?;
-        self.state.library.build_mut(&id)?.loadouts = loadouts;
-        self.open(&id)?;
-        Ok(id)
+        self.add_build(
+            name,
+            &shared.snapshot,
+            &shared.notes,
+            &stash,
+            Some(shared.loadouts),
+            folder_id,
+        )
     }
     pub fn add_loadout(&mut self, kind: LoadoutKind, name: &str) -> Result<(), String> {
         let mut loadouts = self.state.draft.loadouts.clone();
