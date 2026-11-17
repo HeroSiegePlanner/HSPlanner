@@ -26,12 +26,12 @@ pub(crate) mod editor;
 
 #[path = "gear_import.rs"]
 mod import;
-#[path = "gear_suggest.rs"]
-mod suggest;
 #[path = "gear_picker.rs"]
 pub(crate) mod picker;
 #[path = "gear_presentation.rs"]
 pub(crate) mod presentation;
+#[path = "gear_suggest.rs"]
+mod suggest;
 use std::{collections::HashMap, sync::Arc};
 
 include!(concat!(env!("OUT_DIR"), "/item-icons.rs"));
@@ -104,7 +104,7 @@ impl Row {
 }
 
 /// Picker group for a socketable; runes are grouped by the caller.
-fn gem_group(name: &str) -> &'static str {
+pub(crate) fn gem_group(name: &str) -> &'static str {
     if name.contains("Soul") {
         "Soulgems"
     } else if name.ends_with("Jewel") {
@@ -149,6 +149,7 @@ struct RollTarget {
     forged: bool,
     stat: String,
     skill: bool,
+    runeword: bool,
     relic_tier: bool,
 }
 
@@ -987,8 +988,8 @@ impl Render for GearView {
 
 fn roll_slider_state((lo, hi): (f64, f64), value: f64) -> SliderState {
     SliderState::new()
-        .max(hi as f32)
         .min(lo as f32)
+        .max(hi as f32)
         .step(if lo.fract() == 0. && hi.fract() == 0. {
             1.
         } else {
@@ -1040,6 +1041,8 @@ fn apply_roll_value(
     }
     let values = if target.skill {
         &mut item.skill_bonus_overrides
+    } else if target.runeword {
+        &mut item.runeword_overrides
     } else {
         &mut item.implicit_overrides
     };
@@ -1060,13 +1063,9 @@ fn selector_accepts_skill(
     skill: &hsplanner_engine::calc::types::SkillSpec,
 ) -> bool {
     match picker {
-        Picker::RandomSkill => {
-            base.and_then(|b| b.random_skill_pool.as_ref())
-                .is_some_and(|pool| {
-                    pool.class_id == skill.class_id
-                        && skill.tree.as_deref() == Some(pool.tree.as_str())
-                })
-        }
+        Picker::RandomSkill => base
+            .and_then(|b| b.random_skill_pool.as_ref())
+            .is_some_and(|pool| pool.accepts(skill, class_id)),
         Picker::Subskill => {
             skill
                 .subskills
@@ -1212,12 +1211,36 @@ mod control_tests {
     }
 
     #[::core::prelude::v1::test]
+    fn a_runeword_slider_pins_the_runeword_roll() {
+        let target = RollTarget {
+            affix: None,
+            forged: false,
+            stat: "life".into(),
+            skill: false,
+            runeword: true,
+            relic_tier: false,
+        };
+        let mut item = EquippedItem::default();
+        let mut observed = 20.;
+        assert!(apply_roll_value(
+            &mut item,
+            &target,
+            &mut observed,
+            15.,
+            false
+        ));
+        assert_eq!(item.runeword_overrides.get("life"), Some(&15.));
+        assert!(item.implicit_overrides.is_empty());
+    }
+
+    #[::core::prelude::v1::test]
     fn slider_keyboard_and_native_value_changes_edit_the_same_roll_and_reset_does_not_repin() {
         let target = RollTarget {
             affix: None,
             forged: false,
             stat: "life".into(),
             skill: false,
+            runeword: false,
             relic_tier: false,
         };
         let mut item = EquippedItem::default();
@@ -1278,21 +1301,21 @@ mod control_tests {
         let base = data::data()
             .items
             .values()
-            .find(|base| base.random_skill_pool.is_some())
+            .find(|base| {
+                base.random_skill_pool
+                    .as_ref()
+                    .is_some_and(|pool| pool.class_id.is_some())
+            })
             .unwrap();
         let pool = base.random_skill_pool.as_ref().unwrap();
-        let selected = data::get_skills_by_class(&pool.class_id)
+        let selected = data::get_skills_by_class(pool.class_id.as_deref().unwrap())
             .iter()
             .filter(|skill| {
                 selector_accepts_skill(Picker::RandomSkill, Some(base), Some("stormweaver"), skill)
             })
             .collect::<Vec<_>>();
         assert!(!selected.is_empty());
-        assert!(
-            selected
-                .iter()
-                .all(|skill| skill.tree.as_deref() == Some(pool.tree.as_str()))
-        );
+        assert!(selected.iter().all(|skill| skill.tree == pool.tree));
         for skill in data::data().skills_by_class.values().flatten() {
             assert_eq!(
                 selector_accepts_skill(Picker::Subskill, None, None, skill),
@@ -1314,5 +1337,20 @@ mod control_tests {
         sync_roll_slider_bounds(&mut state, (5., 10.), 15.);
         assert_eq!(state.max_value(), 10.);
         assert_eq!(state.value().start(), 10.);
+    }
+
+    // Chronobreakers' -150..-90 Projectile Speed set max -90 under the default min 0.
+    #[::core::prelude::v1::test]
+    fn roll_slider_accepts_ranges_beyond_the_default_bounds() {
+        for (bounds, value) in [
+            ((-150., -90.), -120.),
+            ((-20., 30.), 0.),
+            ((500., 900.), 700.),
+        ] {
+            let state = roll_slider_state(bounds, value);
+            assert_eq!(state.min_value(), bounds.0 as f32);
+            assert_eq!(state.max_value(), bounds.1 as f32);
+            assert_eq!(state.value().start(), value as f32);
+        }
     }
 }

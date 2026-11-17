@@ -417,7 +417,7 @@ async fn download(
     Ok(path)
 }
 
-async fn read(mut response: Response<AsyncBody>) -> anyhow::Result<Vec<u8>> {
+pub(crate) async fn read(mut response: Response<AsyncBody>) -> anyhow::Result<Vec<u8>> {
     let status = response.status();
     let mut body = Vec::new();
     response.body_mut().read_to_end(&mut body).await?;
@@ -426,7 +426,12 @@ async fn read(mut response: Response<AsyncBody>) -> anyhow::Result<Vec<u8>> {
 }
 
 fn digest_matches(hasher: Sha256, expected_hex: &str) -> bool {
-    format!("{:x}", hasher.finalize()).eq_ignore_ascii_case(expected_hex)
+    let actual: String = hasher
+        .finalize()
+        .iter()
+        .map(|byte| format!("{byte:02x}"))
+        .collect();
+    actual.eq_ignore_ascii_case(expected_hex)
 }
 
 #[cfg(target_os = "macos")]
@@ -519,7 +524,11 @@ fn bundle_of(exe: &Path) -> Option<PathBuf> {
 
 #[cfg(target_os = "windows")]
 fn install(installer: &Path) -> anyhow::Result<()> {
+    // The setup program waits for this process, replaces it and starts the new one.
     std::process::Command::new(installer)
+        .arg(hsplanner_installer::UPDATE_FLAG)
+        .arg(hsplanner_installer::WAIT_FLAG)
+        .arg(std::process::id().to_string())
         .spawn()
         .context("starting the installer")?;
     Ok(())

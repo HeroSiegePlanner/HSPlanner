@@ -1182,43 +1182,6 @@ fn active_buff_entries(snapshot: &BuildSnapshot, skills: &[SkillSpec]) -> Vec<Lo
     entries
 }
 
-#[cfg(test)]
-mod buff_tests {
-    use super::*;
-
-    #[::core::prelude::v1::test]
-    fn butcher_subskill_buffs_summary_uses_node_identity_duration_and_learned_state() {
-        let skills = data::get_skills_by_class("butcher");
-        for (parent, id, name, duration) in [
-            ("chain_rip", "prey_on_the_weak", "Prey on the Weak", "5s"),
-            ("butchers_hook", "hellsent", "Hellsent", "1.75s"),
-            ("chain_swing", "killing_spree", "Killing Spree", "5s"),
-            ("chain_rip", "rage_trance", "Rage Trance", "3s"),
-        ] {
-            let key = subskill_key(parent, id);
-            let mut snapshot = BuildSnapshot::default();
-            snapshot.skill_ranks.insert(parent.into(), 1);
-            snapshot.subskill_ranks.insert(key.clone(), 1);
-            assert!(active_buff_entries(&snapshot, skills).is_empty());
-            snapshot.active_buffs.insert(key.clone(), true);
-            let entries = active_buff_entries(&snapshot, skills);
-            assert_eq!(entries.len(), 1, "{key}");
-            assert_eq!(entries[0].id, key);
-            assert_eq!(entries[0].name, name);
-            assert_eq!(
-                entries[0].sub,
-                skills.iter().find(|skill| skill.id == parent).unwrap().name
-            );
-            assert_eq!(entries[0].detail, duration);
-            snapshot.skill_ranks.clear();
-            assert!(active_buff_entries(&snapshot, skills).is_empty());
-            snapshot.skill_ranks.insert(parent.into(), 1);
-            snapshot.subskill_ranks.clear();
-            assert!(active_buff_entries(&snapshot, skills).is_empty());
-        }
-    }
-}
-
 fn loadout_card(
     id: &'static str,
     title: &str,
@@ -1421,4 +1384,41 @@ fn ehp_rows(result: &defense::EhpResult) -> Vec<(String, Option<f64>)> {
             )
         })
         .collect()
+}
+
+#[cfg(test)]
+mod buff_tests {
+    use super::*;
+
+    #[::core::prelude::v1::test]
+    fn butcher_subskill_buffs_summary_uses_node_identity_duration_and_learned_state() {
+        let skills = data::get_skills_by_class("butcher");
+        for (parent, id, name, duration) in [
+            ("chain_rip", "prey_on_the_weak", "Prey on the Weak", "5s"),
+            ("butchers_hook", "hellsent", "Hellsent", "1.75s"),
+            ("chain_swing", "killing_spree", "Killing Spree", "5s"),
+            ("chain_rip", "rage_trance", "Rage Trance", "3s"),
+        ] {
+            let key = subskill_key(parent, id);
+            let mut snapshot = BuildSnapshot::default();
+            snapshot.skill_ranks.insert(parent.into(), 1);
+            snapshot.subskill_ranks.insert(key.clone(), 1);
+            assert!(active_buff_entries(&snapshot, skills).is_empty());
+            snapshot.active_buffs.insert(key.clone(), true);
+            let entries = active_buff_entries(&snapshot, skills);
+            assert_eq!(entries.len(), 1, "{key}");
+            assert_eq!(entries[0].id, key);
+            assert_eq!(entries[0].name, name);
+            assert_eq!(
+                entries[0].sub,
+                skills.iter().find(|skill| skill.id == parent).unwrap().name
+            );
+            assert_eq!(entries[0].detail, duration);
+            snapshot.skill_ranks.clear();
+            assert!(active_buff_entries(&snapshot, skills).is_empty());
+            snapshot.skill_ranks.insert(parent.into(), 1);
+            snapshot.subskill_ranks.clear();
+            assert!(active_buff_entries(&snapshot, skills).is_empty());
+        }
+    }
 }

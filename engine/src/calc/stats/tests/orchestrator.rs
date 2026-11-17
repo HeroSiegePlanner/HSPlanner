@@ -122,11 +122,11 @@ fn hunger_for_blood_floors_the_aggregated_global_bleeding_bonus() {
     let conditions = HashMap::new();
     let subskills = HashMap::new();
     for (rank, other_source, expected) in [
-        (1, 0.0, 1.0),
-        (2, 0.0, 2.0),
-        (3, 0.0, 3.0),
-        (4, 0.0, 5.0),
-        (1, 0.75, 2.0),
+        (1, 0.0, 0.0),
+        (2, 0.0, 1.0),
+        (3, 0.0, 2.0),
+        (4, 0.0, 3.0),
+        (1, 1.25, 2.0),
     ] {
         let ranks = HashMap::from([("hunger_for_blood".into(), rank)]);
         let custom = vec![CustomStat {
@@ -684,8 +684,8 @@ fn light_in_the_dark_turns_light_radius_into_attributes() {
     );
 
     // 1545/1546/1549/1550/1551: "+1 to Light Radius". 1552 "Light In The Dark":
-    // "+3 to Light Radius" and "+40% of your Light Radius Added as Increased
-    // All Attributes" — 8 points, so +3.2% increased all attributes.
+    // "+3 to Light Radius" and "+30% of your Light Radius Added as Increased
+    // All Attributes" — 8 points, so +2.4% increased all attributes.
     let alloc_nodes: HashSet<u32> = [1545, 1546, 1549, 1550, 1551, 1552].into_iter().collect();
     let input = BuildStatsInput {
         allocated_tree_nodes: &alloc_nodes,
@@ -695,7 +695,7 @@ fn light_in_the_dark_turns_light_radius_into_attributes() {
 
     let get = |k: &str| with_nodes.stats.get(k).copied().unwrap_or((0.0, 0.0)).0;
     assert_eq!(get("light_radius"), 8.0);
-    assert!((get("increased_all_attributes") - 3.2).abs() < 1e-9);
+    assert!((get("increased_all_attributes") - 2.4).abs() < 1e-9);
 }
 
 #[test]
@@ -931,6 +931,37 @@ fn granted_skill_ranks_from_input_apply_passive_stats() {
         "expected {expected:?} from '{}' on '{stat_key}'",
         granted.name
     );
+}
+
+#[test]
+fn es_energy_raises_energy_while_its_buff_is_on() {
+    let allocated = HashMap::from([("energy".to_string(), 100)]);
+    let relic = EquippedItem {
+        base_id: "relic_relic_es_energy".into(),
+        ..Default::default()
+    };
+    let inventory: Inventory = HashMap::from([("relic_1".to_string(), relic)]);
+    let (flags, ranks) = (HashMap::new(), HashMap::new());
+    let (tree, sockets) = (HashSet::new(), HashMap::new());
+    let energy = |conditions: &HashMap<String, bool>| {
+        let input = empty_input(
+            &allocated,
+            &inventory,
+            &ranks,
+            &flags,
+            &[],
+            &tree,
+            &sockets,
+            conditions,
+            &ranks,
+            &flags,
+        );
+        compute_build_stats(&input).attributes["energy"]
+    };
+    let off = energy(&HashMap::new());
+    let on = energy(&HashMap::from([("jonnen_valinta_buff".to_string(), true)]));
+    // Jonnen Valinta ranks 1-10: 4% increased energy per rank above the first.
+    assert_eq!(on, (off.0, (off.1 * 1.36).floor()));
 }
 
 #[test]
@@ -1337,12 +1368,25 @@ fn timed_buff_stats_scale_by_uptime_with_skill_haste() {
             value: haste.into(),
         }];
         let mut input = empty_input(
-            &allocated, &inventory, &ranks, &buffs, &custom, &tree, &sockets, &conditions,
-            &subskills, &conditions,
+            &allocated,
+            &inventory,
+            &ranks,
+            &buffs,
+            &custom,
+            &tree,
+            &sockets,
+            &conditions,
+            &subskills,
+            &conditions,
         );
         input.class_id = Some(class);
         input.level = 50;
-        compute_build_stats(&input).stats.get(key).copied().unwrap_or((0.0, 0.0)).1
+        compute_build_stats(&input)
+            .stats
+            .get(key)
+            .copied()
+            .unwrap_or((0.0, 0.0))
+            .1
     };
     let gain = |class, skill, key, haste| {
         stat(class, skill, key, 1, haste) - stat(class, skill, key, 0, haste)

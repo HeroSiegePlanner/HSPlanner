@@ -1,11 +1,12 @@
 //! Item picker (Change item): search, sort, rarity groups, tooltips.
 use super::*;
-use crate::gear_sections::{chip, ghost_button, icon_button, units};
+use crate::gear_sections::{chip, ghost_button, group_header, icon_button, units};
 use crate::item_tooltip;
 use crate::skill_details::stat_name;
 use gpui_kit::component::select::{Select, SelectEvent, SelectState};
 use gpui_kit::component::{Icon, IconName, IndexPath, Sizable};
 use hsplanner_engine::calc::commands::{RankSlotItemsInput, rank_slot_items};
+use hsplanner_engine::calc::planner::dps_skill_ids;
 use hsplanner_engine::calc::types::{ItemBase, RangedValue};
 use hsplanner_ui::controls::segment;
 use hsplanner_ui::tooltip::CursorTooltipExt;
@@ -416,6 +417,7 @@ impl GearView {
         };
         self.dps_pending = true;
         let planner = self.session.read(cx).snapshot().planner_input();
+        let active_skill_ids = dps_skill_ids(&planner);
         let input = RankSlotItemsInput {
             perf: planner.build,
             slot: self.slot.clone(),
@@ -424,7 +426,7 @@ impl GearView {
                 .iter()
                 .map(|row| row.base_id.clone())
                 .collect(),
-            active_skill_ids: planner.active_skill_ids,
+            active_skill_ids,
         };
         let task = cx.background_spawn(async move { rank_slot_items(input) });
         cx.spawn(async move |this, cx| {
@@ -599,26 +601,10 @@ impl GearView {
             .as_ref()
             .is_some_and(|item| item.base_id == row.base_id);
         let equipped_ids = item_tooltip::equipped_ids(&self.session.read(cx).snapshot().inventory);
-        let p = cx.global::<TooltipTheme>();
         div()
             .w_full()
             .when(header, |view| {
-                view.child(
-                    div()
-                        .flex()
-                        .items_center()
-                        .gap_2()
-                        .px_4()
-                        .py_1p5()
-                        .border_b_1()
-                        .border_color(p.border)
-                        .bg(p.panel_secondary)
-                        .text_size(units(11.))
-                        .font_weight(FontWeight::MEDIUM)
-                        .text_color(p.muted)
-                        .child(div().size_1().rounded_full().bg(p.accent))
-                        .child(editor::rarity_label(&row.rarity)),
-                )
+                view.child(group_header(editor::rarity_label(&row.rarity), cx))
             })
             .child(self.item_row(row, selected, &equipped_ids, cx))
             .into_any_element()

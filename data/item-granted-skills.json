@@ -37,7 +37,7 @@
     "starRankLocked": true,
     "name": "Roll the Dice",
     "description": "The die has been rolled.. if the crowns combined stats surpass 777 gain lady luck's blessing as bonus stats.",
-    "condition": "roll_the_dice_blessing",
+    "statSumThreshold": 777,
     "passiveStats": {
       "base": {
         "all_skills": 7,
@@ -304,28 +304,28 @@
           "from": "fire_skill_damage",
           "to": "arcane_skill_damage",
           "pct": 0,
-          "basePct": 100,
+          "basePct": 50,
           "replaces": true
         },
         {
           "from": "cold_skill_damage",
           "to": "arcane_skill_damage",
           "pct": 0,
-          "basePct": 100,
+          "basePct": 50,
           "replaces": true
         },
         {
           "from": "lightning_skill_damage",
           "to": "arcane_skill_damage",
           "pct": 0,
-          "basePct": 100,
+          "basePct": 50,
           "replaces": true
         },
         {
           "from": "poison_skill_damage",
           "to": "arcane_skill_damage",
           "pct": 0,
-          "basePct": 100,
+          "basePct": 50,
           "replaces": true
         }
       ]
@@ -801,13 +801,15 @@
   {
     "id": "jagged_gauntlet",
     "name": "Jagged Gauntlet",
-    "description": "Spells and attacks have a chance to deal increased damage based on your critical strike damage. This effect does not count as a critical hit. Your critical chance is halved and your critical damage is capped.",
+    "description": "Spells and attacks have a chance to deal increased damage based on your critical strike damage. This effect does not count as a critical hit. Your critical chance is reduced by 25% and your critical damage is capped.",
     "passiveStats": {
       "base": {
-        "crit_chance": -4
+        "jagged_gauntlet_max_crit_damage": 40
       },
       "perRank": {
-        "crit_chance": 4
+        "jagged_gauntlet_chance": 4,
+        "jagged_gauntlet_damage": 10,
+        "jagged_gauntlet_max_crit_damage": 20
       }
     }
   },
@@ -1041,13 +1043,17 @@
     "id": "power_of_the_ancients",
     "name": "Power of the Ancients",
     "description": "Gain additional cold skill damage based on your mana.",
-    "passiveStats": {
-      "base": {
-        "cold_skill_damage": 0.6
-      },
-      "perRank": {
-        "cold_skill_damage": 0.2
-      }
+    "passiveConverts": {
+      "perRank": [
+        {
+          "from": "mana",
+          "to": "cold_skill_damage",
+          "basePct": 0.6,
+          "pct": 0.2,
+          "per": 90,
+          "perStep": 5
+        }
+      ]
     }
   },
   {
@@ -1765,7 +1771,16 @@
   {
     "id": "jonnen_valinta",
     "name": "Jonnen Valinta",
-    "description": ""
+    "description": "",
+    "condition": "jonnen_valinta_buff",
+    "passiveStats": {
+      "base": {
+        "increased_energy": -4
+      },
+      "perRank": {
+        "increased_energy": 4
+      }
+    }
   },
   {
     "id": "karp_head",
@@ -2170,7 +2185,8 @@
   {
     "id": "spectral_scatter",
     "name": "Spectral Scatter",
-    "description": "Your ranged projectiles fork after a short delay, dealing increased damage. Damage 25%, Projectiles 4"
+    "description": "Your ranged projectiles fork after a short delay, dealing increased damage. Damage 25%, Projectiles 4",
+    "starRankLocked": true
   },
   {
     "id": "demon_form",

@@ -781,7 +781,7 @@ fn subskill_tag_change_switches_skill_to_entity_rate() {
 }
 
 // marksman:gunner_drone "Rapidfire" is the drone's own rate of fire
-// (sentry_attack_speed 12.5/rank), not player FCR.
+// (sentry_attack_speed 20/rank), not player FCR.
 #[test]
 fn rapidfire_scales_the_drone_rate() {
     let base = perf("marksman", "gunner_drone", 10, &[], &[]);
@@ -790,8 +790,8 @@ fn rapidfire_scales_the_drone_rate() {
         panic!("expected dps for gunner_drone");
     };
     assert!(
-        (f / b - 1.5).abs() < 1e-9,
-        "rank 4 rapidfire = +50% drone rate, got x{}",
+        (f / b - 1.8).abs() < 1e-9,
+        "rank 4 rapidfire = +80% drone rate, got x{}",
         f / b
     );
 }
@@ -851,7 +851,10 @@ fn scorching_whip_deals_spell_damage_at_every_learned_rank() {
             "the whip has no weapon damage component"
         );
         assert!(p.hit_dps_min.is_some_and(|dps| dps > 0.0), "rank {rank}");
-        assert_eq!(p.skill_costs["scorching_whip"].cast_rate_min, Some(60.0 / 49.0));
+        assert_eq!(
+            p.skill_costs["scorching_whip"].cast_rate_min,
+            Some(60.0 / 49.0)
+        );
     }
     let unlearned = perf("exo", "scorching_whip", 0, &[], &[]);
     assert!(unlearned.damage.is_none());
@@ -865,7 +868,10 @@ fn scorching_whip_rate_and_dps_scale_with_attack_speed_not_cast_rate() {
     let base_mana = base.skill_costs["scorching_whip"].mana_per_sec_max.unwrap();
     // 1.5 APS + 0.75 × 100% IAS = 2.25; the use animation turns speeds 1.5 and
     // 2.25 into 60/49 and 60/33 uses/s (×49/33). FCR does not touch attack skills.
-    for (stat, multiplier) in [("increased_attack_speed", 49.0 / 33.0), ("faster_cast_rate", 1.0)] {
+    for (stat, multiplier) in [
+        ("increased_attack_speed", 49.0 / 33.0),
+        ("faster_cast_rate", 1.0),
+    ] {
         let fast = perf_with_stats("exo", "scorching_whip", 20, &[], &[(stat, "100")], 1.0);
         assert_eq!(
             fast.damage.as_ref().unwrap().final_max,
@@ -876,7 +882,10 @@ fn scorching_whip_rate_and_dps_scale_with_attack_speed_not_cast_rate() {
             "{stat}"
         );
         let cost = &fast.skill_costs["scorching_whip"];
-        assert!((cost.cast_rate_max.unwrap() - 60.0 / 49.0 * multiplier).abs() < 1e-9, "{stat}");
+        assert!(
+            (cost.cast_rate_max.unwrap() - 60.0 / 49.0 * multiplier).abs() < 1e-9,
+            "{stat}"
+        );
         assert!(
             (cost.mana_per_sec_max.unwrap() - base_mana * multiplier).abs() < 1e-9,
             "{stat}"
@@ -1503,6 +1512,28 @@ fn item_granted_proc_damage_adds_proc_dps() {
 }
 
 #[test]
+fn amplified_magic_speeds_mana_orb_pulses_not_cast_speed() {
+    let base = perf_with_stats("white_mage", "mana_orb", 10, &[], &[], 1.0);
+    let amplified = perf_with_stats(
+        "white_mage",
+        "mana_orb",
+        10,
+        &[("amplified_magic", 5)],
+        &[],
+        1.0,
+    );
+    let fcr = |p: &BuildPerformance| p.stats.get("faster_cast_rate").copied();
+    assert_eq!(
+        fcr(&amplified),
+        fcr(&base),
+        "Amplified Magic is not cast speed"
+    );
+    // Pulse every 1 s × (1 - 50%): 10 pulses per orb instead of 5.
+    let hits = |p: &BuildPerformance| p.hits_per_cast.map(|h| h.1);
+    assert_eq!(hits(&amplified), hits(&base).map(|h| h * 2.0));
+}
+
+#[test]
 fn orb_of_frost_rate_follows_cooldown_and_skill_haste() {
     let base = perf_with_stats("jotunn", "orb_of_frost", 10, &[], &[], 1.0);
     let with_fcr = perf_with_stats(
@@ -1593,12 +1624,49 @@ fn hit_model_multiplies_dps_by_hits_per_cast() {
     );
 }
 
+// The skill preview recasts Black Hole at the game use rate: Time Bender's 9% a rank shortens
+// the 6 s cooldown and Empowered Singularity drops it to the 0.5 s floor.
+#[test]
+fn black_hole_cooldown_nodes_quicken_its_use_rate() {
+    let rate = |subskills: &[(&str, u32)]| {
+        perf("exo", "black_hole", 10, subskills, &[])
+            .calculation()
+            .iter()
+            .find(|s| s.label() == "Game use rate")
+            .expect("game use rate step")
+            .value()
+            .1
+    };
+    let base = rate(&[]);
+    let bent = rate(&[("time_bender", 5)]);
+    let empowered = rate(&[("empowered_singularity", 1)]);
+    assert!((bent / base - 1. / 0.55).abs() < 0.05, "{base} -> {bent}");
+    assert!(empowered > bent, "{bent} -> {empowered}");
+}
+
+// Time != Space shortens Black Hole's 0.4 s tick by 15% a rank, down to 0.1 s; rule 20 over its
+// 290 deadly frames gives 14, 17, 20, 27 and 42 hits, as the preview's skill_sim does.
+#[test]
+fn time_space_ticks_follow_rule_20() {
+    let hits: Vec<_> = (1..=5)
+        .map(|rank| perf("exo", "black_hole", 10, &[("time_space", rank)], &[]).hits_per_cast)
+        .collect();
+    assert_eq!(hits, [14., 17., 20., 27., 42.].map(|h| Some((h, h))));
+}
+
 // +50% Skill Duration stretches Black Hole from 4.5 s to 6.75 s (the fade stays 20
 // frames): rule 20 gives 17 hits instead of 12, and the dummy model scales with it.
 #[test]
 fn skill_duration_buys_extra_ticks() {
     let base = perf("exo", "black_hole", 10, &[], &[]);
-    let longer = perf_with_stats("exo", "black_hole", 10, &[], &[("skill_duration", "50")], 1.0);
+    let longer = perf_with_stats(
+        "exo",
+        "black_hole",
+        10,
+        &[],
+        &[("skill_duration", "50")],
+        1.0,
+    );
     assert_eq!(longer.hits_per_cast, Some((17.0, 17.0)));
     let (Some(base_dps), Some(long_dps)) = (base.avg_hit_dps_max, longer.avg_hit_dps_max) else {
         panic!("expected dps for black_hole");
@@ -1739,7 +1807,9 @@ fn frost_sunder_onslaught_lands_on_top_of_the_cold_pool() {
         deps.class_id = Some("jotunn");
         deps.level = 50;
         deps.main_skill_id = Some("frost_sunder");
-        compute_build_performance(&deps).avg_hit_dps_max.unwrap_or(0.0)
+        compute_build_performance(&deps)
+            .avg_hit_dps_max
+            .unwrap_or(0.0)
     };
 
     // dps_cards p11: each of the 4 in-zone icicle hits spawns an explosion of
@@ -2154,6 +2224,35 @@ fn blender_conditional_critical_and_additive_damage_bonuses() {
     assert_eq!(mult, (3.9, 3.9)); // 40 + 25 + 225%, additive.
 }
 
+// Season 11: Blender keeps a third of every other area bonus in its contact
+// coverage; its own nodes count fully.
+#[test]
+fn blender_keeps_a_third_of_area_except_its_own_nodes() {
+    let dps = |nodes: &[(&str, u32)], custom: &[(&str, &str)]| {
+        perf_with_stats("butcher", "blender", 20, nodes, custom, 1.0)
+            .avg_hit_dps_max
+            .unwrap()
+    };
+    let base = dps(&[], &[]);
+    let sized = [("industrial_sized", 1)];
+    for (nodes, custom, area) in [
+        (&[][..], &[("area_of_effect", "30")][..], 0.33 * 30.0),
+        (&[][..], &[("area_of_effect_more", "50")][..], 0.33 * 50.0),
+        (&sized[..], &[][..], 17.5),
+        (
+            &sized[..],
+            &[("area_of_effect", "30")][..],
+            17.5 + 0.33 * 30.0,
+        ),
+    ] {
+        let ratio = dps(nodes, custom) / base;
+        assert!(
+            (ratio - (1.0 + area / 100.0)).abs() < 1e-9,
+            "{nodes:?} {custom:?}: x{ratio}"
+        );
+    }
+}
+
 #[test]
 fn blender_microblades_are_separate_non_recursive_and_scale_with_contacts() {
     let nodes = [
@@ -2161,7 +2260,7 @@ fn blender_microblades_are_separate_non_recursive_and_scale_with_contacts() {
         ("attachable_microblades", 3),
     ];
     let result = perf("butcher", "blender", 20, &nodes, &[]);
-    let expected = 0.15 * 2.05 * 3.0 * ((240.0 * 2.0 + 17.1 * 4.0) / 360.0) * 0.75;
+    let expected = 0.09 * 1.75 * 3.0 * ((240.0 * 2.0 + 17.1 * 4.0) / 360.0) * 0.75;
     assert!((result.proc_dps_max / result.avg_hit_dps_max.unwrap() - expected).abs() < 1e-9);
     let extra = perf(
         "butcher",
@@ -2323,8 +2422,8 @@ fn unholy_form_stats_and_damage_follow_rank_and_activation() {
         let on = run(1, true, skill);
         let high = run(20, true, skill);
         let unlearned = run(0, true, skill);
-        assert_eq!(on.stats.get("damage"), Some(&(20.0, 20.0)));
-        assert_eq!(high.stats.get("damage"), Some(&(48.5, 48.5)));
+        assert_eq!(on.stats.get("damage"), Some(&(19.5, 19.5)));
+        assert_eq!(high.stats.get("damage"), Some(&(38.5, 38.5)));
         for key in ["life_replenish", "life_steal"] {
             let factor = on.stats.get(key).unwrap().0 / off.stats.get(key).unwrap().0;
             assert!((factor - 0.05).abs() < 1e-9, "{key}: {factor}");
@@ -2333,11 +2432,11 @@ fn unholy_form_stats_and_damage_follow_rank_and_activation() {
         }
         let ratio = on.avg_hit_dps_max.unwrap() / off.avg_hit_dps_max.unwrap();
         // Floored hits near 30 move the ratio by up to 1/30.
-        assert!((ratio - 1.2).abs() < 0.04, "{skill}: {ratio}");
+        assert!((ratio - 1.195).abs() < 0.04, "{skill}: {ratio}");
         assert!(high.avg_hit_dps_max > on.avg_hit_dps_max);
         assert_eq!(off.avg_hit_dps_max, unlearned.avg_hit_dps_max);
-        assert!((on.proc_dps_min / off.proc_dps_min - 1.2).abs() < 1e-9);
-        assert!((on.proc_dps_max / off.proc_dps_max - 1.2).abs() < 1e-9);
+        assert!((on.proc_dps_min / off.proc_dps_min - 1.195).abs() < 1e-9);
+        assert!((on.proc_dps_max / off.proc_dps_max - 1.195).abs() < 1e-9);
         assert_eq!(off.proc_dps_max, unlearned.proc_dps_max);
     }
 }
@@ -2776,10 +2875,10 @@ fn colossus_total_damage_reaches_spells_and_weapon_hits() {
     for (class, skill) in [("pyromancer", "fireball"), ("viking", "zeal")] {
         let base = perf(class, skill, 20, &[], &[]);
         let boosted = perf_with_tree(class, skill, 20, &[], &[], &[579, 580, 581, 582]);
-        // Four 1% per-stack nodes, five stacks including the base capacity.
-        assert_eq!(boosted.stats["damage"], (20.0, 20.0));
+        // Four 0.5% per-stack nodes, five stacks including the base capacity.
+        assert_eq!(boosted.stats["damage"], (10.0, 10.0));
         let ratio = boosted.avg_hit_dps_max.unwrap() / base.avg_hit_dps_max.unwrap();
-        assert!((ratio - 1.2).abs() < 0.02, "{skill}: {ratio}");
+        assert!((ratio - 1.1).abs() < 0.02, "{skill}: {ratio}");
         assert_eq!(
             boosted.stats.get("enhanced_damage"),
             base.stats.get("enhanced_damage")
@@ -2800,7 +2899,10 @@ fn extra_spell_projectiles_floor_the_percentage_then_add_flat() {
     assert_eq!(super::extra_spell_projectiles(3, &stats(50.0, 0.0)), 4);
     assert_eq!(super::extra_spell_projectiles(3, &stats(50.0, 2.0)), 6);
     let no_subtree = |_: &str| 0.0;
-    assert_eq!(super::effective_projectile_count(3, &no_subtree, Some(&stats(50.0, 1.0))), 5);
+    assert_eq!(
+        super::effective_projectile_count(3, &no_subtree, Some(&stats(50.0, 1.0))),
+        5
+    );
     assert_eq!(super::effective_projectile_count(3, &no_subtree, None), 3);
 }
 
@@ -2818,8 +2920,12 @@ fn pyro_technician_splits_fire_and_attack_synergies() {
     .into_iter()
     .map(|(id, rank)| (id.to_string(), rank))
     .collect();
-    let (subskills, buffs, alloc_tree, sockets) =
-        (HashMap::new(), HashMap::new(), HashSet::new(), HashMap::new());
+    let (subskills, buffs, alloc_tree, sockets) = (
+        HashMap::new(),
+        HashMap::new(),
+        HashSet::new(),
+        HashMap::new(),
+    );
     let (enemy, player, projectiles, resistances, procs) = (
         HashMap::new(),
         HashMap::new(),
@@ -2860,7 +2966,10 @@ fn pyro_technician_splits_fire_and_attack_synergies() {
     let elemental = labels(result.damage.as_ref().unwrap().calculation());
     let swing = labels(result.attack_damage.as_ref().unwrap().calculation());
     for source in ["crowd dive", "craving for another killing", "intelligence"] {
-        assert!(elemental.contains(&format!("Synergy · {source}")), "{elemental:?}");
+        assert!(
+            elemental.contains(&format!("Synergy · {source}")),
+            "{elemental:?}"
+        );
     }
     assert_eq!(swing, ["Synergy · headbanger"]);
 }
@@ -2912,15 +3021,31 @@ fn augment_perf(
 #[test]
 fn augments_add_stats_by_how_the_game_applies_them() {
     let none = HashMap::new();
-    let stat = |perf: &BuildPerformance, key: &str| perf.stats.get(key).copied().unwrap_or((0., 0.)).1;
+    let stat =
+        |perf: &BuildPerformance, key: &str| perf.stats.get(key).copied().unwrap_or((0., 0.)).1;
     // Passive: always on.
-    assert_eq!(stat(&augment_perf("precision", 3, &none, &none), "defense_ignored"), 30.);
+    assert_eq!(
+        stat(
+            &augment_perf("precision", 3, &none, &none),
+            "defense_ignored"
+        ),
+        30.
+    );
     // Damage proc: its hit numbers never become character stats.
     let magefury = augment_perf("magefury", 7, &none, &none);
     assert_eq!(stat(&magefury, "flat_arcane_skill_damage"), 0.);
     // Timed buff: only while its Config toggle is on.
-    let base = stat(&augment_perf("missing_augment", 1, &none, &none), "crit_damage");
-    assert_eq!(stat(&augment_perf("lethal_tempo", 2, &none, &none), "crit_damage"), base);
+    let base = stat(
+        &augment_perf("missing_augment", 1, &none, &none),
+        "crit_damage",
+    );
+    assert_eq!(
+        stat(
+            &augment_perf("lethal_tempo", 2, &none, &none),
+            "crit_damage"
+        ),
+        base
+    );
     let on = HashMap::from([("augment:lethal_tempo".to_string(), true)]);
     let gained = stat(&augment_perf("lethal_tempo", 2, &on, &none), "crit_damage") - base;
     assert!(gained > 0. && gained <= 16., "{gained}");
@@ -2953,21 +3078,39 @@ fn elementalist_scales_with_full_hundreds_of_mana() {
     let perf = augment_perf("elementalist", 7, &none, &none);
     let mana = perf.stats.get("mana").copied().unwrap_or((0., 0.)).1;
     let expected = 0.7 * (mana / 100.).floor();
-    let got = perf.stats.get("magic_skill_damage").copied().unwrap_or((0., 0.)).1;
-    assert!((got - expected).abs() < 1e-6, "mana {mana}: {got} vs {expected}");
+    let got = perf
+        .stats
+        .get("magic_skill_damage")
+        .copied()
+        .unwrap_or((0., 0.))
+        .1;
+    assert!(
+        (got - expected).abs() < 1e-6,
+        "mana {mana}: {got} vs {expected}"
+    );
 }
 
 #[test]
 fn stacking_augments_pay_out_per_combat_stack() {
     let none = HashMap::new();
     let stat = |id: &str, key: &str| {
-        augment_perf(id, 7, &none, &none).stats.get(key).copied().unwrap_or((0., 0.)).1
+        augment_perf(id, 7, &none, &none)
+            .stats
+            .get(key)
+            .copied()
+            .unwrap_or((0., 0.))
+            .1
     };
     let base = |key: &str| stat("missing_augment", key);
     // Unconfigured stacks read as full: 250 × 0.14%.
-    assert!((stat("tempest_strikes", "movement_speed") - base("movement_speed") - 35.).abs() < 1e-6);
+    assert!(
+        (stat("tempest_strikes", "movement_speed") - base("movement_speed") - 35.).abs() < 1e-6
+    );
     // 1000 Manastream stacks × 0.14% magic skill damage.
-    assert!((stat("monstrosity", "magic_skill_damage") - base("magic_skill_damage") - 140.).abs() < 1e-6);
+    assert!(
+        (stat("monstrosity", "magic_skill_damage") - base("magic_skill_damage") - 140.).abs()
+            < 1e-6
+    );
     assert!((stat("avariciousness", "magic_find") - base("magic_find") - 140.).abs() < 1e-6);
 }
 
@@ -2977,22 +3120,43 @@ fn scaled_augments_follow_their_source() {
     let perf = augment_perf("magistriker", 7, &none, &none);
     let aps = crate::calc::skills::attacks_per_second(&perf.stats).1;
     let base = augment_perf("missing_augment", 7, &none, &none);
-    let magic = |p: &BuildPerformance| p.stats.get("magic_skill_damage").copied().unwrap_or((0., 0.)).1;
-    assert!((magic(&perf) - magic(&base) - 7. * aps).abs() < 1e-6, "aps {aps}");
+    let magic = |p: &BuildPerformance| {
+        p.stats
+            .get("magic_skill_damage")
+            .copied()
+            .unwrap_or((0., 0.))
+            .1
+    };
+    assert!(
+        (magic(&perf) - magic(&base) - 7. * aps).abs() < 1e-6,
+        "aps {aps}"
+    );
 
     let buffs = HashMap::from([
         ("hyper_activity_buff".to_string(), true),
         ("augment:other".to_string(), true),
     ]);
     let reduced = |p: &BuildPerformance| {
-        p.stats.get("all_damage_taken_reduced_pct").copied().unwrap_or((0., 0.)).1
+        p.stats
+            .get("all_damage_taken_reduced_pct")
+            .copied()
+            .unwrap_or((0., 0.))
+            .1
     };
     let drunk = augment_perf("drunkard_mayhem", 7, &buffs, &none);
     let sober = augment_perf("missing_augment", 7, &buffs, &none);
     assert!((reduced(&drunk) - reduced(&sober) - 2. * 2.25).abs() < 1e-6);
 
     let summons = augment_perf("minion_mastery", 7, &none, &none);
-    assert_eq!(summons.stats.get("summon_attack_speed").copied().unwrap_or((0., 0.)).1, 56.);
+    assert_eq!(
+        summons
+            .stats
+            .get("summon_attack_speed")
+            .copied()
+            .unwrap_or((0., 0.))
+            .1,
+        56.
+    );
 }
 
 #[test]
@@ -3007,7 +3171,11 @@ fn proc_buffs_count_at_their_uptime() {
     // comes from the pass with the buff up, so it is at least this pass's attack rate.
     let floor = ((aps * 0.08).min(1. / 1.5) * 2.).min(1.);
     let gained = crit(&perf) - base;
-    assert!(gained >= 56. * floor - 1e-6 && gained < 56., "{gained} vs floor {}", 56. * floor);
+    assert!(
+        gained >= 56. * floor - 1e-6 && gained < 56.,
+        "{gained} vs floor {}",
+        56. * floor
+    );
 }
 
 fn augment_skill_perf(
@@ -3021,7 +3189,10 @@ fn augment_skill_perf(
         "armor".to_string(),
         EquippedItem {
             base_id: "armors_normal_steel_armor".into(),
-            augment: Some(crate::calc::types::AugmentRef { id: id.into(), level: 7 }),
+            augment: Some(crate::calc::types::AugmentRef {
+                id: id.into(),
+                level: 7,
+            }),
             ..Default::default()
         },
     )]);
@@ -3058,7 +3229,13 @@ fn augment_skill_perf(
 #[test]
 fn monstrosity_bursts_for_part_of_the_fill_cycle() {
     let none = HashMap::new();
-    let fcr = |p: &BuildPerformance| p.stats.get("faster_cast_rate").copied().unwrap_or((0., 0.)).1;
+    let fcr = |p: &BuildPerformance| {
+        p.stats
+            .get("faster_cast_rate")
+            .copied()
+            .unwrap_or((0., 0.))
+            .1
+    };
     let gained = fcr(&augment_perf("monstrosity", 7, &none, &none))
         - fcr(&augment_perf("missing_augment", 7, &none, &none));
     // 1000 Manastream stacks fill, then 15 s of +70% cast rate: never the whole time.
@@ -3070,7 +3247,11 @@ fn survivors_shield_counts_its_immune_share_when_on() {
     let none = HashMap::new();
     let on = HashMap::from([("augment:survivors_shield".to_string(), true)]);
     let reduced = |p: &BuildPerformance| {
-        p.stats.get("all_damage_taken_reduced_pct").copied().unwrap_or((0., 0.)).1
+        p.stats
+            .get("all_damage_taken_reduced_pct")
+            .copied()
+            .unwrap_or((0., 0.))
+            .1
     };
     let base = reduced(&augment_perf("survivors_shield", 7, &none, &none));
     let gained = reduced(&augment_perf("survivors_shield", 7, &on, &none)) - base;
@@ -3097,7 +3278,9 @@ fn zapper_discharges_a_share_of_lightning_hits_when_toggled() {
 fn longevity_boosts_only_orbiting_skills() {
     let none = HashMap::new();
     let dps = |id: &str, class: &str, skill: &str| {
-        augment_skill_perf(id, class, skill, &none).avg_hit_dps_max.unwrap_or(0.)
+        augment_skill_perf(id, class, skill, &none)
+            .avg_hit_dps_max
+            .unwrap_or(0.)
     };
     let orbit = dps("longevity", "paladin", "holy_hammer");
     let plain = dps("missing_augment", "paladin", "holy_hammer");
@@ -3116,7 +3299,10 @@ fn periodic_and_global_augments_reach_the_damage_stats() {
     assert!((stat(&titan, "damage") - stat(&base, "damage") - 210. * 2. / 30.).abs() < 1e-6);
     // Infinity: double casts as multicast.
     let infinity = augment_perf("infinity", 7, &none, &none);
-    assert_eq!(stat(&infinity, "multicast_chance") - stat(&base, "multicast_chance"), 14.);
+    assert_eq!(
+        stat(&infinity, "multicast_chance") - stat(&base, "multicast_chance"),
+        14.
+    );
     // Nordic Winter: Deep Freeze damage taken, while switched on.
     let on = HashMap::from([("augment:nordic_winter".to_string(), true)]);
     let nordic = augment_perf("nordic_winter", 7, &on, &none);

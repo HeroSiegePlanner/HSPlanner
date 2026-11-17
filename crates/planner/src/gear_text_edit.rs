@@ -1,7 +1,10 @@
 //! Retained text draft and validation for the item editor; Save updates only the gear draft.
 use super::*;
 use gpui_kit::component::button::ButtonVariants;
-use gpui_kit::component::input::{Textarea, TextareaState};
+use gpui_kit::component::input::{
+    Editor, EditorState, GutterDecoration, GutterDecorationCollection, OverviewRulerDecoration,
+    OverviewRulerDecorationCollection, OverviewRulerLane,
+};
 use hsplanner_build::item_text::{self, ParseResult};
 use hsplanner_ui::components::{
     ModalSize, PlannerDialogExt, modal_eyebrow, modal_footer, modal_header, modal_height,
@@ -9,6 +12,7 @@ use hsplanner_ui::components::{
 };
 use hsplanner_ui::controls::{ButtonTone, modal_button};
 use hsplanner_ui::theme;
+use std::ops::Range;
 
 impl GearView {
     pub(super) fn open_text_edit(&mut self, window: &mut Window, cx: &mut Context<Self>) {
@@ -43,7 +47,9 @@ struct ItemTextEditor {
     original: EquippedItem,
     owner: WeakEntity<GearView>,
     document: DocumentKey,
-    text: Entity<TextareaState>,
+    text: Entity<EditorState>,
+    gutter: GutterDecorationCollection,
+    ruler: OverviewRulerDecorationCollection,
     search: Entity<InputState>,
     stats: Vec<(String, String, bool)>,
     result: ParseResult,
@@ -62,9 +68,18 @@ impl ItemTextEditor {
         let value = item_text::serialize(&original).unwrap_or_default();
         let result = item_text::parse(&value, &original);
         let text = cx.new(|cx| {
-            let mut state = TextareaState::new(window, cx).rows(24);
-            state.set_value(value, window, cx);
+            let mut state = EditorState::new(window, cx)
+                .soft_wrap(true)
+                .folding(false)
+                .indent_guides(false);
+            state.set_value(value.clone(), window, cx);
             state
+        });
+        let (gutter, ruler) = text.update(cx, |state, cx| {
+            (
+                state.create_gutter_decorations_collection(Vec::new(), cx),
+                state.create_overview_ruler_decorations_collection(Vec::new(), cx),
+            )
         });
         let search =
             cx.new(|cx| InputState::new(window, cx).placeholder(tr("gear.search_custom_affixes")));
@@ -82,18 +97,22 @@ impl ItemTextEditor {
             }),
             cx.subscribe(&search, |_, _, _: &InputEvent, cx| cx.notify()),
         ];
-        Self {
+        let editor = Self {
             original,
             owner,
             document,
             text,
+            gutter,
+            ruler,
             search,
             stats: item_text::custom_stats(),
             result,
             pending: false,
             task: None,
             _subscriptions: subscriptions,
-        }
+        };
+        editor.mark_diagnostics(&value, cx);
+        editor
     }
     fn validate(&mut self, cx: &mut Context<Self>) {
         self.pending = true;
@@ -103,16 +122,40 @@ impl ItemTextEditor {
             cx.background_executor()
                 .timer(std::time::Duration::from_millis(200))
                 .await;
+            let parsed = text.clone();
             let result = cx
-                .background_spawn(async move { item_text::parse(&text, &original) })
+                .background_spawn(async move { item_text::parse(&parsed, &original) })
                 .await;
             let _ = this.update(cx, |this, cx| {
                 this.result = result;
                 this.pending = false;
+                // Line offsets belong to this text; a newer edit validates again.
+                if this.text.read(cx).value().as_ref() == text {
+                    this.mark_diagnostics(&text, cx);
+                }
                 cx.notify();
             });
         }));
         cx.notify();
+    }
+    /// Colours the gutter and the scrollbar beside each line a diagnostic names.
+    fn mark_diagnostics(&self, text: &str, cx: &mut App) {
+        let p = cx.global::<TooltipTheme>();
+        let (warning, error) = (p.accent_hot, p.negative);
+        let (gutter, ruler) = diagnostic_marks(text, &self.result.diagnostics)
+            .into_iter()
+            .map(|(range, is_warning)| {
+                let color = if is_warning { warning } else { error };
+                (
+                    GutterDecoration::new(range.clone()).with_color(color),
+                    OverviewRulerDecoration::new(range)
+                        .with_color(color)
+                        .with_lane(OverviewRulerLane::Full),
+                )
+            })
+            .unzip();
+        self.gutter.set(gutter, cx);
+        self.ruler.set(ruler, cx);
     }
     fn insert(&mut self, name: &str, percent: bool, window: &mut Window, cx: &mut Context<Self>) {
         let value = self.text.read(cx).value().to_string();
@@ -298,7 +341,7 @@ impl Render for ItemTextEditor {
                             )
                             .child(
                                 div().flex_1().min_h_0().child(
-                                    Textarea::new(&self.text)
+                                    Editor::new(&self.text)
                                         .h_full()
                                         .bordered(false)
                                         .aria_label(tr("gear.item_text"))
@@ -354,5 +397,63 @@ impl Render for ItemTextEditor {
                             .on_click(cx.listener(|this, _, window, cx| this.save(window, cx))),
                     ),
             )
+    }
+}
+
+/// Byte range of the 1-based line `number`, counted the way `str::lines` counts it.
+fn line_range(text: &str, number: usize) -> Option<Range<usize>> {
+    let mut start = 0;
+    for (index, segment) in text.split_inclusive('\n').enumerate() {
+        if index + 1 == number {
+            let line = segment
+                .strip_suffix('\n')
+                .map_or(segment, |line| line.strip_suffix('\r').unwrap_or(line));
+            return Some(start..start + line.len());
+        }
+        start += segment.len();
+    }
+    None
+}
+
+/// The line range and warning flag of every diagnostic that names a line of `text`.
+fn diagnostic_marks(
+    text: &str,
+    diagnostics: &[item_text::Diagnostic],
+) -> Vec<(Range<usize>, bool)> {
+    diagnostics
+        .iter()
+        .filter_map(|d| Some((line_range(text, d.line)?, d.warning)))
+        .collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn diagnostic(line: usize, warning: bool) -> item_text::Diagnostic {
+        item_text::Diagnostic {
+            line,
+            message: String::new(),
+            warning,
+        }
+    }
+
+    #[::core::prelude::v1::test]
+    fn diagnostics_mark_the_lines_they_name() {
+        let text = "Name\r\n--------\n+5% Damage\n";
+        assert_eq!(line_range(text, 1), Some(0..4));
+        assert_eq!(line_range(text, 3), Some(15..25));
+        assert_eq!(line_range(text, 4), None);
+        assert_eq!(
+            diagnostic_marks(
+                text,
+                &[
+                    diagnostic(0, false),
+                    diagnostic(3, true),
+                    diagnostic(9, false)
+                ]
+            ),
+            vec![(15..25, true)]
+        );
     }
 }

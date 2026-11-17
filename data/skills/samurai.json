@@ -511,12 +511,12 @@
       {
         "id": "ripping_flesh",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [3, 5, 7], "note": "each of the 6 shurikens sticks at its first contact (rippingFlesh = 60r frames, tick_frequency 30) and returns after 60r - 1 frames: hits per shuriken = contact + ticks + return = 2 + floor((D - 1)/31) = 2r + 1 (R4 C; was 2r + 2), relative to 1 hit per shuriken in the base: x(2r+1)"}, {"kind": "cooldown_s", "byRank": [2, 2, 2], "note": "cooldown +2 s -> period = 2 s/(1 + 0.005h), above the animation lock (C)"}], "confidence": "C", "note": "card p13 + R4 132#2 [resolved C]. Old entry used x(1+r) = [2,3,4] (2+2r hits per shuriken divided by 2); the card base is 1 hit per shuriken, so the multiplier is the hits per shuriken.", "plannerFix": "planner lacks the +2 s cooldown and the stick/return multi-hits; planner hitModel tick 0.5 s is only valid with this node."},
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [3, 5, 7], "note": "each of the 6 shurikens sticks at its first contact (rippingFlesh = 60r frames, tick_frequency 30) and returns after 60r - 1 frames: hits per shuriken = contact + ticks + return = 2 + floor((D - 1)/31) = 2r + 1 (R4 C; was 2r + 2), relative to 1 hit per shuriken in the base: x(2r+1)"}, {"kind": "cooldown_s", "byRank": [1, 1, 1], "note": "cooldown +2 s -> period = 2 s/(1 + 0.005h), above the animation lock (C)"}], "confidence": "C", "note": "card p13 + R4 132#2 [resolved C]. Old entry used x(1+r) = [2,3,4] (2+2r hits per shuriken divided by 2); the card base is 1 hit per shuriken, so the multiplier is the hits per shuriken.", "plannerFix": "planner lacks the +2 s cooldown and the stick/return multi-hits; planner hitModel tick 0.5 s is only valid with this node."},
         "name": "Ripping Flesh",
         "description": "Shurikens now attach to monsters on hit and are ripped off back to the samurai after a short period or if the samurai moves far away enough. Shuriken throw now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": {"skill_duration": 0, "cooldown_added": 2},
+          "base": {"skill_duration": 0, "cooldown_added": 1},
           "perRank": {"skill_duration": 1, "cooldown_added": 0}
         }
       },
@@ -1181,13 +1181,13 @@
       {
         "id": "stronger_explosives",
         "positionIndex": 1,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8, 16, 24, 32, 40], "note": "LSSD +8%/r (C)"}], "confidence": "C", "note": "card p1. Hits relative to dummyHits.base = 1.1 per cast (cursor (x,y-24))."},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [12, 24, 36, 48], "note": "LSSD +8%/r (C)"}], "confidence": "C", "note": "card p1. Hits relative to dummyHits.base = 1.1 per cast (cursor (x,y-24))."},
         "name": "Stronger Explosives",
         "description": "Increases damage dealt by explosive kunai.",
-        "maxRank": 5,
+        "maxRank": 4,
         "effects": {
           "base": {"subtree_damage": 0},
-          "perRank": {"subtree_damage": 8}
+          "perRank": {"subtree_damage": 12}
         }
       },
       {
@@ -1204,14 +1204,14 @@
       },
       {
         "id": "satisfaction",
-        "positionIndex": 3,
+        "positionIndex": 8,
         "dummy": {"effects": [{"kind": "utility", "note": "mana cost -8%/r, no script read in card (I)"}], "confidence": "I", "note": "card p3 (utility)."},
         "name": "Satisfaction",
         "description": "Decreases the mana cost of explosive kunai.",
-        "maxRank": 5,
+        "maxRank": 2,
         "effects": {
           "base": {"mana_cost_reduction": 0},
-          "perRank": {"mana_cost_reduction": 8}
+          "perRank": {"mana_cost_reduction": 17.5}
         }
       },
       {
@@ -1275,7 +1275,7 @@
       },
       {
         "id": "doubleblast",
-        "positionIndex": 8,
+        "positionIndex": 3,
         "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "use", "note": "proc 4%/r per cast -> pulse = 1 extra explosion hit of D (C/I)"}], "confidence": "I", "note": "card p8 (C/I). Planner of_total_damage 100 with proc 4/r gives the same 0.04r."},
         "name": "Doubleblast",
         "description": "Chance on hit for the kunai to explode an additional time.",
@@ -1329,13 +1329,13 @@
       {
         "id": "penetration_volley",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [30, 60, 90], "note": "LSSD +30%/r (C)"}, {"kind": "projectiles", "byRank": [2, 4, 6], "note": "n = 1 + 2r kunai (3, 5, 7), projType 0 (piercing: no stop, no Destroy_0 explosion at ~317 px), [498] = 1: an Explosion_Item_obj at every hit"}, {"kind": "extra_hits", "byRank": [2, 2, 2], "per": "use", "replacesProjectileHits": true, "note": "aiming through the centre only 2 kunai of the 8 deg fan hit the dummy for every n = 3, 5, 7 (saturation, C simulation) and each gives 2 hits (kunai + [498] explosion, [498] position I) -> total 4.0 D per cast; relative to base 2.0 that is +2 for every rank. Po R4 had ~6 (3 kunai), superseded. Cursor-on-(x, y-24) variant after Resztki D: n = 1: 0, n = 3: 2, n >= 5: 3 hitting kunai"}], "confidence": "I", "note": "card p12 + Po R4 (a) + Resztki D (135 p12) (C simulation, [498] position I). Hits relative to dummyHits.base = 2.0 (aim through the centre)."},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [40, 80, 120], "note": "LSSD +30%/r (C)"}, {"kind": "projectiles", "byRank": [2, 4, 6], "note": "n = 1 + 2r kunai (3, 5, 7), projType 0 (piercing: no stop, no Destroy_0 explosion at ~317 px), [498] = 1: an Explosion_Item_obj at every hit"}, {"kind": "extra_hits", "byRank": [2, 2, 2], "per": "use", "replacesProjectileHits": true, "note": "aiming through the centre only 2 kunai of the 8 deg fan hit the dummy for every n = 3, 5, 7 (saturation, C simulation) and each gives 2 hits (kunai + [498] explosion, [498] position I) -> total 4.0 D per cast; relative to base 2.0 that is +2 for every rank. Po R4 had ~6 (3 kunai), superseded. Cursor-on-(x, y-24) variant after Resztki D: n = 1: 0, n = 3: 2, n >= 5: 3 hitting kunai"}], "confidence": "I", "note": "card p12 + Po R4 (a) + Resztki D (135 p12) (C simulation, [498] position I). Hits relative to dummyHits.base = 2.0 (aim through the centre)."},
         "name": "Penetration Volley",
         "description": "Throw a spread of piercing kunai that explode on each enemy hit.",
         "maxRank": 3,
         "effects": {
           "base": {"projectile_count": 0, "subtree_damage": 0},
-          "perRank": {"projectile_count": 2, "subtree_damage": 30}
+          "perRank": {"projectile_count": 2, "subtree_damage": 40}
         }
       },
       {

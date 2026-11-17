@@ -390,7 +390,11 @@ fn rule_weapon_conditional_lines_use_dedicated_keys() {
     );
     assert_mod("+8 to Maximum Damage", "maximum_damage_flat", 8.0);
     assert_mod("+8 to Minimum Damage", "minimum_damage_flat", 8.0);
-    assert_mod("+8 to Minimum Damage when wielding a shield", "min_damage_flat_with_shield", 8.0);
+    assert_mod(
+        "+8 to Minimum Damage when wielding a shield",
+        "min_damage_flat_with_shield",
+        8.0,
+    );
     assert_mod(
         "+15% Damage Mitigation when using a Shield",
         "damage_mitigation_with_shield",

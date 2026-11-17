@@ -1,6 +1,5 @@
 {
-  "source": "skill-sprites.zip from hsextract (sprite-fx.json, same build as data/skill-fx.json): Draw events, sprite origins and animation speeds. speed = sprite frames per game frame; lift = px drawn above the object (yy); ground = shadow under a falling object; slant = drawn at x + height (Comet's diagonal fall); heightScale/heightAlpha = added per px of height; add = bm_add; fades = alpha runs out with the object's fade. Left out: rotation (aim is 0), random start frames (0), Explosion_Item_obj's random -30..30 turn and pulse ring, Fire Ball trails, Meteor shreds, Volcano fragments, Storm Cloud's lightning ring and its cloud 180 px up (outside the view).",
-  "ground": "Town_01_Ground",
+  "source": "skill-sprites.zip from hsextract (sprite-fx.json, same build as data/skill-fx.json): Draw events, sprite origins and animation speeds. speed = sprite frames per game frame; lift = px drawn above the object (yy); ground = shadow under a falling object; slant = drawn at x + height (Comet's diagonal fall); heightScale/heightAlpha = added per px of height; add = bm_add; fades = alpha runs out with the object's fade; circle = bent round its object as draw_sprite_circle bends it (radius and width in px, times the object's scale, floored); steady = plays with the loop, as an object the game never restarts (the player's shadow); fixed = keeps its size whatever its object's scale; first = the frame shown at `from`, for animations an object drives by hand (Exo_Scorching_Whip_obj's imageIndex climbs 10 / 26.4 a frame from its Alarm_0, holds 6 while its lifetime lasts and climbs to 9); flips = mirrored top to bottom while its object points between 90 and 270 deg (yScale -1); a turned layer whose object scales it unevenly or flips is spun: scaled along its own axes before the turn, one frame at a time. Left out: rotation (aim is 0), random start frames (0), Explosion_Item_obj's random -30..30 turn and pulse ring, Fire Ball trails, Meteor shreds, Volcano fragments, Storm Cloud's lightning ring and its cloud 180 px up (outside the view).",
   "dummy": {
     "idle": "Dummy_Still_spr",
     "hit": "Dummy_Hit_Right_spr",
@@ -23,6 +22,58 @@
       170,
       169
     ],
+    "Exo_Black_Hole_Cosmic_Flare_spr": [
+      71,
+      30
+    ],
+    "Exo_Lunar_Orbit_Planet_01_spr": [
+      23,
+      22
+    ],
+    "Exo_Lunar_Orbit_Nebula_spr": [
+      19,
+      14
+    ],
+    "Exo_Lunar_Orbit_Shrapnel_spr": [
+      14,
+      15
+    ],
+    "Exo_Solar_Dash_Flame_spr": [
+      58,
+      109
+    ],
+    "Exo_Solar_Dash_spr": [
+      43,
+      37
+    ],
+    "Exo_Solar_Flare_spr": [
+      54,
+      30
+    ],
+    "Exo_Solar_Flare_Orb_spr": [
+      43,
+      36
+    ],
+    "Exo_Hit_Impact_Fire_spr": [
+      33,
+      34
+    ],
+    "Exo_Scorching_Whip_Right_spr": [
+      41,
+      64
+    ],
+    "Exo_Solar_Burst_spr": [
+      37,
+      124
+    ],
+    "Exo_Whiplash_spr": [
+      62,
+      28
+    ],
+    "Hit_Impact_Arcane_spr": [
+      20,
+      21
+    ],
     "Exo_Explosion_spr": [
       74,
       67
@@ -34,6 +85,14 @@
     "Exo_Tsunami_Down_spr": [
       140,
       140
+    ],
+    "Exo_Tsunami_Waterspout_spr": [
+      33,
+      33
+    ],
+    "Exo_Tsunami_Waterspout_Burst_spr": [
+      44,
+      164
     ],
     "Hit_Impact_Fire_spr": [
       33,
@@ -91,9 +150,25 @@
       17,
       47
     ],
+    "Pyromancer_Blazing_Detonation_Field_spr": [
+      16,
+      16
+    ],
+    "Pyromancer_Blazing_Trail_spr": [
+      26,
+      49
+    ],
+    "Pyromancer_Breath_Orb_spr": [
+      44,
+      36
+    ],
     "Pyromancer_Breath_of_Fire_spr": [
       19,
       43
+    ],
+    "Pyromancer_Comet_Fragment_spr": [
+      31,
+      31
     ],
     "Pyromancer_Comet_spr": [
       33,
@@ -107,6 +182,10 @@
       60,
       16
     ],
+    "Pyromancer_Firefly_Glow_spr": [
+      36,
+      31
+    ],
     "Pyromancer_Hit_Fire_spr": [
       33,
       34
@@ -119,6 +198,14 @@
       16,
       38
     ],
+    "Pyromancer_Inferno_Slash_Projectile_spr": [
+      48,
+      61
+    ],
+    "Pyromancer_Inferno_Slash_spr": [
+      81,
+      74
+    ],
     "Pyromancer_Meteor_spr": [
       16,
       15
@@ -127,9 +214,45 @@
       142,
       118
     ],
+    "Pyromancer_Phoenix_Flight_Seed_spr": [
+      19,
+      19
+    ],
+    "Pyromancer_Phoenix_Flight_spr": [
+      47,
+      25
+    ],
+    "Pyromancer_Scorching_Aura_Circle_spr": [
+      80,
+      14
+    ],
+    "Pyromancer_Scorching_Aura_spr": [
+      43,
+      44
+    ],
+    "Pyromancer_Scorching_Harvester_spr": [
+      71,
+      30
+    ],
+    "Pyromancer_Scorching_Burst_spr": [
+      37,
+      124
+    ],
+    "Pyromancer_Searing_Chain_spr": [
+      32,
+      5
+    ],
+    "Pyromancer_Volcano_Fragment_spr": [
+      23,
+      22
+    ],
     "Pyromancer_Volcano_spr": [
       40,
       45
+    ],
+    "Pyromancer_Volcano_Yellowstone_spr": [
+      80,
+      90
     ],
     "Samurai_Empires_Slash_spr": [
       99,
@@ -204,6 +327,45 @@
           "lift": 8,
           "add": true
         }
+      ],
+      "Pyromancer_Fire_Ball_Split_obj": [
+        {
+          "sprite": "Pyromancer_Fire_Ball_spr",
+          "speed": 0.1667,
+          "lift": 20,
+          "turns": true
+        }
+      ],
+      "Pyromancer_Fire_Ball_Orbital_obj": [
+        {
+          "sprite": "Pyromancer_Fire_Ball_spr",
+          "speed": 0.1667,
+          "lift": 20,
+          "turns": true
+        }
+      ],
+      "Pyromancer_Fire_Ball_Fly_obj": [
+        {
+          "sprite": "Pyromancer_Firefly_Glow_spr",
+          "speed": 0.2,
+          "lift": 16,
+          "add": true
+        }
+      ],
+      "Pyromancer_Blazing_Trail_obj": [
+        {
+          "sprite": "Pyromancer_Blazing_Trail_spr",
+          "speed": 0.3,
+          "add": true,
+          "fades": true
+        }
+      ],
+      "Pyromancer_Armageddon_obj": [
+        {
+          "sprite": "Pyromancer_Armageddon_spr",
+          "speed": 0.3333,
+          "heightScale": 0.001
+        }
       ]
     },
     "breath_of_fire": {
@@ -213,7 +375,38 @@
           "speed": 0.3333,
           "lift": 12,
           "add": true,
-          "fades": true
+          "fades": true,
+          "turns": true
+        }
+      ],
+      "Pyromancer_Breath_Heat_Combustion_obj": [
+        {
+          "sprite": "Pyromancer_Volcano_Fragment_spr",
+          "turns": true
+        }
+      ],
+      "Pyromancer_Firenova_obj": [
+        {
+          "sprite": "Pyromancer_Nova_Effect_spr",
+          "speed": 0.3333,
+          "add": true
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Pyromancer_Explosion_spr",
+          "speed": 0.5,
+          "lift": 8,
+          "add": true
+        }
+      ],
+      "Pyromancer_Breath_Molten_Orb_obj": [
+        {
+          "sprite": "Pyromancer_Breath_Orb_spr",
+          "speed": 0.3333,
+          "lift": 20,
+          "add": true,
+          "turns": true
         }
       ]
     },
@@ -274,6 +467,46 @@
           "lift": 8,
           "add": true
         }
+      ],
+      "Explosion_Item_obj:Hit_Impact_Fire_spr": [
+        {
+          "sprite": "Hit_Impact_Fire_spr",
+          "speed": 0.375,
+          "lift": 8,
+          "add": true
+        }
+      ],
+      "Pyromancer_Firenova_obj": [
+        {
+          "sprite": "Pyromancer_Nova_Effect_spr",
+          "speed": 0.3333,
+          "add": true
+        }
+      ],
+      "Pyromancer_Blazing_Trail_obj": [
+        {
+          "sprite": "Pyromancer_Blazing_Trail_spr",
+          "speed": 0.3,
+          "add": true,
+          "fades": true
+        }
+      ],
+      "Marksman_Frag_Grenade_Shrapnel_obj": [
+        {
+          "sprite": "Pyromancer_Comet_Fragment_spr",
+          "ground": true,
+          "tint": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0.85,
+          "turns": true
+        },
+        {
+          "sprite": "Pyromancer_Comet_Fragment_spr",
+          "turns": true
+        }
       ]
     },
     "fire_nova": {
@@ -283,7 +516,48 @@
           "speed": 0.3333,
           "add": true
         }
-      ]
+      ],
+      "Pyromancer_Fire_Ball_Split_obj": [
+        {
+          "sprite": "Pyromancer_Fire_Ball_spr",
+          "speed": 0.1667,
+          "lift": 20,
+          "turns": true
+        }
+      ],
+      "Pyromancer_Fire_Ball_Orbital_obj": [
+        {
+          "sprite": "Pyromancer_Fire_Ball_spr",
+          "speed": 0.1667,
+          "lift": 20,
+          "turns": true
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Pyromancer_Explosion_spr",
+          "speed": 0.5,
+          "lift": 8,
+          "add": true
+        }
+      ],
+      "Pyromancer_Armageddon_obj": [
+        {
+          "sprite": "Pyromancer_Armageddon_spr",
+          "speed": 0.3333,
+          "heightScale": 0.001
+        }
+      ],
+      "Pyromancer_Blazing_Trail_obj": [
+        {
+          "sprite": "Pyromancer_Blazing_Trail_spr",
+          "speed": 0.3,
+          "add": true,
+          "fades": true
+        }
+      ],
+      "Pyromancer_Blazing_Trail_Controller_obj": [],
+      "TalentPullMonster": []
     },
     "volcano": {
       "Pyromancer_Volcano_obj": [
@@ -297,7 +571,74 @@
           "lift": 20,
           "add": true
         }
-      ]
+      ],
+      "Pyromancer_Volcano_obj:Pyromancer_Volcano_Yellowstone_spr": [
+        {
+          "sprite": "Pyromancer_Volcano_Yellowstone_spr",
+          "speed": 0.1667
+        },
+        {
+          "sprite": "Hit_Impact_Fire_spr",
+          "speed": 0.25,
+          "lift": 20,
+          "add": true
+        }
+      ],
+      "Pyromancer_Volcano_Fragment_obj": [
+        {
+          "sprite": "Pyromancer_Volcano_Fragment_spr",
+          "ground": true,
+          "scale": [
+            0.66,
+            0.66
+          ],
+          "tint": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0.75
+        },
+        {
+          "sprite": "Pyromancer_Volcano_Fragment_spr",
+          "scale": [
+            0.66,
+            0.66
+          ]
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Pyromancer_Explosion_spr",
+          "speed": 0.5,
+          "lift": 8,
+          "add": true
+        }
+      ],
+      "Explosion_Item_obj:Viking_Odins_Fury_spr": [
+        {
+          "sprite": "Viking_Odins_Fury_spr",
+          "lift": 8,
+          "fades": true
+        }
+      ],
+      "Pyromancer_Scorching_Searing_Burst_obj": [
+        {
+          "sprite": "Pyromancer_Scorching_Burst_spr",
+          "speed": 0.4167,
+          "add": true
+        }
+      ],
+      "Pyromancer_Blazing_Trail_obj": [
+        {
+          "sprite": "Pyromancer_Blazing_Trail_spr",
+          "speed": 0.3,
+          "add": true,
+          "fades": true
+        }
+      ],
+      "Pyromancer_Blazing_Trail_Controller_obj": [],
+      "Pyromancer_Volcano_obj_Step_0": []
     },
     "storm_cloud": {
       "Stormweaver_Storm_Cloud_obj": [
@@ -336,6 +677,23 @@
           "alpha": 0.75,
           "fades": true
         }
+      ],
+      "Exo_Black_Hole_Cosmic_Flare_obj": [
+        {
+          "sprite": "Exo_Black_Hole_Cosmic_Flare_spr",
+          "speed": 0.2,
+          "lift": 16,
+          "add": true,
+          "turns": true
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Hit_Impact_Arcane_spr",
+          "speed": 0.375,
+          "add": true,
+          "lift": 8
+        }
       ]
     },
     "supernova": {
@@ -345,12 +703,58 @@
           "add": true,
           "fades": true
         }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Exo_Explosion_spr",
+          "speed": 0.375,
+          "add": true,
+          "lift": 8
+        }
+      ],
+      "Exo_Solar_Dash_Fireball_obj": [
+        {
+          "sprite": "Exo_Whiplash_spr",
+          "speed": 0.1667,
+          "lift": 16,
+          "add": true,
+          "turns": true
+        }
+      ],
+      "Exo_Supernova_Connected_obj": [],
+      "Exo_Solar_Dash_Flame_obj": [
+        {
+          "sprite": "Exo_Solar_Dash_Flame_spr",
+          "speed": 0.2667,
+          "add": true
+        }
+      ],
+      "Exo_Asteroid_obj": [
+        {
+          "sprite": "Exo_Asteroid_spr",
+          "speed": 0.2
+        }
       ]
     },
     "tsunami": {
       "Exo_Tsunami_obj": [
         {
           "sprite": "Exo_Tsunami_Down_spr",
+          "speed": 0.3,
+          "add": true,
+          "turns": true
+        }
+      ],
+      "Exo_Tsunami_Waterspout_obj": [
+        {
+          "sprite": "Exo_Tsunami_Waterspout_spr",
+          "speed": 0.25,
+          "add": true
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Exo_Tsunami_Waterspout_Burst_spr",
           "speed": 0.3,
           "add": true
         }
@@ -369,6 +773,209 @@
           "speed": 0.375,
           "add": true,
           "lift": 8
+        }
+      ],
+      "Exo_Tsunami_obj": [
+        {
+          "sprite": "Exo_Tsunami_Down_spr",
+          "speed": 0.3,
+          "add": true,
+          "turns": true
+        }
+      ]
+    },
+    "scorching_whip": {
+      "Exo_Scorching_Whip_obj": [
+        {
+          "sprite": "Exo_Scorching_Whip_Right_spr",
+          "speed": 0.3788,
+          "first": 0.3788,
+          "from": 4,
+          "until": 20,
+          "lift": 12,
+          "add": true,
+          "turns": true,
+          "flips": true
+        },
+        {
+          "sprite": "Exo_Scorching_Whip_Right_spr",
+          "first": 6,
+          "from": 20,
+          "until": 30,
+          "lift": 12,
+          "add": true,
+          "turns": true,
+          "flips": true
+        },
+        {
+          "sprite": "Exo_Scorching_Whip_Right_spr",
+          "speed": 0.3788,
+          "first": 6.3788,
+          "from": 30,
+          "until": 37,
+          "lift": 12,
+          "add": true,
+          "turns": true,
+          "flips": true
+        }
+      ],
+      "Exo_Solar_Burst_obj": [
+        {
+          "sprite": "Exo_Solar_Burst_spr",
+          "speed": 0.4167,
+          "from": 2,
+          "add": true
+        }
+      ],
+      "Exo_Solar_Dash_Fireball_obj": [
+        {
+          "sprite": "Exo_Whiplash_spr",
+          "speed": 0.1667,
+          "first": 0.1667,
+          "from": 2,
+          "lift": 16,
+          "add": true,
+          "turns": true
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Exo_Explosion_spr",
+          "speed": 0.375,
+          "add": true,
+          "lift": 8
+        }
+      ],
+      "Exo_Solar_Dash_Flame_obj": [
+        {
+          "sprite": "Exo_Solar_Dash_Flame_spr",
+          "speed": 0.2667,
+          "first": 0.2667,
+          "from": 2,
+          "add": true
+        }
+      ]
+    },
+    "lunar_orbit": {
+      "Exo_Lunar_Orbit_obj": [
+        {
+          "sprite": "Exo_Lunar_Orbit_Planet_01_spr",
+          "speed": 0.1333,
+          "tint": [0, 0, 0],
+          "alpha": 0.75
+        },
+        {
+          "sprite": "Exo_Lunar_Orbit_Planet_01_spr",
+          "speed": 0.1333,
+          "lift": 20
+        }
+      ],
+      "Exo_Lunar_Orbit_Shrapnel_obj": [
+        {
+          "sprite": "Exo_Lunar_Orbit_Shrapnel_spr",
+          "ground": true,
+          "tint": [0, 0, 0],
+          "alpha": 0.85,
+          "turns": true
+        },
+        {
+          "sprite": "Exo_Lunar_Orbit_Shrapnel_spr",
+          "turns": true
+        }
+      ],
+      "Exo_Tsunami_obj": [
+        {
+          "sprite": "Exo_Tsunami_Down_spr",
+          "speed": 0.3,
+          "add": true,
+          "turns": true
+        }
+      ],
+      "Exo_Lunar_Orbit_Nebula_obj": [
+        {
+          "sprite": "Exo_Lunar_Orbit_Nebula_spr",
+          "lift": 20,
+          "scale": [1.12, 1.12],
+          "fades": true
+        }
+      ]
+    },
+    "solar_flare": {
+      "Exo_Solar_Flare_obj": [
+        {
+          "sprite": "Exo_Solar_Flare_spr",
+          "speed": 0.2,
+          "lift": 16,
+          "add": true,
+          "turns": true
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Exo_Hit_Impact_Fire_spr",
+          "speed": 0.375,
+          "add": true,
+          "lift": 8
+        }
+      ],
+      "Exo_Solar_Flare_Grand_Flare_obj": [
+        {
+          "sprite": "Exo_Solar_Flare_spr",
+          "speed": 0.2,
+          "lift": 16,
+          "add": true,
+          "turns": true
+        }
+      ],
+      "Exo_Solar_Flare_Solar_Orb_obj": [
+        {
+          "sprite": "Exo_Solar_Flare_Orb_spr",
+          "speed": 0.2667,
+          "lift": 16,
+          "add": true,
+          "from": 2
+        }
+      ]
+    },
+    "solar_dash": {
+      "Draw_Player_Buff_obj": [
+        {
+          "sprite": "Exo_Solar_Dash_spr",
+          "speed": 0.2667,
+          "lift": 14
+        }
+      ],
+      "Exo_Solar_Dash_Flame_obj": [
+        {
+          "sprite": "Exo_Solar_Dash_Flame_spr",
+          "speed": 0.2667,
+          "add": true
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Exo_Explosion_spr",
+          "speed": 0.375,
+          "add": true,
+          "lift": 8
+        }
+      ],
+      "Exo_Solar_Dash_Fireball_obj": [
+        {
+          "sprite": "Exo_Whiplash_spr",
+          "speed": 0.1667,
+          "lift": 16,
+          "add": true,
+          "turns": true
+        }
+      ],
+      "Exo_Solar_Dash_Solar_Orb_obj": [
+        {
+          "sprite": "Exo_Solar_Flare_Orb_spr",
+          "speed": 0.2667,
+          "lift": 16,
+          "add": true,
+          "from": 2
         }
       ]
     },
@@ -600,25 +1207,51 @@
           "lift": 8,
           "add": true
         }
-      ]
+      ],
+      "Pyromancer_Armageddon_Horizontal_obj": [
+        {
+          "sprite": "Pyromancer_Fire_Ball_spr",
+          "speed": 0.1667,
+          "lift": 20,
+          "turns": true
+        }
+      ],
+      "Explosion_Item_obj:Pyromancer_Explosion_spr": [
+        {
+          "sprite": "Pyromancer_Explosion_spr",
+          "speed": 0.5,
+          "lift": 8,
+          "add": true
+        }
+      ],
+      "Pyromancer_Firenova_obj": [
+        {
+          "sprite": "Pyromancer_Nova_Effect_spr",
+          "speed": 0.3333,
+          "add": true
+        }
+      ],
+      "Pyromancer_Armageddon_Controller_obj": [],
+      "Pyromancer_Armageddon_Controller_obj_Step_0": [],
+      "Pyromancer_Armageddon_Warped_Controller_obj": []
     },
     "hydra": {
       "Pyromancer_Hydra_obj": [
         {
           "sprite": "Pyromancer_Hydra_Down_spr",
           "speed": 0.1333,
-          "until": 13
+          "until": 31
         },
         {
           "sprite": "Pyromancer_Hydra_Attack_Down_spr",
           "speed": 0.1333,
-          "from": 13,
-          "until": 50
+          "from": 31,
+          "until": 68
         },
         {
           "sprite": "Pyromancer_Hydra_Down_spr",
           "speed": 0.1333,
-          "from": 50
+          "from": 68
         }
       ],
       "Pyromancer_Hydra_Fire_Ball_obj": [
@@ -634,6 +1267,317 @@
           "speed": 0.5,
           "lift": 8,
           "add": true
+        }
+      ],
+      "Pyromancer_Firenova_obj": [
+        {
+          "sprite": "Pyromancer_Nova_Effect_spr",
+          "speed": 0.3333,
+          "add": true
+        }
+      ],
+      "Pyromancer_Comet_Hydra_obj": [
+        {
+          "sprite": "Pyromancer_Comet_spr",
+          "speed": 0.25,
+          "ground": true,
+          "slant": true,
+          "heightScale": -0.01,
+          "heightAlpha": -0.005,
+          "tint": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0.75
+        },
+        {
+          "sprite": "Pyromancer_Comet_spr",
+          "speed": 0.25,
+          "slant": true,
+          "heightScale": 0.01
+        }
+      ],
+      "Pyromancer_Breath_of_Fire_Hydra_obj": [
+        {
+          "sprite": "Pyromancer_Breath_of_Fire_spr",
+          "speed": 0.3333,
+          "lift": 26,
+          "add": true,
+          "fades": true,
+          "turns": true
+        }
+      ],
+      "Pyromancer_Scorching_Aura_obj": []
+    },
+    "inferno_slash": {
+      "Visual_Effect_obj": [
+        {
+          "sprite": "Pyromancer_Inferno_Slash_spr",
+          "speed": 0.2333,
+          "lift": 12,
+          "scale": [
+            0.85,
+            0.92
+          ],
+          "alpha": 0.65,
+          "add": true,
+          "turns": true
+        }
+      ],
+      "Projectile_Player_obj": [
+        {
+          "sprite": "Pyromancer_Inferno_Slash_Projectile_spr",
+          "speed": 0.3333,
+          "add": true,
+          "turns": true
+        }
+      ],
+      "Draw_Player_Buff_obj": [],
+      "Pyromancer_Blazing_Trail_obj": [
+        {
+          "sprite": "Pyromancer_Blazing_Trail_spr",
+          "speed": 0.3,
+          "add": true,
+          "fades": true
+        }
+      ],
+      "Pyromancer_Fire_Ball_Fly_obj": [
+        {
+          "sprite": "Pyromancer_Firefly_Glow_spr",
+          "speed": 0.2,
+          "lift": 16,
+          "add": true
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Pyromancer_Explosion_spr",
+          "speed": 0.5,
+          "lift": 8,
+          "add": true
+        }
+      ]
+    },
+    "phoenix_flight": {
+      "Draw_Player_Buff_obj": [
+        {
+          "sprite": "Pyromancer_Phoenix_Flight_spr",
+          "speed": 0.3,
+          "scale": [
+            1.25,
+            1.25
+          ],
+          "add": true,
+          "turns": true
+        }
+      ],
+      "Visual_Effect_obj": [
+        {
+          "sprite": "Pyromancer_Phoenix_Flight_spr",
+          "speed": 0.3,
+          "scale": [
+            1.25,
+            1.25
+          ],
+          "add": true,
+          "turns": true
+        }
+      ],
+      "Pyromancer_Firenova_obj": [
+        {
+          "sprite": "Pyromancer_Nova_Effect_spr",
+          "speed": 0.3333,
+          "add": true
+        }
+      ],
+      "Pyromancer_Phoenix_Flight_Seed_obj": [
+        {
+          "sprite": "Pyromancer_Phoenix_Flight_Seed_spr",
+          "speed": 0.4167,
+          "lift": 16,
+          "add": true
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Pyromancer_Explosion_spr",
+          "speed": 0.5,
+          "lift": 8,
+          "add": true
+        }
+      ],
+      "Explosion_Item_obj:Viking_Odins_Fury_spr": [
+        {
+          "sprite": "Viking_Odins_Fury_spr",
+          "add": true,
+          "fades": true
+        }
+      ],
+      "Pyromancer_Searing_Chains_obj": [
+        {
+          "sprite": "Pyromancer_Searing_Chain_spr",
+          "speed": 1,
+          "add": true
+        }
+      ],
+      "Pyromancer_Fire_Ball_obj": [
+        {
+          "sprite": "Pyromancer_Fire_Ball_spr",
+          "speed": 0.1667,
+          "lift": 20,
+          "turns": true
+        }
+      ],
+      "Pyromancer_Fire_Ball_Split_obj": [
+        {
+          "sprite": "Pyromancer_Fire_Ball_spr",
+          "speed": 0.1667,
+          "lift": 20,
+          "turns": true
+        }
+      ],
+      "Pyromancer_Blazing_Trail_obj": [
+        {
+          "sprite": "Pyromancer_Blazing_Trail_spr",
+          "speed": 0.3,
+          "add": true,
+          "fades": true
+        }
+      ]
+    },
+    "blazing_trail": {
+      "Pyromancer_Blazing_Trail_Controller_obj": [],
+      "TalentsPyromancer_20": [],
+      "Pyromancer_Blazing_Trail_obj_Step_0": [],
+      "Pyromancer_Blazing_Trail_obj": [
+        {
+          "sprite": "Pyromancer_Blazing_Trail_spr",
+          "speed": 0.3,
+          "add": true,
+          "fades": true
+        }
+      ],
+      "Pyromancer_Firenova_obj": [
+        {
+          "sprite": "Pyromancer_Nova_Effect_spr",
+          "speed": 0.3333,
+          "add": true
+        }
+      ],
+      "Pyromancer_Trail_of_Comets_obj": [
+        {
+          "sprite": "Pyromancer_Comet_spr",
+          "speed": 0.25,
+          "ground": true,
+          "slant": true,
+          "heightScale": -0.01,
+          "heightAlpha": -0.005,
+          "tint": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0.75
+        },
+        {
+          "sprite": "Pyromancer_Comet_spr",
+          "speed": 0.25,
+          "slant": true,
+          "heightScale": 0.01
+        }
+      ],
+      "Explosion_Item_obj:Pyromancer_Explosion_spr": [
+        {
+          "sprite": "Pyromancer_Explosion_spr",
+          "speed": 0.5,
+          "lift": 8,
+          "add": true
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Pyromancer_Explosion_spr",
+          "speed": 0.5,
+          "lift": 8,
+          "add": true
+        }
+      ],
+      "Pyromancer_Blazing_Detonation_Field_obj": [
+        {
+          "sprite": "Pyromancer_Blazing_Detonation_Field_spr",
+          "speed": 0.1333
+        }
+      ]
+    },
+    "scorching_aura": {
+      "Pyromancer_Scorching_Aura_obj": [],
+      "Shadow_Parent_obj": [
+        {
+          "sprite": "Pyromancer_Scorching_Aura_spr",
+          "speed": 0.3333,
+          "add": true,
+          "steady": true,
+          "fixed": true
+        },
+        {
+          "sprite": "Pyromancer_Scorching_Aura_Circle_spr",
+          "speed": 0.2,
+          "alpha": 0.25,
+          "add": true,
+          "steady": true,
+          "circle": {
+            "radius": 128,
+            "width": 12
+          }
+        }
+      ],
+      "Pyromancer_Scorching_Searing_Burst_obj": [
+        {
+          "sprite": "Pyromancer_Scorching_Burst_spr",
+          "speed": 0.4167,
+          "add": true
+        }
+      ],
+      "Pyromancer_Blazing_Trail_obj": [
+        {
+          "sprite": "Pyromancer_Blazing_Trail_spr",
+          "speed": 0.3,
+          "add": true,
+          "fades": true
+        }
+      ],
+      "Pyromancer_Scorching_Harvester_obj": [
+        {
+          "sprite": "Pyromancer_Scorching_Harvester_spr",
+          "speed": 0.2,
+          "lift": 16,
+          "add": true,
+          "turns": true
+        }
+      ],
+      "Explosion_Item_obj:Pyromancer_Explosion_spr": [
+        {
+          "sprite": "Pyromancer_Explosion_spr",
+          "speed": 0.5,
+          "lift": 8,
+          "add": true
+        }
+      ],
+      "Explosion_Item_obj": [
+        {
+          "sprite": "Pyromancer_Explosion_spr",
+          "speed": 0.5,
+          "lift": 8,
+          "add": true
+        }
+      ],
+      "Pyromancer_Fire_Ball_Orbital_obj": [
+        {
+          "sprite": "Pyromancer_Fire_Ball_spr",
+          "speed": 0.1667,
+          "lift": 20,
+          "turns": true
         }
       ]
     }

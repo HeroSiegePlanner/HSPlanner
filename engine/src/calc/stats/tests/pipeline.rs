@@ -235,6 +235,45 @@ fn apply_set_bonuses_applies_when_threshold_met() {
     );
 }
 
+#[test]
+fn every_item_set_id_has_a_set() {
+    let missing: Vec<String> = data::data()
+        .items
+        .values()
+        .filter_map(|item| {
+            let set_id = item.set_id.as_deref()?;
+            data::get_set(set_id)
+                .is_none()
+                .then(|| format!("{} -> {set_id}", item.id))
+        })
+        .collect();
+    assert!(
+        missing.is_empty(),
+        "sets missing from sets.json: {missing:?}"
+    );
+}
+
+#[test]
+fn telescope_and_tiny_planet_grant_orbital_gravity() {
+    let inv: Inventory = ["charm_satanic_telescope", "charm_satanic_tiny_planet"]
+        .iter()
+        .map(|id| {
+            let item = EquippedItem {
+                base_id: id.to_string(),
+                ..Default::default()
+            };
+            (id.to_string(), item)
+        })
+        .collect();
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_set_bonuses(&inv, &mut attrs, &mut stats);
+    let orbital = stats
+        .get("orbital_skill_damage")
+        .map(|s| sum_contributions(s));
+    assert_eq!(orbital, Some((30.0, 30.0)));
+}
+
 // ---- class baseline + per-level ----
 
 #[test]

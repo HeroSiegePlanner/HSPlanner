@@ -12,7 +12,7 @@ fn main() {
             panic!("cannot read {path}: {e}\n(run from the engine/ directory)")
         });
         println!("=== {path} ===");
-        match app_lib::ocr::ocr_image_lines(&bytes) {
+        match hsplanner_engine::ocr::ocr_image_lines(&bytes) {
             Ok(lines) => {
                 for line in lines {
                     let [r, g, b] = line.color;

@@ -29,7 +29,7 @@
   { "id": "rune_sur", "name": "Sur", "tier": 3, "stats": { "increased_mana": 10 } },
   { "id": "rune_ber", "name": "Ber", "tier": 3, "stats": { "deadly_blow": 1, "deadly_blow_effectiveness": 8 } },
   { "id": "rune_jah", "name": "Jah", "tier": 3, "stats": { "increased_life": 10 } },
-  { "id": "rune_drax", "name": "Drax", "tier": 3, "stats": { "maximum_damage_pct": 3 } },
+  { "id": "rune_drax", "name": "Drax", "tier": 3, "stats": { "max_weapon_damage": 3 } },
   { "id": "rune_zed", "name": "Zed", "tier": 3, "stats": { "magic_skill_damage": 13 } },
   { "id": "rune_sal", "name": "Sal", "tier": 1, "stats": { "physical_damage_reduction": 4 } },
   { "id": "rune_fawn", "name": "Fawn", "tier": 4, "stats": { "all_damage_taken_reduced_pct": 3} },

@@ -867,7 +867,7 @@ impl SkillsView {
                     ),
             )
             .children(skill_details::tag_chips(&tags, cx))
-            .children(crate::skill_preview::block(skill, cx))
+            .children(crate::skill_preview::block(&details, cx))
             .children(skill_details::bonuses_block(&details, cx))
             .children(skill_details::stats_block(&details, cx))
             .children(skill_details::synergy_blocks(&details, cx))
@@ -2184,6 +2184,22 @@ impl Render for SubskillTooltip {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[::core::prelude::v1::test]
+    fn every_positioned_skill_has_an_icon_except_known_gaps() {
+        const KNOWN_GAPS: &[&str] = &[
+            "necromancer/summon_mastery",
+            "pirate/grenade_jump",
+            "viking/defensive_shout",
+        ];
+        let mut missing: Vec<&str> = visuals::SKILL_POSITIONS
+            .iter()
+            .map(|&(id, _, _)| id)
+            .filter(|id| !visuals::SKILL_ICONS.iter().any(|(icon, _)| icon == id))
+            .collect();
+        missing.sort_unstable();
+        assert_eq!(missing, KNOWN_GAPS);
+    }
 
     #[::core::prelude::v1::test]
     fn butcher_subskill_buffs_default_off_and_require_learned_parent_and_node() {

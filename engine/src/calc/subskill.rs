@@ -1,6 +1,8 @@
+use std::borrow::Cow;
 use std::collections::HashMap;
 
 use super::conditions::{is_condition_active, is_conditional_key};
+use super::types::{SkillSpec, UsePeriodSpec};
 
 pub type StatMap = HashMap<String, f64>;
 
@@ -65,6 +67,57 @@ pub struct SubtreeAggregation {
 /// Public contract: saved builds and share codes depend on the colon delimiter.
 pub fn subskill_key(skill_id: &str, subskill_id: &str) -> String {
     format!("{}:{}", skill_id, subskill_id)
+}
+
+/// Whether a dummy effect's `requires` holds for the sibling nodes' ranks: `a` takes a learned
+/// node, `a=n` one at rank n, `a|b` either, `!a|b` neither, and `&` joins clauses that must all
+/// hold.
+pub fn requires_hold(requires: Option<&str>, rank: impl Fn(&str) -> u32) -> bool {
+    let holds = |id: &str| match id.split_once('=') {
+        Some((id, at)) => at.parse().is_ok_and(|at: u32| rank(id) == at),
+        None => rank(id) > 0,
+    };
+    requires.is_none_or(|requires| {
+        requires.split('&').all(|clause| {
+            let (unless, ids) = clause
+                .strip_prefix('!')
+                .map_or((false, clause), |ids| (true, ids));
+            ids.split('|').any(holds) != unless
+        })
+    })
+}
+
+/// `skill` with the use period its learned nodes set: the longest of their `use_frames` dummy
+/// effects replaces `usePeriod.extraFrames`, with its `trigger` when it gives one.
+pub fn learned_use_period<'a>(
+    skill: &'a SkillSpec,
+    subskill_ranks: &HashMap<String, u32>,
+) -> Cow<'a, SkillSpec> {
+    let rank = |id: &str| {
+        let key = subskill_key(&skill.id, id);
+        subskill_ranks.get(&key).copied().unwrap_or(0)
+    };
+    let learned = skill.subskills.iter().flatten().filter(|n| rank(&n.id) > 0);
+    let set = learned
+        .flat_map(|node| {
+            let effects = node.dummy.iter().flat_map(|dummy| &dummy.effects);
+            effects.map(move |effect| (effect, rank(&node.id)))
+        })
+        .filter(|(effect, _)| effect.kind == "use_frames")
+        .filter(|(effect, _)| requires_hold(effect.requires.as_deref(), rank))
+        .map(|(effect, at)| (effect.value_at(at), effect.trigger))
+        .max_by(|a, b| a.0.total_cmp(&b.0));
+    let (Some((frames, trigger)), Some(period)) = (set, skill.use_period.as_ref()) else {
+        return Cow::Borrowed(skill);
+    };
+    Cow::Owned(SkillSpec {
+        use_period: Some(UsePeriodSpec {
+            extra_frames: frames,
+            trigger: trigger.or(period.trigger),
+            ..period.clone()
+        }),
+        ..skill.clone()
+    })
 }
 
 /// Effective tags after subskill transmutations (removes win over adds).
@@ -495,5 +548,76 @@ mod tests {
         let out = aggregate_subskill_stats(&owner, &r, None);
         assert_eq!(out.stats.get("life"), Some(&15.0));
         assert_eq!(out.proc_stats.get("life"), Some(&5.0));
+    }
+
+    #[test]
+    fn a_requirement_can_name_the_rank_a_sibling_must_have() {
+        let rank = |id: &str| match id {
+            "circle" => 2,
+            "comets" => 1,
+            _ => 0,
+        };
+        assert!(requires_hold(Some("circle=2"), rank));
+        assert!(!requires_hold(Some("circle=1"), rank));
+        assert!(requires_hold(Some("circle=1|circle=2"), rank));
+        assert!(requires_hold(Some("!circle=3"), rank));
+        assert!(requires_hold(Some("circle=2&comets"), rank));
+        assert!(!requires_hold(Some("circle=2&!comets"), rank));
+        assert!(!requires_hold(Some("forks"), rank));
+        assert!(requires_hold(None, rank));
+    }
+
+    #[test]
+    fn a_learned_node_sets_the_use_period_its_requires_allow() {
+        use crate::calc::types::{
+            SkillSpec, SubskillDummyEffect, SubskillDummySpec, SubskillNodeSpec, UsePeriodSpec,
+        };
+        let frames = |values: &[f64], requires: Option<&str>, trigger| SubskillDummyEffect {
+            kind: "use_frames".into(),
+            by_rank: Some(values.to_vec()),
+            requires: requires.map(Into::into),
+            trigger,
+            ..Default::default()
+        };
+        let node = |id: &str, effect| SubskillNodeSpec {
+            id: id.into(),
+            max_rank: 2,
+            dummy: Some(SubskillDummySpec {
+                effects: vec![effect],
+                ..Default::default()
+            }),
+            ..Default::default()
+        };
+        let dash = SkillSpec {
+            id: "dash".into(),
+            use_period: Some(UsePeriodSpec {
+                kind: "charge".into(),
+                extra_frames: 22.0,
+                trigger: Some(false),
+                note: None,
+            }),
+            subskills: Some(vec![
+                node("through", frames(&[50.0], Some("!short"), None)),
+                node("short", frames(&[29.0], Some("through"), None)),
+                node("leap", frames(&[63.0, 64.0], None, Some(true))),
+            ]),
+            ..Default::default()
+        };
+        let period = |learned: &[(&str, u32)]| {
+            let r = learned.iter().map(|(id, rank)| ("dash", *id, *rank));
+            let spec = learned_use_period(&dash, &ranks(&r.collect::<Vec<_>>()));
+            let period = spec.use_period.clone().expect("a use period");
+            (period.extra_frames, period.trigger)
+        };
+        assert_eq!(period(&[]), (22.0, Some(false)));
+        assert_eq!(period(&[("through", 1)]), (50.0, Some(false)));
+        assert_eq!(period(&[("short", 1)]), (22.0, Some(false)));
+        assert_eq!(period(&[("through", 1), ("short", 2)]), (29.0, Some(false)));
+        // The longest period learned wins, with its trigger frames.
+        assert_eq!(period(&[("through", 1), ("leap", 2)]), (64.0, Some(true)));
+        assert!(matches!(
+            learned_use_period(&dash, &HashMap::new()),
+            std::borrow::Cow::Borrowed(_)
+        ));
     }
 }

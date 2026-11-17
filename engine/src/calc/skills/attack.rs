@@ -329,7 +329,17 @@ fn compute_attack_skill_damage_with_rank(
             });
 
     let (bound_flat, bound_multiplier) = super::damage_bound_bonuses(input.stats);
-    let base_min = w_min * (1.0 + r_min(ed) / 100.0) * (1.0 + r_min(ed_more) / 100.0)
+    // Weapon damage stats 448/450 (Hydrangea) and 451 (Drax) scale weapon hits only, never spells.
+    let bound_flat = (
+        bound_flat.0 + rg(input.stats, "min_weapon_damage_flat").0,
+        bound_flat.1 + rg(input.stats, "max_weapon_damage_flat").1,
+    );
+    let bound_multiplier = (
+        bound_multiplier.0,
+        bound_multiplier.1 * (1.0 + rg(input.stats, "max_weapon_damage").1 / 100.0).max(0.0),
+    );
+    // Lucifer's Crown's -300% all resistance drives damage-per-resist ED far below -100%.
+    let base_min = w_min * (1.0 + r_min(ed) / 100.0).max(0.0) * (1.0 + r_min(ed_more) / 100.0)
         + r_min(add_phys)
         + ranged_flat.0
         + skill_flat_min
@@ -337,7 +347,7 @@ fn compute_attack_skill_damage_with_rank(
         + input.conversion_flat
         + bound_flat.0;
     let base_min = base_min * bound_multiplier.0;
-    let base_max = w_max * (1.0 + r_max(ed) / 100.0) * (1.0 + r_max(ed_more) / 100.0)
+    let base_max = w_max * (1.0 + r_max(ed) / 100.0).max(0.0) * (1.0 + r_max(ed_more) / 100.0)
         + r_max(add_phys)
         + ranged_flat.1
         + skill_flat_max
@@ -662,6 +672,9 @@ fn compute_attack_skill_damage_with_rank(
             "maximum_damage_flat",
             "minimum_damage_pct",
             "maximum_damage_pct",
+            "min_weapon_damage_flat",
+            "max_weapon_damage_flat",
+            "max_weapon_damage",
             "attack_damage",
             "attack_damage_more",
             "armor_break",
@@ -999,6 +1012,8 @@ fn compute_attack_skill_damage_with_rank(
         effective_rank_max: eff_max,
         weapon_damage_pct_min: skill_wdp_min,
         weapon_damage_pct_max: skill_wdp_max,
+        weapon_multiplier_min: skill_mult_min,
+        weapon_multiplier_max: skill_mult_max,
         skill_flat_phys_min: skill_flat_min,
         skill_flat_phys_max: skill_flat_max,
         attack_rating_pct_min: skill_arp_min,
@@ -1580,6 +1595,36 @@ mod tests {
         assert_eq!(d.converted_elements[0].hit_max, 464);
     }
 
+    #[test]
+    fn weapon_damage_stats_raise_the_weapon_hit_bounds() {
+        let hit = |shared: &StatMap| {
+            let d = breakdown_for(
+                &skill(),
+                shared,
+                &StatMap::new(),
+                &SkillRanks::new(),
+                1,
+                0.0,
+            );
+            (d.physical_hit_min, d.physical_hit_max)
+        };
+        let (base_min, base_max) = hit(&StatMap::new());
+        let (drax_min, drax_max) = hit(&stats(&[("max_weapon_damage", 100.0)]));
+        assert_eq!(drax_min, base_min);
+        assert!(
+            (drax_max as f64 / base_max as f64 - 2.0).abs() < 0.02,
+            "{base_max} -> {drax_max}"
+        );
+        let (flat_min, flat_max) = hit(&stats(&[
+            ("min_weapon_damage_flat", 20.0),
+            ("max_weapon_damage_flat", 20.0),
+        ]));
+        assert!(
+            flat_min > base_min && flat_max > base_max,
+            "{base_min}–{base_max} -> {flat_min}–{flat_max}"
+        );
+    }
+
     fn hit_max_with_conversion(conversion_flat: f64) -> i64 {
         breakdown_for(
             &skill(),
@@ -1866,6 +1911,24 @@ mod tests {
         let out = breakdown_for(&s, &StatMap::new(), &extra, &SkillRanks::new(), 1, 0.0);
         assert_eq!(out.physical_hit_max, 220);
         assert_eq!(out.physical_avg_max, 275);
+    }
+
+    #[test]
+    fn the_breakdown_exposes_the_weapon_multiplier_of_the_physical_swing() {
+        let mut s = skill();
+        s.attack_scaling = Some(AttackSkillScaling {
+            weapon_bonus_scaling: true,
+            weapon_damage_pct: Some(DamageFormula {
+                base: 185.0,
+                per_level: 35.0,
+            }),
+            ..Default::default()
+        });
+        let scoped = stats(&[("subtree_damage", 8.0), ("weapon_subtree_damage", 4.0)]);
+        let out = breakdown_for(&s, &StatMap::new(), &scoped, &SkillRanks::new(), 1, 0.0);
+        // 1 + 1.20 × (1 + .08 + .04): the neutral weapon damage plus its scaled bonus.
+        assert!((out.weapon_multiplier_max - 2.344).abs() < 1e-9);
+        assert_eq!(out.physical_hit_max, 234);
     }
 
     #[test]

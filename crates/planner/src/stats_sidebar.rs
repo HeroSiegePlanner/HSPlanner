@@ -3,9 +3,10 @@ use crate::TreeView;
 use gpui_kit::{prelude::*, *};
 use hsplanner_build::{BuildSnapshot, session::Session};
 use hsplanner_engine::calc::{
+    build::BuildPerformance,
     data,
     defense::{EhpResult, effective_cap},
-    planner::PlannerPerformance,
+    planner::{self, PlannerPerformance},
     skills::Ranged,
     types::SkillKind,
 };
@@ -18,6 +19,14 @@ use hsplanner_ui::{
     tooltip_text::TooltipText,
 };
 use std::sync::Arc;
+
+/// A skill's own Combined DPS; Hit DPS alone leaves out crits and ailments.
+fn skill_dps(performance: &BuildPerformance) -> Option<Ranged> {
+    let p = performance;
+    p.combined_dps_min
+        .zip(p.combined_dps_max)
+        .or(p.hit_dps_min.zip(p.hit_dps_max))
+}
 
 const ATTRIBUTES: &[&str] = &[
     "strength",
@@ -257,7 +266,17 @@ impl StatsSidebar {
                 cx,
             );
         }
-        if snapshot.active_skill_ids.is_empty() {
+        // A damaging aura in the aura slot deals damage beside the picked skills.
+        let aura = planner::damaging_aura(
+            snapshot.class_id.as_deref(),
+            snapshot.active_aura_id.as_deref(),
+            &snapshot.skill_ranks,
+        );
+        let mut ids = snapshot.active_skill_ids.clone();
+        if let Some(aura) = aura.filter(|aura| !ids.iter().any(|id| id == aura)) {
+            ids.push(aura.to_string());
+        }
+        if ids.is_empty() {
             return section(
                 "sidebar-active-skills",
                 tr("planner.common.active_skills"),
@@ -272,23 +291,19 @@ impl StatsSidebar {
             );
         }
         let mut buttons = div().flex().flex_col().gap_1().mb_2();
-        for id in &snapshot.active_skill_ids {
-            let name = active
+        for id in &ids {
+            let name = skills
                 .iter()
                 .find(|skill| &skill.id == id)
                 .map(|skill| skill.name.as_str())
                 .unwrap_or(id);
             let dps = result
                 .and_then(|result| result.per_skill.iter().find(|skill| &skill.skill_id == id))
-                .and_then(|skill| {
-                    skill
-                        .performance
-                        .hit_dps_min
-                        .zip(skill.performance.hit_dps_max)
-                })
+                .and_then(|skill| skill_dps(&skill.performance))
                 .map(|range| compact_range(range, scale))
                 .unwrap_or_else(|| "—".into());
             let remove = id.clone();
+            let is_aura = aura == Some(id.as_str());
             let label = trf(
                 "planner.sidebar.remove_active",
                 &[("name", name.to_string())],
@@ -331,7 +346,11 @@ impl StatsSidebar {
                         .on_click(cx.listener(move |this, _, _, cx| {
                             this.session.update(cx, |session, cx| {
                                 session.edit(|draft| {
-                                    draft.snapshot.active_skill_ids.retain(|id| id != &remove)
+                                    if is_aura {
+                                        draft.snapshot.active_aura_id = None;
+                                    } else {
+                                        draft.snapshot.active_skill_ids.retain(|id| id != &remove)
+                                    }
                                 });
                                 cx.notify();
                             });
@@ -340,10 +359,9 @@ impl StatsSidebar {
             );
         }
         content = content.child(buttons);
-        let primary = snapshot
-            .active_skill_ids
+        let primary = ids
             .first()
-            .and_then(|id| active.iter().find(|skill| &skill.id == id));
+            .and_then(|id| skills.iter().find(|skill| &skill.id == id));
         let Some(skill) = primary else {
             return section(
                 "sidebar-active-skills",
@@ -839,6 +857,16 @@ impl Render for StatsSidebar {
 mod tests {
     use super::*;
     use hsplanner_engine::calc::defense::EhpEntry;
+
+    #[::core::prelude::v1::test]
+    fn active_skill_rows_show_the_skills_combined_dps() {
+        let mut crits = BuildPerformance::default();
+        (crits.hit_dps_min, crits.hit_dps_max) = (Some(1.), Some(2.));
+        assert_eq!(skill_dps(&crits), Some((1., 2.)));
+        (crits.combined_dps_min, crits.combined_dps_max) = (Some(3.), Some(7.));
+        assert_eq!(skill_dps(&crits), Some((3., 7.)));
+    }
+
     #[::core::prelude::v1::test]
     fn sidebar_numbers_drop_decimals_as_values_grow() {
         assert_eq!(signed_stat((270.44, 350.36), true), "+270–350%");

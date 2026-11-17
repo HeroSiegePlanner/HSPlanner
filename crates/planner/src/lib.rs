@@ -18,9 +18,16 @@ mod node_tooltip;
 mod projectile;
 mod scene;
 mod skill_details;
+mod skill_effects;
+mod skill_homing;
+mod skill_mods;
+mod skill_motion;
+mod skill_overlay;
 mod skill_preview;
 mod skill_sim;
 mod skill_sprites;
+mod skill_steer;
+mod skill_volley;
 pub mod skills;
 mod source_breakdown;
 mod source_preview;
@@ -44,7 +51,7 @@ use gpui_kit::component::{
 };
 use gpui_kit::{
     Bounds, Context, FocusHandle, MouseButton, MouseDownEvent, MouseMoveEvent, MouseUpEvent,
-    Pixels, Render, ScrollWheelEvent, Window, canvas, div, prelude::*, px, size,
+    Pixels, Render, ScrollEvent, Window, canvas, div, prelude::*, px, size,
 };
 use hsplanner_build::{BuildSnapshot, session::Session};
 
@@ -685,7 +692,7 @@ impl TreeView {
         cx.notify();
     }
 
-    fn scroll(&mut self, event: &ScrollWheelEvent, _: &mut Window, cx: &mut Context<Self>) {
+    fn scroll(&mut self, event: &ScrollEvent, _: &mut Window, cx: &mut Context<Self>) {
         self.stop_motion();
         let delta = event.delta.pixel_delta(px(28.0));
         if event.modifiers.shift {
@@ -911,7 +918,7 @@ impl Render for TreeView {
                     cx.notify();
                 }
             }))
-            .on_scroll_wheel(cx.listener(Self::scroll));
+            .on_scroll(cx.listener(Self::scroll));
         let tooltip = hovered.filter(|_| self.build.is_current()).map(|ix| {
             let node = &self.scene.graph.nodes[ix];
             let cursor = self.viewport.get().origin

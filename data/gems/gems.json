@@ -642,7 +642,7 @@
     "tier": 6,
     "stats": {
       "to_vitality": 10,
-      "life_regeneration": 20,
+      "life_replenish": 20,
       "damage_return": 50
     },
     "description": "Soulgem"

@@ -1,9 +1,9 @@
-use app_lib::calc::tree::parse::{classify_tree_node_line, TreeLineClass};
+use hsplanner_engine::calc::tree::parse::{classify_tree_node_line, TreeLineClass};
 use serde_json::{json, Map, Value};
 
 fn main() {
     let mut map = Map::new();
-    for (id, node) in app_lib::calc::data::tree_nodes() {
+    for (id, node) in hsplanner_engine::calc::data::tree_nodes() {
         let (mut parsed, mut unsupported) = (Vec::new(), Vec::new());
         for line in &node.lines {
             match classify_tree_node_line(line) {

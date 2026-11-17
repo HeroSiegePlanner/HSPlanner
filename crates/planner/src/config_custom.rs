@@ -212,7 +212,7 @@ impl CustomStatsEditor {
         let subscriptions = vec![
             cx.subscribe(&text, |this, text, event: &InputEvent, cx| {
                 if matches!(event, InputEvent::Change) {
-                    this.issues = parse_custom_text(&text.read(cx).value().to_string()).1;
+                    this.issues = parse_custom_text(text.read(cx).value().as_ref()).1;
                     cx.notify();
                 }
             }),

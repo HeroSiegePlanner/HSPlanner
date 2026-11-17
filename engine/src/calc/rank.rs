@@ -373,6 +373,23 @@ mod tests {
     }
 
     #[test]
+    fn face_of_existence_ranks_the_picked_buff_skill() {
+        let items = &super::super::data::data().items;
+        let id = "helmet_heroic_face_of_existence";
+        let pool = items[id].random_skill_pool.as_ref().unwrap();
+        let butcher = super::super::data::get_skills_by_class("butcher");
+        let skill = |id: &str| butcher.iter().find(|s| s.id == id).unwrap();
+        assert!(pool.accepts(skill("fuel_to_fire"), Some("butcher")));
+        assert!(!pool.accepts(skill("slicing_throw"), Some("butcher")));
+
+        let mut picked = equipped(id, None);
+        picked.random_skill_id = Some("fuel_to_fire".to_string());
+        let inv: Inventory = HashMap::from([("helmet".to_string(), picked)]);
+        let out = aggregate_item_skill_bonuses(&inv, items);
+        assert_eq!(out.get("fuel to fire"), Some(&(20.0, 30.0)));
+    }
+
+    #[test]
     fn aggregate_missing_base_skipped() {
         let db: HashMap<String, ItemBase> = HashMap::new();
         let mut inv: Inventory = HashMap::new();

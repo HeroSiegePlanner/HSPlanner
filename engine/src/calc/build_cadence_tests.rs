@@ -373,7 +373,7 @@ fn butcher_local_critical_nodes_preserve_shared_stats_and_ordinary_hits() {
         ("brutalizing_slash", "skullsplitter", 30.),
         ("butchers_hook", "immaculate_butcher", 30.),
         ("chain_swing", "entry_frenzy", 20.),
-        ("blender", "obsidian_blades", 32.5),
+        ("blender", "obsidian_blades", 24.),
     ] {
         let mut build = Build::new("butcher", id);
         build.inventory.insert(
@@ -451,7 +451,7 @@ fn blender_variants_inherit_obsidian_critical_points_once() {
         assert_eq!(attack.projectile_count, plain.projectile_count);
         close(
             attack.crit_multiplier_avg - plain.crit_multiplier_avg,
-            0.5 * 97.5 / 100.,
+            0.5 * 72. / 100.,
         );
         assert!(boosted.avg_hit_dps_max.unwrap() > baseline.avg_hit_dps_max.unwrap());
         assert_eq!(boosted.stats, baseline.stats);
@@ -461,7 +461,7 @@ fn blender_variants_inherit_obsidian_critical_points_once() {
 fn hunger_for_blood_requires_a_bleeding_target_and_uses_finalized_global_points() {
     let mut build = Build::new("butcher", "furious_strike");
     let baseline = build.run();
-    for (rank, expected) in [(1, 1.), (2, 2.), (3, 3.), (4, 5.)] {
+    for (rank, expected) in [(2, 1.), (3, 2.), (4, 3.), (6, 4.)] {
         build.ranks.insert("hunger_for_blood".into(), rank);
         build.enemy_conditions.clear();
         let off = build.run();
@@ -492,7 +492,7 @@ fn butcher_bleeding_subtrees_add_fractional_local_points_after_the_global_floor(
     ] {
         let mut build = Build::new("butcher", id);
         build.ranks.insert("hunger_for_blood".into(), 1);
-        build.stat("extra_damage_bleeding", "0.75");
+        build.stat("extra_damage_bleeding", "1.25");
         let baseline = build.run();
         build.subs.insert(subskill_key(id, node), 1);
         let off = build.run();
@@ -968,7 +968,10 @@ fn on_hit_subproc_counts_projectiles_and_repeated_contacts() {
     build.projectiles.insert("lightning_surge".into(), 3);
     close(build.run().proc_dps_max, base.proc_dps_max * 2.0);
     build.stat("faster_cast_rate", "100");
-    close(build.run().proc_dps_max, base.proc_dps_max * 2.0 * 43.0 / 28.0);
+    close(
+        build.run().proc_dps_max,
+        base.proc_dps_max * 2.0 * 43.0 / 28.0,
+    );
 }
 
 #[test]
@@ -1097,7 +1100,10 @@ fn attack_speed_spells_preserve_both_weapon_rate_endpoints_for_damage_and_cost()
             .find(|step| step.label() == "Actions per second")
             .unwrap()
             .value();
-        let locked = (crate::calc::skills::animation_lock_rate(weapon_rate.0), crate::calc::skills::animation_lock_rate(weapon_rate.1));
+        let locked = (
+            crate::calc::skills::animation_lock_rate(weapon_rate.0),
+            crate::calc::skills::animation_lock_rate(weapon_rate.1),
+        );
         assert_eq!(actions, locked, "{skill}");
         let cost = &result.skill_costs[skill];
         assert_eq!(

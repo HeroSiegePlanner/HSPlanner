@@ -482,8 +482,8 @@
     "position": { "row": 1, "col": 1 },
     "ranks": [{ "rank": 1 }],
     "passiveStats": {
-      "base": { "parry_chance": 1 },
-      "perRank": { "parry_chance": 1 }
+      "base": { "parry_chance": 1.5 },
+      "perRank": { "parry_chance": 1.5 }
     }
   },
   {
@@ -509,7 +509,7 @@
     "attackScaling": {
       "weaponBonusScaling": true,
       "weaponSubtreeScalesFullHit": true,
-      "weaponDamagePct": { "base": 160, "perLevel": 24 },
+      "weaponDamagePct": { "base": 160, "perLevel": 28 },
       "flatPhysicalMin": { "base": 2, "perLevel": 1 },
       "flatPhysicalMax": { "base": 10, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -517,7 +517,7 @@
     "bonusSources": [
       { "source": "Lance Thrust", "stat": "attack_damage", "value": 8, "per": "skill_level" },
       { "source": "Lance Throw", "stat": "attack_damage", "value": 6, "per": "skill_level" },
-      { "source": "Parry", "stat": "attack_damage", "value": 4, "per": "skill_level" }
+      { "source": "Parry", "stat": "attack_damage", "value": 8, "per": "skill_level" }
     ],
     "subskills": [
       {
@@ -530,13 +530,13 @@
       {
         "id": "sharp_point",
         "positionIndex": 1,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [10, 20, 30, 40, 50], "note": "LSSD +10%/r on the whole hit."}], "confidence": "C", "note": "Card p1."},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [20, 40], "note": "LSSD +10%/r on the whole hit."}], "confidence": "C", "note": "Card p1."},
         "name": "Sharp Point",
         "description": "Increases the damage dealt by crushing lance.",
-        "maxRank": 5,
+        "maxRank": 2,
         "effects": {
           "base": {"subtree_damage": 0},
-          "perRank": {"subtree_damage": 10}
+          "perRank": {"subtree_damage": 20}
         }
       },
       {
@@ -577,7 +577,7 @@
       },
       {
         "id": "finishing_stagger",
-        "positionIndex": 5,
+        "positionIndex": 7,
         "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.2, 1.4, 1.6, 1.8, 2.0], "note": "Vs stunned: the dummy is stunned constantly (base 2 s, rule 27), so the multiplier applies on every hit."}], "confidence": "C", "note": "Card p5."},
         "name": "Finishing Stagger",
         "description": "Increases damage dealt to stunned targets.",
@@ -598,14 +598,14 @@
       },
       {
         "id": "rapidcast_artillery",
-        "positionIndex": 7,
-        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [6, 12, 18, 24, 30], "note": "Attack speed: acc = 0.06r in TalentUseSetSpeed case 296."}], "confidence": "C", "note": "Card p7."},
+        "positionIndex": 5,
+        "dummy": {"effects": [{"kind": "cast_speed_pct", "byRank": [10, 20, 30], "note": "Attack speed: acc = 0.06r in TalentUseSetSpeed case 296."}], "confidence": "C", "note": "Card p7."},
         "name": "Rapidcast Artillery",
         "description": "Increases attack speed when using crushing lance.",
-        "maxRank": 5,
+        "maxRank": 3,
         "effects": {
           "base": {"skill_attack_speed_more": 0},
-          "perRank": {"skill_attack_speed_more": 6}
+          "perRank": {"skill_attack_speed_more": 10}
         }
       },
       {
@@ -622,7 +622,7 @@
       },
       {
         "id": "pulverizing_shock",
-        "positionIndex": 9,
+        "positionIndex": 10,
         "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.25, 1.5, 1.75, 2.0, 2.25], "note": "Armour break 25r% (+RSS234, not traced, taken as 0) while active (5 s). Conditional multiplier; engine gates by break uptime from 4r% per use."}], "confidence": "C", "note": "Card p9, [969] = [25/r + RSS234, 5 s]."},
         "name": "Pulverizing Shock",
         "description": "Chance to inflict armor break on hit.",
@@ -641,7 +641,7 @@
       },
       {
         "id": "scorching_quake",
-        "positionIndex": 10,
+        "positionIndex": 9,
         "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "use", "note": "Echo: chance 4r% on cast to repeat the AOE once (pulses=1): +1 hit d0 per roll."}, {"kind": "dot", "byRank": [4, 8, 12, 16, 20], "note": "Value = burning chance % per use; burn amount 0.3r*d0 (card floor(d0*30%/r))."}], "confidence": "C", "note": "Card p10, asm L501/L540.", "plannerFix": "Planner has only the burning proc; the echo second AOE hit (+1 d0 at 4r%) is missing."},
         "name": "Scorching Quake",
         "description": "Chance on cast to empower crushing lance causing it to echo an additional time inflicting burning on hit.",
@@ -740,7 +740,7 @@
     "bonusSources": [
       { "source": "Glorious Strike", "stat": "attack_damage", "value": 5, "per": "skill_level" },
       { "source": "Commending Banner", "stat": "attack_damage", "value": 7, "per": "skill_level" },
-      { "source": "Armor Crush", "stat": "attack_damage", "value": 3, "per": "skill_level" }
+      { "source": "Armor Crush", "stat": "attack_damage", "value": 9, "per": "skill_level" }
     ],
     "subskills": [
       {
@@ -753,13 +753,13 @@
       {
         "id": "battle_experienced",
         "positionIndex": 1,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [12, 24, 36, 48, 60], "note": "LSSD +12%/r multiplies the whole hit (rule 9 variant 2)."}], "confidence": "C", "note": "Card p1."},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45, 60, 75], "note": "LSSD +12%/r multiplies the whole hit (rule 9 variant 2)."}], "confidence": "C", "note": "Card p1."},
         "name": "Battle Experienced",
         "description": "Increases the damage dealt by lance thrust.",
         "maxRank": 5,
         "effects": {
           "base": {"subtree_damage": 0},
-          "perRank": {"subtree_damage": 12}
+          "perRank": {"subtree_damage": 15}
         }
       },
       {
@@ -823,12 +823,12 @@
         "dummy": {"effects": [{"kind": "other", "note": "Per use chance 2r% of 1r AS and 2r AR stack (buff 109, 3 s, max 15). Average AS bonus ~ r * 0.02r * min(15, 3 s / T_att): depends on T_att, not a constant. Expected hit-count effect 0."}], "confidence": "I", "note": "Card p6 (C/I, stacks average); planner chance 2r and AS 1r, AR 2r match."},
         "name": "Swift Striking",
         "description": "Chance to gain a stack of swift strikes on hit increasing your attack speed and attack rating.",
-        "maxRank": 5,
+        "maxRank": 3,
         "proc": {
           "trigger": "on_hit",
-          "chance": { "base": 0, "perRank": 2 },
+          "chance": { "base": 8, "perRank": 2 },
           "effects": {
-            "base": { "increased_attack_speed": 0, "attack_rating_pct": 0 },
+            "base": { "increased_attack_speed": 4, "attack_rating_pct": 8 },
             "perRank": { "increased_attack_speed": 1, "attack_rating_pct": 2 }
           }
         }
@@ -842,7 +842,7 @@
         "maxRank": 5,
         "effects": {
           "base": {"crit_damage": 0},
-          "perRank": {"crit_damage": 27.5}
+          "perRank": {"crit_damage": 35}
         }
       },
       {
@@ -896,13 +896,13 @@
       {
         "id": "legion_exterminator",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD +25%/r; whirl transformation still gives 1 hit (no map clear at 360 deg), no banner synergy."}], "confidence": "C", "note": "Card p12."},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [35, 70, 105], "note": "LSSD +25%/r; whirl transformation still gives 1 hit (no map clear at 360 deg), no banner synergy."}], "confidence": "C", "note": "Card p12."},
         "name": "Legion Exterminator",
         "description": "Unleash a whirl attack with increased area of effect radius. Lance thrust no longer collides with commending banner.",
         "maxRank": 3,
         "effects": {
           "base": {"area_of_effect": 0, "subtree_damage": 0},
-          "perRank": {"area_of_effect": 20, "subtree_damage": 25}
+          "perRank": {"area_of_effect": 20, "subtree_damage": 35}
         }
       },
       {
@@ -1438,7 +1438,7 @@
           "chance": { "base": 0, "perRank": 12 },
           "effects": {
             "base": { "of_total_damage": 0 },
-            "perRank": { "of_total_damage": 35 }
+            "perRank": { "of_total_damage": 125 }
           },
           "appliesStates": [
             {
@@ -1457,7 +1457,7 @@
         "maxRank": 3,
         "effects": {
           "base": {"arcane_skill_damage": 0},
-          "perRank": {"arcane_skill_damage": 18}
+          "perRank": {"arcane_skill_damage": 42}
         }
       },
       {

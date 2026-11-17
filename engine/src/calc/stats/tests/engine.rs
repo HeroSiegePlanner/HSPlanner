@@ -238,7 +238,7 @@ fn awakening_fury_requires_learned_active_buff_and_ignores_forms() {
                         (sum.0 + source.value.0, sum.1 + source.value.1)
                     });
                 let expected = if learned && active {
-                    (20.0, 34.0)
+                    (18.0, 28.0)
                 } else {
                     (0.0, 0.0)
                 };
@@ -259,8 +259,8 @@ fn awakening_fury_requires_learned_active_buff_and_ignores_forms() {
 fn audited_butcher_talents_return_zero_at_nonpositive_effective_rank() {
     for (id, key, rank_one) in [
         ("ending_fate", "life_replenish_more", 50.0),
-        ("awakening_fury", "attack_damage", 20.0),
-        ("hunger_for_blood", "extra_damage_bleeding", 1.25),
+        ("awakening_fury", "attack_damage", 18.0),
+        ("hunger_for_blood", "extra_damage_bleeding", 0.75),
         ("fuel_to_fire", "damage", 20.0),
         ("enraged_mania", "melee_attack_size_offset", 8.0),
         ("enraged_mania", "increased_attack_speed", 0.5),
@@ -398,7 +398,7 @@ fn insatiable_hunger_replaces_form_payloads_with_the_actual_runtime_selectors() 
                 assert_eq!(
                     exact_total("damage"),
                     if unholy_learned {
-                        (29.435, 32.64)
+                        (25.806, 27.912)
                     } else if holy_learned && ordinary_toggles {
                         (-50.0, -50.0)
                     } else {
@@ -408,22 +408,24 @@ fn insatiable_hunger_replaces_form_payloads_with_the_actual_runtime_selectors() 
                 assert_eq!(
                     exact_total("life_replenish_more"),
                     if holy_learned && unholy_learned {
-                        (40.6, 51.0)
+                        (40.48, 50.75)
                     } else if holy_learned && ordinary_toggles {
                         (52.0, 68.0)
                     } else {
                         (0.0, 0.0)
                     }
                 );
-                assert_eq!(
-                    exact_total("life_steal_more"),
-                    if holy_learned && unholy_learned {
-                        (-31.0, -30.75)
-                    } else if holy_learned && ordinary_toggles {
-                        (60.0, 70.0)
-                    } else {
-                        (20.0, 20.0)
-                    }
+                let steal = exact_total("life_steal_more");
+                let expected = if holy_learned && unholy_learned {
+                    (-30.75, -30.6)
+                } else if holy_learned && ordinary_toggles {
+                    (60.0, 70.0)
+                } else {
+                    (20.0, 20.0)
+                };
+                assert!(
+                    (steal.0 - expected.0).abs() < 1e-9 && (steal.1 - expected.1).abs() < 1e-9,
+                    "{steal:?} != {expected:?}"
                 );
                 let flat_regen = if unholy_learned || holy_learned && ordinary_toggles {
                     102.0
@@ -444,7 +446,7 @@ fn insatiable_hunger_replaces_form_payloads_with_the_actual_runtime_selectors() 
                 let mut final_stats = compute_final_stats(&stats);
                 apply_multipliers_pass(&mut final_stats);
                 let expected = if holy_learned && unholy_learned {
-                    (69.0, 69.25)
+                    (69.25, 69.4)
                 } else if holy_learned && ordinary_toggles {
                     (160.0, 170.0)
                 } else {
@@ -455,7 +457,7 @@ fn insatiable_hunger_replaces_form_payloads_with_the_actual_runtime_selectors() 
                 assert!((actual.1 - expected.1).abs() < 1e-9);
                 let actual = final_stats["life_replenish"];
                 let expected = if holy_learned && unholy_learned {
-                    (143.412, 154.02)
+                    (143.2896, 153.765)
                 } else if holy_learned && ordinary_toggles {
                     (155.04, 171.36)
                 } else {
@@ -552,14 +554,14 @@ fn hunger_payload_zero_gate_handles_negative_rank_bonuses_and_mixed_endpoints() 
             let totals = compute_final_stats(&stats);
             let holy_low = |value: f64| if holy_active { value } else { 0.0 };
             for (key, low, high) in [
-                ("damage", holy_low(-50.0), 20.3),
-                ("life_replenish_more", holy_low(44.0), 40.6),
-                ("life_steal_more", holy_low(35.0), -50.75),
+                ("damage", holy_low(-50.0), 19.734),
+                ("life_replenish_more", holy_low(44.0), 40.48),
+                ("life_steal_more", holy_low(35.0), -50.6),
                 ("life_replenish", holy_low(2.0), 2.0),
                 ("increased_attack_speed", holy_low(24.0), 24.5),
                 ("crit_damage", 0.0, 10.0),
                 ("life_steal", holy_low(13.0), 14.0),
-                ("attack_damage", 0.0, 15.0),
+                ("attack_damage", 0.0, 10.0),
             ] {
                 let high = if mixed { high } else { low };
                 let actual = totals.get(key).copied().unwrap_or((0.0, 0.0));
@@ -606,9 +608,9 @@ fn hunger_rank_range_includes_the_last_ordinary_form_value_before_activation() {
         &mut stats,
     );
     let totals = compute_final_stats(&stats);
-    assert_eq!(totals["life_replenish_more"], (116.725, 164.0));
-    assert_eq!(totals["life_steal_more"], (-50.875, 110.0));
-    assert_eq!(totals["damage"], (-50.0, 21.876));
+    assert_eq!(totals["life_replenish_more"], (116.38, 164.0));
+    assert_eq!(totals["life_steal_more"], (-50.675, 110.0));
+    assert_eq!(totals["damage"], (-50.0, 20.777));
     assert_eq!(totals["life_replenish"], (2.0, 2.0));
 }
 
@@ -744,7 +746,7 @@ fn butcher_form_passives_require_the_matching_active_form() {
                 ("increased_attack_speed", (24.5, 25.5), holy),
                 ("crit_damage", (10.0, 12.0), unholy),
                 ("life_steal", (14.0, 16.0), holy),
-                ("attack_damage", (15.0, 18.0), unholy),
+                ("attack_damage", (10.0, 12.0), unholy),
             ] {
                 let total = stats
                     .get(key)
@@ -1150,7 +1152,7 @@ fn buffing_aura_effectiveness_scales_active_aura_passive() {
     let mut attrs0: SourceMap = HashMap::new();
     let mut stats0: SourceMap = HashMap::new();
     apply_skill_ranks(
-        Some(&class_id),
+        Some(class_id),
         &ranks,
         Some(&aura.id),
         &HashMap::new(),
@@ -1178,7 +1180,7 @@ fn buffing_aura_effectiveness_scales_active_aura_passive() {
         }],
     );
     apply_skill_ranks(
-        Some(&class_id),
+        Some(class_id),
         &ranks,
         Some(&aura.id),
         &HashMap::new(),
@@ -1344,6 +1346,26 @@ fn radiant_power_converts_mana_with_base_pct() {
 }
 
 #[test]
+fn power_of_the_ancients_scales_cold_skill_damage_with_mana() {
+    // StatColdSkillDamage: += mana / p2 × p1. An item rank r reads class rank
+    // r - 1, so p1 = 0.6 + 0.2r and p2 = 90 + 5r.
+    let mut ranks: HashMap<String, Ranged> = HashMap::new();
+    ranks.insert(normalize_skill_name("Power of the Ancients"), (20.0, 30.0));
+    let stats = HashMap::from([("mana".to_string(), (10_000.0, 10_000.0))]);
+    let mut sources: SourceMap = HashMap::new();
+    apply_item_granted_conversions(&ranks, &stats, &HashMap::new(), &mut sources);
+    let got = sum_contributions(sources.get("cold_skill_damage").unwrap());
+    assert!(
+        (got.0 - 10_000.0 * 4.6 / 190.0).abs() < 1e-9,
+        "rank 20: {got:?}"
+    );
+    assert!(
+        (got.1 - 10_000.0 * 6.6 / 240.0).abs() < 1e-9,
+        "rank 30: {got:?}"
+    );
+}
+
+#[test]
 fn absolute_zero_grants_cold_break_from_rank_one() {
     // Tooltip: 0% [+2% per level] Cold Break at rank 1 → 2 × (rank - 1).
     let inv: Inventory = HashMap::new();
@@ -1385,7 +1407,7 @@ fn trampling_force_converts_movement_speed_into_both_damage_stats() {
 }
 
 #[test]
-fn celestial_might_moves_every_elemental_increase_into_arcane() {
+fn celestial_might_moves_half_of_every_elemental_increase_into_arcane() {
     let mut ranks: HashMap<String, Ranged> = HashMap::new();
     ranks.insert(normalize_skill_name("Celestial Might"), (1.0, 1.0));
     let mut stats: HashMap<String, Ranged> = HashMap::new();
@@ -1405,8 +1427,8 @@ fn celestial_might_moves_every_elemental_increase_into_arcane() {
 
     let arcane = sum_contributions(sources.get("arcane_skill_damage").expect("arcane missing"));
     assert!(
-        (arcane.0 - 160.0).abs() < 1e-9,
-        "four schools at 40% each land as 160% arcane: {arcane:?}"
+        (arcane.0 - 80.0).abs() < 1e-9,
+        "half of four schools at 40% each lands as 80% arcane: {arcane:?}"
     );
     for key in [
         "fire_skill_damage",
@@ -1416,8 +1438,8 @@ fn celestial_might_moves_every_elemental_increase_into_arcane() {
     ] {
         let net = sum_contributions(sources.get(key).unwrap_or_else(|| panic!("{key} missing")));
         assert!(
-            (net.0 + 40.0).abs() < 1e-9,
-            "{key} must be cancelled out, got {net:?}"
+            (net.0 + 20.0).abs() < 1e-9,
+            "{key} must lose the converted half, got {net:?}"
         );
         assert!(touched.contains(key), "{key} must be re-summed");
     }
@@ -1453,13 +1475,13 @@ fn replaces_conversion_never_drives_its_source_negative() {
         .map(|l| sum_contributions(l))
         .unwrap_or((0.0, 0.0));
     assert!(
-        (more.0 + 8.0).abs() < 1e-9,
-        "the multiplier is what gets cancelled, got {more:?}"
+        (more.0 + 4.0).abs() < 1e-9,
+        "the converted half of the multiplier is cancelled, got {more:?}"
     );
     let arcane = sum_contributions(sources.get("arcane_skill_damage").expect("arcane missing"));
     assert!(
-        (arcane.0 - 8.0).abs() < 1e-9,
-        "arcane still gains it: {arcane:?}"
+        (arcane.0 - 4.0).abs() < 1e-9,
+        "arcane gains the converted half: {arcane:?}"
     );
 }
 
@@ -1484,65 +1506,58 @@ fn a_portion_convert_leaves_its_source_alone() {
 
 #[test]
 fn apply_inventory_implicit_overrides_replace_base_implicits() {
-    // Pick any item with non-empty implicit, override one of its keys
-    // with a scalar value, and verify the override appears in the source.
-    let item_with_implicit = data::data()
-        .items
-        .values()
-        .find(|i| {
-            i.implicit
-                .as_ref()
-                .is_some_and(|m| !m.is_empty() && !m.contains_key("enhanced_defense"))
-        })
-        .cloned();
-    let Some(base) = item_with_implicit else {
-        eprintln!("no item with non-ED implicit in data; skipping");
-        return;
+    let has_override = |map: &SourceMap, key: &str| {
+        map.get(key)
+            .is_some_and(|v| v.iter().any(|c| c.value == (999.0, 999.0)))
     };
-    let (override_key, _) = base.implicit.as_ref().unwrap().iter().next().unwrap();
-    let override_key = override_key.clone();
-    let mut overrides = std::collections::HashMap::new();
-    overrides.insert(override_key.clone(), 999.0_f64);
+    let mut missing = Vec::new();
+    for base in data::data().items.values() {
+        let Some(implicit) = base.implicit.as_ref() else {
+            continue;
+        };
+        // An enhanced_defense override rescales the item's defense instead.
+        for override_key in implicit.keys().filter(|k| *k != "enhanced_defense") {
+            let mut inv: Inventory = HashMap::new();
+            inv.insert(
+                base.slot.clone(),
+                EquippedItem {
+                    base_id: base.id.clone(),
+                    implicit_overrides: HashMap::from([(override_key.clone(), 999.0)]),
+                    random_skill_element: Some("fire".into()),
+                    all_skills_class_id: Some("viking".into()),
+                    ..Default::default()
+                },
+            );
+            let mut attrs: SourceMap = HashMap::new();
+            let mut stats: SourceMap = HashMap::new();
+            apply_inventory(&inv, &mut attrs, &mut stats);
 
-    let mut inv: Inventory = HashMap::new();
-    inv.insert(
-        base.slot.clone(),
-        EquippedItem {
-            base_id: base.id.clone(),
-            implicit_overrides: overrides,
-            ..Default::default()
-        },
-    );
-    let mut attrs: SourceMap = HashMap::new();
-    let mut stats: SourceMap = HashMap::new();
-    apply_inventory(&inv, &mut attrs, &mut stats);
-
-    // Override value should appear somewhere — either in attr_sources (if
-    // the stat modifies an attribute) or in stat_sources.
-    let in_stats = stats
-        .get(&override_key)
-        .map(|v| v.iter().any(|c| c.value == (999.0, 999.0)))
-        .unwrap_or(false);
-    let in_attrs = if let Some(def) = stat_def(&override_key) {
-        if let Some(target) = def.modifies_attribute.as_deref() {
-            let key = if target == "all" {
-                data::game_config()
-                    .attributes
-                    .first()
-                    .map(|a| a.key.clone())
-            } else {
-                Some(target.to_string())
+            // Rolled keys land on what the item rolled; unpicked they stay inert.
+            let stat_key = match override_key.as_str() {
+                "random_skill_element" => "fire_skills",
+                "all_skills_class" => "all_skills_viking",
+                key => key,
             };
-            key.and_then(|k| attrs.get(&k).cloned())
-                .map(|v| v.iter().any(|c| c.value == (999.0, 999.0)))
-                .unwrap_or(false)
-        } else {
-            false
+            let in_attrs = stat_def(stat_key)
+                .and_then(|def| def.modifies_attribute.as_deref())
+                .and_then(|target| match target {
+                    "all" => data::game_config()
+                        .attributes
+                        .first()
+                        .map(|a| a.key.as_str()),
+                    _ => Some(target),
+                })
+                .is_some_and(|key| has_override(&attrs, key));
+            if !has_override(&stats, stat_key) && !in_attrs {
+                missing.push(format!("{} {override_key}", base.id));
+            }
         }
-    } else {
-        false
-    };
-    assert!(in_stats || in_attrs, "override value not found anywhere");
+    }
+    missing.sort();
+    assert!(
+        missing.is_empty(),
+        "overrides not found anywhere: {missing:#?}"
+    );
 }
 
 #[test]

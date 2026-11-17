@@ -203,12 +203,11 @@ fn effective_projectile_count(
 /// ceil(T) frames after activation, the next every ceil(T) + 1 frames.
 /// `active` = frames from activation (deadly, 2 frames after creation) to destruction.
 pub(crate) fn tick_hits(active: u32, tick_frames: f64, first_overlap: u32, max_ticks: u32) -> u32 {
-    let (mut tick, mut cooldown, mut hit_map, mut hits, mut ticks) = (0.0_f64, 0u32, false, 0u32, 0u32);
+    let (mut tick, mut cooldown, mut hit_map, mut hits, mut ticks) =
+        (0.0_f64, 0u32, false, 0u32, 0u32);
     let mut deadly = true;
     for f in 0..active {
-        if cooldown > 0 {
-            cooldown -= 1;
-        }
+        cooldown = cooldown.saturating_sub(1);
         if deadly && cooldown == 0 && f >= first_overlap {
             cooldown = 3;
             if !hit_map {
@@ -265,6 +264,7 @@ fn subskill_dummy_adjustment(
         hits_mult: 1.0,
         ..Default::default()
     };
+    let mut chains = Chains::default();
     for node in spec.subskills.iter().flatten() {
         let Some(dummy) = node
             .dummy
@@ -288,19 +288,46 @@ fn subskill_dummy_adjustment(
         if node.counts_dummy_hits() && !covers {
             adj.covered_projectiles += node.planner_stat("projectile_count", rank);
         }
+        let rank_of = |id: &str| {
+            subskill_ranks
+                .get(&subskill_key(&spec.id, id))
+                .copied()
+                .unwrap_or(0)
+        };
         for e in &dummy.effects {
-            if let Some(req) = e.requires.as_deref() {
-                let learned = |id: &str| {
-                    subskill_ranks.get(&subskill_key(&spec.id, id)).copied().unwrap_or(0) > 0
-                };
-                if !req.split('|').any(learned) {
-                    continue;
-                }
+            if !super::subskill::requires_hold(e.requires.as_deref(), rank_of) {
+                continue;
             }
             let v = e.value_at(rank);
+            let proc = |hits| ChainProc {
+                hits,
+                base_only: e.base_only,
+                absolute: e.absolute,
+                count: e.count_at(rank),
+                rolls: None,
+            };
             let applied = match e.kind.as_str() {
                 "set_hits" => {
                     adj.set_hits = Some(v);
+                    true
+                }
+                "hits_mult" if e.chain => {
+                    join(
+                        &mut chains.every_hit,
+                        &node.id,
+                        proc(v - 1.0),
+                        e.rolls.as_deref(),
+                    );
+                    true
+                }
+                "extra_hits" if e.chain => {
+                    join(&mut chains.per_hit, &node.id, proc(v), e.rolls.as_deref());
+                    true
+                }
+                "extra_hits" if e.per.as_deref() != Some("hit") && e.rolls.is_some() => {
+                    chains
+                        .sources
+                        .push((v, e.rolls.as_deref().unwrap_or_default()));
                     true
                 }
                 "hits_mult" => {
@@ -328,13 +355,117 @@ fn subskill_dummy_adjustment(
                     rank,
                     e.kind,
                     number(v),
-                    e.per.as_deref().map(|p| format!(" per {}", p)).unwrap_or_default(),
+                    e.per
+                        .as_deref()
+                        .map(|p| format!(" per {}", p))
+                        .unwrap_or_default(),
                     dummy.confidence.as_deref().unwrap_or("?")
                 ));
             }
         }
     }
+    chains.apply(&mut adj);
     adj
+}
+
+/// One chain proc: the hits a rolling hit adds through it, whether only the skill's own objects
+/// roll it, whether the cast fixes its damage, the hits its objects roll on (its hits when unset)
+/// and the procs its objects may roll (bits; all the rest when unset).
+#[derive(Debug, Clone, Copy, Default)]
+struct ChainProc {
+    hits: f64,
+    base_only: bool,
+    absolute: bool,
+    count: Option<f64>,
+    rolls: Option<u64>,
+}
+
+/// A learned chain proc: its node, its values and the procs its rows say its objects roll.
+type Entry<'a> = (&'a str, ChainProc, Option<&'a [String]>);
+
+/// The learned chain procs of a use: per base hit, as multipliers of every hit, and per-use
+/// objects that roll only some of the per-hit ones.
+#[derive(Default)]
+struct Chains<'a> {
+    per_hit: Vec<Entry<'a>>,
+    every_hit: Vec<Entry<'a>>,
+    sources: Vec<(f64, &'a [String])>,
+}
+
+impl Chains<'_> {
+    fn apply(&self, adj: &mut SubskillDummyAdjustment) {
+        let all = |list: &[Entry]| (1u64 << list.len()) - 1;
+        let per_hit = resolved(&self.per_hit);
+        adj.extra_per_hit += chain_hits(&per_hit, all(&self.per_hit));
+        adj.hits_mult *= 1.0 + chain_hits(&resolved(&self.every_hit), all(&self.every_hit));
+        for (hits, rolls) in &self.sources {
+            adj.extra_per_use += hits * (1.0 + chain_hits(&per_hit, bits(&self.per_hit, rolls)));
+        }
+    }
+}
+
+/// The bits of the procs in `list` that `ids` names.
+fn bits(list: &[Entry], ids: &[String]) -> u64 {
+    (list.iter().enumerate())
+        .filter(|(_, (id, ..))| ids.iter().any(|known| known == id))
+        .fold(0, |mask, (i, _)| mask | (1u64 << i))
+}
+
+/// The procs of `list`, each with the procs its objects roll turned into bits.
+fn resolved(list: &[Entry]) -> Vec<ChainProc> {
+    let with_rolls = |(_, proc, rolls): &Entry| ChainProc {
+        rolls: rolls.map(|ids| bits(list, ids)),
+        ..*proc
+    };
+    list.iter().map(with_rolls).collect()
+}
+
+/// `proc` joins the procs of `node`, adding to its other learned rows.
+fn join<'a>(
+    procs: &mut Vec<Entry<'a>>,
+    node: &'a str,
+    proc: ChainProc,
+    rolls: Option<&'a [String]>,
+) {
+    match procs.iter_mut().find(|(id, ..)| *id == node) {
+        Some((_, known, known_rolls)) => {
+            known.hits += proc.hits;
+            known.count = match (known.count, proc.count) {
+                (Some(a), Some(b)) => Some(a + b),
+                (a, b) => a.or(b),
+            };
+            *known_rolls = known_rolls.or(rolls);
+        }
+        None => procs.push((node, proc, rolls)),
+    }
+}
+
+/// Hits one rolling hit adds through the chain procs `rollable` (a bit each) leaves it.
+fn chain_hits(procs: &[ChainProc], rollable: u64) -> f64 {
+    let (relative, absolute) = chain_parts(procs, rollable);
+    relative + absolute
+}
+
+/// The hits one rolling hit adds through `rollable`: those scaled by its damage, and those an
+/// absolute proc deals whatever rolled it. What a proc makes rolls the rest of `rollable` but the
+/// skill-only procs and any outside its own `rolls`, as InheritModifiers drops its own roll.
+fn chain_parts(procs: &[ChainProc], rollable: u64) -> (f64, f64) {
+    let skill_only = (procs.iter().enumerate())
+        .filter(|(_, p)| p.base_only)
+        .fold(0, |mask, (i, _)| mask | (1u64 << i));
+    let rolled = (0..procs.len()).filter(|&i| rollable & (1u64 << i) != 0);
+    rolled.fold((0.0, 0.0), |(relative, absolute), i| {
+        let p = procs[i];
+        let left = rollable & !(1u64 << i) & !skill_only & p.rolls.unwrap_or(u64::MAX);
+        let (child_relative, child_absolute) = chain_parts(procs, left);
+        let own = p.hits * (1.0 + child_relative);
+        let counted = p.count.unwrap_or(p.hits) * child_absolute;
+        if p.absolute {
+            (relative, absolute + own + counted)
+        } else {
+            (relative + own, absolute + counted)
+        }
+    })
 }
 
 fn hits_per_cast(spec: Option<&SkillSpec>, duration_bonus: Ranged) -> Ranged {
@@ -385,8 +516,13 @@ fn attack_action_rate_override(
     let base = rg(stats, "attacks_per_second");
     let ias = rg(stats, "increased_attack_speed");
     let more = rg(stats, "increased_attack_speed_more");
-    let rate = |b: f64, i: f64, m: f64| (super::skills::attack_rate(b.max(0.0), i) * (1.0 + m / 100.0)).max(0.0);
-    Some((gate.0.min(rate(base.0, ias.0, more.0)), gate.1.min(rate(base.1, ias.1, more.1))))
+    let rate = |b: f64, i: f64, m: f64| {
+        (super::skills::attack_rate(b.max(0.0), i) * (1.0 + m / 100.0)).max(0.0)
+    };
+    Some((
+        gate.0.min(rate(base.0, ias.0, more.0)),
+        gate.1.min(rate(base.1, ias.1, more.1)),
+    ))
 }
 
 /// Trigger cadence is independent of the damage dealt by the triggered skill.
@@ -471,7 +607,13 @@ fn augment_buff_uptimes(
         ) {
             continue;
         }
-        let rate = augment_trigger_rate(&aug.trigger, activation, actions, contacts, deps.kills_per_sec);
+        let rate = augment_trigger_rate(
+            &aug.trigger,
+            activation,
+            actions,
+            contacts,
+            deps.kills_per_sec,
+        );
         let interval = aug.proc_cooldown.unwrap_or(0.0).max(ITEM_PROC_ICD_SECS);
         let uptime = |rate: f64| ((rate * chance / 100.0).min(1.0 / interval) * duration).min(1.0);
         let uptime = (uptime(rate.0), uptime(rate.1));
@@ -530,7 +672,12 @@ fn augment_hit(
         let more = rg(stats, &format!("{element}_skill_damage_more"));
         let res = deps.enemy_resistances.get(element).copied().unwrap_or(0.0);
         let scale = |add: f64, more: f64| {
-            value * synergy * (1.0 + add / 100.0) * (1.0 + more / 100.0) * extra * (1.0 - res / 100.0)
+            value
+                * synergy
+                * (1.0 + add / 100.0)
+                * (1.0 + more / 100.0)
+                * extra
+                * (1.0 - res / 100.0)
         };
         hit.0 += scale(r_min(add), r_min(more));
         hit.1 += scale(r_max(add), r_max(more));
@@ -574,7 +721,6 @@ struct ProcContext<'a> {
     empty_scoped: &'a StatMap,
 }
 
-
 fn append_subskill_notes(
     skill: &SkillSpec,
     ranks: &HashMap<String, u32>,
@@ -589,7 +735,9 @@ fn append_subskill_notes(
         {
             if let Some(note) = node.calculation_note.as_deref() {
                 // The dps_cards dummy model now counts these contacts.
-                let note = if node.counts_dummy_hits() && note.contains("excluded from displayed DPS") {
+                let note = if node.counts_dummy_hits()
+                    && note.contains("excluded from displayed DPS")
+                {
                     format!("{} Superseded: the dps_cards dummy model counts these contacts (see Subskill dummy effects).", note)
                 } else {
                     note.to_string()
@@ -846,9 +994,11 @@ pub(crate) fn performance_from_stats(
     let active_skill: Option<&SkillSpec> = deps.main_skill_id.and_then(|mid| {
         all_class_skills
             .iter()
-            .filter(|s| s.kind == SkillKind::Active)
+            .filter(|s| s.kind == SkillKind::Active || s.pulse_frames.is_some())
             .find(|s| s.id == mid)
     });
+    let learned = active_skill.map(|s| super::subskill::learned_use_period(s, deps.subskill_ranks));
+    let active_skill: Option<&SkillSpec> = learned.as_deref();
     let unavailable_reason = active_skill.and_then(|s| {
         super::skills::requirements::unmet_requirement(
             s,
@@ -888,8 +1038,8 @@ pub(crate) fn performance_from_stats(
         .and_then(|id| computed.skill_scoped.get(id))
         .unwrap_or(&empty_scoped);
     let subtree_stat = |key: &str| -> f64 { r_max(rg(main_scoped, key)).max(0.0) };
-    // Subskills whose hits the dps_cards dummy model counts drop the planner's
-    // of_total_damage stand-in for the same contacts.
+    // Subskills whose hits the dps_cards dummy model counts, or whose damage the game keeps
+    // to their own objects, drop the planner's of_total_damage stand-in.
     let weapon_kind = super::stats::equipped_weapon_kind(deps.inventory);
     let dummy_replaced = |key: &str| -> f64 {
         active_skill
@@ -898,8 +1048,10 @@ pub(crate) fn performance_from_stats(
                 s.subskills
                     .iter()
                     .flatten()
-                    .filter(|n| n.counts_dummy_hits())
-                    .filter(|n| super::stats::attributes::node_weapon_ok(&s.id, &n.id, &weapon_kind))
+                    .filter(|n| n.counts_dummy_hits() || n.owns_damage())
+                    .filter(|n| {
+                        super::stats::attributes::node_weapon_ok(&s.id, &n.id, &weapon_kind)
+                    })
                     .map(|n| {
                         let rank = deps
                             .subskill_ranks
@@ -918,8 +1070,28 @@ pub(crate) fn performance_from_stats(
     if dummy_replaced_of_total != 0.0 {
         calculation.push(CalculationStep::new(
             "Subskill of-total replaced",
-            format!("{}% of_total_damage from subskills whose contacts the dps_cards dummy model counts is left out", number(dummy_replaced_of_total)),
+            format!("{}% of_total_damage from subskills whose contacts the dps_cards dummy model counts, or whose damage stays on their own objects, is left out", number(dummy_replaced_of_total)),
             (dummy_replaced_of_total, dummy_replaced_of_total),
+        ));
+    }
+    let owned_skill_damage = active_skill.map_or(0.0, |s| {
+        let key = format!(
+            "{}_skill_damage",
+            s.damage_type.as_deref().unwrap_or_default()
+        );
+        let owned = s.subskills.iter().flatten().filter(|n| n.owns_damage());
+        owned
+            .map(|n| {
+                let rank = deps.subskill_ranks.get(&subskill_key(&s.id, &n.id));
+                n.planner_stat(&key, rank.copied().unwrap_or(0))
+            })
+            .sum()
+    });
+    if owned_skill_damage != 0.0 {
+        calculation.push(CalculationStep::new(
+            "Subskill damage on its own objects",
+            format!("{}% skill damage from subskills whose damage the game keeps to their own objects stays out of the hit; their dummy hits carry it", number(owned_skill_damage)),
+            (owned_skill_damage, owned_skill_damage),
         ));
     }
     if let Some(reason) = unavailable_reason {
@@ -1110,7 +1282,11 @@ pub(crate) fn performance_from_stats(
             } else {
                 echo_stat.0.abs().min(echo_stat.1.abs())
             };
-            if echo_max > 0.0 && calc_skill.tags.iter().any(|tag| tag == "Spell") {
+            // A pulsing aura never passes through TalentUseClass, so it never echoes.
+            if echo_max > 0.0
+                && active_skill.is_none_or(|s| s.pulse_frames.is_none())
+                && calc_skill.tags.iter().any(|tag| tag == "Spell")
+            {
                 if is_attack_skill || super::affix_tags::is_entity(&calc_skill.tags) {
                     calculation.push(CalculationStep::new(
                         "Temporal Echo not yet modeled",
@@ -1214,7 +1390,10 @@ pub(crate) fn performance_from_stats(
         (Some(swing.min), Some(swing.max))
     } else {
         let (base_rate, rate_bonus) = if active_skill.is_some_and(|s| s.uses_attack_speed) {
-            (Some(r_max(stat("attacks_per_second"))), stat("increased_attack_speed"))
+            (
+                Some(r_max(stat("attacks_per_second"))),
+                stat("increased_attack_speed"),
+            )
         } else if active_skill.is_some_and(|s| s.uses_skill_haste) {
             // Cooldown-gated cast: one cast per cooldown, and skill haste is what shortens it.
             (
@@ -1226,7 +1405,10 @@ pub(crate) fn performance_from_stats(
                 (stat("skill_haste").0 * 0.5, stat("skill_haste").1 * 0.5),
             )
         } else {
-            (active_skill.and_then(|s| s.base_cast_rate), stat("faster_cast_rate"))
+            (
+                active_skill.and_then(|s| s.base_cast_rate),
+                stat("faster_cast_rate"),
+            )
         };
         let base_rate_min = if active_skill.is_some_and(|s| s.uses_attack_speed) {
             Some(stat("attacks_per_second").0)
@@ -1246,7 +1428,10 @@ pub(crate) fn performance_from_stats(
         let more = match active_skill {
             Some(s) if s.uses_attack_speed => {
                 let mut merged = computed.stats.clone();
-                merged.insert("skill_attack_speed_more".into(), rg(main_scoped, "skill_attack_speed_more"));
+                merged.insert(
+                    "skill_attack_speed_more".into(),
+                    rg(main_scoped, "skill_attack_speed_more"),
+                );
                 super::skills::attack_speed_more(&merged)
             }
             Some(s) if s.uses_skill_haste => (0.0, 0.0),
@@ -1294,6 +1479,23 @@ pub(crate) fn performance_from_stats(
                         } else {
                             format!(", {} flight {} frames after floor(24/S) + 1 trigger frames", p.kind, number(p.extra_frames))
                         })
+                    ),
+                    rate,
+                ));
+                (Some(rate.0), Some(rate.1))
+            }
+            None => effective_rate,
+        };
+        let effective_rate = match active_skill
+            .and_then(|s| super::skill_cost::pulse_rate(s, main_scoped))
+        {
+            Some(rate) => {
+                calculation.push(CalculationStep::new(
+                    "Aura pulse rate",
+                    format!(
+                        "60 / (ceil({} frames × (1 − {}% pulse speed)) + 1); cast speed does not apply",
+                        number(active_skill.and_then(|s| s.pulse_frames).unwrap_or(0.0)),
+                        range(rg(main_scoped, "aura_pulse_speed"))
                     ),
                     rate,
                 ));
@@ -1406,10 +1608,14 @@ pub(crate) fn performance_from_stats(
         let converted = (n - base_n - sub.covered_projectiles).max(0.0);
         let per_hit_base = match sub.set_hits {
             Some(set) => set,
-            None => (dh.base + dh.per_extra_projectile * converted.min(n - base_n)).max(0.0),
+            None => dh.hits_with(converted.min(n - base_n)).max(0.0),
         };
         // A card transformation already counts every wave of the use.
-        let waves = if sub.set_hits.is_some() { 1.0 } else { wave_factor };
+        let waves = if sub.set_hits.is_some() {
+            1.0
+        } else {
+            wave_factor
+        };
         let per_use = ((per_hit_base * (1.0 + sub.extra_per_hit) + sub.extra_per_use)
             * sub.hits_mult)
             .max(0.0)
@@ -1433,12 +1639,21 @@ pub(crate) fn performance_from_stats(
         exported_hits = Some(dummy);
         // The damage breakdown already holds the n-projectile volley.
         (hits_min, hits_max) = (dummy.0 / n.max(1.0), dummy.1 / n.max(1.0));
+        let counts = match dh.by_projectiles.as_deref() {
+            Some(table) => format!(
+                "{table:?} hits from {} projectiles up, then",
+                number(base_n)
+            ),
+            None => format!(
+                "{} base hits at {} projectiles",
+                number(dh.base),
+                number(base_n)
+            ),
+        };
         calculation.push(CalculationStep::new(
             "Dummy hits per use",
             format!(
-                "{} base hits at {} projectiles + {} per extra projectile ({} projectiles), × skill-duration tick ratio; {} [{}]",
-                number(dh.base),
-                number(base_n),
+                "{counts} + {} per extra projectile ({} projectiles), × skill-duration tick ratio; {} [{}]",
                 number(dh.per_extra_projectile),
                 number(n),
                 dh.note.as_deref().unwrap_or(""),
@@ -1621,8 +1836,7 @@ pub(crate) fn performance_from_stats(
     // Switched-on augment buffs that proc less often than they last are rerun
     // at their uptime, once: the second pass keeps this pass's trigger rates.
     if !AugmentUptimeScope::active() {
-        let uptimes =
-            augment_buff_uptimes(deps, proc_activation, player_actions, proc_contacts);
+        let uptimes = augment_buff_uptimes(deps, proc_activation, player_actions, proc_contacts);
         if !uptimes.is_empty() {
             let _scope = AugmentUptimeScope::enter(uptimes);
             return performance_from_stats(deps, compute_stats_for_skill(deps, deps.main_skill_id));
@@ -1786,7 +2000,8 @@ pub(crate) fn performance_from_stats(
                 continue;
             }
             if proc.trigger == "on_attack"
-                && active_skill.is_some_and(|skill| normalize_skill_name(&skill.name) == target_name)
+                && active_skill
+                    .is_some_and(|skill| normalize_skill_name(&skill.name) == target_name)
             {
                 continue;
             }
@@ -1951,7 +2166,11 @@ pub(crate) fn performance_from_stats(
                 let lightning = active_skill
                     .and_then(|s| s.damage_type.as_deref())
                     .is_some_and(|t| t.eq_ignore_ascii_case("lightning"));
-                let res = deps.enemy_resistances.get("lightning").copied().unwrap_or(0.0);
+                let res = deps
+                    .enemy_resistances
+                    .get("lightning")
+                    .copied()
+                    .unwrap_or(0.0);
                 let scale = if lightning {
                     share / 100.0 * (1.0 - res / 100.0)
                 } else {
@@ -2335,3 +2554,19 @@ mod proc_target_tests;
 #[cfg(test)]
 #[path = "build_dps_snapshot_tests.rs"]
 mod dps_snapshot_tests;
+
+#[cfg(test)]
+#[path = "item_stats_tests.rs"]
+mod item_stats_tests;
+
+#[cfg(test)]
+#[path = "scorching_aura_tests.rs"]
+mod scorching_aura_tests;
+
+#[cfg(test)]
+#[path = "own_damage_tests.rs"]
+mod own_damage_tests;
+
+#[cfg(test)]
+#[path = "proc_chain_tests.rs"]
+mod proc_chain_tests;

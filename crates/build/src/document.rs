@@ -109,6 +109,22 @@ impl BuildSnapshot {
         self.max_subskill_points = points.clamp(1, 30);
     }
 
+    /// Saved ranks above a node's current maximum (a season lowered it) count as that maximum.
+    fn capped_subskill_ranks(&self) -> HashMap<String, u32> {
+        let skills = data::get_skills_by_class(self.class_id.as_deref().unwrap_or(""));
+        self.subskill_ranks
+            .iter()
+            .map(|(key, &rank)| {
+                let max = key.split_once(':').and_then(|(skill_id, node_id)| {
+                    let skill = skills.iter().find(|s| s.id == skill_id)?;
+                    let node = skill.subskills.as_ref()?.iter().find(|n| n.id == node_id)?;
+                    Some(node.max_rank)
+                });
+                (key.clone(), max.map_or(rank, |max| rank.min(max)))
+            })
+            .collect()
+    }
+
     pub fn planner_input(&self) -> PlannerInput {
         PlannerInput {
             build: BuildPerformanceInput {
@@ -117,7 +133,7 @@ impl BuildSnapshot {
                 allocated_attrs: self.allocated.clone(),
                 inventory: self.inventory.clone(),
                 skill_ranks: self.skill_ranks.clone(),
-                subskill_ranks: self.subskill_ranks.clone(),
+                subskill_ranks: self.capped_subskill_ranks(),
                 active_aura_id: self.active_aura_id.clone(),
                 active_buffs: self.active_buffs.clone(),
                 custom_stats: self.custom_stats.clone(),
@@ -391,6 +407,20 @@ impl BuildSnapshot {
 mod tests {
     use super::*;
     use serde_json::json;
+
+    #[test]
+    fn ranks_above_a_lowered_maximum_count_as_the_maximum() {
+        let mut snapshot: BuildSnapshot = serde_json::from_value(json!({})).unwrap();
+        snapshot.class_id = Some("viking".into());
+        snapshot
+            .subskill_ranks
+            .insert("whirlwind:cycloning_step".into(), 5);
+        snapshot.subskill_ranks.insert("other:node".into(), 7);
+        let ranks = snapshot.planner_input().build.subskill_ranks;
+        assert_eq!(ranks["whirlwind:cycloning_step"], 3);
+        assert_eq!(ranks["other:node"], 7);
+        assert_eq!(snapshot.subskill_ranks["whirlwind:cycloning_step"], 5);
+    }
 
     #[test]
     fn dot_immunity_survives_save_and_reaches_the_engine() {

@@ -1567,7 +1567,7 @@
     "bonusSources": [
       { "source": "Blood Bolts", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
       { "source": "Gut Spread", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
-      { "source": "Blood Demons", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
+      { "source": "Blood Demons", "stat": "arcane_skill_damage", "value": 13.5, "per": "skill_level" },
       { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 6.66, "per": "attribute_point" }
     ],
     "subskills": [

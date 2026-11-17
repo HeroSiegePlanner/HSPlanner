@@ -860,7 +860,7 @@
         30,
         50
       ],
-      "light_radius": 5,
+      "light_radius": 2,
       "all_resistances": 15
     },
     "sockets": 0,

@@ -135,6 +135,7 @@ fn archetype_skill_damage(stats: &StatMap, tags: &[String]) -> (Ranged, Ranged) 
 // value% per effective source rank (or per attribute point). The attack path
 // consumes only attack_damage synergies; the spell path everything else
 // (attack_rating is no damage stat on either side).
+#[allow(clippy::too_many_arguments)]
 pub(super) fn bonus_source_synergy_pct(
     s: &Skill,
     attributes: &AttrMap,
@@ -471,7 +472,11 @@ fn compute_skill_damage_with_rank(
     } else {
         (0.0, 0.0)
     };
-    let total_mult = (1.0 + total_damage.0 / 100.0, 1.0 + total_damage.1 / 100.0);
+    // Drawbacks such as Belt of Skulls' -666% floor a hit at zero, never below.
+    let total_mult = (
+        (1.0 + total_damage.0 / 100.0).max(0.0),
+        (1.0 + total_damage.1 / 100.0).max(0.0),
+    );
     let spell_damage = if staged_elemental {
         rg(input.stats, "spell_damage")
     } else {
@@ -526,6 +531,7 @@ fn compute_skill_damage_with_rank(
             },
             on_crit_mult: 1.0 - crit_portion + crit_portion * base.on_crit_mult,
             avg_mult: 1.0 - crit_portion + crit_portion * base.avg_mult,
+            ..base
         }
     };
 
@@ -556,16 +562,15 @@ fn compute_skill_damage_with_rank(
     // LoadAllModifiers selects stat235 when the owning skill's damage types
     // include physical, otherwise stat236. Spell tags do not decide this:
     // Blade Barrier is a Spell with physical + arcane damage.
-    let elemental_break_source = if s.attack_scaling.is_some()
-        || s.damage_type.as_deref() == Some("physical")
-    {
-        "elemental_break_on_strike"
-    } else {
-        "elemental_break_on_spell"
-    };
+    let elemental_break_source =
+        if s.attack_scaling.is_some() || s.damage_type.as_deref() == Some("physical") {
+            "elemental_break_on_strike"
+        } else {
+            "elemental_break_on_spell"
+        };
     let elemental_break_pct = if is_elemental {
-        let base = r_max(rg(input.stats, "elemental_break"))
-            + r_max(rg(input.scoped, "elemental_break"));
+        let base =
+            r_max(rg(input.stats, "elemental_break")) + r_max(rg(input.scoped, "elemental_break"));
         let on = r_max(rg(input.stats, elemental_break_source))
             + r_max(rg(input.scoped, elemental_break_source));
         (base + on).max(0.0)
@@ -618,7 +623,6 @@ fn compute_skill_damage_with_rank(
         input.scoped,
     );
 
-
     // The runtime elemental path adds the intercept after the rank/flat
     // term's synergy and generic modifiers. Only verified metadata opts in.
     let unscaled_base = if staged_elemental {
@@ -628,25 +632,39 @@ fn compute_skill_damage_with_rank(
     } else {
         0.0
     };
-    let scaled_min = unscaled_base
+    // LoadAura case 32: a damaging aura's pulse is floor(LTD × (1 + effectiveness)).
+    let aura_effectiveness = if s.tags.iter().any(|tag| tag == "Aura") {
+        let e = rg(input.stats, "damaging_aura_effectiveness");
+        ((1.0 + e.0 / 100.0).max(0.0), (1.0 + e.1 / 100.0).max(0.0))
+    } else {
+        (1.0, 1.0)
+    };
+    let scaled_min = (unscaled_base
         + (base_min - unscaled_base + flat_min)
             * (1.0 + synergy_min / 100.0)
-            * (1.0 + skill_dmg_min / 100.0);
-    let scaled_max = unscaled_base
+            * (1.0 + skill_dmg_min / 100.0).max(0.0))
+        * aura_effectiveness.0;
+    let scaled_max = (unscaled_base
         + (base_max - unscaled_base + flat_max)
             * (1.0 + synergy_max / 100.0)
-            * (1.0 + skill_dmg_max / 100.0);
+            * (1.0 + skill_dmg_max / 100.0).max(0.0))
+        * aura_effectiveness.1;
     let common_subtree = rg(input.scoped, "subtree_damage");
     let elemental_subtree = rg(input.scoped, "elemental_subtree_damage");
     let movement_conversion = rg(input.scoped, "subtree_damage_per_movement_speed");
     let movement_speed = rg(input.stats, "movement_speed");
+    // Burning Soul: m += value% × maximum life / 100, inside the subtree multiplier.
+    let life_conversion = rg(input.scoped, "subtree_damage_per_100_max_life");
+    let life = rg(input.stats, "life");
     let subtree = (
         common_subtree.0
             + elemental_subtree.0
-            + movement_conversion.0 * movement_speed.0.max(0.0) / 100.0,
+            + movement_conversion.0 * movement_speed.0.max(0.0) / 100.0
+            + life_conversion.0 * life.0.max(0.0) / 100.0,
         common_subtree.1
             + elemental_subtree.1
-            + movement_conversion.1 * movement_speed.1.max(0.0) / 100.0,
+            + movement_conversion.1 * movement_speed.1.max(0.0) / 100.0
+            + life_conversion.1 * life.1.max(0.0) / 100.0,
     );
     let subtree_mult = (
         (1.0 + subtree.0 / 100.0).max(0.0),
@@ -696,10 +714,7 @@ fn compute_skill_damage_with_rank(
     } else {
         generic_rounded
     };
-    let target_mult = extra_mult
-        * damage_taken_mult
-        * combined_break_mult
-        * resistance_mult;
+    let target_mult = extra_mult * damage_taken_mult * combined_break_mult * resistance_mult;
     let cast_hit = |value: f64| {
         if staged_elemental {
             value.floor()
@@ -976,10 +991,7 @@ fn compute_skill_damage_with_rank(
     stat_inputs(
         &mut calculation,
         input.stats,
-        [
-            "elemental_break",
-            elemental_break_source,
-        ],
+        ["elemental_break", elemental_break_source],
     );
     calculation.push(CalculationStep::new(
         "Elemental Break %",

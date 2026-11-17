@@ -4,7 +4,7 @@ use crate::{
         editor::rarity_label,
         presentation::{augment_icon, item_icon, socketable_icon},
     },
-    skill_details::{stat_name, units},
+    skill_details::{is_percent, stat_name, units},
 };
 use gpui_kit::{prelude::*, *};
 use hsplanner_engine::calc::{
@@ -271,14 +271,6 @@ fn plain(value: f64) -> String {
     } else {
         format!("{rounded}")
     }
-}
-
-fn is_percent(key: &str) -> bool {
-    data::game_config()
-        .stats
-        .iter()
-        .find(|s| s.key == key)
-        .is_some_and(|s| s.format.as_deref() == Some("percent"))
 }
 
 // `formatValue`: "+12%", "+[3-5]" for ranges; an empty key means no suffix.
@@ -682,10 +674,14 @@ pub(crate) fn build_model(
         ));
     }
     if let Some(runeword) = runeword {
+        let pinned = |key: &String| equipped.and_then(|item| item.runeword_overrides.get(key));
         let mut stats: Vec<(&String, Ranged)> = runeword
             .stats
             .iter()
-            .map(|(key, value)| (key, value.as_ranged()))
+            .map(|(key, value)| {
+                let rolled = pinned(key).map_or_else(|| value.as_ranged(), |&v| (v, v));
+                (key, rolled)
+            })
             .filter(|(_, value)| !is_zero(*value))
             .collect();
         stats.sort_by(|a, b| a.0.cmp(b.0));
@@ -694,7 +690,7 @@ pub(crate) fn build_model(
             .map(|(key, value)| Line::Text {
                 text: stat_line(key, value),
                 style: LineStyle::Runeword,
-                custom: false,
+                custom: pinned(key).is_some(),
             })
             .chain(runeword.description.iter().map(|text| Line::Text {
                 text: text.clone(),
@@ -767,7 +763,7 @@ pub(crate) fn build_model(
     }
 
     if let Some(item) = equipped
-        && data::forge_kind_for(&base.rarity).is_some()
+        && data::accepts_crystal(&base.slot, &base.rarity)
     {
         let forged: Vec<Line> = item
             .forged_mods
@@ -828,7 +824,9 @@ pub(crate) fn build_model(
                 let mut stats: Vec<(&String, &f64)> = tier
                     .stats
                     .iter()
-                    .filter(|(k, v)| **v != 0. && !(k.starts_with("max_") && k.ends_with("_stacks")))
+                    .filter(|(k, v)| {
+                        **v != 0. && !(k.starts_with("max_") && k.ends_with("_stacks"))
+                    })
                     .collect();
                 stats.sort_by(|a, b| a.0.cmp(b.0));
                 sections.push(Section::titled(
@@ -1046,10 +1044,16 @@ pub(crate) fn augment_model(augment: &AngelicAugment) -> ItemTooltipModel {
 
     let mut facts = Vec::new();
     if let Some(chance) = first.and_then(|tier| tier.proc_chance) {
-        facts.push((format!("{}%", num(chance)), augment.trigger.replace('_', " ")));
+        facts.push((
+            format!("{}%", num(chance)),
+            augment.trigger.replace('_', " "),
+        ));
     }
     if let Some(cooldown) = augment.proc_cooldown.or(augment.period) {
-        facts.push((format!("{} s", num(cooldown)), tr("item.flask_cooldown").to_owned()));
+        facts.push((
+            format!("{} s", num(cooldown)),
+            tr("item.flask_cooldown").to_owned(),
+        ));
     }
     if let Some(duration) = range(&|tier| tier.proc_duration_sec) {
         facts.push((span(duration, " s"), tr("item.potion_duration").to_owned()));
@@ -1098,7 +1102,7 @@ pub(crate) fn augment_model(augment: &AngelicAugment) -> ItemTooltipModel {
 
     let stat_lines = |stats: &dyn Fn(&AugmentLevel) -> Option<&StatMap>| -> Vec<Line> {
         let mut keys: Vec<&String> = first
-            .and_then(|tier| stats(tier))
+            .and_then(stats)
             .map(|map| map.keys().filter(|key| !stack_keys(key)).collect())
             .unwrap_or_default();
         keys.sort();
@@ -1180,8 +1184,67 @@ fn augment_stat_line(key: &str, value: Ranged) -> String {
 }
 
 /// Picker rows for augments: the rich augment card instead of a text tooltip.
-pub(crate) fn augment_tooltip(augment: &'static AngelicAugment) -> impl Fn(&mut Window, &mut App) -> AnyView {
+pub(crate) fn augment_tooltip(
+    augment: &'static AngelicAugment,
+) -> impl Fn(&mut Window, &mut App) -> AnyView {
     move |_, cx| cx.new(|_| ItemTooltip::new(augment_model(augment))).into()
+}
+
+/// A gem, jewel, soulgem or rune: what it adds when socketed.
+fn socketable_model(id: &str) -> Option<ItemTooltipModel> {
+    let data = data::data();
+    let (name, tier, stats, kind) = match (data.gems.get(id), data.runes.get(id)) {
+        (Some(gem), _) => {
+            let kind = match crate::gear::gem_group(&gem.name) {
+                "Soulgems" => "jewelry.kind_soulgem",
+                "Jewels" => "jewelry.kind_jewel",
+                _ => "jewelry.kind_gem",
+            };
+            (&gem.name, gem.tier, &gem.stats, kind)
+        }
+        (None, Some(rune)) => (&rune.name, rune.tier, &rune.stats, "jewelry.kind_rune"),
+        (None, None) => return None,
+    };
+    let mut type_line = tr(kind).to_owned();
+    // Gems run tier 1–5 and runes 1–3; soulgems sit outside the ladder.
+    if (1..=5).contains(&tier) {
+        type_line.push_str(" · ");
+        type_line.push_str(&trf("item.tier_short", &[("tier", tier.to_string())]));
+    }
+    let mut keys: Vec<&String> = stats.keys().collect();
+    keys.sort();
+    let lines = if keys.is_empty() {
+        vec![Line::Text {
+            text: tr("item.socketable_no_stats").to_owned(),
+            style: LineStyle::Muted,
+            custom: false,
+        }]
+    } else {
+        keys.into_iter()
+            .map(|key| Line::Text {
+                text: stat_line(key, (stats[key], stats[key])),
+                style: LineStyle::Implicit,
+                custom: false,
+            })
+            .collect()
+    };
+    Some(ItemTooltipModel {
+        name: name.clone(),
+        tone: "neutral".to_owned(),
+        type_line,
+        image_id: id.to_owned(),
+        icon: socketable_icon(name),
+        sections: vec![Section::plain(lines)],
+        footer: None,
+    })
+}
+
+/// Picker rows for gems and runes: the item card instead of a text tooltip.
+pub(crate) fn socketable_tooltip(id: String) -> impl Fn(&mut Window, &mut App) -> AnyView {
+    move |_, cx| match socketable_model(&id) {
+        Some(model) => cx.new(|_| ItemTooltip::new(model)).into(),
+        None => cx.new(|_| EmptyTooltip).into(),
+    }
 }
 
 fn type_line(
@@ -1320,8 +1383,7 @@ fn granted_skill_entries(
         let mut lines = Vec::new();
         if let Some(converts) = &skill.passive_converts {
             for convert in &converts.per_rank {
-                let pct =
-                    |rank: f64| ((convert.base_pct + convert.pct * rank) * 100.).round() / 100.;
+                let pct = |rank: f64| (convert.share(rank) * 10_000.).round() / 100.;
                 let (a, b) = (pct(rank_min), pct(rank_max));
                 let pct_text = if a == b {
                     format!("{}%", num(a))
@@ -1938,23 +2000,29 @@ fn render_panel(model: &ItemTooltipModel, embedded: bool, window: &Window, cx: &
                                 }),
                         ),
                 )
-                .children(model.icon.clone().or_else(|| item_icon(&model.image_id)).map(|icon| {
-                    div()
-                        .absolute()
-                        .right_2()
-                        .top_0()
-                        .bottom_0()
-                        .w(units(48.))
-                        .flex()
-                        .items_center()
-                        .justify_center()
-                        .child(
-                            img(icon)
-                                .max_w_full()
-                                .max_h(units(48.))
-                                .object_fit(ObjectFit::Contain),
-                        )
-                })),
+                .children(
+                    model
+                        .icon
+                        .clone()
+                        .or_else(|| item_icon(&model.image_id))
+                        .map(|icon| {
+                            div()
+                                .absolute()
+                                .right_2()
+                                .top_0()
+                                .bottom_0()
+                                .w(units(48.))
+                                .flex()
+                                .items_center()
+                                .justify_center()
+                                .child(
+                                    img(icon)
+                                        .max_w_full()
+                                        .max_h(units(48.))
+                                        .object_fit(ObjectFit::Contain),
+                                )
+                        }),
+                ),
         );
     for (index, section) in model.sections.iter().enumerate() {
         let mut block = div().px_3().py_2().when(index > 0, |v| {
@@ -2248,8 +2316,18 @@ mod tests {
         let dodger = augment_model(data::get_augment("artful_dodger").unwrap());
         assert_eq!(dodger.name, "Artful Dodger");
         assert_eq!(dodger.type_line, "Angelic Augment");
-        assert!(lines(&dodger).iter().any(|l| l == "+[8-56]% Enhanced Damage"), "{:?}", lines(&dodger));
-        assert!(lines(&dodger).iter().any(|l| l == "Counts while switched on in Config"));
+        assert!(
+            lines(&dodger)
+                .iter()
+                .any(|l| l == "+[8-56]% Enhanced Damage"),
+            "{:?}",
+            lines(&dodger)
+        );
+        assert!(
+            lines(&dodger)
+                .iter()
+                .any(|l| l == "Counts while switched on in Config")
+        );
 
         let staticshot = augment_model(data::get_augment("staticshot").unwrap());
         let facts: Vec<(String, String)> = staticshot
@@ -2263,22 +2341,71 @@ mod tests {
             .flatten()
             .collect();
         assert_eq!(facts[0], ("22%".to_owned(), "on strike".to_owned()));
-        assert!(lines(&staticshot).iter().any(|l| l.contains("+100% damage per level")), "{:?}", lines(&staticshot));
+        assert!(
+            lines(&staticshot)
+                .iter()
+                .any(|l| l.contains("+100% damage per level")),
+            "{:?}",
+            lines(&staticshot)
+        );
 
         let tempest = augment_model(data::get_augment("tempest_strikes").unwrap());
-        assert!(lines(&tempest).iter().any(|l| l == "+[0.02-0.14]% Attack Speed per stack"), "{:?}", lines(&tempest));
+        assert!(
+            lines(&tempest)
+                .iter()
+                .any(|l| l == "+[0.02-0.14]% Attack Speed per stack"),
+            "{:?}",
+            lines(&tempest)
+        );
         let elementalist = augment_model(data::get_augment("elementalist").unwrap());
-        assert!(lines(&elementalist).iter().any(|l| l == "+[0.1-0.7]% Magic Skill Damage per 100 maximum mana"), "{:?}", lines(&elementalist));
+        assert!(
+            lines(&elementalist)
+                .iter()
+                .any(|l| l == "+[0.1-0.7]% Magic Skill Damage per 100 maximum mana"),
+            "{:?}",
+            lines(&elementalist)
+        );
         let shield = augment_model(data::get_augment("survivors_shield").unwrap());
         assert_eq!(shield.name, "Survivor's Shield");
         assert!(shield.sections.iter().flat_map(|s| &s.lines).any(|line| matches!(line,
             Line::Facts(facts) if facts.contains(&("0.5–3.5 s".to_owned(), "immunity".to_owned())))));
 
         let monstrosity = augment_model(data::get_augment("monstrosity").unwrap());
-        assert!(monstrosity
-            .sections
-            .iter()
-            .any(|section| section.header.as_ref().is_some_and(|(title, _, _)| title == "At full stacks")));
+        assert!(monstrosity.sections.iter().any(|section| {
+            section
+                .header
+                .as_ref()
+                .is_some_and(|(title, _, _)| title == "At full stacks")
+        }));
+    }
+
+    #[::core::prelude::v1::test]
+    fn socketable_tooltip_names_kind_tier_and_socketed_stats() {
+        let lines = |id: &str| -> Vec<String> {
+            socketable_model(id)
+                .unwrap()
+                .sections
+                .iter()
+                .flat_map(|section| &section.lines)
+                .filter_map(|line| match line {
+                    Line::Text { text, .. } => Some(text.clone()),
+                    _ => None,
+                })
+                .collect()
+        };
+        let ruby = socketable_model("gem_chipped_ruby").unwrap();
+        assert_eq!(ruby.type_line, "Gem · T1");
+        assert_eq!(lines("gem_chipped_ruby").len(), 2);
+        assert_eq!(
+            socketable_model("gem_anubis_soulgem").unwrap().type_line,
+            "Soulgem"
+        );
+        assert_eq!(
+            socketable_model("rune_drax").unwrap().type_line,
+            "Rune · T3"
+        );
+        assert_eq!(lines("gem_chipped_skull"), ["No stats the planner counts"]);
+        assert!(socketable_model("not_a_gem").is_none());
     }
 
     #[::core::prelude::v1::test]
@@ -2298,16 +2425,27 @@ mod tests {
                 .iter()
                 .flat_map(|section| &section.lines)
                 .find_map(|line| match line {
-                    Line::Entry { title, desc, .. } if title == &data::get_augment(id).unwrap().name => {
+                    Line::Entry { title, desc, .. }
+                        if title == &data::get_augment(id).unwrap().name =>
+                    {
                         Some(desc.clone())
                     }
                     _ => None,
                 })
                 .unwrap()
         };
-        assert_eq!(desc("staticshot").as_deref(), Some("22% on strike · deals its own hit"));
-        assert_eq!(desc("lethal_tempo").as_deref(), Some("Counts while switched on in Config"));
-        assert_eq!(desc("zapper").as_deref(), Some("8% on strike · deals its own hit"));
+        assert_eq!(
+            desc("staticshot").as_deref(),
+            Some("22% on strike · deals its own hit")
+        );
+        assert_eq!(
+            desc("lethal_tempo").as_deref(),
+            Some("Counts while switched on in Config")
+        );
+        assert_eq!(
+            desc("zapper").as_deref(),
+            Some("8% on strike · deals its own hit")
+        );
         assert_eq!(desc("precision"), None);
     }
 
@@ -2333,10 +2471,12 @@ mod tests {
                 &("1".to_owned(), "charge".to_owned()),
             ]
         );
-        assert!(model.sections.iter().all(|section| section
-            .header
-            .as_ref()
-            .is_none_or(|(title, _, _)| title != tr("item.not_supported"))));
+        assert!(model.sections.iter().all(|section| {
+            section
+                .header
+                .as_ref()
+                .is_none_or(|(title, _, _)| title != tr("item.not_supported"))
+        }));
     }
 
     #[::core::prelude::v1::test]
@@ -2583,8 +2723,8 @@ mod tests {
                 "life_steal",
                 "defense_ignored",
                 "to_strength",
-                "life_per_kill",
                 "max_crushing_blow_stacks",
+                "increased_strength_more",
             ]
         );
         let values = HashMap::from([("extra_z".into(), 1), ("extra_a".into(), 2)]);
@@ -2624,6 +2764,11 @@ mod tests {
         );
         assert_eq!(range_token(1., 3.), "[1-3]");
         assert_eq!(range_token(2., 2.), "2");
+    }
+
+    #[::core::prelude::v1::test]
+    fn total_multipliers_read_as_percent() {
+        assert_eq!(format_ranged((2., 4.), "faster_cast_rate_more"), "+[2-4]%");
     }
 
     #[::core::prelude::v1::test]

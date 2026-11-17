@@ -66,5 +66,9 @@
   "struck_skills": {"tags": ["Struck"], "effect": "rank"},
   "shield_skills": {"tags": ["Shield"], "effect": "rank"},
   "shield_skill_damage": {"tags": ["Shield"], "effect": "damage"},
-  "aura_skills": {"tags": ["Aura"], "effect": "rank"}
+  "aura_skills": {"tags": ["Aura"], "effect": "rank"},
+  "melee_skills": {"tags": ["Melee"], "effect": "rank"},
+  "ranged_skills": {"tags": ["Ranged"], "effect": "rank"},
+  "aoe_skills": {"tags": ["Area of Effect"], "effect": "rank"},
+  "orbit_skills": {"tags": ["Orbital"], "effect": "rank"}
 }

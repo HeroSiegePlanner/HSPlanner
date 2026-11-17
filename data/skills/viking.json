@@ -544,9 +544,9 @@
         "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "I", "note": "card p5 Echoing Roar: area +25 %/r (v scale, L51, I); the dummy is already inside the area, so 0 extra hits. Area scale in planner 25/r matches."},
         "name": "Echoing Roar",
         "description": "Increases the area of effect radius of odin´s fury.",
-        "maxRank": 5,
+        "maxRank": 3,
         "effects": {
-          "base": {"area_of_effect": 0},
+          "base": {"area_of_effect": 50},
           "perRank": {"area_of_effect": 25}
         }
       },
@@ -1058,7 +1058,8 @@
       }
     ],
     "tags": [
-      "Active"
+      "Active",
+      "Spell"
     ],
     "tree": "Berserker",
     "position": {
@@ -1776,7 +1777,7 @@
       {
         "id": "scattering_battlegear",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [6.67, 6.67, 6.67]}, {"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD is ASSIGNED, not added: with rank in p13 LSSD = 0.5*r13 and the p1 (8 %/r) and p12 (35 %/r) contributions are dropped"}], "confidence": "I", "note": "card p13: axe lands on the dummy and spins 18 deg/frame, ~2-3 axe hits (1 + floor((60-t_lot)/20)); set_hits = blow 1 + 2.5 hits * A/M(2.27) = 6.67 (midpoint, I). Transformation replaces the orbit hits. R4 14#2 (C): LoadSubSkillDamage case viking 14 (0x144b1400b-0x144b14f3e) ends p13 with RV_assign @0x144b14f1b = LoadSubTalentDamage(p13, s9)*0.01 into the accumulator, while p1 and p12 use RV_add (@0x144b1433f, @0x144b14925): with rank in p13 LSSD = 0.5*r13 (blow, cold and axes x(1 + 0.5r13)); without p13 LSSD = 0.08*r1 + 0.35*r12. The damage_pct effect is therefore a replacement of the p1/p12 LSSD.", "plannerFix": "Scattering Battlegear is a transformation: axes land at points and spin in place (no orbit); LSSD becomes 50 %/r by assignment (p1 and p12 LSSD overwritten, R4 14#2); planner keeps the orbit model with cold 50/r added on top of p1/p12."},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [6.67, 6.67, 6.67]}, {"kind": "damage_pct", "byRank": [50, 100, 150], "note": "LSSD is ASSIGNED, not added: with rank in p13 LSSD = 0.5*r13 and the p1 (8 %/r) and p12 (35 %/r) contributions are dropped"}], "confidence": "I", "note": "card p13: axe lands on the dummy and spins 18 deg/frame, ~2-3 axe hits (1 + floor((60-t_lot)/20)); set_hits = blow 1 + 2.5 hits * A/M(2.27) = 6.67 (midpoint, I). Transformation replaces the orbit hits. R4 14#2 (C): LoadSubSkillDamage case viking 14 (0x144b1400b-0x144b14f3e) ends p13 with RV_assign @0x144b14f1b = LoadSubTalentDamage(p13, s9)*0.01 into the accumulator, while p1 and p12 use RV_add (@0x144b1433f, @0x144b14925): with rank in p13 LSSD = 0.5*r13 (blow, cold and axes x(1 + 0.5r13)); without p13 LSSD = 0.08*r1 + 0.35*r12. The damage_pct effect is therefore a replacement of the p1/p12 LSSD. S11: fixed in game, LSSD is now added (p1 and p12 contributions kept).", "plannerFix": "Scattering Battlegear is a transformation: axes land at points and spin in place (no orbit); LSSD becomes 50 %/r by assignment (p1 and p12 LSSD overwritten, R4 14#2); planner keeps the orbit model with cold 50/r added on top of p1/p12."},
         "name": "Scattering Battlegear",
         "description": "Axes now fly into a random spot in a cone in front of you and start spinning on the ground dealing increased damage.",
         "maxRank": 3,
@@ -1935,10 +1936,10 @@
         "dummy": {"effects": [{"kind": "utility"}], "confidence": "C", "note": "card p6 Cycloning Step: BuffAdd move speed 10 %/r for 2 s; no dummy damage. Planner movement_speed 10/r matches."},
         "name": "Cycloning Step",
         "description": "Increases your movement speed while using whirlwind.",
-        "maxRank": 5,
+        "maxRank": 3,
         "effects": {
           "base": {"movement_speed": 0},
-          "perRank": {"movement_speed": 10}
+          "perRank": {"movement_speed": 15}
         }
       },
       {
@@ -1959,7 +1960,7 @@
       },
       {
         "id": "burning_air",
-        "positionIndex": 8,
+        "positionIndex": 9,
         "dummy": {"effects": [{"kind": "dot", "byRank": [1, 4, 9, 16, 25]}], "confidence": "C", "note": "card p8 (L1089): [18] = floor(dmg*RSS72*0.25 %/r) with RSS72 = attack speed %; byRank = expected DoT per use in % of one hit at 100 % attack speed = 0.04r*0.25r*100 = 1, 4, 9, 16, 25 (scale by AS/100).", "plannerFix": "Burning Air rolls per USE (chance 4r %) for a fire DoT of floor(hit * attack speed * 0.25r %); planner uses an on_hit proc with a fixed attack-speed conversion."},
         "name": "Burning Air",
         "description": "Chance on hit to inflict burning dealing damage based on your total attack speed.",
@@ -1976,7 +1977,7 @@
       },
       {
         "id": "trail_of_fire",
-        "positionIndex": 9,
+        "positionIndex": 8,
         "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "I", "note": "card p9 (L1134-L1144): trail placed under the player; tick 0.5 s, max 6 ticks at contact (dummy in trail radius only). In-zone (D <= 155 px, outside the trail) -> 0.", "plannerFix": "Trail of Fire is a fire trail under the player (radius ~20*(1+0.3r) px); the dummy at range is 0 and the planner adds burning 30/r to every hit."},
         "name": "Trail of Fire",
         "description": "Leave a trail of fire behind you inflicting monsters with burning.",
@@ -2181,7 +2182,7 @@
         "maxRank": 5,
         "effects": {
           "base": {"crit_damage": 0},
-          "perRank": {"crit_damage": 20}
+          "perRank": {"crit_damage": 12.5}
         }
       },
       {
@@ -2274,13 +2275,13 @@
       {
         "id": "trembling_trail",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [30, 60, 90]}, {"kind": "extra_hits", "byRank": [2, 2, 2], "per": "use"}], "confidence": "C", "note": "card p11 (R4 16#1 C): Viking_Shockwave_obj_Step_0 asm 0x14b23ccef-0x14b23d157: the last segment (numb == 0, 352 px) with [308] > 0 spawns a ring of 8 waves, direction = the last segment's direction + 45*i (i = 0..7, 45.0 @0x14f1882c8), first segment 60 px further, numb = [308]. The wave with i = 4 (+180 deg) returns along the same line (292, 232, 172, 112, 52 px) and hits the dummy at 160 px with segments 172 and 112 (13.5 / 48.3 px, +2 hits per use), at ~200 px with 232 and 172; the other 7 waves are >= 135 px away. +2 hits per use unchanged.", "plannerFix": "Trembling Trail adds a return ring of 8 waves; the backward wave hits the dummy twice per use. Planner only has physical +30 %/r and no ring hits."},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [20, 40, 60]}, {"kind": "extra_hits", "byRank": [2, 2, 2], "per": "use"}], "confidence": "C", "note": "card p11 (R4 16#1 C): Viking_Shockwave_obj_Step_0 asm 0x14b23ccef-0x14b23d157: the last segment (numb == 0, 352 px) with [308] > 0 spawns a ring of 8 waves, direction = the last segment's direction + 45*i (i = 0..7, 45.0 @0x14f1882c8), first segment 60 px further, numb = [308]. The wave with i = 4 (+180 deg) returns along the same line (292, 232, 172, 112, 52 px) and hits the dummy at 160 px with segments 172 and 112 (13.5 / 48.3 px, +2 hits per use), at ~200 px with 232 and 172; the other 7 waves are >= 135 px away. +2 hits per use unchanged.", "plannerFix": "Trembling Trail adds a return ring of 8 waves; the backward wave hits the dummy twice per use. Planner only has physical +30 %/r and no ring hits."},
         "name": "Trembling Trail",
         "description": "Smash the ground in front of you creating a shockwave that travels a short distance and then splits into all directions.",
         "maxRank": 3,
         "effects": {
           "base": {"subtree_damage": 0},
-          "perRank": {"subtree_damage": 30}
+          "perRank": {"subtree_damage": 20}
         }
       },
       {
@@ -2561,7 +2562,7 @@
       {
         "id": "deadly_advantage",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "zero_on_dummy"}], "confidence": "C", "note": "card p12: s9 = 45 unused; RANK(p12) > 0 is the condition that adds p11.s9 to LSSD (asm LSSD L109-110). 0 on its own.", "plannerFix": "Deadly Advantage has no own damage; it is only the gate for p11's LSSD. Planner gives physical +45 %/r to the hit, which the card says is unused."},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [45, 90, 135]}], "confidence": "C", "note": "card p12: s9 = 45 unused; RANK(p12) > 0 is the condition that adds p11.s9 to LSSD (asm LSSD L109-110). 0 on its own. S11: the node now loads its own value (45 %/r) instead of gating p11.", "plannerFix": "Deadly Advantage has no own damage; it is only the gate for p11's LSSD. Planner gives physical +45 %/r to the hit, which the card says is unused."},
         "name": "Deadly Advantage",
         "description": "Berserk no longer requires a melee weapon dealing increased damage.",
         "maxRank": 3,
@@ -2573,13 +2574,13 @@
       {
         "id": "graaaaagh",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "other", "byRank": [0.5625, 0.5625, 0.5625]}, {"kind": "extra_hits", "byRank": [0.008, 0.016, 0.024], "per": "use"}], "confidence": "I", "note": "card p13 ([310] = 0.1 %*r): at full stacks an explosion floor(d0*S*M*0.001r) (~0.064r*d0 at M=8) and stacks reset to 0. byRank[0] = average stack ratio (M+1)/(2M) = 0.5625 at M = 8 (applies to the stack share only); extra_hits = 0.064r/M per use (one blast per M hits). Assumptions I.", "plannerFix": "GRAAAAAGH! resets stacks at full stacks (average stacks drop to ~(M+1)/2) and adds a small blast; planner records it as a gain."},
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.5625, 0.5625, 0.5625]}, {"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12], "per": "use"}], "confidence": "I", "note": "card p13 ([310] = 0.1 %*r): at full stacks an explosion floor(d0*S*M*0.001r) (~0.064r*d0 at M=8) and stacks reset to 0. byRank[0] = average stack ratio (M+1)/(2M) = 0.5625 at M = 8 (applies to the stack share only); extra_hits = 0.064r/M per use (one blast per M hits). Assumptions I. S11: [310] = 0.5 %*r, blast ~0.32r*d0 at M=8, extra_hits 0.04r per use.", "plannerFix": "GRAAAAAGH! resets stacks at full stacks (average stacks drop to ~(M+1)/2) and adds a small blast; planner records it as a gain."},
         "name": "GRAAAAAGH!",
         "description": "Every time you reach full stacks unleash a trembling pulse dealing increased damage scaling with full stat scaling consuming all stacks.",
         "maxRank": 3,
         "effects": {
           "base": {"of_total_damage": 0},
-          "perRank": {"of_total_damage": 0.1}
+          "perRank": {"of_total_damage": 0.5}
         }
       },
       {

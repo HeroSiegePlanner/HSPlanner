@@ -336,8 +336,8 @@ pub fn apply_item_granted_conversions(
                 .copied()
                 .unwrap_or((0.0, 0.0));
             let effective = combine_additive_and_more(from, from_more);
-            let share_min = (conv.base_pct + conv.pct * rank_min) / 100.0;
-            let share_max = (conv.base_pct + conv.pct * rank_max) / 100.0;
+            let share_min = conv.share(rank_min);
+            let share_max = conv.share(rank_max);
             let add_min = share_min * effective.0;
             let add_max = share_max * effective.1;
             if add_min == 0.0 && add_max == 0.0 {
@@ -390,34 +390,6 @@ pub fn apply_item_granted_conversions(
     touched
 }
 
-// Powerfunnel reads the neutral physical attack after weapon Enhanced Damage.
-fn attack_damage_after_weapon_enhanced(
-    inventory: &Inventory,
-    stats: &HashMap<String, Ranged>,
-) -> Ranged {
-    let (weapon_min, weapon_max) = inventory
-        .get("weapon")
-        .and_then(|item| data::get_item(&item.base_id))
-        .and_then(|base| base.damage_min.zip(base.damage_max))
-        .unwrap_or((2.0, 6.0));
-    let stat = |key: &str| stats.get(key).copied().unwrap_or((0.0, 0.0));
-    let ed = stat("enhanced_damage");
-    let ed_more = stat("enhanced_damage_more");
-    let flat = stat("additive_physical_damage");
-    let attack = stat("attack_damage");
-    let attack_more = stat("attack_damage_more");
-    // Same neutral physical stages as the attack calculator, before skill,
-    // crit, enemy and projectile modifiers.
-    (
-        (weapon_min * (1.0 + ed.0 / 100.0) * (1.0 + ed_more.0 / 100.0) + flat.0)
-            * (1.0 + attack.0 / 100.0)
-            * (1.0 + attack_more.0 / 100.0),
-        (weapon_max * (1.0 + ed.1 / 100.0) * (1.0 + ed_more.1 / 100.0) + flat.1)
-            * (1.0 + attack.1 / 100.0)
-            * (1.0 + attack_more.1 / 100.0),
-    )
-}
-
 // Tree conversions can target attributes (re-summed in place) or stats
 // (returned in `touched` for the orchestrator to re-sum).
 #[allow(clippy::too_many_arguments)]
@@ -466,11 +438,6 @@ pub fn apply_tree_conversions(
                 sum.1 += contribution.1;
             }
             sum
-        } else if conv.from_key == "attack_damage"
-            && conv.to_key == "increased_life"
-            && conv.from_kind == ConvertKind::Stat
-        {
-            attack_damage_after_weapon_enhanced(inventory, stats)
         } else {
             match conv.from_kind {
                 ConvertKind::Attribute => attributes
@@ -522,7 +489,7 @@ pub fn apply_tree_conversions(
 }
 
 /// Item "X% of A converted to B" stats: (item stat, A, whether A is an attribute, B).
-const ITEM_STAT_CONVERSIONS: [(&str, &str, bool, &str); 16] = [
+const ITEM_STAT_CONVERSIONS: [(&str, &str, bool, &str); 17] = [
     (
         "intelligence_converted_to_magic_skill_dmg",
         "intelligence",
@@ -606,6 +573,12 @@ const ITEM_STAT_CONVERSIONS: [(&str, &str, bool, &str); 16] = [
         "poison_resistance",
         false,
         "poison_skill_damage",
+    ),
+    (
+        "lightning_resistance_converted_to_lightning_damage",
+        "lightning_resistance",
+        false,
+        "lightning_skill_damage",
     ),
     (
         "faster_cast_rate_percent_converted_to_movement_speed",

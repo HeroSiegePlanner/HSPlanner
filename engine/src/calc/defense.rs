@@ -437,7 +437,10 @@ mod tests {
     fn damage_reduction_caps_at_seventy_five() {
         let s = stats(&[("physical_damage_reduction", 90.0)]);
         assert_eq!(capped_reduction(&s, "physical_damage_reduction"), 75.0);
-        let raised = stats(&[("physical_damage_reduction", 90.0), ("max_physical_damage_reduction", 5.0)]);
+        let raised = stats(&[
+            ("physical_damage_reduction", 90.0),
+            ("max_physical_damage_reduction", 5.0),
+        ]);
         assert_eq!(capped_reduction(&raised, "physical_damage_reduction"), 80.0);
     }
 }

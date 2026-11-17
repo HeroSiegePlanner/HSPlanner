@@ -2805,7 +2805,7 @@
         "maxRank": 3,
         "effects": {
           "base": {"conversion_max_mana": 0, "mana_drain_pct": 9},
-          "perRank": {"conversion_max_mana": 0.05, "mana_drain_pct": 1}
+          "perRank": {"conversion_max_mana": 0.2, "mana_drain_pct": 1}
         }
       },
       {

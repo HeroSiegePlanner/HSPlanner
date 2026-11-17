@@ -170,7 +170,9 @@ fn strength_to_life_uses_final_strength_and_stacks_per_node() {
 }
 
 #[test]
-fn powerfunneled_lifespan_reads_weapon_damage_after_enhanced_damage() {
+// #215: 7.5% of the Attack Damage stat, not of the weapon's damage, so weapon
+// Enhanced Damage changes nothing.
+fn powerfunneled_lifespan_converts_the_attack_damage_stat() {
     let allocated = HashMap::new();
     let skill_ranks = HashMap::new();
     let active_buffs = HashMap::new();
@@ -181,9 +183,6 @@ fn powerfunneled_lifespan_reads_weapon_damage_after_enhanced_damage() {
     let subskill_ranks = HashMap::new();
     let enemy_conditions = HashMap::new();
     let weapon_id = "base_melee_giant_axe";
-    let weapon = crate::calc::data::get_item(weapon_id).unwrap();
-    let weapon_min = weapon.damage_min.unwrap();
-    let weapon_max = weapon.damage_max.unwrap();
 
     for added_ed in [0.0, 50.0] {
         let affixes = if added_ed == 0.0 {
@@ -216,13 +215,13 @@ fn powerfunneled_lifespan_reads_weapon_damage_after_enhanced_damage() {
             &enemy_conditions,
         );
         let result = compute_build_stats(&input);
-        let ed = result.stats.get("enhanced_damage").map_or(0.0, |v| v.0);
-        // Strength now feeds the Attack Damage stage that Powerfunnel also reads.
-        let atk = result.stats.get("attack_damage").map_or(0.0, |v| v.0);
-        let expected = (
-            weapon_min * (1.0 + ed / 100.0) * (1.0 + atk / 100.0) * 0.075,
-            weapon_max * (1.0 + ed / 100.0) * (1.0 + atk / 100.0) * 0.075,
-        );
+        // Strength feeds the Attack Damage that Powerfunnel reads.
+        let atk = result
+            .stats
+            .get("attack_damage")
+            .copied()
+            .unwrap_or_default();
+        let expected = (atk.0 * 0.075, atk.1 * 0.075);
         let actual = result
             .stats
             .get("increased_life")
@@ -531,7 +530,7 @@ fn resistance_conversions_sum_elements_and_respect_sign_and_caps() {
     ];
     // Vital Resistance and Feast of the Elements raise life by a percentage in game.
     for (node, target, expected) in [
-        (1152, "increased_life", 15.6),
+        (1152, "increased_life", 10.4),
         (641, "increased_life", 14.0),
         (643, "damage", 2.8),
     ] {
@@ -806,7 +805,10 @@ fn tree_defense_scales_equipped_armor_and_feeds_hulking_colossus() {
     // half point (6.5 per Vitality), so the converted total can land one higher.
     let floored = (base.stats["life"].0 + defense * 0.025).floor();
     let life = result.stats["life"].0;
-    assert!(life == floored || life == floored + 1.0, "{life} vs {floored}");
+    assert!(
+        life == floored || life == floored + 1.0,
+        "{life} vs {floored}"
+    );
     let breakdown = compute_stat_breakdown(&result.stat_sources, "defense", None);
     assert!((breakdown.combined.0 - base.stats["defense"].0 * 1.13).abs() < 1e-8);
 }
@@ -842,34 +844,13 @@ fn enhanced_damage_tree_branches_follow_weapon_type_and_reach_powerfunnel() {
                 "{kind}: {key}"
             );
         }
-        let ed = result
-            .stats
-            .get("enhanced_damage")
-            .copied()
-            .unwrap_or_default()
-            .0;
-        let more = result
-            .stats
-            .get("enhanced_damage_more")
-            .copied()
-            .unwrap_or_default()
-            .0;
-        let flat = result
-            .stats
-            .get("additive_physical_damage")
-            .copied()
-            .unwrap_or_default()
-            .0;
         let attack = result
             .stats
             .get("attack_damage")
             .copied()
             .unwrap_or_default()
             .0;
-        let expected_life_pct =
-            (weapon.damage_min.unwrap() * (1.0 + ed / 100.0) * (1.0 + more / 100.0) + flat)
-                * (1.0 + attack / 100.0)
-                * 0.075;
+        let expected_life_pct = attack * 0.075;
         let added_life_pct = result.stats["increased_life"].0
             - base
                 .stats
@@ -888,9 +869,9 @@ fn spacial_conversion_preserves_radius_and_benefits_non_spell_area_skills() {
         &[],
         &[("area_of_effect", 40.0), ("area_of_effect_more", 50.0)],
     );
-    // (1 + 40%) × (1 + 50%) - 1 = 110%, copied without consuming radius.
+    // (1 + 40%) × (1 + 50%) - 1 = 110%; half is copied without consuming radius.
     assert_eq!(result.stats_combined["area_of_effect"], (110.0, 110.0));
-    assert_eq!(result.stats["area_skill_damage"], (110.0, 110.0));
+    assert_eq!(result.stats["area_skill_damage"], (55.0, 55.0));
     for tags in [
         vec!["Melee", "Area of Effect"],
         vec!["Spell", "Area of Effect"],
@@ -902,7 +883,7 @@ fn spacial_conversion_preserves_radius_and_benefits_non_spell_area_skills() {
                 &tags,
                 &result.stats,
             ),
-            (110.0, 110.0)
+            (55.0, 55.0)
         );
     }
     assert!(!result.stats.contains_key("spell_aoe_damage"));
@@ -1029,8 +1010,14 @@ fn delayed_recovery_compensates_tick_interval_in_its_per_second_rate() {
 
 #[test]
 fn citadel_scales_recovery_with_configured_colossus_stacks() {
-    let custom = [("life_replenish", 100.0)];
+    // Citadel is Increased Life Replenish: it shares Angel's Vibrance's pool (#216).
+    let custom = [
+        ("life_replenish", 100.0),
+        ("life_replenish_increased", 45.0),
+    ];
     let base = audit_build(&[], &[], &custom);
+    let increased = base.stats["life_replenish_increased"].0 / 100.0;
+    let raw = base.stats["life_replenish"].0 / (1.0 + increased);
     for count in [0, 1, 4, 5, 99] {
         let r = audit_build_with_conditions(
             &[579, 580, 581, 582, 583],
@@ -1039,9 +1026,11 @@ fn citadel_scales_recovery_with_configured_colossus_stacks() {
             &[],
             &[("colossus", count)],
         );
-        assert_eq!(
-            r.stats["life_replenish"].0,
-            base.stats["life_replenish"].0 * (1.0 + 2.5 * f64::from(count.min(5)))
+        let expected = raw * (1.0 + increased + 0.4 * f64::from(count.min(5)));
+        assert!(
+            (r.stats["life_replenish"].0 - expected).abs() < 1e-9,
+            "{count} stacks: {:?}",
+            r.stats["life_replenish"]
         );
         assert_eq!(
             r.stats_combined
@@ -1133,7 +1122,7 @@ fn agitation_scales_movement_speed_with_up_to_ten_stacks() {
 #[test]
 fn colossus_grants_total_damage_per_stack_and_has_one_base_stack() {
     for nodes in [&[579][..], &[579, 580, 581, 582][..]] {
-        let rate = nodes.len() as f64;
+        let rate = nodes.len() as f64 * 0.5;
         let cap = nodes.len() as u32 + 1;
         for count in [0, 1, cap, 99] {
             let result = audit_build_with_conditions(nodes, &[], &[], &[], &[("colossus", count)]);

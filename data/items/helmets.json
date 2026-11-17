@@ -555,10 +555,13 @@
     "maxSockets": 3,
     "skillBonuses": {
       "Spacetime Equilibrium": 1,
-      "Random Buff Skill": [
+      "Random Skill": [
         20,
         30
       ]
+    },
+    "randomSkillPool": {
+      "tag": "Buff"
     }
   },
   {

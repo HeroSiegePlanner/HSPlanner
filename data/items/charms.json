@@ -571,8 +571,8 @@
     "requiresLevel": 92,
     "skillBonuses": {
       "Booster Shot": [
-        6,
-        15
+        15,
+        25
       ]
     },
     "width": 2,
@@ -2561,8 +2561,8 @@
         10,
         100
       ],
-      "physical_damage_reduction": -25,
-      "magic_damage_reduction": -25
+      "physical_damage_reduction": -20,
+      "magic_damage_reduction": -20
     },
     "sockets": 0,
     "maxSockets": 0

@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["engine", "crates/app", "crates/build", "crates/planner", "crates/ui", "crates/library", "crates/notes", "crates/paste"]
+members = ["engine", "crates/app", "crates/build", "crates/planner", "crates/ui", "crates/library", "crates/notes", "crates/installer", "crates/paste"]
 default-members = ["crates/app"]
 exclude = ["legacy/src-tauri", "prototypes/gpui-tree", "tree-renderer"]
 
@@ -12,11 +12,12 @@ publish = false
 [workspace.dependencies]
 hsplanner-notes={path="crates/notes"}
 hsplanner-library={path="crates/library"}
-hsplanner-engine = { package = "HSPlanner", path = "engine", default-features = false }
+hsplanner-engine = { path = "engine", default-features = false }
 hsplanner-build = { path = "crates/build" }
 hsplanner-planner = { path = "crates/planner" }
 hsplanner-ui = { path = "crates/ui" }
-gpui-kit = "=0.8.0"
+hsplanner-installer = { path = "crates/installer" }
+gpui-kit = "=0.9.1"
 log = "0.4"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
@@ -26,6 +27,10 @@ opt-level = 1
 
 [profile.dev.package."*"]
 opt-level = 2
+debug = false
+
+[profile.dev.package.hsplanner-planner]
+opt-level = 0
 
 [profile.release]
 debug = 0
