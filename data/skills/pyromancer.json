@@ -1368,6 +1368,7 @@
         "positionIndex": 2,
         "name": "Sixt Degree Burns",
         "description": "Increases the damage dealt by scorching aura.",
+        "statLabels": {"subtree_damage": "damage"},
         "maxRank": 5,
         "effects": {
           "base": {"subtree_damage": 0},
@@ -1395,9 +1396,11 @@
       {
         "id": "flaming_fissure",
         "positionIndex": 4,
-        "dummy": {"ownDamage": true, "effects": [{"kind": "extra_hits", "byRank": [0.2, 0.4, 0.6, 0.8, 1.0], "per": "hit", "note": "L0x2e rolls irandom(99) < LST(32, 4, 9) once a pulse: the 10r % the tooltip calls damage, not its 3r % chance; every hit of an object holding 341 then makes a 0.75 Searing_Burst_obj under the dummy dealing damage x (1 + true) = x2 (PC02 L0x145-L0x154): 0.1r x 2", "chain": true}], "confidence": "C", "note": "LoadAuraScorching and ProjectileCollision02Pyromancer (Sep 16 exe), counted per pulse by the preview sim (skill_mods/scorching_aura.rs: the pulse's rolls at their odds, every object counted apart, a full stack's procs at one hit in 101, Searing Burst's spots enumerated). Chain: no handler of 341-344 writes its effect back, so every object one makes (the burst, the ignition's pulse and balls, the patch on each of its 6 ticks, and the souls' and balls' explosions, Harvester Step_0 L0x20 and Orbital Destroy_0 L0x18) holds all its carrier held but its maker and rolls them on every hit; the engine chains them all", "plannerFix": "planner models a 3 %/r on-hit proc adding 10 %/r fire damage; in game the 10 %/r value is the pulse's chance of a burst dealing x2 the aura's damage"},
+        "dummy": {"ownDamage": true, "effects": [{"kind": "extra_hits", "base": 0, "perRank": 0.2, "per": "hit", "note": "L0x2e rolls irandom(99) < LST(32, 4, 9) once a pulse: the 10r % the tooltip calls damage, not its 3r % chance; every hit of an object holding 341 then makes a 0.75 Searing_Burst_obj under the dummy dealing damage x (1 + true) = x2 (PC02 L0x145-L0x154): 0.1r x 2", "chain": true}], "confidence": "C", "note": "LoadAuraScorching and ProjectileCollision02Pyromancer (Sep 16 exe), counted per pulse by the preview sim (skill_mods/scorching_aura.rs: the pulse's rolls at their odds, every object counted apart, a full stack's procs at one hit in 101, Searing Burst's spots enumerated). Chain: no handler of 341-344 writes its effect back, so every object one makes (the burst, the ignition's pulse and balls, the patch on each of its 6 ticks, and the souls' and balls' explosions, Harvester Step_0 L0x20 and Orbital Destroy_0 L0x18) holds all its carrier held but its maker and rolls them on every hit; the engine chains them all", "plannerFix": "planner models a 3 %/r on-hit proc adding 10 %/r fire damage; in game the 10 %/r value is the pulse's chance of a burst dealing x2 the aura's damage"},
         "name": "Flaming Fissure",
         "description": "Chance on hit to release a flaming fissure beneath monsters knocking them into the air dealing additional damage.",
+        "statLabels": {"fire_skill_damage": "damage"},
+        "tooltipNote": "The game rolls this Damage value, not the Proc Chance, once per pulse: a lucky pulse opens a fissure under the target dealing 200% of the pulse's damage.",
         "maxRank": 5,
         "proc": {
           "trigger": "on_hit",
@@ -1433,9 +1436,10 @@
       {
         "id": "ignite_the_flames",
         "positionIndex": 7,
-        "dummy": {"ownDamage": true, "effects": [{"kind": "extra_hits", "byRank": [0.01, 0.010099, 0.010198, 0.010297, 0.010396], "per": "hit", "note": "PC02 L0x1be-L0x1e8: every hit of an object holding 342 stacks a buff up to 100; the hit that finds 100 pulses a 2.5 Explosion_Item_obj at the dummy dealing damage x (1 + 0.01r x 100 x 0.01) and clears them: (1 + 0.01r) / 101 a damage-weighted stacking hit", "chain": true}, {"kind": "extra_hits", "byRank": [0.05584, 0.05624, 0.05663, 0.05703, 0.05743], "per": "hit", "requires": "release_the_chaos=1", "note": "with Release the Chaos the ignition also sends 3h Fire_Ball_Orbital_obj round the player (PC02 L0x1d3-L0x1e4); 2 / 5 / 8 touch the dummy, each and its explosion dealing damage x (1 + 0.01r + 0.4h): 2n (1 + 0.01r + 0.4h) / 101", "chain": true}, {"kind": "extra_hits", "byRank": [0.17921, 0.1802, 0.18119, 0.18218, 0.18317], "per": "hit", "requires": "release_the_chaos=2", "chain": true}, {"kind": "extra_hits", "byRank": [0.3501, 0.35168, 0.35327, 0.35485, 0.35644], "per": "hit", "requires": "release_the_chaos=3", "chain": true}], "confidence": "C", "note": "LoadAuraScorching and ProjectileCollision02Pyromancer (Sep 16 exe), counted per pulse by the preview sim (skill_mods/scorching_aura.rs: the pulse's rolls at their odds, every object counted apart, a full stack's procs at one hit in 101, Searing Burst's spots enumerated)", "plannerFix": "planner adds 1 %/r fire damage to every hit; in game a pulse comes once in 101 stacking hits"},
+        "dummy": {"ownDamage": true, "effects": [{"kind": "extra_hits", "base": 0.00990099, "perRank": 0.00009901, "per": "hit", "note": "PC02 L0x1be-L0x1e8: every hit of an object holding 342 stacks a buff up to 100; the hit that finds 100 pulses a 2.5 Explosion_Item_obj at the dummy dealing damage x (1 + 0.01r x 100 x 0.01) and clears them: (1 + 0.01r) / 101 a damage-weighted stacking hit", "chain": true}, {"kind": "extra_hits", "base": 0.055446, "perRank": 0.000396, "per": "hit", "requires": "release_the_chaos=1", "note": "with Release the Chaos the ignition also sends 3h Fire_Ball_Orbital_obj round the player (PC02 L0x1d3-L0x1e4); 2 / 5 / 8 touch the dummy (10 / 13 / 16 at the granted ranks 4-6), each and its explosion dealing damage x (1 + 0.01r + 0.4h): 2n (1 + 0.01r + 0.4h) / 101", "chain": true}, {"kind": "extra_hits", "base": 0.178218, "perRank": 0.00099, "per": "hit", "requires": "release_the_chaos=2", "chain": true}, {"kind": "extra_hits", "base": 0.348515, "perRank": 0.001584, "per": "hit", "requires": "release_the_chaos=3", "chain": true}, {"kind": "extra_hits", "base": 0.514851, "perRank": 0.00198, "per": "hit", "requires": "release_the_chaos=4", "chain": true}, {"kind": "extra_hits", "base": 0.772277, "perRank": 0.002574, "per": "hit", "requires": "release_the_chaos=5", "chain": true}, {"kind": "extra_hits", "base": 1.077228, "perRank": 0.003168, "per": "hit", "requires": "release_the_chaos=6", "chain": true}], "confidence": "C", "note": "LoadAuraScorching and ProjectileCollision02Pyromancer (Sep 16 exe), counted per pulse by the preview sim (skill_mods/scorching_aura.rs: the pulse's rolls at their odds, every object counted apart, a full stack's procs at one hit in 101, Searing Burst's spots enumerated)", "plannerFix": "planner adds 1 %/r fire damage to every hit; in game a pulse comes once in 101 stacking hits"},
         "name": "IGNITE THE FLAMES!",
         "description": "Damaging monsters now builds up flaming ignition stacks unleashing a fiery pulse at max stacks.",
+        "statLabels": {"fire_skill_damage": "damage"},
         "maxRank": 5,
         "effects": {
           "base": {"fire_skill_damage": 0},
@@ -1445,9 +1449,10 @@
       {
         "id": "ground_blaze",
         "positionIndex": 8,
-        "dummy": {"ownDamage": true, "effects": [{"kind": "extra_hits", "byRank": [0.0288, 0.1152, 0.2592, 0.4608, 0.72], "per": "hit", "note": "L0x32 rolls its 4r % chance once a pulse; every hit of an object holding 343 lights a Blazing_Trail_obj at the dummy (PC02 L0x1ad-L0x1b7) dealing 12r % a tick, 6 ticks over its 2.5 s (Alarm_0 resets the 0.7 maxScale to 1), each tick rolling what the patch holds: 0.04r x 6 x 0.12r", "chain": true}], "confidence": "C", "note": "LoadAuraScorching and ProjectileCollision02Pyromancer (Sep 16 exe), counted per pulse by the preview sim (skill_mods/scorching_aura.rs: the pulse's rolls at their odds, every object counted apart, a full stack's procs at one hit in 101, Searing Burst's spots enumerated)", "plannerFix": "planner models a 4 %/r on-hit proc adding 12 %/r of total damage; in game it is a ticking patch"},
+        "dummy": {"ownDamage": true, "effects": [{"kind": "extra_hits", "byRank": [0.0288, 0.1152, 0.2592, 0.4608, 0.72, 1.0368, 1.4112, 1.8432], "per": "hit", "note": "L0x32 rolls its 4r % chance once a pulse; every hit of an object holding 343 lights a Blazing_Trail_obj at the dummy (PC02 L0x1ad-L0x1b7) dealing 12r % a tick, 6 ticks over its 2.5 s (Alarm_0 resets the 0.7 maxScale to 1), each tick rolling what the patch holds: 0.04r x 6 x 0.12r", "chain": true}], "confidence": "C", "note": "LoadAuraScorching and ProjectileCollision02Pyromancer (Sep 16 exe), counted per pulse by the preview sim (skill_mods/scorching_aura.rs: the pulse's rolls at their odds, every object counted apart, a full stack's procs at one hit in 101, Searing Burst's spots enumerated)", "plannerFix": "planner models a 4 %/r on-hit proc adding 12 %/r of total damage; in game it is a ticking patch"},
         "name": "Ground Blaze",
         "description": "Chance on hit to slow monsters and light a blaze at their feet.",
+        "tooltipNote": "A lucky pulse lights a blaze under the target that ticks 6 times in 2.5 s on a standing target, each tick dealing this share of the pulse's damage.",
         "maxRank": 5,
         "proc": {
           "trigger": "on_hit",
@@ -1464,6 +1469,7 @@
         "positionIndex": 9,
         "name": "Scorching Agony",
         "description": "Increases damage dealt to burning targets.",
+        "statLabels": {"extra_damage_burning": "increased_damage_burning"},
         "maxRank": 5,
         "effects": {
           "base": {"extra_damage_burning": 0},
@@ -1475,6 +1481,8 @@
         "positionIndex": 10,
         "name": "Burn Them All!",
         "description": "Inflicts burning for a portion of scorching auras damage on hit.",
+        "statLabels": {"increased_burning_damage": "burning_damage", "burning": "conversion"},
+        "tooltipNote": "The planner does not count the Conversion yet: this node's burning uses the generic burning share of the hit.",
         "maxRank": 5,
         "effects": {
           "base": {"increased_burning_damage": 0},
@@ -1491,9 +1499,10 @@
       {
         "id": "searing_burst",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.12403, 0.24806, 0.37209], "note": "L0x74-L0x81: 4r Searing_Burst_obj (0.4, singleHit) at irandom(360) deg and irandom(floor(64 x scale)) px from the player, each with the aura's damage; 3.10 % of the spots meet the in-zone dummy at scale 2"}, {"kind": "extra_hits", "byRank": [0.026, 0.05201, 0.07801], "requires": "scorched_lands=1", "note": "Scorched Lands spreads them wider: 3.75 / 3.58 / 3.21 / 2.92 / 2.66 % of the spots meet it"}, {"kind": "extra_hits", "byRank": [0.01908, 0.03817, 0.05725], "requires": "scorched_lands=2"}, {"kind": "extra_hits", "byRank": [0.00447, 0.00893, 0.0134], "requires": "scorched_lands=3"}, {"kind": "extra_hits", "byRank": [-0.00744, -0.01489, -0.02233], "requires": "scorched_lands=4"}, {"kind": "extra_hits", "byRank": [-0.01781, -0.03562, -0.05342], "requires": "scorched_lands=5"}], "confidence": "C", "note": "LoadAuraScorching and ProjectileCollision02Pyromancer (Sep 16 exe), counted per pulse by the preview sim (skill_mods/scorching_aura.rs: Searing Burst's spots enumerated); the bursts carry none of 341-344, which L0x78-L0x81 leave unset", "plannerFix": "planner gives projectile_count 4/r, which the engine counted as 4r full hits a pulse"},
+        "dummy": {"effects": [{"kind": "extra_hits", "base": 0, "perRank": 0.12403, "note": "L0x74-L0x81: 4r Searing_Burst_obj (0.4, singleHit) at irandom(360) deg and irandom(floor(64 x scale)) px from the player, each with the aura's damage; 3.10 % of the spots meet the in-zone dummy at scale 2"}, {"kind": "extra_hits", "base": 0, "perRank": 0.026003, "requires": "scorched_lands=1", "note": "Scorched Lands spreads them wider: 3.75 / 3.58 / 3.21 / 2.92 / 2.66 % of the spots meet it (2.45 / 2.27 / 2.12 % at the granted ranks 6-8)"}, {"kind": "extra_hits", "base": 0, "perRank": 0.019084, "requires": "scorched_lands=2"}, {"kind": "extra_hits", "base": 0, "perRank": 0.004465, "requires": "scorched_lands=3"}, {"kind": "extra_hits", "base": 0, "perRank": -0.007444, "requires": "scorched_lands=4"}, {"kind": "extra_hits", "base": 0, "perRank": -0.017808, "requires": "scorched_lands=5"}, {"kind": "extra_hits", "base": 0, "perRank": -0.026079, "requires": "scorched_lands=6"}, {"kind": "extra_hits", "base": 0, "perRank": -0.033155, "requires": "scorched_lands=7"}, {"kind": "extra_hits", "base": 0, "perRank": -0.039278, "requires": "scorched_lands=8"}], "confidence": "C", "note": "LoadAuraScorching and ProjectileCollision02Pyromancer (Sep 16 exe), counted per pulse by the preview sim (skill_mods/scorching_aura.rs: Searing Burst's spots enumerated); the bursts carry none of 341-344, which L0x78-L0x81 leave unset", "plannerFix": "planner gives projectile_count 4/r, which the engine counted as 4r full hits a pulse"},
         "name": "Searing Burst",
         "description": "Frequently unleash small bursts of fire dealing additional damage stunning monsters on hit.",
+        "statLabels": {"subtree_damage": "damage"},
         "maxRank": 3,
         "effects": {
           "base": {"subtree_damage": 0, "projectile_count": 0},
@@ -1505,6 +1514,7 @@
         "positionIndex": 12,
         "name": "Burning Soul",
         "description": "Increases the damage of scorching aura based on your maximum life.",
+        "statLabels": {"subtree_damage_per_100_max_life": "max_life_damage"},
         "maxRank": 3,
         "effects": {
           "base": {"subtree_damage_per_100_max_life": 0},
@@ -1514,9 +1524,10 @@
       {
         "id": "scorching_harvester",
         "positionIndex": 13,
-        "dummy": {"ownDamage": true, "effects": [{"kind": "extra_hits", "byRank": [0.2, 0.4, 0.6], "per": "hit", "note": "PC02 L0x15b-L0x169: every hit of an object holding 344 sends a Pyromancer_Scorching_Harvester_obj from the player, homing until its centre meets the dummy, where an Explosion_Item_obj deals 20r % of the hit (Harvester Step_0 L0x12-L0x22) and rolls all the soul holds (L0x20)", "chain": true}], "confidence": "C", "note": "LoadAuraScorching and ProjectileCollision02Pyromancer (Sep 16 exe), counted per pulse by the preview sim (skill_mods/scorching_aura.rs: the pulse's rolls at their odds, every object counted apart, a full stack's procs at one hit in 101, Searing Burst's spots enumerated)", "plannerFix": "planner adds 20 %/r fire damage to every hit; in game a soul deals it once a pulse"},
+        "dummy": {"ownDamage": true, "effects": [{"kind": "extra_hits", "base": 0, "perRank": 0.2, "per": "hit", "note": "PC02 L0x15b-L0x169: every hit of an object holding 344 sends a Pyromancer_Scorching_Harvester_obj from the player, homing until its centre meets the dummy, where an Explosion_Item_obj deals 20r % of the hit (Harvester Step_0 L0x12-L0x22) and rolls all the soul holds (L0x20)", "chain": true}], "confidence": "C", "note": "LoadAuraScorching and ProjectileCollision02Pyromancer (Sep 16 exe), counted per pulse by the preview sim (skill_mods/scorching_aura.rs: the pulse's rolls at their odds, every object counted apart, a full stack's procs at one hit in 101, Searing Burst's spots enumerated)", "plannerFix": "planner adds 20 %/r fire damage to every hit; in game a soul deals it once a pulse"},
         "name": "Scorching Harvester",
         "description": "Frequently send out fiery souls dealing damage replenishing a portion of your maximum life.",
+        "statLabels": {"fire_skill_damage": "damage", "life_steal": "life_steal"},
         "maxRank": 3,
         "effects": {
           "base": {"fire_skill_damage": 0, "life_steal": 0},
@@ -1529,6 +1540,7 @@
         "dummy": {"ownDamage": true, "effects": [], "confidence": "C", "note": "PC02 L0x1d3-L0x1e4: the balls are the ignition's objects, so Ignite the Flames' rows count them at this node's rank (requires release_the_chaos=r) within Ignite's chain; LoadAuraScorching and ProjectileCollision02Pyromancer (Sep 16 exe), counted per pulse by the preview sim (skill_mods/scorching_aura.rs)", "plannerFix": "planner gives projectile_count 3/r and 40 %/r fire damage on every hit; in game the balls come with Ignite's pulse only"},
         "name": "RELEASE THE CHAOS!",
         "description": "Ignite the flames now additionally unleashes piercing fireballs spiraling outwards dealing additional damage.",
+        "statLabels": {"fire_skill_damage": "damage"},
         "maxRank": 3,
         "effects": {
           "base": {"fire_skill_damage": 0, "projectile_count": 0},

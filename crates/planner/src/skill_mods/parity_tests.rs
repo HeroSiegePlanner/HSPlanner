@@ -322,10 +322,22 @@ pub(crate) fn misses(
     engine: impl Fn(&[(&str, u32)]) -> f32,
     within: f32,
 ) -> Vec<String> {
+    misses_past(class, skill, sim, engine, within, 0)
+}
+
+/// The same up to `past` ranks above each node's highest, as granted sub-skill ranks reach.
+pub(crate) fn misses_past(
+    class: &str,
+    skill: &str,
+    sim: impl Fn(&[(&str, u32)]) -> f32,
+    engine: impl Fn(&[(&str, u32)]) -> f32,
+    within: f32,
+    past: u32,
+) -> Vec<String> {
     let (sim_base, engine_base) = (sim(&[]), engine(&[]));
     let mut wrong = Vec::new();
     for node in nodes(class, skill) {
-        for rank in 1..=node.max_rank {
+        for rank in 1..=node.max_rank + past {
             let ranks = [(node.id.as_str(), rank)];
             let (sim, engine) = (sim(&ranks) - sim_base, engine(&ranks) - engine_base);
             if (sim - engine).abs() >= within {

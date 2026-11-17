@@ -826,6 +826,12 @@ pub struct SubskillNodeSpec {
     /// Calculation assumptions/unsupported secondary behavior shown in details.
     #[serde(default)]
     pub calculation_note: Option<String>,
+    /// The game's tooltip label of a stat or applied state, as a `planner.skills.game_stat.*` id.
+    #[serde(default)]
+    pub stat_labels: Option<HashMap<String, String>>,
+    /// How the game uses the node where its tooltip misleads, shown in the node's tooltip.
+    #[serde(default)]
+    pub tooltip_note: Option<String>,
     #[serde(default)]
     pub icon: Option<String>,
     #[serde(default)]
