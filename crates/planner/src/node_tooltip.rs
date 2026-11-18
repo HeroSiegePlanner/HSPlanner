@@ -3,10 +3,13 @@ use std::collections::HashMap;
 
 use gpui_kit::base::Tooltip;
 use gpui_kit::component::animation::{EffectTransition, cubic_bezier};
+use gpui_kit::component::{Icon, IconName};
 use gpui_kit::{
     App, BoxShadow, Div, FontWeight, Hsla, IntoElement, ParentElement, RenderOnce, Styled, Window,
     div, linear_color_stop, linear_gradient, point, px, relative, rems,
 };
+use hsplanner_build::BuildSnapshot;
+use hsplanner_engine::calc::{data, subskill::effective_skill_tags};
 use serde::Deserialize;
 
 use crate::{
@@ -16,6 +19,8 @@ use crate::{
     tooltip_text::TooltipText,
     tree::{Info, Node},
 };
+
+const EITHER_TAGS: [[&str; 2]; 2] = [["Explosion", "Area of Effect"], ["Melee", "Ranged"]];
 
 #[derive(Clone, Deserialize)]
 pub struct NodeLines {
@@ -57,6 +62,48 @@ pub struct NodeTooltip {
     pending: bool,
     socket: Option<hsplanner_engine::calc::types::TreeSocketContent>,
     allocated: bool,
+    skills: Vec<(String, bool)>,
+}
+
+/// The game's tooltip rule: every node tag, with the Explosion/AoE and Melee/Ranged pairs either-or.
+fn benefits(node_tags: &[String], skill_tags: &[String]) -> bool {
+    let has = |tag: &str| skill_tags.iter().any(|t| t == tag);
+    let pair = |tag: &str| {
+        EITHER_TAGS.into_iter().find(|pair| {
+            pair.contains(&tag) && pair.iter().all(|p| node_tags.iter().any(|t| t == p))
+        })
+    };
+    node_tags.iter().all(|tag| match pair(tag) {
+        Some(pair) => pair.into_iter().any(has),
+        None => has(tag),
+    })
+}
+
+/// Learned active skills (all class actives before any is learned) and whether each benefits.
+fn skill_matches(node_tags: &[String], build: &BuildSnapshot) -> Vec<(String, bool)> {
+    let listed = !node_tags.is_empty() && !matches!(node_tags, [tag] if tag == "Passive");
+    let Some(class_id) = build.class_id.as_deref().filter(|_| listed) else {
+        return Vec::new();
+    };
+    let actives: Vec<_> = data::get_skills_by_class(class_id)
+        .iter()
+        .map(|skill| {
+            let base = skill.tags.as_deref().unwrap_or_default();
+            let tags = effective_skill_tags(&skill.id, base, &build.subskill_ranks);
+            let learned = build
+                .skill_ranks
+                .get(&skill.id)
+                .is_some_and(|&rank| rank > 0);
+            (skill, tags, learned)
+        })
+        .filter(|(_, tags, _)| tags.iter().any(|tag| tag == "Active"))
+        .collect();
+    let any_learned = actives.iter().any(|(_, _, learned)| *learned);
+    actives
+        .into_iter()
+        .filter(|(_, _, learned)| *learned || !any_learned)
+        .map(|(skill, tags, _)| (skill.name.clone(), benefits(node_tags, &tags)))
+        .collect()
 }
 
 impl NodeTooltip {
@@ -70,7 +117,17 @@ impl NodeTooltip {
             pending: false,
             socket: None,
             allocated: false,
+            skills: Vec::new(),
         }
+    }
+
+    pub fn skills(mut self, build: &BuildSnapshot) -> Self {
+        self.skills = self
+            .info
+            .as_ref()
+            .map(|info| skill_matches(&info.g, build))
+            .unwrap_or_default();
+        self
     }
 
     pub fn socket(
@@ -109,6 +166,21 @@ fn text(content: impl Into<gpui_kit::SharedString>, color: Hsla) -> Div {
         .line_height(relative(1.55))
         .text_color(color)
         .child(content.into())
+}
+
+fn skill_row(name: String, benefits: bool, palette: &TooltipTheme) -> Div {
+    let color = if benefits {
+        palette.positive
+    } else {
+        palette.muted
+    };
+    let check = benefits.then(|| Icon::new(IconName::Check).size_3().text_color(color));
+    div()
+        .flex()
+        .items_center()
+        .gap_1()
+        .child(div().flex_none().size_3().children(check))
+        .child(text(name, color))
 }
 
 impl RenderOnce for NodeTooltip {
@@ -305,27 +377,40 @@ impl RenderOnce for NodeTooltip {
                 )));
             }
             if !info.g.is_empty() {
+                let skills = (!self.skills.is_empty()).then(|| {
+                    div().flex().flex_col().children(
+                        self.skills
+                            .into_iter()
+                            .map(|(name, benefits)| skill_row(name, benefits, palette)),
+                    )
+                });
+                let chips = div()
+                    .flex()
+                    .flex_wrap()
+                    .gap_1()
+                    .children(info.g.into_iter().map(|tag| {
+                        div()
+                            .px_1p5()
+                            .py_0p5()
+                            .rounded(rems(2. / 13.))
+                            .border_1()
+                            .border_color(palette.border_strong)
+                            .text_size(rems(10. / 13.))
+                            .text_color(palette.muted)
+                            .child(TooltipText::new(
+                                gpui_kit::SharedString::from(format!("tooltip-tag-{tag}")),
+                                tag.to_uppercase(),
+                                tag_tracking,
+                            ))
+                    }));
                 panel = panel.child(
                     section(palette)
                         .bg(palette.panel_secondary.opacity(0.4))
                         .flex()
-                        .flex_wrap()
-                        .gap_1()
-                        .children(info.g.into_iter().map(|tag| {
-                            div()
-                                .px_1p5()
-                                .py_0p5()
-                                .rounded(rems(2. / 13.))
-                                .border_1()
-                                .border_color(palette.border_strong)
-                                .text_size(rems(10. / 13.))
-                                .text_color(palette.muted)
-                                .child(TooltipText::new(
-                                    gpui_kit::SharedString::from(format!("tooltip-tag-{tag}")),
-                                    tag.to_uppercase(),
-                                    tag_tracking,
-                                ))
-                        })),
+                        .flex_col()
+                        .gap_1p5()
+                        .child(chips)
+                        .children(skills),
                 );
             }
         } else {
@@ -347,6 +432,7 @@ impl RenderOnce for NodeTooltip {
 mod tests {
     use super::*;
     use crate::tree::Graph;
+    use hsplanner_engine::calc::subskill::subskill_key;
 
     #[test]
     fn classification_covers_every_node_and_keeps_original_lines() {
@@ -370,6 +456,102 @@ mod tests {
         assert_eq!(
             lines[&853].unsupported,
             ["+2500 Lightning Damage dealt by odin"]
+        );
+    }
+
+    fn tags(list: &[&str]) -> Vec<String> {
+        list.iter().map(|tag| tag.to_string()).collect()
+    }
+
+    fn pyromancer(learned: &[&str]) -> BuildSnapshot {
+        BuildSnapshot {
+            class_id: Some("pyromancer".into()),
+            skill_ranks: learned.iter().map(|id| (id.to_string(), 1)).collect(),
+            ..BuildSnapshot::default()
+        }
+    }
+
+    #[test]
+    fn a_skill_benefits_only_when_it_carries_every_node_tag() {
+        assert!(benefits(&tags(&["Spell"]), &tags(&["Active", "Spell"])));
+        assert!(!benefits(
+            &tags(&["Spell", "Area of Effect"]),
+            &tags(&["Active", "Spell"])
+        ));
+    }
+
+    #[test]
+    fn explosion_with_aoe_and_melee_with_ranged_accept_either_tag() {
+        assert!(benefits(
+            &tags(&["Area of Effect", "Explosion"]),
+            &tags(&["Explosion"])
+        ));
+        assert!(benefits(&tags(&["Melee", "Ranged"]), &tags(&["Melee"])));
+        assert!(!benefits(&tags(&["Melee", "Ranged"]), &tags(&["Spell"])));
+        assert!(!benefits(&tags(&["Explosion"]), &tags(&["Area of Effect"])));
+    }
+
+    #[test]
+    fn lists_learned_active_skills_in_class_order_like_the_game() {
+        let learned = [
+            "fire_nova",
+            "blazing_trail",
+            "fire_enchant",
+            "phoenix_flight",
+            "fire_shield",
+            "avatar_of_fire",
+            "fireball",
+            "breath_of_fire",
+            "hydra",
+            "ignite",
+        ];
+        let expected = [
+            ("Blazing Trail", true),
+            ("Fire Enchant", false),
+            ("Phoenix Flight", true),
+            ("Fire Shield", false),
+            ("Avatar of Fire", false),
+            ("Breath of Fire", true),
+            ("Fireball", true),
+            ("Hydra", true),
+            ("Fire Nova", true),
+        ]
+        .map(|(name, benefits)| (name.to_string(), benefits));
+        assert_eq!(
+            skill_matches(&tags(&["Spell"]), &pyromancer(&learned)),
+            expected
+        );
+    }
+
+    #[test]
+    fn lists_every_class_active_when_no_skill_is_learned() {
+        let listed = skill_matches(&tags(&["Spell"]), &pyromancer(&[]));
+        assert_eq!(listed.len(), 16);
+        assert!(
+            listed
+                .iter()
+                .all(|(name, _)| name != "Ignite" && name != "Fiery Presence")
+        );
+    }
+
+    #[test]
+    fn untagged_and_passive_only_nodes_list_no_skills() {
+        let build = pyromancer(&["fireball"]);
+        assert!(skill_matches(&[], &build).is_empty());
+        assert!(skill_matches(&tags(&["Passive"]), &build).is_empty());
+    }
+
+    #[test]
+    fn a_learned_subskill_changes_which_nodes_the_skill_matches() {
+        let mut build = pyromancer(&["fireball"]);
+        build
+            .subskill_ranks
+            .insert(subskill_key("fireball", "orbital_fire"), 1);
+        let fireball = |benefits| vec![("Fireball".to_string(), benefits)];
+        assert_eq!(skill_matches(&tags(&["Orbital"]), &build), fireball(true));
+        assert_eq!(
+            skill_matches(&tags(&["Projectile"]), &build),
+            fireball(false)
         );
     }
 

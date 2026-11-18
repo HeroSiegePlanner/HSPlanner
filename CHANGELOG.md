@@ -6,6 +6,7 @@
 - Share opens a window with two choices: copy the build code, with or without the stash, or store the build on hsplanner.app and copy its link.
 - Import accepts hsplanner.app links as well as build codes.
 - Scorching Aura's subskill tooltips use the game's stat names and explain how Flaming Fissure and Ground Blaze hit (#237, #239, #240).
+- A tagged tree node's tooltip lists your skills and ticks the ones it benefits, like the game.
 
 ## Calculations
 

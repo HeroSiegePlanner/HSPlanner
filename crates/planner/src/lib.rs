@@ -945,6 +945,7 @@ impl Render for TreeView {
                         self.build_input.tree_socketed.get(&(node.id as u32)),
                         self.selected.contains(&ix),
                     )
+                    .skills(&self.build_input)
                     .performance(self.build.preview(), self.build.in_flight),
                 ),
             )
