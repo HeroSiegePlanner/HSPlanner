@@ -278,6 +278,7 @@ impl Tree<'_> {
                 AppliedStateValue::Full {
                     state: name,
                     amount: Some(amount),
+                    ..
                 } if name == state => Some(at(amount.base, amount.per_rank, rank)),
                 _ => None,
             })

@@ -43,7 +43,7 @@ fn agree(together: &[Vec<(&str, u32)>]) {
 fn pairs(a: &'static str, b: &'static str) -> Vec<Vec<(&'static str, u32)>> {
     let max = |id: &str| {
         let node = parity::nodes(CLASS, SKILL).iter().find(|n| n.id == id);
-        node.map_or(0, |n| n.max_rank)
+        node.map_or(0, |n| n.max_rank + parity::GRANTED)
     };
     let ranks = (1..=max(a)).flat_map(|ra| (1..=max(b)).map(move |rb| (ra, rb)));
     ranks.map(|(ra, rb)| vec![(a, ra), (b, rb)]).collect()
@@ -53,7 +53,7 @@ fn pairs(a: &'static str, b: &'static str) -> Vec<Vec<(&'static str, u32)>> {
 fn the_engines_subskill_hits_follow_the_sim() {
     let (sim, base) = (expected(&[]), engine(&[]));
     assert!((sim - base).abs() < 0.01, "sim {sim}, engine {base}");
-    let wrong = parity::misses(CLASS, SKILL, expected, engine, 0.01);
+    let wrong = parity::misses_past(CLASS, SKILL, expected, engine, 0.01, parity::GRANTED);
     assert!(wrong.is_empty(), "\n{}", wrong.join("\n"));
 }
 

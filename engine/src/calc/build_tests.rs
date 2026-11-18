@@ -1018,6 +1018,27 @@ fn asphyxiating_touch_keeps_ailments_but_suppresses_direct_damage() {
     }
 }
 
+// LoadAuraScorching L0x37-L0x38 + PC00Skills case 18: each pulse burns for its hit x 10 %/rank a second.
+#[test]
+fn burn_them_all_burns_for_its_conversion_share_of_the_pulse() {
+    for rank in 1..=5 {
+        let p = perf(
+            "pyromancer",
+            "scorching_aura",
+            20,
+            &[("burn_them_all", rank)],
+            &[],
+        );
+        let hit = p.damage.as_ref().expect("Scorching Aura damage").avg_max as f64;
+        let burning = p.ailment_dps_max.expect("Burn Them All inflicts burning");
+        let expected = hit * 0.1 * rank as f64;
+        assert!(
+            (burning - expected).abs() < 1e-6,
+            "rank {rank}: {burning} vs {expected}"
+        );
+    }
+}
+
 // "Heat Combustion" inflicts burning with no amount — dropping amount-less
 // states zeroed the ailment DPS of nodes whose whole point is the ailment.
 #[test]

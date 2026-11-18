@@ -775,6 +775,9 @@ pub enum AppliedStateValue {
         state: String,
         #[serde(default)]
         amount: Option<AmountSpec>,
+        /// `amount` is the share of the hit, in percent, that the state deals each second.
+        #[serde(default)]
+        conversion: bool,
     },
 }
 

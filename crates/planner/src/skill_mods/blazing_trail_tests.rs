@@ -81,8 +81,8 @@ fn pulses(patch: &Spawn) -> Option<&Trail> {
 #[test]
 fn the_engine_follows_the_nodes_a_walking_player_plays_together() {
     let mut together: Vec<Vec<(&str, u32)>> = Vec::new();
-    for fork in 1..=3 {
-        let crackling = (1..=5).map(|rank| ("crackling_heat", rank));
+    for fork in 1..=3 + parity::GRANTED {
+        let crackling = (1..=5 + parity::GRANTED).map(|rank| ("crackling_heat", rank));
         together.extend(crackling.map(|k| vec![("forking_flames", fork), k]));
     }
     together.push(vec![("fueled_flames", 5), ("forking_flames", 3)]);
@@ -391,7 +391,7 @@ fn disagree(together: &[Vec<(&str, u32)>]) -> Vec<String> {
 fn the_engines_subskill_hits_follow_the_sim() {
     let (sim, base) = (expected(&[]), engine(&[]));
     assert!(sim == 12. && base == 12., "sim {sim}, engine {base}");
-    let wrong = parity::misses(CLASS, SKILL, expected, engine, 0.01);
+    let wrong = parity::misses_past(CLASS, SKILL, expected, engine, 0.01, parity::GRANTED);
     assert!(wrong.is_empty(), "\n{}", wrong.join("\n"));
 }
 
@@ -399,10 +399,10 @@ fn the_engines_subskill_hits_follow_the_sim() {
 fn the_engine_follows_every_node_with_circle_of_fires_controllers() {
     // Circle of Fire's controllers walk on their own, so each node reads them, not the player.
     let mut together = Vec::new();
-    for circle in 1..=3 {
+    for circle in 1..=3 + parity::GRANTED {
         let walking = ("circle_of_fire", circle);
         for node in parity::nodes(CLASS, SKILL) {
-            let others = (1..=node.max_rank).filter(|_| node.id != walking.0);
+            let others = (1..=node.max_rank + parity::GRANTED).filter(|_| node.id != walking.0);
             together.extend(others.map(|rank| vec![walking, (node.id.as_str(), rank)]));
         }
         // Controller Step_0 L0x10-L0x13: comets win over mines.
@@ -419,11 +419,11 @@ fn the_engine_follows_every_node_with_circle_of_fires_controllers() {
 #[test]
 fn the_engine_follows_the_nodes_the_game_plays_together() {
     let mut together = Vec::new();
-    for circle in 1..=3 {
+    for circle in 1..=3 + parity::GRANTED {
         let walking = ("circle_of_fire", circle);
         // Blazing_Trail_obj Alarm_0 L0x1b: every fork rolls Crackling Heat as its patch did.
-        for fork in 1..=3 {
-            let crackling = (1..=5).map(|rank| ("crackling_heat", rank));
+        for fork in 1..=3 + parity::GRANTED {
+            let crackling = (1..=5 + parity::GRANTED).map(|rank| ("crackling_heat", rank));
             together.extend(crackling.map(|k| vec![walking, ("forking_flames", fork), k]));
         }
         together.push(vec![walking, ("fueled_flames", 5), ("forking_flames", 3)]);

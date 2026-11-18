@@ -105,6 +105,7 @@ pub fn ailment_dps(
         stats,
         scoped,
         apply_chances,
+        &HashMap::new(),
         false,
     )
     .0
@@ -118,6 +119,7 @@ pub(crate) fn replacing_ailment_calculation(
     stats: &StatMap,
     scoped: &StatMap,
     apply_chances: &HashMap<String, f64>,
+    hit_shares: &HashMap<String, f64>,
     target_dot_immune: bool,
 ) -> (f64, Vec<CalculationStep>) {
     let (weighted_hit, contacts) = sources
@@ -137,6 +139,7 @@ pub(crate) fn replacing_ailment_calculation(
         stats,
         scoped,
         apply_chances,
+        hit_shares,
         target_dot_immune,
     );
     if contacts > 0.0 {
@@ -149,12 +152,14 @@ pub(crate) fn replacing_ailment_calculation(
     (dps, steps)
 }
 
+/// `hit_shares` replaces `ailmentBaseFraction` for states a subtree node converts from the hit.
 pub(crate) fn ailment_calculation(
     hit_avg: f64,
     hits_per_second: f64,
     stats: &StatMap,
     scoped: &StatMap,
     apply_chances: &HashMap<String, f64>,
+    hit_shares: &HashMap<String, f64>,
     target_dot_immune: bool,
 ) -> (f64, Vec<CalculationStep>) {
     let mut trace = Vec::new();
@@ -169,7 +174,10 @@ pub(crate) fn ailment_calculation(
     let total: f64 = AILMENTS
         .iter()
         .map(|a| {
-            let fraction = base_fraction(a.state);
+            let (fraction, share) = match hit_shares.get(a.state) {
+                Some(&converted) => (converted, "conversion"),
+                None => (base_fraction(a.state), "base fraction"),
+            };
             if fraction <= 0.0 {
                 return 0.0;
             }
@@ -193,7 +201,7 @@ pub(crate) fn ailment_calculation(
             );
             let contribution = hit_avg * (fraction + skill_damage_added) * (1.0 + damage_pct / 100.0) * (1.0 + frequency_pct / 100.0) * uptime;
             trace.push(CalculationStep::new(format!("{} uptime", a.state), format!("1 − (1 − clamp({}% stat + {}% subtree, 0, 100) / 100)^({} hits/s)", number(from_stat), number(from_procs), number(hits_per_second)), scalar(uptime)));
-            trace.push(CalculationStep::new(format!("{} DPS", a.state), format!("{} average hit × ({} base fraction + {} skill damage added) × (1 + {}% damage / 100) × (1 + {}% frequency / 100) × {} uptime", number(hit_avg), number(fraction), number(skill_damage_added), number(damage_pct), number(frequency_pct), number(uptime)), scalar(contribution)));
+            trace.push(CalculationStep::new(format!("{} DPS", a.state), format!("{} average hit × ({} {share} + {} skill damage added) × (1 + {}% damage / 100) × (1 + {}% frequency / 100) × {} uptime", number(hit_avg), number(fraction), number(skill_damage_added), number(damage_pct), number(frequency_pct), number(uptime)), scalar(contribution)));
             contribution
         })
         .sum();
@@ -256,6 +264,7 @@ mod tests {
                     &empty,
                     &empty,
                     &apply,
+                    &HashMap::new(),
                     false,
                 );
                 let expected = ailment_dps(120.0, 7.0, &empty, &empty, &apply);
@@ -265,6 +274,7 @@ mod tests {
                     &empty,
                     &empty,
                     &apply,
+                    &HashMap::new(),
                     false,
                 );
                 assert_eq!(same, ailment_dps(100.0, 7.0, &empty, &empty, &apply));
@@ -273,6 +283,7 @@ mod tests {
                     &empty,
                     &empty,
                     &apply,
+                    &HashMap::new(),
                     false,
                 );
                 assert_eq!(disabled, ailment_dps(100.0, 6.0, &empty, &empty, &apply));
@@ -282,6 +293,7 @@ mod tests {
                     &shatter,
                     &empty,
                     &apply,
+                    &HashMap::new(),
                     true,
                 );
                 assert!((immune - expected * 0.5).abs() < 1e-10);
@@ -352,7 +364,15 @@ mod tests {
                 (150.0, 1.5),
             ] {
                 let scoped = stats(&[("monster_dot_immunity_shattered", shatter)]);
-                let (dps, trace) = ailment_calculation(1000.0, 1.0, &damage, &scoped, &apply, true);
+                let (dps, trace) = ailment_calculation(
+                    1000.0,
+                    1.0,
+                    &damage,
+                    &scoped,
+                    &apply,
+                    &HashMap::new(),
+                    true,
+                );
                 assert!(
                     (dps - baseline * expected).abs() < 1e-9,
                     "{} / {shatter}: {dps}",
@@ -371,6 +391,24 @@ mod tests {
         // burning fraction 0.2, 100% apply chance, no damage bonuses.
         let dps = ailment_dps(1000.0, 1.0, &empty, &empty, &chances(&[("burning", 100.0)]));
         assert!((dps - 200.0).abs() < 1e-9, "expected 200, got {dps}");
+    }
+
+    // Burn Them All!: the converted share replaces the 0.2 burning fraction; damage bonuses still apply.
+    #[test]
+    fn a_converted_share_replaces_the_configured_fraction() {
+        let (dps, trace) = ailment_calculation(
+            1000.0,
+            1.0,
+            &stats(&[("increased_burning_damage", 50.0)]),
+            &StatMap::new(),
+            &chances(&[("burning", 100.0)]),
+            &chances(&[("burning", 0.5)]),
+            false,
+        );
+        assert!((dps - 750.0).abs() < 1e-9, "expected 750, got {dps}");
+        assert!(trace
+            .iter()
+            .any(|step| step.expression().contains("0.5 conversion")));
     }
 
     #[test]

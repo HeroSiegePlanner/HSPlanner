@@ -287,7 +287,7 @@ fn the_engines_subskill_hits_follow_the_sim() {
         (sim - 1.).abs() < 1e-3 && (base - 1.).abs() < 1e-3,
         "sim {sim}, engine {base}"
     );
-    let wrong = parity::misses(CLASS, "fire_nova", expected, engine, 0.01);
+    let wrong = parity::misses_past(CLASS, "fire_nova", expected, engine, 0.01, parity::GRANTED);
     assert!(wrong.is_empty(), "\n{}", wrong.join("\n"));
 }
 

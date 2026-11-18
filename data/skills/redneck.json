@@ -86,7 +86,7 @@
       {
         "id": "double_bourbon",
         "positionIndex": 2,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.28, 0.56, 0.84], "per": "use", "note": "7r% per cast of a 2nd full bottle = 4 hits; expected 4*0.07r"}], "confidence": "C", "note": "card 92 p2 (L95-96); planner on_hit proc gives same expectation"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.28, 0.56, 0.84, 1.12, 1.4, 1.68], "per": "use", "note": "7r% per cast of a 2nd full bottle = 4 hits; expected 4*0.07r"}], "confidence": "C", "note": "card 92 p2 (L95-96); planner on_hit proc gives same expectation"},
         "name": "Double Bourbon",
         "description": "Chance to throw an additional molotov.",
         "maxRank": 3,
@@ -133,7 +133,7 @@
       {
         "id": "gas_leak",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.8, 5.6, 8.4, 11.2, 14.0], "per": "use", "note": "2 flames near dummy x 4 hits x 0.35r*D; geometry I"}], "confidence": "I", "note": "card 92 p5 (gasLeak every 32 px)", "plannerFix": "planner of_total_damage 35%/r is a flat multiplier; game adds ~2 extra 4-hit flames at 0.35r*D each on the dummy (2.8r hits)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.8, 5.6, 8.4, 11.2, 14.0, 16.8, 19.6, 22.4], "per": "use", "note": "2 flames near dummy x 4 hits x 0.35r*D; geometry I"}], "confidence": "I", "note": "card 92 p5 (gasLeak every 32 px)", "plannerFix": "planner of_total_damage 35%/r is a flat multiplier; game adds ~2 extra 4-hit flames at 0.35r*D each on the dummy (2.8r hits)"},
         "name": "Gas Leak",
         "description": "Molotovs leave a small trail of fire as they travel.",
         "maxRank": 5,
@@ -173,7 +173,7 @@
       {
         "id": "redeeming_flames",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5], "note": "+1 spill per rank"}, {"kind": "extra_hits", "byRank": [0, 0, 0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "spills land ~70 px away: 0 dummy hits"}], "confidence": "I", "note": "card 92 p8", "plannerFix": "planner projectile_count +1/r converted at perExtraProjectile 2.0 = +2 hits per rank; game: extra spills hit nothing on the dummy"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5, 6, 7, 8], "note": "+1 spill per rank"}, {"kind": "extra_hits", "byRank": [0, 0, 0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "spills land ~70 px away: 0 dummy hits"}], "confidence": "I", "note": "card 92 p8", "plannerFix": "planner projectile_count +1/r converted at perExtraProjectile 2.0 = +2 hits per rank; game: extra spills hit nothing on the dummy"},
         "name": "Redeeming Flames",
         "description": "Increases the amount of spills from moonshine molotov.",
         "maxRank": 5,
@@ -221,7 +221,7 @@
       {
         "id": "set_the_world_on_fire",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [4, 8, 12], "note": "+4 bottles per rank (n = 1 + 4r on a circle of radius 148.7 px around the player)"}, {"kind": "extra_hits", "byRank": [0, 0, 4], "per": "use", "replacesProjectileHits": true, "note": "PoR4 (c) + Resztki E, cursor at (x, y-24), circle centred on (x, y): nearest neighbour bottle 158.3 / 79.2 / 47.1 px from the dummy for r = 1/2/3 (r4 would be 30.3 px); flame reach 69 px -> r1, r2 0, r3 +1 flame = +4 hits. Cursor on the dummy centre (variant): 176.2 / 100.4 / 69.1 px, r3 on the 69 px limit = 0. With p3 r5 (flame r ~100 px) +2 flames at r >= 2 (not counted)"}, {"kind": "cooldown_s", "byRank": [1, 1, 1], "note": "cooldown +1 s (1.5 -> 2.5 s, DPS x0.6)"}], "confidence": "I", "note": "card 92 p12; PoR4 (c) rule 40 + Resztki E; r3 on the edge of the flame reach and the circle centre (x, y) vs (x, y+6) are I", "plannerFix": "projectile_count +4/r in the planner; in game only r3 adds one neighbouring flame (+4 hits) on the dummy and the cooldown rises by 1 s"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [4, 8, 12, 16, 20, 24], "note": "+4 bottles per rank (n = 1 + 4r on a circle of radius 148.7 px around the player)"}, {"kind": "extra_hits", "byRank": [0, 0, 4], "per": "use", "replacesProjectileHits": true, "note": "PoR4 (c) + Resztki E, cursor at (x, y-24), circle centred on (x, y): nearest neighbour bottle 158.3 / 79.2 / 47.1 px from the dummy for r = 1/2/3 (r4 would be 30.3 px); flame reach 69 px -> r1, r2 0, r3 +1 flame = +4 hits. Cursor on the dummy centre (variant): 176.2 / 100.4 / 69.1 px, r3 on the 69 px limit = 0. With p3 r5 (flame r ~100 px) +2 flames at r >= 2 (not counted)"}, {"kind": "cooldown_s", "byRank": [1, 1, 1], "note": "cooldown +1 s (1.5 -> 2.5 s, DPS x0.6)"}], "confidence": "I", "note": "card 92 p12; PoR4 (c) rule 40 + Resztki E; r3 on the edge of the flame reach and the circle centre (x, y) vs (x, y+6) are I", "plannerFix": "projectile_count +4/r in the planner; in game only r3 adds one neighbouring flame (+4 hits) on the dummy and the cooldown rises by 1 s"},
         "name": "Set The World On Fire!",
         "description": "Throw multiple molotovs around you for a short period setting the world ablaze. Moonshine molotov now has a cooldown.",
         "maxRank": 3,
@@ -333,7 +333,7 @@
       {
         "id": "stacked_bag",
         "positionIndex": 1,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6], "note": "+3 bombs per rank"}, {"kind": "extra_hits", "byRank": [1, 2], "per": "use", "replacesProjectileHits": true, "note": "ceil(n/3): 2 -> 3 -> 4 hits (r=0/1/2)"}], "confidence": "I", "note": "card 93 p1 (C/I)"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9, 12, 15], "note": "+3 bombs per rank"}, {"kind": "extra_hits", "byRank": [1, 2, 3, 4, 5], "per": "use", "replacesProjectileHits": true, "note": "ceil(n/3): 2 -> 3 -> 4 hits (r=0/1/2)"}], "confidence": "I", "note": "card 93 p1 (C/I)"},
         "name": "Stacked Bag",
         "description": "Throw additional bombs.",
         "maxRank": 2,
@@ -468,7 +468,7 @@
       {
         "id": "fiery_infusion",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [11.6, 15.2, 18.8], "per": "use", "note": "2 bombs exploding at dummy x 4 hits x D(1+0.45r) = 8+3.6r"}], "confidence": "I", "note": "card 93 p11", "plannerFix": "planner: fire_skill_damage 45/r on whole skill + area 25/r; game: a 4-hit flame of D(1+0.45r) per bomb exploding at dummy"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [11.6, 15.2, 18.8, 22.4, 26.0, 29.6], "per": "use", "note": "2 bombs exploding at dummy x 4 hits x D(1+0.45r) = 8+3.6r"}], "confidence": "I", "note": "card 93 p11", "plannerFix": "planner: fire_skill_damage 45/r on whole skill + area 25/r; game: a 4-hit flame of D(1+0.45r) per bomb exploding at dummy"},
         "name": "Fiery Infusion",
         "description": "Pipe bombs now leave burning flames on the ground with increased damage and area of effect radius.",
         "maxRank": 3,
@@ -599,7 +599,7 @@
       {
         "id": "increased_stock",
         "positionIndex": 2,
-        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [0.0, 0.0, 0.96], "requires": "donuts", "note": "only in Donuts mode (p13): the spiral turns 3*(1 + 0.2*r2) deg/frame, the radius grows 1.15 px/frame from 8 and the 360 deg period must match the radius window 129-150 px: PoR4 (rule 38, aim through the dummy centre; donuts.py cursor_dy = 0) 1.04 / ~0 / 0 / 1.00 / 1.03 / 1.03 hits for r2 = 0..5, i.e. relative to the 1.04 of r2 = 0: 0 / 0 / 0.96 for r2 = 1..3 (cursor (x, y-24) variant 0.03 / 0 / 0.57). Outside Donuts mode p2 only moves the first landing zone (48 -> 76.8 px; in-zone dummy still 2 hits)"}], "confidence": "I", "note": "card 95 p2 (Runda 2c) + R4 95#2 + PoR4 (a) rule 38; tire drift along the direction and mask orientation are I", "plannerFix": "planner has no interaction: p2 speed-up of the orbit spoils the Donuts hit for r2 = 1, 2"},
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [0.0, 0.0, 0.96, 0.99, 0.99], "requires": "donuts", "note": "only in Donuts mode (p13): the spiral turns 3*(1 + 0.2*r2) deg/frame, the radius grows 1.15 px/frame from 8 and the 360 deg period must match the radius window 129-150 px: PoR4 (rule 38, aim through the dummy centre; donuts.py cursor_dy = 0) 1.04 / ~0 / 0 / 1.00 / 1.03 / 1.03 hits for r2 = 0..5, i.e. relative to the 1.04 of r2 = 0: 0 / 0 / 0.96 for r2 = 1..3 (cursor (x, y-24) variant 0.03 / 0 / 0.57). Outside Donuts mode p2 only moves the first landing zone (48 -> 76.8 px; in-zone dummy still 2 hits)"}], "confidence": "I", "note": "card 95 p2 (Runda 2c) + R4 95#2 + PoR4 (a) rule 38; tire drift along the direction and mask orientation are I", "plannerFix": "planner has no interaction: p2 speed-up of the orbit spoils the Donuts hit for r2 = 1, 2"},
         "name": "Increased Stock",
         "description": "Increases the projectile speed of tire fire.",
         "maxRank": 3,
@@ -635,7 +635,7 @@
       {
         "id": "bouncy_tire",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.15, 0.3], "per": "use", "note": "first explosion D(1+0.15r): +0.15r hit per use (in-zone); at 160 px card gives +1 explosion (I)"}], "confidence": "I", "note": "card 95 p5 (Runda 2c)", "plannerFix": "planner fire 15/r applies to all tire damage; game only to first bounce explosion (+0.15r hit)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.15, 0.3, 0.45, 0.6, 0.75], "per": "use", "note": "first explosion D(1+0.15r): +0.15r hit per use (in-zone); at 160 px card gives +1 explosion (I)"}], "confidence": "I", "note": "card 95 p5 (Runda 2c)", "plannerFix": "planner fire 15/r applies to all tire damage; game only to first bounce explosion (+0.15r hit)"},
         "name": "Bouncy Tire",
         "description": "Tires now bounce over gaps and short terrain dealing a damaging area of effect pulse when landing.",
         "maxRank": 2,
@@ -726,7 +726,7 @@
       {
         "id": "mini_tires",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6], "note": "+2 tires per rank"}, {"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "side tires miss dummy (22 px > 20 px)"}, {"kind": "damage_pct", "byRank": [20, 40, 60], "note": "LSSD +20%/r"}], "confidence": "I", "note": "card 95 p12", "plannerFix": "planner projectile_count 2/r converted at 2.0 hits each; game: 0 extra dummy hits"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6, 8, 10, 12], "note": "+2 tires per rank"}, {"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "side tires miss dummy (22 px > 20 px)"}, {"kind": "damage_pct", "byRank": [20, 40, 60], "note": "LSSD +20%/r"}], "confidence": "I", "note": "card 95 p12", "plannerFix": "planner projectile_count 2/r converted at 2.0 hits each; game: 0 extra dummy hits"},
         "name": "Mini Tires",
         "description": "Now send out multiple smaller tires in an arc.",
         "maxRank": 3,
@@ -757,7 +757,7 @@
       {
         "id": "loose_tire",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.75, 1.5, 2.25], "per": "use", "note": "first explosion D(1+0.75r): +0.75r hit per use (in-zone)"}], "confidence": "I", "note": "card 95 p14 (Runda 2c)", "plannerFix": "planner fire 75/r applies to all damage; game only to first landing explosion"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.75, 1.5, 2.25, 3.0, 3.75, 4.5], "per": "use", "note": "first explosion D(1+0.75r): +0.75r hit per use (in-zone)"}], "confidence": "I", "note": "card 95 p14 (Runda 2c)", "plannerFix": "planner fire 75/r applies to all damage; game only to first landing explosion"},
         "name": "Loose Tire",
         "description": "Send out a bouncing tire dealing increased area of effect damage every time it lands.",
         "maxRank": 3,
@@ -1135,7 +1135,7 @@
       {
         "id": "billy_little_bob",
         "positionIndex": 7,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [14, 21, 28, 35, 42], "note": "motorcycle: 7 salvos x (1+r) buckshots"}, {"kind": "extra_hits", "byRank": [16, 24, 32, 40, 48], "per": "use", "replacesProjectileHits": true, "note": "R4 100#1: motorcycle fires from landing (frame 24) every 31 frames until its 240-frame life ends = 7 salvos of 1 + r shots (aimed, 8 px/frame, 312 px range, singleHit), each shot passes through the dummy once = 7*(1+r) hits; the Buckshot_obj Destroy_0 (0x14995c300) creates an Explosion_Item_obj with d3 = D (scale 1, r 44 px, full modifiers) at the end of the flight (312 px from the motorcycle): only salvo 0 ends within 44 px of the dummy (24 px behind it) = (1+r) more hits -> 8*(1+r) hits of D (was 7*(1+r))"}], "confidence": "C", "note": "card 100 p7; R4 100#1 (Destroy_0 0x14995c300, motorcycle schedule, C); motorcycle start point assumed equal to the truck's (I)", "plannerFix": "planner projectile_count 1/r converted at 0.0 = 0 hits; game: motorcycle buckshots hit the dummy"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [14, 21, 28, 35, 42, 49, 56, 63], "note": "motorcycle: 7 salvos x (1+r) buckshots"}, {"kind": "extra_hits", "byRank": [16, 24, 32, 40, 48, 56, 64, 72], "per": "use", "replacesProjectileHits": true, "note": "R4 100#1: motorcycle fires from landing (frame 24) every 31 frames until its 240-frame life ends = 7 salvos of 1 + r shots (aimed, 8 px/frame, 312 px range, singleHit), each shot passes through the dummy once = 7*(1+r) hits; the Buckshot_obj Destroy_0 (0x14995c300) creates an Explosion_Item_obj with d3 = D (scale 1, r 44 px, full modifiers) at the end of the flight (312 px from the motorcycle): only salvo 0 ends within 44 px of the dummy (24 px behind it) = (1+r) more hits -> 8*(1+r) hits of D (was 7*(1+r))"}], "confidence": "C", "note": "card 100 p7; R4 100#1 (Destroy_0 0x14995c300, motorcycle schedule, C); motorcycle start point assumed equal to the truck's (I)", "plannerFix": "planner projectile_count 1/r converted at 0.0 = 0 hits; game: motorcycle buckshots hit the dummy"},
         "name": "Billy & Little Bob",
         "description": "Adds a motorcycle rider to the pickup raid firing buckshots.",
         "maxRank": 5,
@@ -1147,7 +1147,7 @@
       {
         "id": "double_barrel",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [36, 72, 108, 144, 180], "note": "bullets x(1+r)"}, {"kind": "extra_hits", "byRank": [3, 6, 9, 12, 15], "per": "use", "replacesProjectileHits": true, "note": "+3.0 bullet hits per rank (base E=3.0)"}], "confidence": "I", "note": "card 100 p8 (R3 E=3.0)", "plannerFix": "planner 0 hits (perExtraProjectile 0); game: each rank adds ~3.0 bullet hits"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [36, 72, 108, 144, 180, 216, 252, 288], "note": "bullets x(1+r)"}, {"kind": "extra_hits", "byRank": [3, 6, 9, 12, 15, 18, 21, 24], "per": "use", "replacesProjectileHits": true, "note": "+3.0 bullet hits per rank (base E=3.0)"}], "confidence": "I", "note": "card 100 p8 (R3 E=3.0)", "plannerFix": "planner 0 hits (perExtraProjectile 0); game: each rank adds ~3.0 bullet hits"},
         "name": "Double Barrel",
         "description": "Pickup truck now fires additional projectiles.",
         "maxRank": 5,
@@ -1159,7 +1159,7 @@
       {
         "id": "moonshine_miles",
         "positionIndex": 9,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [13, 19.5, 26, 32.5, 39], "note": "plane drops (1+r) bombs every 0.5 s (6-7 salvos in the drop window)"}, {"kind": "extra_hits", "byRank": [13, 19.5, 26, 32.5, 39], "per": "use", "replacesProjectileHits": true, "note": "Resztki A: the plane drops bombs while distance_to_object(nearest enemy) <= 160 is a bbox gap (plane 105x115, dummy 24x24), so centres up to ~226 px apart count: drop window ~410 px (~205 frames at 2 px/frame) instead of 320 px (~160 frames) = 6-7 salvos (midpoint 6.5; was 8 salvos in the old entry) of (1 + r) bombs, bombs arc to the enemy; hits per bomb not stated in the card (counted as 1, I). The end blast D*3 lands ~268 px behind the dummy = 0"}], "confidence": "I", "note": "card 100 p9; Resztki po R4 A (rule 42) + R4 100#2; salvo count 6-7 is a range (midpoint 6.5), bomb hit rate I", "plannerFix": "planner 0 hits; game: plane bombs add 8(1+r) hits when dummy in 160 px"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [13, 19.5, 26, 32.5, 39, 45.5, 52, 58.5], "note": "plane drops (1+r) bombs every 0.5 s (6-7 salvos in the drop window)"}, {"kind": "extra_hits", "byRank": [13, 19.5, 26, 32.5, 39, 45.5, 52, 58.5], "per": "use", "replacesProjectileHits": true, "note": "Resztki A: the plane drops bombs while distance_to_object(nearest enemy) <= 160 is a bbox gap (plane 105x115, dummy 24x24), so centres up to ~226 px apart count: drop window ~410 px (~205 frames at 2 px/frame) instead of 320 px (~160 frames) = 6-7 salvos (midpoint 6.5; was 8 salvos in the old entry) of (1 + r) bombs, bombs arc to the enemy; hits per bomb not stated in the card (counted as 1, I). The end blast D*3 lands ~268 px behind the dummy = 0"}], "confidence": "I", "note": "card 100 p9; Resztki po R4 A (rule 42) + R4 100#2; salvo count 6-7 is a range (midpoint 6.5), bomb hit rate I", "plannerFix": "planner 0 hits; game: plane bombs add 8(1+r) hits when dummy in 160 px"},
         "name": "Moonshine Miles",
         "description": "Adds a wooden airplane to the pickup raid dropping bombs dealing area of effect damage.",
         "maxRank": 5,
@@ -1190,7 +1190,7 @@
       {
         "id": "suicide_squad",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [8, 16, 24], "note": "8r kamikaze tires"}, {"kind": "extra_hits", "byRank": [35.68, 117.88, 247.6], "per": "use", "replacesProjectileHits": true, "note": "R4 100#1: per vehicle 1 big blast (scale 3, r 108 px) + 8r tires, all of floor(D*(1+3r)); the frame simulation (dummy 24 px from the blast point, 12 driving directions, ellipse tire 38x27, landing blast scale 0.75) gives 0.99 hits per tire (0.61 body + 0.37 landing blast): (1 + 3r)*(1 + 0.99*8r) = 35.68 / 117.88 / 247.6 main-hit units (card: ~1 + 7.9r hits of D*(1 + 3r)); vehicle blast point 4.7-8 px before the cursor target, tire orientation and 2 px/frame motion are I"}], "confidence": "I", "note": "card 100 p11; R4 100#1 (Redneck_Tire_obj in Destroy_0, C objects; hit rates from simulation I); Resztki E: blast point ~30 px instead of 24 px from the dummy not recomputed", "plannerFix": "planner fire 300/r on whole skill + 8/r projectiles (0 hits); game: explosion and tires only, x(1+3r)"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [8, 16, 24, 32, 40, 48], "note": "8r kamikaze tires"}, {"kind": "extra_hits", "byRank": [35.68, 117.88, 247.6, 424.84, 649.6, 921.88], "per": "use", "replacesProjectileHits": true, "note": "R4 100#1: per vehicle 1 big blast (scale 3, r 108 px) + 8r tires, all of floor(D*(1+3r)); the frame simulation (dummy 24 px from the blast point, 12 driving directions, ellipse tire 38x27, landing blast scale 0.75) gives 0.99 hits per tire (0.61 body + 0.37 landing blast): (1 + 3r)*(1 + 0.99*8r) = 35.68 / 117.88 / 247.6 main-hit units (card: ~1 + 7.9r hits of D*(1 + 3r)); vehicle blast point 4.7-8 px before the cursor target, tire orientation and 2 px/frame motion are I"}], "confidence": "I", "note": "card 100 p11; R4 100#1 (Redneck_Tire_obj in Destroy_0, C objects; hit rates from simulation I); Resztki E: blast point ~30 px instead of 24 px from the dummy not recomputed", "plannerFix": "planner fire 300/r on whole skill + 8/r projectiles (0 hits); game: explosion and tires only, x(1+3r)"},
         "name": "Suicide Squad",
         "description": "The raid now moves towards target location exploding into multiple big explosions and truck tires rolling into all directions.",
         "maxRank": 3,
@@ -1214,7 +1214,7 @@
       {
         "id": "drunken_air_raid",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [13, 19.5, 26], "note": "planes only (truck dropped): (1 + r) planes x 6.5 salvos x 1 bomb (planeBombs = 0 without p9) in the 160 px bbox-gap window (Resztki A: ~410 px drop window = 6-7 salvos, midpoint 6.5; was 8 salvos); extra planes stand 96 px apart perpendicular to the aim (window narrower, not counted); end blast D*3 = 0 (R4 100#2); bomb hit rate I"}, {"kind": "damage_pct", "byRank": [30, 60, 90], "note": "LSSD +30%/r"}], "confidence": "I", "note": "card 100 p13; Resztki po R4 A + R4 100#2", "plannerFix": "planner count +1/r with 0 hits + fire 30/r; game: plane-only model 8(1+r) hits"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [13, 19.5, 26, 32.5, 39, 45.5], "note": "planes only (truck dropped): (1 + r) planes x 6.5 salvos x 1 bomb (planeBombs = 0 without p9) in the 160 px bbox-gap window (Resztki A: ~410 px drop window = 6-7 salvos, midpoint 6.5; was 8 salvos); extra planes stand 96 px apart perpendicular to the aim (window narrower, not counted); end blast D*3 = 0 (R4 100#2); bomb hit rate I"}, {"kind": "damage_pct", "byRank": [30, 60, 90], "note": "LSSD +30%/r"}], "confidence": "I", "note": "card 100 p13; Resztki po R4 A + R4 100#2", "plannerFix": "planner count +1/r with 0 hits + fire 30/r; game: plane-only model 8(1+r) hits"},
         "name": "Drunken Air Raid",
         "description": "Now only send a raid of planes that fire projectiles and drop bombs.",
         "maxRank": 3,
@@ -1226,7 +1226,7 @@
       {
         "id": "tarethiel_mc",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [16, 24, 32], "note": "motorcycles only (truck dropped): (1 + r) motorcycles x (7 salvos x 1 shot + 1 blast of salvo 0 = 8) of D; buckShot = 0 without p7 (R4 100#1: 8*(1 + buckShot) per motorcycle); extra motorcycles 96 px apart not geometry-checked"}, {"kind": "damage_pct", "byRank": [30, 60, 90], "note": "LSSD +30%/r"}, {"kind": "dot", "byRank": [1.0, 1.0, 1.0], "note": "burn floor(D) per motorcycle"}], "confidence": "I", "note": "card 100 p14; R4 100#1 (shot + blast schedule)", "plannerFix": "planner count +1/r with 0 hits; game: motorcycle model 7(1+r) hits"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [16, 24, 32, 40, 48, 56], "note": "motorcycles only (truck dropped): (1 + r) motorcycles x (7 salvos x 1 shot + 1 blast of salvo 0 = 8) of D; buckShot = 0 without p7 (R4 100#1: 8*(1 + buckShot) per motorcycle); extra motorcycles 96 px apart not geometry-checked"}, {"kind": "damage_pct", "byRank": [30, 60, 90], "note": "LSSD +30%/r"}, {"kind": "dot", "byRank": [1.0, 1.0, 1.0], "note": "burn floor(D) per motorcycle"}], "confidence": "I", "note": "card 100 p14; R4 100#1 (shot + blast schedule)", "plannerFix": "planner count +1/r with 0 hits; game: motorcycle model 7(1+r) hits"},
         "name": "Tarethiel MC",
         "description": "Now only send motorcycle riders firing buckshot inflicting burning on hit.",
         "maxRank": 3,
@@ -1367,7 +1367,7 @@
       {
         "id": "double_the_logging",
         "positionIndex": 3,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.09, 0.18, 0.27, 0.36, 0.45], "per": "use", "note": "chance 3r% per attack of a 2nd saw: +3 saw hits (R4 oriented-rectangle count) = 0.03r*3; with p7 the saw has 2 hits, with p14 1 (not combined)"}], "confidence": "C", "note": "card 101 p3 (L679); R4 101#0 (3 saw hits instead of 6)", "plannerFix": "planner proc 3r% gives 100% of total damage (1 hit-equivalent); game: second saw of 6 hits"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.09, 0.18, 0.27, 0.36, 0.45, 0.54, 0.63, 0.72], "per": "use", "note": "chance 3r% per attack of a 2nd saw: +3 saw hits (R4 oriented-rectangle count) = 0.03r*3; with p7 the saw has 2 hits, with p14 1 (not combined)"}], "confidence": "C", "note": "card 101 p3 (L679); R4 101#0 (3 saw hits instead of 6)", "plannerFix": "planner proc 3r% gives 100% of total damage (1 hit-equivalent); game: second saw of 6 hits"},
         "name": "Double The Logging",
         "description": "Chance to attach an additional chainsaw on hit.",
         "maxRank": 5,
@@ -1402,7 +1402,7 @@
       {
         "id": "chaining_uppercut",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0048, 0.0192, 0.0432, 0.0768, 0.12], "per": "use", "note": "chance 3r% per attack x ~2 uppercut landings per attack (R4 101#0: saw hits at frames 2 and 130/134 give ~2 landings after the throw, not 3) x floor(A*0.08r) = 0.0048*r^2 (class 'none', no modifiers; gate jump <= 16, one landing per flight)"}], "confidence": "I", "note": "card 101 p5 (R3 101#2); landing count 3 -> 2 per R4 101#0 note (I)", "plannerFix": "planner: proc 3r% with physical 8r% (LSSD); game: landing explosions floor(A*0.08r)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0048, 0.0192, 0.0432, 0.0768, 0.12, 0.1728, 0.2352, 0.3072], "per": "use", "note": "chance 3r% per attack x ~2 uppercut landings per attack (R4 101#0: saw hits at frames 2 and 130/134 give ~2 landings after the throw, not 3) x floor(A*0.08r) = 0.0048*r^2 (class 'none', no modifiers; gate jump <= 16, one landing per flight)"}], "confidence": "I", "note": "card 101 p5 (R3 101#2); landing count 3 -> 2 per R4 101#0 note (I)", "plannerFix": "planner: proc 3r% with physical 8r% (LSSD); game: landing explosions floor(A*0.08r)"},
         "name": "Chaining Uppercut",
         "description": "Chance on hit to send monsters airborne dealing increased area of effect damage when landing.",
         "maxRank": 5,
@@ -1454,7 +1454,7 @@
       {
         "id": "malfunctioning_chainsaw",
         "positionIndex": 9,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.15, 0.3, 0.45, 0.6, 0.75], "per": "use", "note": "R4 101#1 (Destroy_0 0x1499648a0, [266] = 0.15r): Explosion_Item_obj at maxScale (r 16 + 12 px) with damage[0] = d0*0.15r, 1 saw per attack, the saw stands 8 px from the dummy centre -> +1 hit of 0.15r*A per saw; only without p14 (with p14 the saw flies 480 px away and the blast misses)"}], "confidence": "C", "note": "card 101 p9; R4 101#1 (asm-confirmed index [266], C)", "plannerFix": "planner of_total_damage 15r% (~1.05r hits); game one explosion 0.15r*A per saw"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1.05, 1.2], "per": "use", "note": "R4 101#1 (Destroy_0 0x1499648a0, [266] = 0.15r): Explosion_Item_obj at maxScale (r 16 + 12 px) with damage[0] = d0*0.15r, 1 saw per attack, the saw stands 8 px from the dummy centre -> +1 hit of 0.15r*A per saw; only without p14 (with p14 the saw flies 480 px away and the blast misses)"}], "confidence": "C", "note": "card 101 p9; R4 101#1 (asm-confirmed index [266], C)", "plannerFix": "planner of_total_damage 15r% (~1.05r hits); game one explosion 0.15r*A per saw"},
         "name": "Malfunctioning Chainsaw",
         "description": "Chainsaws explode after expiring dealing additional damage and stunning nearby enemies.",
         "maxRank": 5,
@@ -1497,7 +1497,7 @@
       {
         "id": "woodcutters_madness",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8.33, 16.67, 25], "note": "every 3rd attack LSSD +25r%: average"}, {"kind": "extra_hits", "byRank": [0.333, 0.667, 1.0], "per": "use", "note": "ring of r hits every 3rd attack (r/3 per attack)"}], "confidence": "I", "note": "card 101 p12", "plannerFix": "planner flat 25%; game every 3rd attack (average)"},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [8.33, 16.67, 25], "note": "every 3rd attack LSSD +25r%: average"}, {"kind": "extra_hits", "byRank": [0.333, 0.667, 1.0, 1.334, 1.667, 2.001], "per": "use", "note": "ring of r hits every 3rd attack (r/3 per attack)"}], "confidence": "I", "note": "card 101 p12", "plannerFix": "planner flat 25%; game every 3rd attack (average)"},
         "name": "Woodcutter´s Madness",
         "description": "Every 3rd hit unleashes a spinning attack with increased radius and dealing increased damage.",
         "maxRank": 3,
@@ -1677,7 +1677,7 @@
       {
         "id": "final_stand",
         "positionIndex": 4,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 2, 3, 4, 5], "per": "use", "note": "final ring damage A*(1+r): +r hits"}], "confidence": "C", "note": "card 103 p4 ([449])", "plannerFix": "planner physical 100r% on every hit; game only the final ring"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 2, 3, 4, 5, 6, 7, 8], "per": "use", "note": "final ring damage A*(1+r): +r hits"}], "confidence": "C", "note": "card 103 p4 ([449])", "plannerFix": "planner physical 100r% on every hit; game only the final ring"},
         "name": "Final Stand",
         "description": "Increases damage dealt by chainsaw massacre's ending whirl.",
         "maxRank": 5,
@@ -1689,7 +1689,7 @@
       {
         "id": "optimal_working_hours",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [-50, -50, -50, -50, -50], "note": "whirl time x0.5 = 150 frames = 7 whirls (frames 0, 22, ..., 132) instead of 14; the dummy is hit ~0.51 x 7.9 = ~4.0 times (3.5-5; track model I). The closing ring is NOT halved (1 per use)"}, {"kind": "damage_mult", "byRank": [1.098, 1.196, 1.294, 1.392, 1.49], "note": "R4 103#1: Charge_Controller_obj_Step_0 (0x1475c3190, [450]) multiplies damage[0] by G = 1 + 0.15r every 60 frames; whirls created after frame 61 carry x G, after 121 x G^2: weighted whirl hits 4.0*(1 + 0.098r) (r5 x1.49), applied here to the whole use for simplicity"}, {"kind": "extra_hits", "byRank": [0.3225, 0.69, 1.1025, 1.56, 2.0625], "per": "use", "note": "closing ring A*(1 + p4)*G^2 instead of A*(1 + p4): extra (G^2 - 1) = (1 + 0.15r)^2 - 1 hits at p4 = 0"}], "confidence": "I", "note": "card 103 p5; R4 103#1 (growth [450] and 7 whirls C, whirl hit count from a simplified track model I)", "plannerFix": "planner time/growth: in game time x0.5 and a compounding x(1 + 0.15r) on damage[0] every 60 frames (whirls and ring)"},
+        "dummy": {"effects": [{"kind": "duration_pct", "byRank": [-50, -50, -50, -50, -50], "note": "whirl time x0.5 = 150 frames = 7 whirls (frames 0, 22, ..., 132) instead of 14; the dummy is hit ~0.51 x 7.9 = ~4.0 times (3.5-5; track model I). The closing ring is NOT halved (1 per use)"}, {"kind": "damage_mult", "byRank": [1.098, 1.196, 1.294, 1.392, 1.49], "note": "R4 103#1: Charge_Controller_obj_Step_0 (0x1475c3190, [450]) multiplies damage[0] by G = 1 + 0.15r every 60 frames; whirls created after frame 61 carry x G, after 121 x G^2: weighted whirl hits 4.0*(1 + 0.098r) (r5 x1.49), applied here to the whole use for simplicity"}, {"kind": "extra_hits", "byRank": [0.3225, 0.69, 1.1025, 1.56, 2.0625, 2.61, 3.2025, 3.84], "per": "use", "note": "closing ring A*(1 + p4)*G^2 instead of A*(1 + p4): extra (G^2 - 1) = (1 + 0.15r)^2 - 1 hits at p4 = 0"}], "confidence": "I", "note": "card 103 p5; R4 103#1 (growth [450] and 7 whirls C, whirl hit count from a simplified track model I)", "plannerFix": "planner time/growth: in game time x0.5 and a compounding x(1 + 0.15r) on damage[0] every 60 frames (whirls and ring)"},
         "name": "Optimal Working Hours",
         "description": "Decreases duration but increases damage dealt each second spent spinning.",
         "maxRank": 5,
@@ -1780,7 +1780,7 @@
       {
         "id": "raging_sawblades",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [3.92, 4.76, 6.06], "per": "use", "note": "extra rings: T/[452] = 5 s / (1.5 s*(1-0.15r)); rings assumed to hit"}], "confidence": "C", "note": "card 103 p12 (C)", "plannerFix": "planner faster_cast_rate 15r% on whole skill; game ring interval only"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [3.92, 4.76, 6.06, 8.33, 13.33, 33.33], "per": "use", "note": "extra rings: T/[452] = 5 s / (1.5 s*(1-0.15r)); rings assumed to hit"}], "confidence": "C", "note": "card 103 p12 (C)", "plannerFix": "planner faster_cast_rate 15r% on whole skill; game ring interval only"},
         "name": "Raging Sawblades",
         "description": "Perform the ending whirl frequently while spinning.",
         "maxRank": 3,
@@ -2043,7 +2043,7 @@
       {
         "id": "engine_gone_wild",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "per": "use", "note": "post-fade flight hit x(1+0.15r) (~1 hit)"}], "confidence": "I", "note": "card 108 p5 (R3)", "plannerFix": "planner arcane 15r% on all hits; game only the extra flight hit"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75, 1.9, 2.05, 2.2], "per": "use", "note": "post-fade flight hit x(1+0.15r) (~1 hit)"}], "confidence": "I", "note": "card 108 p5 (R3)", "plannerFix": "planner arcane 15r% on all hits; game only the extra flight hit"},
         "name": "Engine Gone Wild",
         "description": "When expiring, the chainsaws launch into the direction they are facing, dealing additional damage and bouncing off of terrain.",
         "maxRank": 5,
@@ -2055,7 +2055,7 @@
       {
         "id": "chaining_chainsaws",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.14, 0.42, 0.84, 1.4, 2.1], "per": "use", "note": "chain T0 hits 2/3/4/5/6 per chain x chance 7r% once per saw"}], "confidence": "I", "note": "card 108 p6 (druga runda)", "plannerFix": "planner proc 7r% per hit with no effect; game chain once per saw"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.14, 0.42, 0.84, 1.4, 2.1, 2.94, 3.92, 5.04], "per": "use", "note": "chain T0 hits 2/3/4/5/6 per chain x chance 7r% once per saw"}], "confidence": "I", "note": "card 108 p6 (druga runda)", "plannerFix": "planner proc 7r% per hit with no effect; game chain once per saw"},
         "name": "Chaining Chainsaws",
         "description": "Launched chainsaws have a chance to chain when they first hit an enemy.",
         "maxRank": 5,
@@ -2064,7 +2064,7 @@
       {
         "id": "empty_the_workbag",
         "positionIndex": 7,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.32, 0.64, 0.96], "per": "use", "note": "2nd saw (4 hits) with chance 8r% per cast"}], "confidence": "C", "note": "card 108 p7"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.32, 0.64, 0.96, 1.28, 1.6, 1.92], "per": "use", "note": "2nd saw (4 hits) with chance 8r% per cast"}], "confidence": "C", "note": "card 108 p7"},
         "name": "Empty The Workbag",
         "description": "Chance on cast to throw additional rogue chainsaw.",
         "maxRank": 3,
@@ -2128,7 +2128,7 @@
       {
         "id": "shredding_squad",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9], "note": "1 + 3r saws in an arc every 10 deg around the aim (n = 4 / 7 / 10); the 5-saw limit kills only one oldest saw per cast"}, {"kind": "set_hits", "byRank": [15.7, 23.0, 23.2], "note": "R4 108#1 (frame simulation, oriented rectangle) + PoR4 (c) rule 40 (saw lands ~14.4 px before the target) + Resztki E (target 6 px above the cursor), cursor above the dummy: total hits per cast 15.7 / 23.0 / 23.2 for n = 4 / 7 / 10 (r = 1..3; r4, r5: 24.6 / 23.2); each saw within ~85 px of the dummy gives 4 hits (4.0 / 6.0 / 6.2 saws hit it), saturating from r = 2; cursor on the dummy centre variant 15.8 / 26.2 / 23.2; goneWild = 0.01 (always flies off) adds ~+1 hit per saw (I, not included)"}, {"kind": "damage_pct", "byRank": [8, 16, 24], "note": "LSSD +10%/r"}], "confidence": "C", "note": "card 108 p12; R4 108#1 (arc geometry C, asm 0x1463a62e7/0x1463a6676) + PoR4 (c) + Resztki po R4 B/E (rg2.py reproduces to 0.1)", "plannerFix": "planner projectile_count +3/r does not reach the dummy per saw; in game the arc gives 15.7-23.2 hits per cast (x3.9 .. x5.9 vs the single saw)"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9], "note": "1 + 3r saws in an arc every 10 deg around the aim (n = 4 / 7 / 10); the 5-saw limit kills only one oldest saw per cast"}, {"kind": "set_hits", "byRank": [15.7, 23.0, 23.2, 24.6, 23.2], "note": "R4 108#1 (frame simulation, oriented rectangle) + PoR4 (c) rule 40 (saw lands ~14.4 px before the target) + Resztki E (target 6 px above the cursor), cursor above the dummy: total hits per cast 15.7 / 23.0 / 23.2 for n = 4 / 7 / 10 (r = 1..3; r4, r5: 24.6 / 23.2); each saw within ~85 px of the dummy gives 4 hits (4.0 / 6.0 / 6.2 saws hit it), saturating from r = 2; cursor on the dummy centre variant 15.8 / 26.2 / 23.2; goneWild = 0.01 (always flies off) adds ~+1 hit per saw (I, not included)"}, {"kind": "damage_pct", "byRank": [8, 16, 24], "note": "LSSD +10%/r"}], "confidence": "C", "note": "card 108 p12; R4 108#1 (arc geometry C, asm 0x1463a62e7/0x1463a6676) + PoR4 (c) + Resztki po R4 B/E (rg2.py reproduces to 0.1)", "plannerFix": "planner projectile_count +3/r does not reach the dummy per saw; in game the arc gives 15.7-23.2 hits per cast (x3.9 .. x5.9 vs the single saw)"},
         "name": "Shredding Squad",
         "description": "Launch multiple rogue chainsaws in an arc instead of throwing them on the ground.",
         "maxRank": 3,
@@ -2152,7 +2152,7 @@
       {
         "id": "circle_of_cutting",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0.5, 0.7, 1.1], "note": "R4 108#1 + PoR4 (c) + Resztki E, cursor above the dummy: n = 1 + 4r = 5 / 9 / 13 saws on a circle of radius |cursor| land and at once return to the player at (2.5 + d/128) px/frame, leaving the blade range before the first pass: 0.5 / 0.7 / 1.1 hits per cast (r4, r5: 1.4 / 2.0); cursor on the dummy centre variant 0.8 / 0.8 / 1.5 / 1.8 / 2.0"}, {"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD +25%/r"}, {"kind": "cooldown_s", "byRank": [2.5, 2.5, 2.5], "note": "cooldown +2.5 s"}], "confidence": "C", "note": "card 108 p14; R4 108#1 + PoR4 (c) + Resztki po R4 B/E (movement during the jump pause F27-F39 not simulated, I)", "plannerFix": "planner projectile_count +4/r: in game the saws return to the player and hit the dummy < 1 time per cast; cooldown +2.5 s"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0.5, 0.7, 1.1, 1.4, 2.0], "note": "R4 108#1 + PoR4 (c) + Resztki E, cursor above the dummy: n = 1 + 4r = 5 / 9 / 13 saws on a circle of radius |cursor| land and at once return to the player at (2.5 + d/128) px/frame, leaving the blade range before the first pass: 0.5 / 0.7 / 1.1 hits per cast (r4, r5: 1.4 / 2.0); cursor on the dummy centre variant 0.8 / 0.8 / 1.5 / 1.8 / 2.0"}, {"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD +25%/r"}, {"kind": "cooldown_s", "byRank": [2.5, 2.5, 2.5], "note": "cooldown +2.5 s"}], "confidence": "C", "note": "card 108 p14; R4 108#1 + PoR4 (c) + Resztki po R4 B/E (movement during the jump pause F27-F39 not simulated, I)", "plannerFix": "planner projectile_count +4/r: in game the saws return to the player and hit the dummy < 1 time per cast; cooldown +2.5 s"},
         "name": "Circle of Cutting",
         "description": "Throw multiple rogue chainsaws in a circle around you, traveling back to you upon landing.",
         "maxRank": 3,
@@ -2366,7 +2366,7 @@
       {
         "id": "sudden_treefall",
         "positionIndex": 7,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "use", "note": "second tree (1 hit) with chance 4r%"}], "confidence": "I", "note": "card 109 p7", "plannerFix": "planner proc 4r% with no effect; game second tree 1 hit"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2, 0.24, 0.28, 0.32], "per": "use", "note": "second tree (1 hit) with chance 4r%"}], "confidence": "I", "note": "card 109 p7", "plannerFix": "planner proc 4r% with no effect; game second tree 1 hit"},
         "name": "Sudden Treefall",
         "description": "Trunks have a chance to cut down another tree at a nearby enemy.",
         "maxRank": 5,
@@ -2394,7 +2394,7 @@
       {
         "id": "heavy_fall",
         "positionIndex": 9,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.08, 0.16, 0.24, 0.32, 0.4], "per": "use", "note": "R4 109#1: chance 4r% per attack of a cascade of 6 Heavy_Fall_obj (96 px from the tree, 60 px apart, scale 1.25, mask r 40 px) carrying d0 + d1 of the tree; pieces 1 and 2 reach the 160 px dummy (32 / 28 px away; with 23.6 px lateral 39.8 / 36.6 < 52) = 2 hits per trigger -> 0.04r*2 (+2 more when the second tree of p7 also falls, not combined)"}], "confidence": "C", "note": "card 109 p9; R4 109#1 (asm Tree_Step_0 0x149a1fb70 L70-L87, Heavy_Fall_Step_0 0x149a1a380)", "plannerFix": "planner proc gives 50% of total damage; game wave = 1 full hit"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.08, 0.16, 0.24, 0.32, 0.4, 0.48, 0.56, 0.64], "per": "use", "note": "R4 109#1: chance 4r% per attack of a cascade of 6 Heavy_Fall_obj (96 px from the tree, 60 px apart, scale 1.25, mask r 40 px) carrying d0 + d1 of the tree; pieces 1 and 2 reach the 160 px dummy (32 / 28 px away; with 23.6 px lateral 39.8 / 36.6 < 52) = 2 hits per trigger -> 0.04r*2 (+2 more when the second tree of p7 also falls, not combined)"}], "confidence": "C", "note": "card 109 p9; R4 109#1 (asm Tree_Step_0 0x149a1fb70 L70-L87, Heavy_Fall_Step_0 0x149a1a380)", "plannerFix": "planner proc gives 50% of total damage; game wave = 1 full hit"},
         "name": "Heavy Fall",
         "description": "Chance on hit to unleash a shockwave in the falling direction, dealing additional damage.",
         "maxRank": 5,
@@ -2422,7 +2422,7 @@
       {
         "id": "stack_of_trunks",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3], "note": "+1 tree per rank"}, {"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "side trees miss dummy (80 px > 37 px)"}, {"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD +25%/r"}], "confidence": "C", "note": "card 109 p11"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5, 6], "note": "+1 tree per rank"}, {"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "side trees miss dummy (80 px > 37 px)"}, {"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD +25%/r"}], "confidence": "C", "note": "card 109 p11"},
         "name": "Stack of Trunks",
         "description": "Cut down multiple trees in an arc.",
         "maxRank": 3,
@@ -2453,7 +2453,7 @@
       {
         "id": "splitting_fall",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [9.8, 16.3, 19.6], "per": "use", "note": "PoR4 (a) rule 38 (tree falls along the aim through the dummy centre): 3.26 of the 8 discs reach the dummy (disk_fast.py; 3.0 for the cursor (x, y-24), 2.56 / 2.97 in the Resztki E / R4 cursor-above runs); each hitting disc = 1 disc hit + 1 chain with max_bounces = 4r (T0: 1 + floor((4r + 1)/3) hits) -> 3 / 5 / 6 hits per disc for r = 1..3 (7 / 9 at r4, r5) -> 9.8 / 16.3 / 19.6 hits per attack of d0 + d1 (R4: 9 / 15 / 18); on top of the tree's own hit"}, {"kind": "damage_pct", "byRank": [40, 80, 120], "note": "LSSD +40%/r"}], "confidence": "I", "note": "card 109 p13; R4 109#2 + PoR4 (a) + Resztki po R4 B/D/E (random disc spread +-25 deg and Minkowski ellipse 19x13.5 approximation I)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [9.8, 16.3, 19.6, 22.8, 29.3, 32.6], "per": "use", "note": "PoR4 (a) rule 38 (tree falls along the aim through the dummy centre): 3.26 of the 8 discs reach the dummy (disk_fast.py; 3.0 for the cursor (x, y-24), 2.56 / 2.97 in the Resztki E / R4 cursor-above runs); each hitting disc = 1 disc hit + 1 chain with max_bounces = 4r (T0: 1 + floor((4r + 1)/3) hits) -> 3 / 5 / 6 hits per disc for r = 1..3 (7 / 9 at r4, r5) -> 9.8 / 16.3 / 19.6 hits per attack of d0 + d1 (R4: 9 / 15 / 18); on top of the tree's own hit"}, {"kind": "damage_pct", "byRank": [40, 80, 120], "note": "LSSD +40%/r"}], "confidence": "I", "note": "card 109 p13; R4 109#2 + PoR4 (a) + Resztki po R4 B/D/E (random disc spread +-25 deg and Minkowski ellipse 19x13.5 approximation I)"},
         "name": "Splitting Fall",
         "description": "Trunks split into multiple wooden discs upon falling that chain from monsters on hit.",
         "maxRank": 3,
@@ -2465,7 +2465,7 @@
       {
         "id": "falling_forest",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [9, 17, 25], "note": "1+8r trees all at dummy (I)"}, {"kind": "cooldown_s", "byRank": [3, 3, 3], "note": "cooldown +3 s"}, {"kind": "damage_pct", "byRank": [65, 130, 195], "note": "LSSD +65%/r"}], "confidence": "I", "note": "card 109 p14", "plannerFix": "planner: no +3 s cooldown; tree count 1+8r not modelled (0 hits)"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [9, 17, 25, 33, 41, 49], "note": "1+8r trees all at dummy (I)"}, {"kind": "cooldown_s", "byRank": [3, 3, 3], "note": "cooldown +3 s"}, {"kind": "damage_pct", "byRank": [65, 130, 195], "note": "LSSD +65%/r"}], "confidence": "I", "note": "card 109 p14", "plannerFix": "planner: no +3 s cooldown; tree count 1+8r not modelled (0 hits)"},
         "name": "Falling Forest",
         "description": "Multiple trunks fall from the sky on target location, falling towards the nearest monster. Tree trunk triumph now has a cooldown.",
         "maxRank": 3,

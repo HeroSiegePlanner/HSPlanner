@@ -91,7 +91,7 @@
       {
         "id": "looping_shot",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [-1.75, -0.5, 0.75], "per": "use", "note": "Looping Shot (assumes p4 rank 0, M=5): chain = M hits at damage 0.25*r5 each -> 5*0.25r - 3; r1..3 (maxRank 3)"}], "confidence": "I", "note": "Looping Shot (T1, reguly 17/21/23 Runda 2c/3). Delta is main-hit units vs base H0(5)=3; depends on p4 rank (at r4>0 the delta is (5+2r4)*0.25r - H0(5+2r4)).", "plannerFix": "planner models +25 %/r as LSSD; game: chain hits x0.25r each with M=5+2*r4 hits instead of H0(M) hits at 100 %"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [-1.75, -0.5, 0.75, 2.0, 3.25, 4.5], "per": "use", "note": "Looping Shot (assumes p4 rank 0, M=5): chain = M hits at damage 0.25*r5 each -> 5*0.25r - 3; r1..3 (maxRank 3)"}], "confidence": "I", "note": "Looping Shot (T1, reguly 17/21/23 Runda 2c/3). Delta is main-hit units vs base H0(5)=3; depends on p4 rank (at r4>0 the delta is (5+2r4)*0.25r - H0(5+2r4)).", "plannerFix": "planner models +25 %/r as LSSD; game: chain hits x0.25r each with M=5+2*r4 hits instead of H0(M) hits at 100 %"},
         "name": "Looping Shot",
         "description": "Trickshot can hit the same monster multiple times if there are no others nearby with reduced damage.",
         "maxRank": 3,
@@ -302,7 +302,7 @@
       {
         "id": "rapidshot",
         "positionIndex": 4,
-        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 1}, {"kind": "extra_hits", "byRank": [3, 6, 9, 12, 15], "per": "use", "replacesProjectileHits": true, "note": "[165] = 1 + r: r extra consecutive arrows at every trigger, each of the N_s = 3 salvos (fan caps do not bind for 1 arrow per volley): 3r extra hits per cast"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); dummy 157 px along the track, 29.5 px sideways, cursor (x, y-24)] Vault table p4 + Resztki E (N_s = 3). Was 2.5r (N_s 2.5).", "plannerFix": "planner adds projectile_count 1/r as a plain hit count; game: r extra arrows in each of the 3 salvos (3r per cast, N_s = 3 at cursor (x, y-24))"},
+        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 1}, {"kind": "extra_hits", "byRank": [3, 6, 9, 12, 15, 18, 21, 24], "per": "use", "replacesProjectileHits": true, "note": "[165] = 1 + r: r extra consecutive arrows at every trigger, each of the N_s = 3 salvos (fan caps do not bind for 1 arrow per volley): 3r extra hits per cast"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); dummy 157 px along the track, 29.5 px sideways, cursor (x, y-24)] Vault table p4 + Resztki E (N_s = 3). Was 2.5r (N_s 2.5).", "plannerFix": "planner adds projectile_count 1/r as a plain hit count; game: r extra arrows in each of the 3 salvos (3r per cast, N_s = 3 at cursor (x, y-24))"},
         "name": "Rapidshot",
         "description": "Increases the amount of projectiles fired when vaulting.",
         "maxRank": 5,
@@ -623,7 +623,7 @@
       {
         "id": "arrow_nova",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [4, 6, 8], "per": "use", "note": "Arrow Nova: [364] = 2 + 2r Marksman_Turret_Arrow_obj created at the dummy centre (self.x, self.y) on a salvo hit, no pack, first check F+2 on the start position: every one hits exactly once for damage[0] of the arrow = 4 / 6 / 8 hits (r = 1..3). Needs the salvo to hit (aim through the centre; the fan is 3 / 2 / 2 arrows after p12, one of them within 5.5 deg)."}, {"kind": "projectiles", "base": 0, "perRank": -20, "note": "fan count reduced ((1 - (20+10r)%) ) but one shared pack -> 0 dummy effect"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); dummy aimed through its centre (attack-type skill)] R4 40#0 (C/I) + table p12. Was 0.27*(2+2r) = [1.08, 1.62, 2.16] (start 15-27 px from the hit point was an assumption).", "plannerFix": "planner gives of_total_damage 20/r and projectile_count 2/r; game gives 2 + 2r novas of full damage that all hit (4 / 6 / 8 per use), fan count reduced"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [4, 6, 8, 10, 12, 14], "per": "use", "note": "Arrow Nova: [364] = 2 + 2r Marksman_Turret_Arrow_obj created at the dummy centre (self.x, self.y) on a salvo hit, no pack, first check F+2 on the start position: every one hits exactly once for damage[0] of the arrow = 4 / 6 / 8 hits (r = 1..3). Needs the salvo to hit (aim through the centre; the fan is 3 / 2 / 2 arrows after p12, one of them within 5.5 deg)."}, {"kind": "projectiles", "base": 0, "perRank": -20, "note": "fan count reduced ((1 - (20+10r)%) ) but one shared pack -> 0 dummy effect"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); dummy aimed through its centre (attack-type skill)] R4 40#0 (C/I) + table p12. Was 0.27*(2+2r) = [1.08, 1.62, 2.16] (start 15-27 px from the hit point was an assumption).", "plannerFix": "planner gives of_total_damage 20/r and projectile_count 2/r; game gives 2 + 2r novas of full damage that all hit (4 / 6 / 8 per use), fan count reduced"},
         "name": "Arrow Nova",
         "description": "Multishot now fires a decreased amount of projectiles which when landing or hitting a monster split into multiple projectiles flying in all directions.",
         "maxRank": 3,
@@ -909,7 +909,7 @@
       {
         "id": "volatile_multishot",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 60, "note": "LSSD +60 %/r"}, {"kind": "projectiles", "base": 0, "perRank": 1}, {"kind": "extra_hits", "byRank": [0.4, 1.0, 0.4], "per": "use", "replacesProjectileHits": true, "note": "fan of n = 1 + r projectiles (8 deg, scale 0.45 and a 6 px aim offset at p12): total hits (projectile + explosion) for r = 0..3: 2; 2.4; 3; 2.4 -> +0.4 / +1.0 / +0.4 over the base 2 (r4, r5: 3; 2.3). Exactly 1 projectile stops on the dummy for every r (p13/p14 are per stopped projectile). Variant cursor (x, y-24): 0; 0; 2; 2; 3; 2 hits."}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); cursor on (x, y), aimed through the centre] Resztki Volatile p12 (scale 0.45 TalentsMarksman L726 asm 0x1462a72e6 + 6 px aim offset, I). Was extra_hits [2, 4, 6] (each extra projectile = 2 hits).", "plannerFix": "planner gives of_total_damage 60 instead of LSSD 60 %/r and counts projectile_count 1/r as hits; game: LSSD 60 %/r plus a fan whose hits are 2; 2.4; 3; 2.4 for r = 0..3 (about 1-1.5x, not x(1+r))"},
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 60, "note": "LSSD +60 %/r"}, {"kind": "projectiles", "base": 0, "perRank": 1}, {"kind": "extra_hits", "byRank": [0.4, 1.0, 0.4, 1.0, 0.3], "per": "use", "replacesProjectileHits": true, "note": "fan of n = 1 + r projectiles (8 deg, scale 0.45 and a 6 px aim offset at p12): total hits (projectile + explosion) for r = 0..3: 2; 2.4; 3; 2.4 -> +0.4 / +1.0 / +0.4 over the base 2 (r4, r5: 3; 2.3). Exactly 1 projectile stops on the dummy for every r (p13/p14 are per stopped projectile). Variant cursor (x, y-24): 0; 0; 2; 2; 3; 2 hits."}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); cursor on (x, y), aimed through the centre] Resztki Volatile p12 (scale 0.45 TalentsMarksman L726 asm 0x1462a72e6 + 6 px aim offset, I). Was extra_hits [2, 4, 6] (each extra projectile = 2 hits).", "plannerFix": "planner gives of_total_damage 60 instead of LSSD 60 %/r and counts projectile_count 1/r as hits; game: LSSD 60 %/r plus a fan whose hits are 2; 2.4; 3; 2.4 for r = 0..3 (about 1-1.5x, not x(1+r))"},
         "name": "Volatile Multishot",
         "description": "Fire multiple smaller projectiles in a cone.",
         "maxRank": 3,
@@ -921,7 +921,7 @@
       {
         "id": "fire_in_the_hole",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 7}, {"kind": "extra_hits", "byRank": [7, 14, 21], "per": "use", "replacesProjectileHits": true, "note": "[366] = 7r fragments from the explosion point (on the dummy) with damage[0] and pierce; upper bound if all hit (I)"}], "confidence": "I", "note": "Fire in the Hole!, card table p13 (fragments start on the dummy, hit I)."},
+        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 7}, {"kind": "extra_hits", "byRank": [7, 14, 21, 28, 35, 42], "per": "use", "replacesProjectileHits": true, "note": "[366] = 7r fragments from the explosion point (on the dummy) with damage[0] and pierce; upper bound if all hit (I)"}], "confidence": "I", "note": "Fire in the Hole!, card table p13 (fragments start on the dummy, hit I)."},
         "name": "Fire in the Hole!",
         "description": "On monster or terrain impact launch multiple piercing arrows in all directions.",
         "maxRank": 3,
@@ -1032,7 +1032,7 @@
       {
         "id": "rain_of_pain",
         "positionIndex": 3,
-        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 1, "note": "procProj +1 per ring-1 step; the card gives explicit per-wave hits"}, {"kind": "extra_hits", "byRank": [-3, 0], "per": "use", "replacesProjectileHits": true, "note": "per cast at cursor (x, y-24): per-wave hits for p3 = 0,1,2 are 2,1,2 (x3 waves); base 6 -> r1 = 3 (delta -3), r2 = 6 (delta 0). Non-monotonic in the card (p3=3..6: 2,3,2,3 per wave). At cursor (x, y) the count is different (not modelled)."}], "confidence": "I", "note": "Rain Of Pain (maxRank 2), per-wave hits at cursor (x, y-24) for p3 = 0,1,2: 2, 1, 2 (6, 3, 6 per cast); numbers unchanged but now on the 22.96 px edge: p3 = 0, 2, 4, 6 are I (pixel-cell model 0, 1, 1, 2, 1, 2, 2 per wave: base 0, r1 1, r2 1). Resztki E (I). At cursor (x, y) always 1 per wave.", "plannerFix": "planner adds a plain projectile_count +1/r; game: the ring-1 angles change so the dummy hit count per wave goes 2 -> 1 -> 2 (non-linear)"},
+        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 1, "note": "procProj +1 per ring-1 step; the card gives explicit per-wave hits"}, {"kind": "extra_hits", "byRank": [-3, 0, 0, 3, 0], "per": "use", "replacesProjectileHits": true, "note": "per cast at cursor (x, y-24): per-wave hits for p3 = 0,1,2 are 2,1,2 (x3 waves); base 6 -> r1 = 3 (delta -3), r2 = 6 (delta 0). Non-monotonic in the card (p3=3..6: 2,3,2,3 per wave). At cursor (x, y) the count is different (not modelled)."}], "confidence": "I", "note": "Rain Of Pain (maxRank 2), per-wave hits at cursor (x, y-24) for p3 = 0,1,2: 2, 1, 2 (6, 3, 6 per cast); numbers unchanged but now on the 22.96 px edge: p3 = 0, 2, 4, 6 are I (pixel-cell model 0, 1, 1, 2, 1, 2, 2 per wave: base 0, r1 1, r2 1). Resztki E (I). At cursor (x, y) always 1 per wave.", "plannerFix": "planner adds a plain projectile_count +1/r; game: the ring-1 angles change so the dummy hit count per wave goes 2 -> 1 -> 2 (non-linear)"},
         "name": "Rain Of Pain",
         "description": "Increases the amount of arrow rain projectiles.",
         "maxRank": 2,
@@ -1068,7 +1068,7 @@
       {
         "id": "split_fall",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.135, 0.54, 1.215, 2.16, 3.375], "per": "use", "note": "Split Fall: on landing, chance [369] = 3r % of 3 Turret_Arrow children (damage x [368] = 15r %); R4: 10 of the 78 children per wave hit the dummy (26 landings x 3; cursor (x, y-24); 11 at (x, y)), so per cast E = 3 waves x 10 x 0.03r = 0.9r hits of 0.15r main hits = 0.135 r^2 (r5: 3.4 units, +56 % of the 6-hit base)"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); cursor (x, y-24), base rain (without p12/p13)] R4 41#1 (C mechanism, I geometry) + Resztki E (Split Fall 10 unchanged, kombinacje p12 14 / p13 37 children per wave). Was extra_hits per hit 0.0045 r^2 (x 6 base hits = 0.027 r^2)."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.135, 0.54, 1.215, 2.16, 3.375, 4.86, 6.615, 8.64], "per": "use", "note": "Split Fall: on landing, chance [369] = 3r % of 3 Turret_Arrow children (damage x [368] = 15r %); R4: 10 of the 78 children per wave hit the dummy (26 landings x 3; cursor (x, y-24); 11 at (x, y)), so per cast E = 3 waves x 10 x 0.03r = 0.9r hits of 0.15r main hits = 0.135 r^2 (r5: 3.4 units, +56 % of the 6-hit base)"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); cursor (x, y-24), base rain (without p12/p13)] R4 41#1 (C mechanism, I geometry) + Resztki E (Split Fall 10 unchanged, kombinacje p12 14 / p13 37 children per wave). Was extra_hits per hit 0.0045 r^2 (x 6 base hits = 0.027 r^2)."},
         "name": "Split Fall",
         "description": "Chance on hit for arrows to split into multiple projectiles flying in all directions.",
         "maxRank": 5,
@@ -1159,7 +1159,7 @@
       {
         "id": "kill_command",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 50, "note": "LSSD += 50 %/r"}, {"kind": "set_hits", "byRank": [15, 30, 45], "note": "transformation: procAmount = 5r waves 0.1 s apart, rings every 24 px (n = 2, 5, 9, 14); cursor (x, y-24), centre 30 px above the dummy: ring 0 (2 arrows) misses, ring 1 (r 24, arrow at 261 deg, 7.3 px from the centre) 1, ring 2 (r 48, arrows 250 and 290 deg, 22.3 px) 2 -> 3 hits per wave x 5r waves = 15r per cast (r = 1..3: 15, 30, 45). Cursor (x, y): 4 per wave (20r)."}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); cursor (x, y-24)] Resztki E (Kill Command, centre 6 px above the cursor; was 1 per wave) - both models agree. LSSD 50 %/r kept.", "plannerFix": "planner adds projectile_count +5/r and physical 50/r; game replaces the rain by 5r waves of a different ring pattern: 3 hits per wave at cursor (x, y-24) (15r per cast) plus LSSD 50 %/r"},
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 50, "note": "LSSD += 50 %/r"}, {"kind": "set_hits", "byRank": [15, 30, 45, 60, 75, 90], "note": "transformation: procAmount = 5r waves 0.1 s apart, rings every 24 px (n = 2, 5, 9, 14); cursor (x, y-24), centre 30 px above the dummy: ring 0 (2 arrows) misses, ring 1 (r 24, arrow at 261 deg, 7.3 px from the centre) 1, ring 2 (r 48, arrows 250 and 290 deg, 22.3 px) 2 -> 3 hits per wave x 5r waves = 15r per cast (r = 1..3: 15, 30, 45). Cursor (x, y): 4 per wave (20r)."}], "confidence": "C", "note": "[dummy hits relative to planner base (per use); cursor (x, y-24)] Resztki E (Kill Command, centre 6 px above the cursor; was 1 per wave) - both models agree. LSSD 50 %/r kept.", "plannerFix": "planner adds projectile_count +5/r and physical 50/r; game replaces the rain by 5r waves of a different ring pattern: 3 hits per wave at cursor (x, y-24) (15r per cast) plus LSSD 50 %/r"},
         "name": "Kill Command",
         "description": "Unleash a long rain of arrows on a massive radius. Arrow rain now has a cooldown.",
         "maxRank": 3,
@@ -1183,7 +1183,7 @@
       {
         "id": "arrow_splinter",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.594, 4.752, 17.82], "per": "use", "note": "Arrow Splinter: on landing, chance 12r % of [370][1] = r arrows every 360/n deg, damage x 55r %; hits per wave if every landing splinters: 3 / 6 / 10 / 11 / 15 (r14 = 1..5, rotated rectangles, I; was 16 for r5); per cast E = 3 waves x H x 0.12r hits of 0.55r main hits: 0.594 / 4.752 / 17.82 units (r5 79.2)"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); cursor (x, y-24), base rain] R4 41#1 + Resztki E (Splinter 3, 6, 10, 11, 15). Was extra_hits per hit 0.066 r^3 (x 6 base hits = 0.396 / 3.17 / 10.7)."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.594, 4.752, 17.82, 34.848, 74.25], "per": "use", "note": "Arrow Splinter: on landing, chance 12r % of [370][1] = r arrows every 360/n deg, damage x 55r %; hits per wave if every landing splinters: 3 / 6 / 10 / 11 / 15 (r14 = 1..5, rotated rectangles, I; was 16 for r5); per cast E = 3 waves x H x 0.12r hits of 0.55r main hits: 0.594 / 4.752 / 17.82 units (r5 79.2)"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); cursor (x, y-24), base rain] R4 41#1 + Resztki E (Splinter 3, 6, 10, 11, 15). Was extra_hits per hit 0.066 r^3 (x 6 base hits = 0.396 / 3.17 / 10.7)."},
         "name": "Arrow Splinter",
         "description": "When hitting the ground arrows split into multiple piercing arrows flying in all directions.",
         "maxRank": 3,
@@ -1256,7 +1256,7 @@
       {
         "id": "spinning_shrapnel",
         "positionIndex": 2,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.1, 0.15, 0.2, 0.25], "per": "hit", "note": "chance 5 %*r per arrow hit x full damage (1 ratio) of a shrapnel child: c per hit; child hitting the dummy is I"}], "confidence": "I", "note": "Spinning Shrapnel, card table p2 (chance C, child hit I).", "plannerFix": "planner models shrapnel at 50 % of total damage; the card gives a full-damage child with chance 5 %*r per arrow hit"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4], "per": "hit", "note": "chance 5 %*r per arrow hit x full damage (1 ratio) of a shrapnel child: c per hit; child hitting the dummy is I"}], "confidence": "I", "note": "Spinning Shrapnel, card table p2 (chance C, child hit I).", "plannerFix": "planner models shrapnel at 50 % of total damage; the card gives a full-damage child with chance 5 %*r per arrow hit"},
         "name": "Spinning Shrapnel",
         "description": "Chance on hit to sling the arrow in the air spinning and dropping back dealing additional damage.",
         "maxRank": 5,
@@ -1386,7 +1386,7 @@
       {
         "id": "marked_for_destruction",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.85, 1.71, 2.56], "per": "use", "note": "skillAmount x(1 + 15 %*r): hits scale with arrow count, 5.69 * 0.15r; targeted arrows may raise the hit rate (I, not counted)"}], "confidence": "I", "note": "Marked For Destruction, card table p11.", "plannerFix": "planner gives skill_duration 15/r; game adds 15 %*r arrows per cast (about +0.85 hits per rank)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.85, 1.71, 2.56, 3.42, 4.27, 5.13], "per": "use", "note": "skillAmount x(1 + 15 %*r): hits scale with arrow count, 5.69 * 0.15r; targeted arrows may raise the hit rate (I, not counted)"}], "confidence": "I", "note": "Marked For Destruction, card table p11.", "plannerFix": "planner gives skill_duration 15/r; game adds 15 %*r arrows per cast (about +0.85 hits per rank)"},
         "name": "Marked For Destruction",
         "description": "Arrow rampage now spawns from all directions flying towards target area for an extended period of time. Cooldown is increased.",
         "maxRank": 3,
@@ -1414,7 +1414,7 @@
       {
         "id": "arrow_mayhem",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.18, 1.44, 4.86], "per": "hit", "note": "child turret arrows: chance 20 %*r x count 2r x damage 45 %*r per dummy hit = 0.18 r^3 per hit (extra per base hit); child hits I"}], "confidence": "I", "note": "Arrow Mayhem, card table p13.", "plannerFix": "planner gives arcane_skill_damage 15/r and projectile_count 2/r; game gives child count 2r with damage 45 %*r and chance 20 %*r per hit"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.18, 1.44, 4.86, 11.52, 22.5, 32.4], "per": "hit", "note": "child turret arrows: chance 20 %*r x count 2r x damage 45 %*r per dummy hit = 0.18 r^3 per hit (extra per base hit); child hits I"}], "confidence": "I", "note": "Arrow Mayhem, card table p13.", "plannerFix": "planner gives arcane_skill_damage 15/r and projectile_count 2/r; game gives child count 2r with damage 45 %*r and chance 20 %*r per hit"},
         "name": "Arrow Mayhem",
         "description": "Arrow rampage projectiles have a chance to shatter into a spread of arrows when hitting a target.",
         "maxRank": 3,
@@ -1430,7 +1430,7 @@
       {
         "id": "fiery_rain_of_arrows",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD +15 %/r on physical part"}, {"kind": "extra_hits", "byRank": [-1.48, -2.35, -2.91], "per": "use", "note": "radius x(1 + 35 %*r): hits per cast proportional to 1/R, 5.69*(1/(1+0.35r) - 1) (I)"}, {"kind": "dot", "byRank": [1.5, 3.0, 4.5], "note": "burning [18] = floor((d1+d0)*150 %*r): burn ratio 1.5r of D per application"}], "confidence": "I", "note": "Fiery Rain of Arrows, card table p14 (C code, I for the hit-rate scaling).", "plannerFix": "planner adds area_of_effect 35/r (raises hits); game: bigger radius lowers hits on one target (1/R), burn 150 %*r"},
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD +15 %/r on physical part"}, {"kind": "extra_hits", "byRank": [-1.48, -2.35, -2.91, -3.32, -3.62, -3.85], "per": "use", "note": "radius x(1 + 35 %*r): hits per cast proportional to 1/R, 5.69*(1/(1+0.35r) - 1) (I)"}, {"kind": "dot", "byRank": [1.5, 3.0, 4.5], "note": "burning [18] = floor((d1+d0)*150 %*r): burn ratio 1.5r of D per application"}], "confidence": "I", "note": "Fiery Rain of Arrows, card table p14 (C code, I for the hit-rate scaling).", "plannerFix": "planner adds area_of_effect 35/r (raises hits); game: bigger radius lowers hits on one target (1/R), burn 150 %*r"},
         "name": "Fiery Rain of Arrows",
         "description": "Arrow rampage area becomes much wider and deals a portion of its damage as fire causing burning on monsters hit based on fire damage dealt.",
         "maxRank": 3,
@@ -1633,7 +1633,7 @@
       {
         "id": "grenadier",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 35, "note": "LSSD +35 %/r"}, {"kind": "set_hits", "byRank": [0.23, 0.38, 0.53], "note": "Grenadier: n = 1 + 2r grenades (3 / 5 / 7) in a 360/n deg ring on the WORLD axes (not aimed, distance = distance to the cursor); the blast after the 24 px drift reaches the dummy (<= 43.5 px) only for a grenade within +-13.7 deg of the dummy direction: 0.076*n grenades hit on average = 0.23 / 0.38 / 0.53 blast hits per cast (exactly 1 when the dummy direction is a multiple of 360/n). The shrapnel of that grenade is NOT counted (the card gives no value): lower bound."}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); blast hits only] R4 48#2 (C layout, I probability) + Po R4 (c) rule 40 (0.076*n). LSSD 35 %/r kept. Was other = 0 (not resolved).", "plannerFix": "planner adds projectile_count +2/r as plain hits; game: the ring is not aimed, only 0.076*n of the n = 1 + 2r grenades reach the dummy, fewer hits than without p12"},
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 35, "note": "LSSD +35 %/r"}, {"kind": "set_hits", "byRank": [0.23, 0.38, 0.53, 0.68, 0.83, 0.98], "note": "Grenadier: n = 1 + 2r grenades (3 / 5 / 7) in a 360/n deg ring on the WORLD axes (not aimed, distance = distance to the cursor); the blast after the 24 px drift reaches the dummy (<= 43.5 px) only for a grenade within +-13.7 deg of the dummy direction: 0.076*n grenades hit on average = 0.23 / 0.38 / 0.53 blast hits per cast (exactly 1 when the dummy direction is a multiple of 360/n). The shrapnel of that grenade is NOT counted (the card gives no value): lower bound."}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); blast hits only] R4 48#2 (C layout, I probability) + Po R4 (c) rule 40 (0.076*n). LSSD 35 %/r kept. Was other = 0 (not resolved).", "plannerFix": "planner adds projectile_count +2/r as plain hits; game: the ring is not aimed, only 0.076*n of the n = 1 + 2r grenades reach the dummy, fewer hits than without p12"},
         "name": "Grenadier",
         "description": "Throw frag grenades rapidly into all directions.",
         "maxRank": 3,
@@ -1645,7 +1645,7 @@
       {
         "id": "flames_and_explosions",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [10.5, 15.0, 19.5], "per": "use", "note": "Flames and Explosions: fire flame (6 ticks, one flame under the target at a time, created on hit) with damage floor(d1*(1 + 0.75r)): 6 * (1 + 0.75r). Upper bound if the flame is always present (card says +6 hits, I)"}, {"kind": "dot", "byRank": [0.3, 0.6, 0.9], "note": "burning [18] = floor(dmg*30 %*r) on hit (chance 100 %)"}], "confidence": "I", "note": "Flames and Explosions, card table p13 (C code, flame uptime I).", "plannerFix": "planner gives fire_skill_damage 75/r (as LSSD-like) and burn 30/r; game: 6 flame ticks of d1*(1+0.75r) under the target plus burn 30 %*r"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [10.5, 15.0, 19.5, 24.0, 28.5, 33.0], "per": "use", "note": "Flames and Explosions: fire flame (6 ticks, one flame under the target at a time, created on hit) with damage floor(d1*(1 + 0.75r)): 6 * (1 + 0.75r). Upper bound if the flame is always present (card says +6 hits, I)"}, {"kind": "dot", "byRank": [0.3, 0.6, 0.9], "note": "burning [18] = floor(dmg*30 %*r) on hit (chance 100 %)"}], "confidence": "I", "note": "Flames and Explosions, card table p13 (C code, flame uptime I).", "plannerFix": "planner gives fire_skill_damage 75/r (as LSSD-like) and burn 30/r; game: 6 flame ticks of d1*(1+0.75r) under the target plus burn 30 %*r"},
         "name": "Flames and Explosions",
         "description": "Incendiary grenades sets the area under monsters hit on fire dealing additional fire damage causing burning.",
         "maxRank": 3,
@@ -1713,7 +1713,7 @@
       {
         "id": "burstshot",
         "positionIndex": 1,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use", "note": "burstShotChance 3 %*r per shot: an extra salvo with 1 hit (expected per shot, base 1)"}], "confidence": "I", "note": "Burstshot, card table p1 (C code, chance roll I in the count)."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15, 0.18, 0.21, 0.24], "per": "use", "note": "burstShotChance 3 %*r per shot: an extra salvo with 1 hit (expected per shot, base 1)"}], "confidence": "I", "note": "Burstshot, card table p1 (C code, chance roll I in the count)."},
         "name": "Burstshot",
         "description": "Chance on attack for arrow turret to fire twice.",
         "maxRank": 5,
@@ -1779,7 +1779,7 @@
       {
         "id": "multishot",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 1}, {"kind": "extra_hits", "byRank": [1, 2, 3, 4, 5], "per": "use", "replacesProjectileHits": true, "note": "+1 arrow per rank per shot, each hits the dummy (targeted)"}], "confidence": "C", "note": "Multishot, card table p6 (projectileAmount = 1 + p6)."},
+        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 1}, {"kind": "extra_hits", "byRank": [1, 2, 3, 4, 5, 6, 7, 8], "per": "use", "replacesProjectileHits": true, "note": "+1 arrow per rank per shot, each hits the dummy (targeted)"}], "confidence": "C", "note": "Multishot, card table p6 (projectileAmount = 1 + p6)."},
         "name": "Multishot",
         "description": "Turrets fire additional projectiles in an arc.",
         "maxRank": 5,
@@ -1815,7 +1815,7 @@
       {
         "id": "exploding_arrowhead",
         "positionIndex": 9,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.12, 1.24, 1.36, 1.48, 1.6], "per": "hit", "note": "Exploding Arrowhead: 1 fire explosion per arrow hit with damage d1*(1 + 12 %*r) (x = p9.s9, I); chance not read"}], "confidence": "I", "note": "Exploding Arrowhead, card table p9."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.12, 1.24, 1.36, 1.48, 1.6, 1.72, 1.84, 1.96], "per": "hit", "note": "Exploding Arrowhead: 1 fire explosion per arrow hit with damage d1*(1 + 12 %*r) (x = p9.s9, I); chance not read"}], "confidence": "I", "note": "Exploding Arrowhead, card table p9."},
         "name": "Exploding Arrowhead",
         "description": "Projectiles now stick an explosive to the target on hit that explodes dealing additional damage after a short delay.",
         "maxRank": 5,
@@ -2061,7 +2061,7 @@
       {
         "id": "mine_field",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1.2, 0.8, 1.2], "note": "Mine Field: n = XSP(1 + 5r) mines at 40 % r damage each; mine 0 at the cursor point P, mines 1-5 at 40 px (D + 360/(n - 1)*(i - 1)), mines 6+ at 80 px (D + 360/(n - 5)*(i - 5)); hitbox r 32 x 0.8 = 25.6 + 12 = 37.6 px reach. With the dummy 30 px below P and the aim along 0 deg, rank 1 (n = 6) is reached by mine 0 and ring mines 4 and 5 (216 deg at 33.0 px, 288 deg at 14.7 px) = 3 x 0.4 = 1.2 main hits; ranks 2-3 only by mine 0 (the inner ring covers 0-144 / 0-96 deg) = 0.8 / 1.2 (hsextract 2026-10-29; counts depend on the aim, a ring mine reaches when sin(a) <= -0.4526)"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); cursor (x, y-24)] R4 52#1 + hsextract 2026-10-29 ring layout (k = 1 / 5)", "plannerFix": "planner gives projectile_count 5/r and of_total_damage 40/r as plain hits; game: many weaker mines (40 %*r damage), 3 reach the dummy at rank 1 and 1 at ranks 2-3"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1.2, 0.8, 1.2, 1.6, 2.0, 2.4], "note": "Mine Field: n = XSP(1 + 5r) mines at 40 % r damage each; mine 0 at the cursor point P, mines 1-5 at 40 px (D + 360/(n - 1)*(i - 1)), mines 6+ at 80 px (D + 360/(n - 5)*(i - 5)); hitbox r 32 x 0.8 = 25.6 + 12 = 37.6 px reach. With the dummy 30 px below P and the aim along 0 deg, rank 1 (n = 6) is reached by mine 0 and ring mines 4 and 5 (216 deg at 33.0 px, 288 deg at 14.7 px) = 3 x 0.4 = 1.2 main hits; ranks 2-3 only by mine 0 (the inner ring covers 0-144 / 0-96 deg) = 0.8 / 1.2 (hsextract 2026-10-29; counts depend on the aim, a ring mine reaches when sin(a) <= -0.4526)"}], "confidence": "I", "note": "[dummy hits relative to planner base (per use); cursor (x, y-24)] R4 52#1 + hsextract 2026-10-29 ring layout (k = 1 / 5)", "plannerFix": "planner gives projectile_count 5/r and of_total_damage 40/r as plain hits; game: many weaker mines (40 %*r damage), 3 reach the dummy at rank 1 and 1 at ranks 2-3"},
         "name": "Mine Field",
         "description": "Throw multiple smaller mines into a target location dealing damage and slowing monsters on hit.",
         "maxRank": 3,
@@ -2085,7 +2085,7 @@
       {
         "id": "air_raid",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 20, "note": "LSSD +20 %/r"}, {"kind": "extra_hits", "byRank": [4, 8, 12], "per": "use", "note": "Air Raid: bombAmount = 4r bombs dropped over the mine point (x+400 sprite); assumed each bomb hits the dummy (I)"}], "confidence": "I", "note": "Air Raid (maxRank 3), card table p13.", "plannerFix": "planner gives arcane_skill_damage 20/r and projectile_count 4/r; game: bombs 4r over the mine point, hit count I"},
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 20, "note": "LSSD +20 %/r"}, {"kind": "extra_hits", "byRank": [4, 8, 12, 16, 20, 24], "per": "use", "note": "Air Raid: bombAmount = 4r bombs dropped over the mine point (x+400 sprite); assumed each bomb hits the dummy (I)"}], "confidence": "I", "note": "Air Raid (maxRank 3), card table p13.", "plannerFix": "planner gives arcane_skill_damage 20/r and projectile_count 4/r; game: bombs 4r over the mine point, hit count I"},
         "name": "Air Raid",
         "description": "Land mine now marks monster location on hit for an air raid dropping multiple bombs. Land mine now has a cooldown.",
         "maxRank": 3,
@@ -2220,7 +2220,7 @@
       {
         "id": "cannonballs",
         "positionIndex": 3,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.12, 0.48, 1.08, 1.92, 3.0], "per": "use", "note": "extra cannonball per landing with chance 3 %*r and count r: expected 0.03 r^2 extra balls per shot, each ball = 1 explosion + shrapnel (1 + k = 4 hits); assumes the extra balls land near the dummy (I)"}], "confidence": "I", "note": "Cannonballs, card table p3 (chance 3r, count r; hit geometry I)."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.12, 0.48, 1.08, 1.92, 3.0, 4.32, 5.88, 7.68], "per": "use", "note": "extra cannonball per landing with chance 3 %*r and count r: expected 0.03 r^2 extra balls per shot, each ball = 1 explosion + shrapnel (1 + k = 4 hits); assumes the extra balls land near the dummy (I)"}], "confidence": "I", "note": "Cannonballs, card table p3 (chance 3r, count r; hit geometry I)."},
         "name": "Cannonballs",
         "description": "Chance when hitting the ground to unleash additional cannonballs on nearby targets.",
         "maxRank": 5,
@@ -2357,7 +2357,7 @@
       {
         "id": "burst_artillery",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 2}, {"kind": "extra_hits", "byRank": [8, 16, 24], "per": "use", "replacesProjectileHits": true, "note": "+2r cannonballs per shot, each 1 explosion + shrapnel (1 + k = 4 hits): 2r * 4 = 8r extra"}], "confidence": "C", "note": "Burst Artillery, card table p13 (each ball = 1 + k hits, planner base 4 per ball)."},
+        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 2}, {"kind": "extra_hits", "byRank": [8, 16, 24, 32, 40, 48], "per": "use", "replacesProjectileHits": true, "note": "+2r cannonballs per shot, each 1 explosion + shrapnel (1 + k = 4 hits): 2r * 4 = 8r extra"}], "confidence": "C", "note": "Burst Artillery, card table p13 (each ball = 1 + k hits, planner base 4 per ball)."},
         "name": "Burst Artillery",
         "description": "Fires multiple cannonballs in a quick succession.",
         "maxRank": 3,
@@ -2479,7 +2479,7 @@
       {
         "id": "explosive_toolkit",
         "positionIndex": 4,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03675, 0.087, 0.15075, 0.228, 0.31875], "per": "hit", "note": "Explosive Toolkit: chance 3 %*r per bullet x explosion damage (1 + 0.225r) = extra per hit (I: explosion damage taken as (d1+d4+d0)*(1+0.225r) ~ d1)"}], "confidence": "C", "note": "Explosive Toolkit (maxRank 5), card table p4 (C/I)."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03675, 0.087, 0.15075, 0.228, 0.31875, 0.423, 0.54075, 0.672], "per": "hit", "note": "Explosive Toolkit: chance 3 %*r per bullet x explosion damage (1 + 0.225r) = extra per hit (I: explosion damage taken as (d1+d4+d0)*(1+0.225r) ~ d1)"}], "confidence": "C", "note": "Explosive Toolkit (maxRank 5), card table p4 (C/I)."},
         "name": "Explosive Toolkit",
         "description": "Chance on hit for projectile to explode on impact dealing additional area of effect damage.",
         "maxRank": 5,
@@ -2538,7 +2538,7 @@
       {
         "id": "burst_engine",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.02, 0.08, 0.18, 0.32, 0.5], "per": "use", "note": "Burst Engine: extra salvo with chance 2 %*r (x count r): 0.02 r^2 extra volleys per action (I)"}], "confidence": "I", "note": "Burst Engine (maxRank 5), card table p8."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.02, 0.08, 0.18, 0.32, 0.5, 0.72, 0.98, 1.28], "per": "use", "note": "Burst Engine: extra salvo with chance 2 %*r (x count r): 0.02 r^2 extra volleys per action (I)"}], "confidence": "I", "note": "Burst Engine (maxRank 5), card table p8."},
         "name": "Burst Engine",
         "description": "Chance on attack to shoot additional projectiles in sequence.",
         "maxRank": 5,
@@ -2554,7 +2554,7 @@
       {
         "id": "immolating_impact",
         "positionIndex": 9,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.048, 0.112, 0.192, 0.288, 0.4], "per": "hit", "note": "Immolating Impact (needs p7 burn): nova with chance 4 %*r (I) and damage d1*(1 + 0.2r) per hit on a burning target: 0.04r * (1+0.2r)"}], "confidence": "I", "note": "Immolating Impact, card table p9 (chance value from planner, I)."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.048, 0.112, 0.192, 0.288, 0.4, 0.528, 0.672, 0.832], "per": "hit", "note": "Immolating Impact (needs p7 burn): nova with chance 4 %*r (I) and damage d1*(1 + 0.2r) per hit on a burning target: 0.04r * (1+0.2r)"}], "confidence": "I", "note": "Immolating Impact, card table p9 (chance value from planner, I)."},
         "name": "Immolating Impact",
         "description": "Unleash a small fire nova when hitting a burning target.",
         "maxRank": 5,
@@ -2678,7 +2678,7 @@
       {
         "id": "mini_sarmat",
         "positionIndex": 1,
-        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 1}, {"kind": "extra_hits", "byRank": [1, 2, 3, 4, 5], "per": "use", "replacesProjectileHits": true, "note": "shootProjectileAmount = 1 + p1: +1 rocket (1 explosion) per rank per shot"}], "confidence": "C", "note": "Mini Sarmat, card table p1."},
+        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 1}, {"kind": "extra_hits", "byRank": [1, 2, 3, 4, 5, 6, 7, 8], "per": "use", "replacesProjectileHits": true, "note": "shootProjectileAmount = 1 + p1: +1 rocket (1 explosion) per rank per shot"}], "confidence": "C", "note": "Mini Sarmat, card table p1."},
         "name": "Mini Sarmat",
         "description": "Increases the amount of rockets fired by rocket turret.",
         "maxRank": 5,
@@ -2773,7 +2773,7 @@
       {
         "id": "blastwave",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "hit", "note": "Blastwave: second explosion wave with chance 3 %*r = +1 hit with chance 3 %*r per rocket hit (card reading; blastWave count 1/r not multiplied in)"}], "confidence": "C", "note": "Blastwave, card table p8 (C/I: chance C, wave count I)."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15, 0.18, 0.21, 0.24], "per": "hit", "note": "Blastwave: second explosion wave with chance 3 %*r = +1 hit with chance 3 %*r per rocket hit (card reading; blastWave count 1/r not multiplied in)"}], "confidence": "C", "note": "Blastwave, card table p8 (C/I: chance C, wave count I)."},
         "name": "Blastwave",
         "description": "Chance on hit to create a shockwave of additional explosions.",
         "maxRank": 5,
@@ -2818,7 +2818,7 @@
       {
         "id": "locked_on",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 40, "note": "LSSD +40 %/r"}, {"kind": "projectiles", "base": 0, "perRank": 10}, {"kind": "extra_hits", "byRank": [10, 20, 30], "per": "use", "replacesProjectileHits": true, "note": "Locked On: +10 rockets per shot (1 explosion each)"}, {"kind": "cooldown_pct", "byRank": [200, 200, 200], "note": "shootFrequency x3 (period 7.5 s per salvo): +200 %"}], "confidence": "C", "note": "Locked On (maxRank 3), card table p11.", "plannerFix": "planner gives +10 projectiles at the same cadence; game fires them x3 less often (cooldown x3), so DPS factor is (1+p1+10r)/(3(1+p1))"},
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 40, "note": "LSSD +40 %/r"}, {"kind": "projectiles", "base": 0, "perRank": 10}, {"kind": "extra_hits", "byRank": [10, 20, 30, 40, 50, 60], "per": "use", "replacesProjectileHits": true, "note": "Locked On: +10 rockets per shot (1 explosion each)"}, {"kind": "cooldown_pct", "byRank": [200, 200, 200], "note": "shootFrequency x3 (period 7.5 s per salvo): +200 %"}], "confidence": "C", "note": "Locked On (maxRank 3), card table p11.", "plannerFix": "planner gives +10 projectiles at the same cadence; game fires them x3 less often (cooldown x3), so DPS factor is (1+p1+10r)/(3(1+p1))"},
         "name": "Locked On",
         "description": "Fires a bigger barrage of missiles that target an area dealing massive damage over three seconds. Attack speed reduced.",
         "maxRank": 3,

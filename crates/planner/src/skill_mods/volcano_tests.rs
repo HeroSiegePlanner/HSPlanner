@@ -496,7 +496,7 @@ fn the_engines_subskill_hits_follow_the_sim() {
     let uncapped = super::parity::uncapped;
     let (sim, base) = (uncapped(&[]), engine(&[]));
     assert!(near(sim, 8.) && near(base, 8.), "sim {sim}, engine {base}");
-    let wrong = parity::misses(CLASS, super::SKILL, uncapped, engine, 0.01);
+    let wrong = parity::misses_past(CLASS, super::SKILL, uncapped, engine, 0.01, parity::GRANTED);
     assert!(wrong.is_empty(), "\n{}", wrong.join("\n"));
 }
 
@@ -504,7 +504,7 @@ fn the_engines_subskill_hits_follow_the_sim() {
 fn the_engine_follows_the_fragments_yellowstone_and_the_player_volcano_land() {
     let i_am = ("i_am_the_volcano_now", 2);
     let mut together: Vec<Vec<(&str, u32)>> = Vec::new();
-    for rank in 1..=5 {
+    for rank in 1..=5 + parity::GRANTED {
         for node in ["eruption", "danger_zone", "crushing_fragment"] {
             together.push(vec![i_am, (node, rank)]);
         }
@@ -520,7 +520,7 @@ fn the_engine_follows_the_fragments_yellowstone_and_the_player_volcano_land() {
         together.push(vec![("yellowstone", 3), ("crushing_fragment", rank)]);
         together.push(vec![("yellowstone", 2), ("crushing_fragment", rank)]);
     }
-    for rank in 1..=3 {
+    for rank in 1..=3 + parity::GRANTED {
         together.push(vec![i_am, ("lava_trail", rank)]);
         together.push(vec![i_am, ("yellowstone", rank)]);
         together.push(vec![("yellowstone", rank), ("lava_trail", 2)]);

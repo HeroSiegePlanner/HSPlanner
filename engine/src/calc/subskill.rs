@@ -24,6 +24,7 @@ pub enum AppliedStateSpec {
     Full {
         state: String,
         amount: Option<AmountSpec>,
+        conversion: bool,
     },
 }
 
@@ -55,6 +56,7 @@ pub struct AppliedStateInfo {
     pub trigger: String,
     pub chance: f64,
     pub amount: Option<f64>,
+    pub conversion: bool,
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
@@ -247,9 +249,14 @@ pub fn aggregate_subskill_stats(
                             trigger: proc.trigger.clone(),
                             chance,
                             amount: None,
+                            conversion: false,
                         });
                     }
-                    AppliedStateSpec::Full { state, amount } => {
+                    AppliedStateSpec::Full {
+                        state,
+                        amount,
+                        conversion,
+                    } => {
                         let amt = amount.as_ref().map(|a| a.base + a.per_rank * rank_f);
                         let amt_normalized = amt.filter(|v| *v != 0.0);
                         applied_states.push(AppliedStateInfo {
@@ -257,6 +264,7 @@ pub fn aggregate_subskill_stats(
                             trigger: proc.trigger.clone(),
                             chance,
                             amount: amt_normalized,
+                            conversion: *conversion,
                         });
                     }
                 }
@@ -488,6 +496,7 @@ mod tests {
                             base: 5.0,
                             per_rank: 2.0,
                         }),
+                        conversion: false,
                     }],
                 }),
                 ..Default::default()
@@ -516,6 +525,7 @@ mod tests {
                             base: 0.0,
                             per_rank: 0.0,
                         }),
+                        conversion: false,
                     }],
                 }),
                 ..Default::default()

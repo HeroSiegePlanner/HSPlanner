@@ -260,7 +260,7 @@
       {
         "id": "shadow_beams",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.5, 1, 1.5], "per": "hit", "note": "beam on every bolt hit: floor(D*0.5r) per hit; value = 0.5r hits per base hit"}], "confidence": "I", "note": "card table p12 ([704] 50 %/r per hit; beam ends on dummy; not with p11)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.5, 1, 1.5, 2, 2.5, 3], "per": "hit", "note": "beam on every bolt hit: floor(D*0.5r) per hit; value = 0.5r hits per base hit"}], "confidence": "I", "note": "card table p12 ([704] 50 %/r per hit; beam ends on dummy; not with p11)"},
         "name": "Shadow Beams",
         "description": "Unleash beams of shadows towards monsters on hit.",
         "maxRank": 3,
@@ -291,7 +291,7 @@
       {
         "id": "shadow_cascade",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.2, 0.53, 1.01], "per": "use", "note": "mean hits per cast bolt incl. the cascade r0..3 = 3.00 / 3.20 / 3.53 / 4.01 (card R4 239#2 + PoR4, aim through the centre, rule 38) vs base 3.0 -> +0.20 / +0.53 / +1.01 (r1..3); chance 5r % per hit, 3 children at -12 / 0 / +12 deg, unbounded cascade; r4/r5 would be 4.76 / 6.17 (planner maxRank 3). Resztki B own simulation gives 3.34 / 3.79 / 4.40 (within 10 %, kept the card values); delta per bolt; (x, y-24) variant 2.00 / 2.25 / 2.54 / 2.97; not additive with p6/p10 and absent with p11"}], "confidence": "I", "note": "card R4 239#2 (MC 2 x 2500, asm 0x14522bed0 block 706) + PoR4 + Resztki B (independent simulation, stays I); replaces the old closed-form F estimate", "plannerFix": "planner has on_hit chance 5r with no effect; cascade is a branching process (3 children from the parent position + 12 px), not modelled"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.2, 0.53, 1.01, 1.76, 3.17], "per": "use", "note": "mean hits per cast bolt incl. the cascade r0..3 = 3.00 / 3.20 / 3.53 / 4.01 (card R4 239#2 + PoR4, aim through the centre, rule 38) vs base 3.0 -> +0.20 / +0.53 / +1.01 (r1..3); chance 5r % per hit, 3 children at -12 / 0 / +12 deg, unbounded cascade; r4/r5 would be 4.76 / 6.17 (planner maxRank 3). Resztki B own simulation gives 3.34 / 3.79 / 4.40 (within 10 %, kept the card values); delta per bolt; (x, y-24) variant 2.00 / 2.25 / 2.54 / 2.97; not additive with p6/p10 and absent with p11"}], "confidence": "I", "note": "card R4 239#2 (MC 2 x 2500, asm 0x14522bed0 block 706) + PoR4 + Resztki B (independent simulation, stays I); replaces the old closed-form F estimate", "plannerFix": "planner has on_hit chance 5r with no effect; cascade is a branching process (3 children from the parent position + 12 px), not modelled"},
         "name": "Shadow Cascade",
         "description": "Shadow bolt has a chance to burst into smaller shadow bolts on hit. This effect can occur infinitely.",
         "maxRank": 3,
@@ -416,7 +416,7 @@
       {
         "id": "last_mortal_act",
         "positionIndex": 1,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.1, 0.2, 0.3], "per": "use", "note": "the soul (Soul_Spurn_Damaging_obj, floor(D*0.1r), full modifiers via InheritModifiers) is created at the hit enemy (x, y), stands ~20 frames growing and hits the dummy exactly once before flying to the player: +0.1r D per AoE hit (r3: +30 %); with p12 one soul per 1.25 s tick"}], "confidence": "C", "note": "R4 240#0 (asm 0x14511e8f2/0x14511e941, 0x14b3536dd; mechanism C, frame order +-1 I); was a 0-1 hit midpoint 0.5"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6], "per": "use", "note": "the soul (Soul_Spurn_Damaging_obj, floor(D*0.1r), full modifiers via InheritModifiers) is created at the hit enemy (x, y), stands ~20 frames growing and hits the dummy exactly once before flying to the player: +0.1r D per AoE hit (r3: +30 %); with p12 one soul per 1.25 s tick"}], "confidence": "C", "note": "R4 240#0 (asm 0x14511e8f2/0x14511e941, 0x14b3536dd; mechanism C, frame order +-1 I); was a 0-1 hit midpoint 0.5"},
         "name": "Last Mortal Act",
         "description": "Ripped souls deal a portion of the damage.",
         "maxRank": 3,
@@ -456,7 +456,7 @@
       {
         "id": "consume",
         "positionIndex": 4,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use", "note": "second AoE with chance 3r % per cast, one hit of D each"}], "confidence": "I", "note": "card table p4 (+1 loop pass, alarm 0.15 s)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15, 0.18, 0.21, 0.24], "per": "use", "note": "second AoE with chance 3r % per cast, one hit of D each"}], "confidence": "I", "note": "card table p4 (+1 loop pass, alarm 0.15 s)"},
         "name": "Consume",
         "description": "Chance on cast to unleash an additional soul spurn.",
         "maxRank": 5,
@@ -822,7 +822,7 @@
       {
         "id": "master_of_spirits",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [23.4, 62.4, 117.0], "per": "use", "note": "transformation: spirits skipped; masters (3r) shoot Shadow Bolts every 1.35 s during lifetime 2.5 s (1+50 %/r): per use m*N_b*2.6, m=3r, N_b=1+floor((T-0.1)/1.35), T=2.5(1+0.5r) -> N_b 3/4/5"}, {"kind": "cooldown_s", "byRank": [8, 8, 8], "note": "cooldown +8 s (GetTalentCooldown#237 A=8)"}], "confidence": "I", "note": "card table p12 (C/I; h_SB = 2.6 per bolt)", "plannerFix": "planner models masters as summon count only; card: shadow bolts from masters, cooldown +8 s"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [23.4, 62.4, 117.0, 187.2, 273.0, 374.4], "per": "use", "note": "transformation: spirits skipped; masters (3r) shoot Shadow Bolts every 1.35 s during lifetime 2.5 s (1+50 %/r): per use m*N_b*2.6, m=3r, N_b=1+floor((T-0.1)/1.35), T=2.5(1+0.5r) -> N_b 3/4/5"}, {"kind": "cooldown_s", "byRank": [8, 8, 8], "note": "cooldown +8 s (GetTalentCooldown#237 A=8)"}], "confidence": "I", "note": "card table p12 (C/I; h_SB = 2.6 per bolt)", "plannerFix": "planner models masters as summon count only; card: shadow bolts from masters, cooldown +8 s"},
         "name": "Master of Spirits",
         "description": "Summon multiple spirit servants following you and unleashing shadow bolts towards nearby monsters. Restless Spirits now has a cooldown.",
         "maxRank": 3,
@@ -834,7 +834,7 @@
       {
         "id": "soul_termination",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.75, 1.5, 2.25], "per": "hit", "note": "first spirit hit makes an Explosion_Item with floor(D*0.75r) and destroys the spirit: +0.75r hits per spirit hit"}], "confidence": "C", "note": "card table p13 ([709])"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.75, 1.5, 2.25, 3.0, 3.75, 4.5], "per": "hit", "note": "first spirit hit makes an Explosion_Item with floor(D*0.75r) and destroys the spirit: +0.75r hits per spirit hit"}], "confidence": "C", "note": "card table p13 ([709])"},
         "name": "Soul Termination",
         "description": "Restless spirits explode on hit dealing a portion of their damage as area of effect damage.",
         "maxRank": 3,
@@ -1356,7 +1356,7 @@
       {
         "id": "soul_combustion",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1.63, 1.81, 2.0], "per": "use", "note": "transformation: no mark; Stun_obj hit D + Soul_Combustion explosion floor(D*(1+0.4r)) x f_det. Uses the card's example f_det=0.45 (upper bound f_det=1: 2.4 / 2.8 / 3.2)"}], "confidence": "I", "note": "card table p14 (R3 class 'brak' for explosion)", "plannerFix": "planner has 0 hits and arcane 40 %/r (LSSD); card: 1 + f_det*(1+0.4r) hits per cast"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1.63, 1.81, 2.0, 2.18, 2.37, 2.55], "per": "use", "note": "transformation: no mark; Stun_obj hit D + Soul_Combustion explosion floor(D*(1+0.4r)) x f_det. Uses the card's example f_det=0.45 (upper bound f_det=1: 2.4 / 2.8 / 3.2)"}], "confidence": "I", "note": "card table p14 (R3 class 'brak' for explosion)", "plannerFix": "planner has 0 hits and arcane 40 %/r (LSSD); card: 1 + f_det*(1+0.4r) hits per cast"},
         "name": "Soul Combustion",
         "description": "Satan´s mark causes target souls to explode after a short delay dealing increased damage.",
         "maxRank": 3,
@@ -1547,7 +1547,7 @@
       {
         "id": "the_devil_within",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0045, 0.018, 0.0405, 0.072, 0.1125], "per": "hit", "note": "Blood Ripple: chance 3r % per cultist hit, floor(D*0.15r): expected 0.0045 r^2 D per hit"}], "confidence": "C", "note": "card table p5 ([683])"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0045, 0.018, 0.0405, 0.072, 0.1125, 0.162, 0.2205, 0.288], "per": "hit", "note": "Blood Ripple: chance 3r % per cultist hit, floor(D*0.15r): expected 0.0045 r^2 D per hit"}], "confidence": "C", "note": "card table p5 ([683])"},
         "name": "The Devil Within",
         "description": "Chance to unleash a ripple of blood on hit dealing additional damage.",
         "maxRank": 5,
@@ -1600,7 +1600,7 @@
       {
         "id": "eternal_corruption",
         "positionIndex": 9,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.3, 0.6, 0.9, 1.2, 1.5], "per": "use", "note": "second loop set (+1 to the wave loop) with chance 2r % per cast: x(1 + 0.02r) on the 15 base hits per cast = 0.3r extra hits per use"}], "confidence": "I", "note": "card table p9 re-based on the R4 base 15 hits per cast (planner of_total 100 with chance 2r % = same expectation)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.3, 0.6, 0.9, 1.2, 1.5, 1.8, 2.1, 2.4], "per": "use", "note": "second loop set (+1 to the wave loop) with chance 2r % per cast: x(1 + 0.02r) on the 15 base hits per cast = 0.3r extra hits per use"}], "confidence": "I", "note": "card table p9 re-based on the R4 base 15 hits per cast (planner of_total 100 with chance 2r % = same expectation)"},
         "name": "Eternal Corruption",
         "description": "Chance on cast to summon an additional black mass.",
         "maxRank": 5,
@@ -1910,7 +1910,7 @@
       {
         "id": "chain_of_fire",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0625, 0.15, 0.2625], "per": "hit", "note": "chain (N0, 1 hit of D*(1 + 0.25r)) with chance 5r % on EVERY flame hit: 0.05 r (1 + 0.25 r) per flame hit; was 0.35 r (1 + 0.25 r) per use assuming 7 flame hits, now per hit because the base is 0 (appears only with p10 r >= 2)"}], "confidence": "I", "note": "card table p12 (druga runda: chain N0 1 hit, chance 5r % per hit) re-based per flame hit since the dummy base is now 0 (Resztki E)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0625, 0.15, 0.2625, 0.4, 0.5625, 0.75], "per": "hit", "note": "chain (N0, 1 hit of D*(1 + 0.25r)) with chance 5r % on EVERY flame hit: 0.05 r (1 + 0.25 r) per flame hit; was 0.35 r (1 + 0.25 r) per use assuming 7 flame hits, now per hit because the base is 0 (appears only with p10 r >= 2)"}], "confidence": "I", "note": "card table p12 (druga runda: chain N0 1 hit, chance 5r % per hit) re-based per flame hit since the dummy base is now 0 (Resztki E)"},
         "name": "Chain of Fire",
         "description": "Chance to unleash a chain of fire on hit dealing increased damage.",
         "maxRank": 3,
@@ -2070,7 +2070,7 @@
       {
         "id": "manabinded_cast",
         "positionIndex": 1,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use", "note": "Manabinded Cast: chance 3r % per hit gives Smite of D*(1+energy*0.15r): +2 x 0.03 r hits per use (energy factor taken as 1)"}], "confidence": "C", "note": "card table p1 ([688])", "plannerFix": "planner gives conversion_energy 15 %/r on on_hit chance 3r; card: Smite object (extra hit) per hit"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15, 0.18, 0.21, 0.24], "per": "use", "note": "Manabinded Cast: chance 3r % per hit gives Smite of D*(1+energy*0.15r): +2 x 0.03 r hits per use (energy factor taken as 1)"}], "confidence": "C", "note": "card table p1 ([688])", "plannerFix": "planner gives conversion_energy 15 %/r on on_hit chance 3r; card: Smite object (extra hit) per hit"},
         "name": "Manabinded Cast",
         "description": "Chance to smite monsters with a pillar of searing light on hit dealing additional damage according to your energy.",
         "maxRank": 5,
@@ -2140,7 +2140,7 @@
       {
         "id": "total_illumination",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [0.03, 0.12, 0.27, 0.48, 0.75], "note": "expected extra beams: chance 3r % per cast x r extra beams (0.03 r^2); beams fall beside the dummy, perExtraProjectile 0 gives no hits"}, {"kind": "extra_hits", "byRank": [0.06, 0.12, 0.18, 0.24, 0.3], "per": "use", "replacesProjectileHits": true, "note": "chance 3r % per cast of n = 1 + r beams every 12 deg around the aim: for the dummy 160 px to the side and the aim through the centre (Resztki D, horizontal) n = 2..6 hit with 2 beams (was 1 for odd n): +2 hits for r = 1..5 -> 0.03r x 2 = 0.06r; vertical azimuth: +2 only for r = 1, 3, 5; beam margin 0.6 px (27.4 vs 28) I; p12 widens the strip (more beams hit)"}], "confidence": "I", "note": "Resztki D (bl2.py, 2 rays for n >= 2 horizontally) + PoR4 (a); beams hit 2 times each, hits relative to base 2.0; replaces the projectile conversion (perExtraProjectile 0)"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [0.03, 0.12, 0.27, 0.48, 0.75, 1.08, 1.47, 1.92], "note": "expected extra beams: chance 3r % per cast x r extra beams (0.03 r^2); beams fall beside the dummy, perExtraProjectile 0 gives no hits"}, {"kind": "extra_hits", "byRank": [0.06, 0.12, 0.18, 0.24, 0.3, 0.36, 0.42, 0.48], "per": "use", "replacesProjectileHits": true, "note": "chance 3r % per cast of n = 1 + r beams every 12 deg around the aim: for the dummy 160 px to the side and the aim through the centre (Resztki D, horizontal) n = 2..6 hit with 2 beams (was 1 for odd n): +2 hits for r = 1..5 -> 0.03r x 2 = 0.06r; vertical azimuth: +2 only for r = 1, 3, 5; beam margin 0.6 px (27.4 vs 28) I; p12 widens the strip (more beams hit)"}], "confidence": "I", "note": "Resztki D (bl2.py, 2 rays for n >= 2 horizontally) + PoR4 (a); beams hit 2 times each, hits relative to base 2.0; replaces the projectile conversion (perExtraProjectile 0)"},
         "name": "Total Illumination",
         "description": "Chance on cast to unleash additional bursts in an arc.",
         "maxRank": 5,
@@ -2156,7 +2156,7 @@
       {
         "id": "forking_glare",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.12, 0.23, 0.34, 0.45, 0.56], "per": "use", "note": "Forking Glare: one new beam once per cast if any of the 2 hits rolls chance 3r %; beam hits the dummy ~2 times"}], "confidence": "I", "note": "card table p6 ([689])", "plannerFix": "planner counts +100 % of total per hit proc (~1 hit); card: once per cast, beam of ~2 hits"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.12, 0.23, 0.34, 0.45, 0.56, 0.66, 0.75, 0.84], "per": "use", "note": "Forking Glare: one new beam once per cast if any of the 2 hits rolls chance 3r %; beam hits the dummy ~2 times"}], "confidence": "I", "note": "card table p6 ([689])", "plannerFix": "planner counts +100 % of total per hit proc (~1 hit); card: once per cast, beam of ~2 hits"},
         "name": "Forking Glare",
         "description": "Chance to unleash an additional burst of light from a nearby monster on hit.",
         "maxRank": 5,
@@ -2184,7 +2184,7 @@
       {
         "id": "light_orb",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use", "note": "extra Burst_Of_Light_Orb with chance 3r % per cast: ~1 hit of D"}], "confidence": "I", "note": "card table p8", "plannerFix": "planner has on_cast chance 3r with no effect; card: +1 hit of D"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15, 0.18, 0.21, 0.24], "per": "use", "note": "extra Burst_Of_Light_Orb with chance 3r % per cast: ~1 hit of D"}], "confidence": "I", "note": "card table p8", "plannerFix": "planner has on_cast chance 3r with no effect; card: +1 hit of D"},
         "name": "Light Orb",
         "description": "Chance on cast to unleash an orb of light briefly bursting into a burst of light.",
         "maxRank": 5,
@@ -2205,7 +2205,7 @@
       {
         "id": "blinding_light",
         "positionIndex": 10,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.016, 0.064, 0.144, 0.256, 0.4], "per": "hit", "note": "Blinding Light: chance 4r % per hit -> Universal Damage Return floor(D*0.4r) + stun 3 s: 0.04r*0.4r D per hit"}], "confidence": "C", "note": "card table p10 ([690])", "plannerFix": "planner adds +40 %/r arcane damage (LSSD) on the proc; card: separate return object of 0.4r*D with chance 4r %"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.016, 0.064, 0.144, 0.256, 0.4, 0.576, 0.784, 1.024], "per": "hit", "note": "Blinding Light: chance 4r % per hit -> Universal Damage Return floor(D*0.4r) + stun 3 s: 0.04r*0.4r D per hit"}], "confidence": "C", "note": "card table p10 ([690])", "plannerFix": "planner adds +40 %/r arcane damage (LSSD) on the proc; card: separate return object of 0.4r*D with chance 4r %"},
         "name": "Blinding Light",
         "description": "Chance to inflict stun and deal increased damage on hit.",
         "maxRank": 5,
@@ -2222,7 +2222,7 @@
       {
         "id": "holy_beam",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9], "note": "extra beams in the arc (3r)"}, {"kind": "extra_hits", "byRank": [2, 2, 2], "per": "use", "replacesProjectileHits": true, "note": "n = 1 + 3r beams (4, 7, 10) every 12 deg around the aim: 2 beams cross the dummy (Resztki D horizontal: 2 for every r; vertical azimuth 2, 1, 2 for r = 1..3) x 2 hits each, minus the base beam: +2 hits per cast; planner maxRank 3 (card table lists r4-5 too); margin 0.6 px I"}], "confidence": "I", "note": "R4 246#0 + PoR4 (a) + Resztki D (bl2.py, rule 38 aim through the centre); hits relative to base 2.0; replaces the projectile conversion"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9, 12, 15, 18], "note": "extra beams in the arc (3r)"}, {"kind": "extra_hits", "byRank": [2, 2, 2], "per": "use", "replacesProjectileHits": true, "note": "n = 1 + 3r beams (4, 7, 10) every 12 deg around the aim: 2 beams cross the dummy (Resztki D horizontal: 2 for every r; vertical azimuth 2, 1, 2 for r = 1..3) x 2 hits each, minus the base beam: +2 hits per cast; planner maxRank 3 (card table lists r4-5 too); margin 0.6 px I"}], "confidence": "I", "note": "R4 246#0 + PoR4 (a) + Resztki D (bl2.py, rule 38 aim through the centre); hits relative to base 2.0; replaces the projectile conversion"},
         "name": "Holy Beam",
         "description": "Unleash multiple bursts of light in an arc on hit.",
         "maxRank": 3,
@@ -2234,7 +2234,7 @@
       {
         "id": "burning_smite",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [100, 200, 300], "note": "LSSD += 100 %/r and beam width x(1+100 %/r)"}, {"kind": "extra_hits", "byRank": [1.4, 2.8, 4.2], "per": "use", "note": "Burning Smite: chance 10r % per beam hit makes a Heavenly Fire (7 hits of D): 0.1r * 2 hits * 7 = 1.4r hits per use"}], "confidence": "C", "note": "card table p12 ([691])", "plannerFix": "planner has on_hit chance 10r with arcane 100 %/r and burning/slow states but no 7-hit flame"},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [100, 200, 300], "note": "LSSD += 100 %/r and beam width x(1+100 %/r)"}, {"kind": "extra_hits", "byRank": [1.4, 2.8, 4.2, 5.6, 7.0, 8.4], "per": "use", "note": "Burning Smite: chance 10r % per beam hit makes a Heavenly Fire (7 hits of D): 0.1r * 2 hits * 7 = 1.4r hits per use"}], "confidence": "C", "note": "card table p12 ([691])", "plannerFix": "planner has on_hit chance 10r with arcane 100 %/r and burning/slow states but no 7-hit flame"},
         "effects": {
           "base": {"subtree_damage": 0},
           "perRank": {"subtree_damage": 100}
@@ -2407,7 +2407,7 @@
       {
         "id": "holy_discharge",
         "positionIndex": 3,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.015, 0.06, 0.135], "per": "hit", "note": "Holy Discharge: chance 5r % per chain hit makes Smite of D*0.3r: 0.05r * 0.3r D per hit"}], "confidence": "C", "note": "card table p3 ([693])"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.015, 0.06, 0.135, 0.24, 0.375, 0.54], "per": "hit", "note": "Holy Discharge: chance 5r % per chain hit makes Smite of D*0.3r: 0.05r * 0.3r D per hit"}], "confidence": "C", "note": "card table p3 ([693])"},
         "name": "Holy Discharge",
         "description": "Chance to smite monsters with holy lightning on hit dealing additional damage.",
         "maxRank": 3,
@@ -2423,7 +2423,7 @@
       {
         "id": "divine_divergence",
         "positionIndex": 4,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0075, 0.03, 0.0675, 0.12, 0.1875], "per": "use", "note": "Divine Divergence: chance 3r % per chain hit makes a new chain (N0, 1 hit of D*0.25r): 0.0075 r^2 hits per use"}], "confidence": "C", "note": "card table p4 ([694]; druga runda N0)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0075, 0.03, 0.0675, 0.12, 0.1875, 0.27, 0.3675, 0.48], "per": "use", "note": "Divine Divergence: chance 3r % per chain hit makes a new chain (N0, 1 hit of D*0.25r): 0.0075 r^2 hits per use"}], "confidence": "C", "note": "card table p4 ([694]; druga runda N0)"},
         "name": "Divine Divergence",
         "description": "Chance to unleash an additional chain of holy light on hit.",
         "maxRank": 5,
@@ -2518,7 +2518,7 @@
       {
         "id": "gods_altar",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3, 5, 9], "per": "use", "note": "God Altar lives 150 frames (Altar_Create_0 L11), fires every P + 1 frames with P = fps*shootFrequency, shootFrequency = max(max(1 - 0.25 r, 0.1) - 0.4 sentryAS, 0.2) (floor 0.2 s from Sentry_Alarm_8) = 0.75 / 0.5 / 0.25 s for r1..3, first shot after 15 frames: 3 / 5 / 9 shots (11 / 11 at r4-5); one N0 chain = 1 hit of D each; was 2.5 / shootFrequency = 3.33 / 5 / 10"}, {"kind": "cooldown_s", "byRank": [1, 1, 1], "note": "cooldown +1 s (GetTalentCooldown#250 A=1)"}], "confidence": "C", "note": "R4 250#1 (Shaman_Totem_Parent_Step_0 0x149e27690, Sentry_Alarm_8 0x149315a70): mechanism C, +-1 frame of the first shot I (margin >= 3 frames at the 150 frame boundary); sentry attack speed 0 in the scenario", "plannerFix": "planner models 25 %/r as faster_cast_rate; card: altar shots every max(1-0.25r, 0.2) s (floor 0.2 s), 3 / 5 / 9 shots, cooldown +1 s"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3, 5, 9, 11, 11, 11], "per": "use", "note": "God Altar lives 150 frames (Altar_Create_0 L11), fires every P + 1 frames with P = fps*shootFrequency, shootFrequency = max(max(1 - 0.25 r, 0.1) - 0.4 sentryAS, 0.2) (floor 0.2 s from Sentry_Alarm_8) = 0.75 / 0.5 / 0.25 s for r1..3, first shot after 15 frames: 3 / 5 / 9 shots (11 / 11 at r4-5); one N0 chain = 1 hit of D each; was 2.5 / shootFrequency = 3.33 / 5 / 10"}, {"kind": "cooldown_s", "byRank": [1, 1, 1], "note": "cooldown +1 s (GetTalentCooldown#250 A=1)"}], "confidence": "C", "note": "R4 250#1 (Shaman_Totem_Parent_Step_0 0x149e27690, Sentry_Alarm_8 0x149315a70): mechanism C, +-1 frame of the first shot I (margin >= 3 frames at the 150 frame boundary); sentry attack speed 0 in the scenario", "plannerFix": "planner models 25 %/r as faster_cast_rate; card: altar shots every max(1-0.25r, 0.2) s (floor 0.2 s), 3 / 5 / 9 shots, cooldown +1 s"},
         "name": "God´s Altar",
         "description": "Summon an altar of light unleashing chain of holy light on nearby monsters. Chain of holy light now has a cooldown.",
         "maxRank": 3,
@@ -2530,7 +2530,7 @@
       {
         "id": "recursive_light",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.6, 6.2, 9.8], "per": "use", "note": "Recursive Light: chain hit is 0.6r*D, then Smite pulses (6+3*r7 hits of 0.6r*D in total at r7=0); value = (6)*0.6r - 1 base hit, at celestial_light rank 0; each celestial rank adds 3*0.6r hits-equiv"}], "confidence": "C", "note": "card table p12 (Runda 2c, N0 + Smite, C)", "plannerFix": "planner gives of_total_damage 60 %/r (x(1+0.6r)); card: 6 hits of 0.6r D (Smite pulses) at r7=0"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.6, 6.2, 9.8, 13.4, 17.0, 20.6], "per": "use", "note": "Recursive Light: chain hit is 0.6r*D, then Smite pulses (6+3*r7 hits of 0.6r*D in total at r7=0); value = (6)*0.6r - 1 base hit, at celestial_light rank 0; each celestial rank adds 3*0.6r hits-equiv"}], "confidence": "C", "note": "card table p12 (Runda 2c, N0 + Smite, C)", "plannerFix": "planner gives of_total_damage 60 %/r (x(1+0.6r)); card: 6 hits of 0.6r D (Smite pulses) at r7=0"},
         "name": "Recursive Light",
         "description": "Chain of holy light strikes the same target multiple times if there are no monsters nearby dealing a portion of its damage.",
         "maxRank": 3,
@@ -2542,7 +2542,7 @@
       {
         "id": "echo_of_heavens",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.5, 1, 1.5], "per": "hit", "note": "Echo of Heavens: each chain hit spawns a bolt of floor(D*0.5r) (bolt hit on dummy assumed, I)"}], "confidence": "C", "note": "PoR4 (d) + R4 250#0: Chain_of_Holy_Light_Bolt_obj is created at the PLAYER (argument[1], asm 0x1452320a8/0x145232225) for every chain hit, flies 8 px/frame at the dummy centre (~20 frames, singleHit, full modifiers) and hits exactly once for floor(D*0.5r); C, not I as before"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.5, 1, 1.5, 2, 2.5, 3], "per": "hit", "note": "Echo of Heavens: each chain hit spawns a bolt of floor(D*0.5r) (bolt hit on dummy assumed, I)"}], "confidence": "C", "note": "PoR4 (d) + R4 250#0: Chain_of_Holy_Light_Bolt_obj is created at the PLAYER (argument[1], asm 0x1452320a8/0x145232225) for every chain hit, flies 8 px/frame at the dummy centre (~20 frames, singleHit, full modifiers) and hits exactly once for floor(D*0.5r); C, not I as before"},
         "name": "Echo of Heavens",
         "description": "Unleash holy bolts towards targets on hit with a chance to proc heavenly fire on hit.",
         "maxRank": 3,
@@ -2554,7 +2554,7 @@
       {
         "id": "gods_grasp",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.9, 2.8, 3.7], "per": "use", "note": "God's Grasp: one-shot grasp with explosion floor(D*(1+0.9r)) per cast; value = 1+0.9r hits"}], "confidence": "C", "note": "R4 250#0 (Grasp_obj_Destroy_0 0x14b2dd610: Explosion_Item_obj idx 1492 at the dummy, scale 1.25, full modifiers, 1 hit, no dice, ~2 s after the cast; asm 0x145232d1c); C, explosion object now read", "plannerFix": "planner applies arcane 90 %/r (LSSD) to the chain; card: separate Explosion_Item_obj hit D*(1+0.9r) once per cast (Grasp -> explosion)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.9, 2.8, 3.7, 4.6, 5.5, 6.4], "per": "use", "note": "God's Grasp: one-shot grasp with explosion floor(D*(1+0.9r)) per cast; value = 1+0.9r hits"}], "confidence": "C", "note": "R4 250#0 (Grasp_obj_Destroy_0 0x14b2dd610: Explosion_Item_obj idx 1492 at the dummy, scale 1.25, full modifiers, 1 hit, no dice, ~2 s after the cast; asm 0x145232d1c); C, explosion object now read", "plannerFix": "planner applies arcane 90 %/r (LSSD) to the chain; card: separate Explosion_Item_obj hit D*(1+0.9r) once per cast (Grasp -> explosion)"},
         "name": "God's Grasp",
         "description": "Pull monsters towards the first target on hit unleashing a divine explosion dealing increased damage with increased area of effect radius.",
         "maxRank": 3,
@@ -2830,7 +2830,7 @@
       {
         "id": "energy_charges",
         "positionIndex": 4,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 2, 2, 3, 4], "per": "use", "note": "T x(1+15 %/r): pulses N = 1+floor((5(1+0.15r)-0.5)/pf): r1..5 = 6,7,7,8,9 vs 5"}], "confidence": "C", "note": "card table p4", "plannerFix": "planner models 15 %/r as skill_duration but keeps 5 pulses; card: N = 6/7/7/8/9"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 2, 2, 3, 4, 5, 5, 6], "per": "use", "note": "T x(1+15 %/r): pulses N = 1+floor((5(1+0.15r)-0.5)/pf): r1..5 = 6,7,7,8,9 vs 5"}], "confidence": "C", "note": "card table p4", "plannerFix": "planner models 15 %/r as skill_duration but keeps 5 pulses; card: N = 6/7/7/8/9"},
         "name": "Energy Charges",
         "description": "Increases the duration of mana orb.",
         "maxRank": 5,
@@ -2885,7 +2885,7 @@
       {
         "id": "amplified_magic",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 1, 2, 3, 5], "per": "use", "note": "pulse period pf = 1 s x(1-10 %/r): N = 6/6/7/8/10 vs 5 (r5: 0.5 s -> 10 pulses)"}], "confidence": "C", "note": "card table p8"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 1, 2, 3, 5, 7, 11, 18], "per": "use", "note": "pulse period pf = 1 s x(1-10 %/r): N = 6/6/7/8/10 vs 5 (r5: 0.5 s -> 10 pulses)"}], "confidence": "C", "note": "card table p8"},
         "name": "Amplified Magic",
         "description": "Increases the tick frequency of mana orb.",
         "maxRank": 5,
@@ -2897,7 +2897,7 @@
       {
         "id": "heavens_aid",
         "positionIndex": 9,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.5, 1, 1.5, 2, 2.5], "per": "use", "note": "Heaven's Aid: chance 2r % per pulse spawns a new orb with its own ~5 pulses: 5 pulses x 5 x 0.02r = 0.5 r hits per use"}], "confidence": "I", "note": "card table p9 ([698])", "plannerFix": "planner gives +100 % of total per impulse proc (0.1 r hits per use); card: new orb with ~5 pulses each"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4], "per": "use", "note": "Heaven's Aid: chance 2r % per pulse spawns a new orb with its own ~5 pulses: 5 pulses x 5 x 0.02r = 0.5 r hits per use"}], "confidence": "I", "note": "card table p9 ([698])", "plannerFix": "planner gives +100 % of total per impulse proc (0.1 r hits per use); card: new orb with ~5 pulses each"},
         "name": "Heaven's Aid",
         "description": "Chance to summon an additional mana orb at target location on hit.",
         "maxRank": 5,
@@ -2961,7 +2961,7 @@
       {
         "id": "compacting_power",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.9, 5.64, 12.55], "per": "use", "note": "Compacting Power: T x(1+30 %/r), pulses N = 7/8/10 at r1..3, damage x(1+0.04r)^k per pulse, sum over pulses = 7.9 / 10.6 / 17.6 hits; delta from 5"}], "confidence": "I", "note": "card table p14 (C)", "plannerFix": "planner gives skill_duration and projectile_size but keeps 5 pulses at fixed damage"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.9, 5.64, 12.55, 20.73, 43.5, 75.5], "per": "use", "note": "Compacting Power: T x(1+30 %/r), pulses N = 7/8/10 at r1..3, damage x(1+0.04r)^k per pulse, sum over pulses = 7.9 / 10.6 / 17.6 hits; delta from 5"}], "confidence": "I", "note": "card table p14 (C)", "plannerFix": "planner gives skill_duration and projectile_size but keeps 5 pulses at fixed damage"},
         "name": "Compacting Power",
         "description": "Summon a mana orb with increased duration and size. Each mana pulse now increases its damage but shrinks it in size.",
         "maxRank": 3,

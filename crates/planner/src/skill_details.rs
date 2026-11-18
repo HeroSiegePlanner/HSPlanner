@@ -1320,7 +1320,7 @@ pub(crate) fn subtree_block(details: &DetailsContext, cx: &App) -> Option<Div> {
                         "planner.skills.applies",
                         &[("0", (name.replace('_', " ")).to_string())],
                     ),
-                    AppliedStateValue::Full { state, amount } => {
+                    AppliedStateValue::Full { state, amount, .. } => {
                         let amount = amount
                             .map(|a| a.base.unwrap_or(0.) + a.per_rank.unwrap_or(0.) * rank as f64)
                             .unwrap_or(0.);

@@ -480,7 +480,7 @@ fn agree(together: &[Ranks]) {
 fn pairs(a: &'static str, b: &'static str) -> Vec<Ranks<'static>> {
     let max = |id: &str| {
         let node = parity::nodes(CLASS, SKILL).iter().find(|n| n.id == id);
-        node.map_or(0, |n| n.max_rank)
+        node.map_or(0, |n| n.max_rank + parity::GRANTED)
     };
     let ranks = (1..=max(a)).flat_map(|ra| (1..=max(b)).map(move |rb| (ra, rb)));
     ranks.map(|(ra, rb)| vec![(a, ra), (b, rb)]).collect()
@@ -516,7 +516,7 @@ fn the_engines_subskill_hits_follow_the_sim() {
         near(sim, 1., 0.01) && near(base, 1., 0.01),
         "sim {sim}, engine {base}"
     );
-    let wrong = parity::misses(CLASS, SKILL, expected, engine, 0.01);
+    let wrong = parity::misses_past(CLASS, SKILL, expected, engine, 0.01, parity::GRANTED);
     assert!(wrong.is_empty(), "\n{}", wrong.join("\n"));
 }
 
@@ -525,14 +525,14 @@ fn the_engines_subskill_hits_follow_the_sim() {
 #[test]
 fn the_engine_follows_the_nodes_the_sim_plays_together() {
     let mut together: Vec<Vec<(&str, u32)>> = Vec::new();
-    for rank in 1..=5 {
+    for rank in 1..=5 + parity::GRANTED {
         let ring = ("scorching_fury", rank);
         together.push(vec![ring, ("burning_wings", 1)]);
         together.push(vec![ring, ("mental_heat", 1)]);
         together.push(vec![ring, ("collateral_burning", 2), ("burning_wings", 3)]);
         together.push(vec![("afterburn", rank), ("burning_wings", 2)]);
     }
-    for rank in 1..=3 {
+    for rank in 1..=3 + parity::GRANTED {
         together.push(vec![
             ("wings_of_the_phoenix", rank),
             ("burning_wings", rank),

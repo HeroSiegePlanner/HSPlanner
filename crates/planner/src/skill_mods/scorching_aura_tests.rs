@@ -455,7 +455,7 @@ fn the_engines_subskill_hits_follow_the_sim() {
         near(sim, 1., 1e-4) && near(base, 1., 1e-4),
         "sim {sim}, engine {base}"
     );
-    let wrong = parity::misses(CLASS, SKILL, uncapped, engine, 0.01);
+    let wrong = parity::misses_past(CLASS, SKILL, uncapped, engine, 0.01, parity::GRANTED);
     assert!(wrong.is_empty(), "\n{}", wrong.join("\n"));
 }
 
@@ -516,14 +516,9 @@ fn the_engine_follows_searing_burst_spread_by_scorched_lands() {
     agree(&pairs(&[], ("searing_burst", 3), ("scorched_lands", 5)));
 }
 
-/// Ranks Peg Leg, Overloaded Dice and Storm in a Vial can add above a node's highest (#238).
-const GRANTED: u32 = 3;
-
 #[test]
 fn granted_ranks_past_the_highest_keep_following_the_sim() {
-    let uncapped = super::parity::uncapped;
-    let wrong = parity::misses_past(CLASS, SKILL, uncapped, engine, 0.01, GRANTED);
-    assert!(wrong.is_empty(), "\n{}", wrong.join("\n"));
+    use parity::GRANTED;
     agree(&pairs(
         &[],
         ("ignite_the_flames", 5 + GRANTED),

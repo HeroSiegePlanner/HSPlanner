@@ -2152,7 +2152,7 @@ impl Render for SubskillTooltip {
                 section = section.child(Self::stat(label, value, cx));
             }
             for state in proc.applies_states.iter().flatten() {
-                if let AppliedStateValue::Full { state, amount } = state {
+                if let AppliedStateValue::Full { state, amount, .. } = state {
                     let amount = amount.as_ref();
                     let current = at_rank(
                         amount.and_then(|a| a.base),

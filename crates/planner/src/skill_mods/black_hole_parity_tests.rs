@@ -69,7 +69,9 @@ fn engine(ranks: &[(&str, u32)]) -> f32 {
 
 /// Every rank of `a` with every rank of `b`.
 fn pairs(a: (&'static str, u32), b: (&'static str, u32)) -> Vec<[(&'static str, u32); 2]> {
-    let ranks = |(node, max): (&'static str, u32)| (1..=max).map(move |rank| (node, rank));
+    let ranks = |(node, max): (&'static str, u32)| {
+        (1..=max + parity::GRANTED).map(move |rank| (node, rank))
+    };
     ranks(a)
         .flat_map(|x| ranks(b).map(move |y| [x, y]))
         .collect()
@@ -82,7 +84,7 @@ fn the_engines_subskill_hits_follow_the_sim() {
         (sim - 12.).abs() < 1e-4 && (base - 12.).abs() < 1e-4,
         "sim {sim}, engine {base}"
     );
-    let wrong = parity::misses(CLASS, SKILL, expected, engine, 0.01);
+    let wrong = parity::misses_past(CLASS, SKILL, expected, engine, 0.01, parity::GRANTED);
     assert!(wrong.is_empty(), "\n{}", wrong.join("\n"));
 }
 

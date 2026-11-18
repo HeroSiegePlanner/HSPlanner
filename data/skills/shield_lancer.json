@@ -170,7 +170,7 @@
       {
         "id": "punisher",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [2.75, 11, 24.75], "note": "Expected LSSD: roll 5r% per use x LSSD 55r% = 0.0275*r^2 (in %), V1 part. Conditional values would be 55r."}, {"kind": "extra_hits", "byRank": [0.4, 0.8, 1.2], "per": "use", "note": "Expected extra hits per use = 5r% x 8 Impale ticks of d0 (Impale tick 0.4 s, ~194 frames active => 8 hits; lifetime is I)."}], "confidence": "I", "note": "Card p11; lifetime of Impale (tick_hits 194/24) is I. Stun 3 s on dummy has no DPS effect.", "plannerFix": "Planner has the 55r LSSD proc but omits the Impale object (8 hits of d0 at 5r% per use)."},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [2.75, 11, 24.75], "note": "Expected LSSD: roll 5r% per use x LSSD 55r% = 0.0275*r^2 (in %), V1 part. Conditional values would be 55r."}, {"kind": "extra_hits", "byRank": [0.4, 0.8, 1.2, 1.6, 2.0, 2.4], "per": "use", "note": "Expected extra hits per use = 5r% x 8 Impale ticks of d0 (Impale tick 0.4 s, ~194 frames active => 8 hits; lifetime is I)."}], "confidence": "I", "note": "Card p11; lifetime of Impale (tick_hits 194/24) is I. Stun 3 s on dummy has no DPS effect.", "plannerFix": "Planner has the 55r LSSD proc but omits the Impale object (8 hits of d0 at 5r% per use)."},
         "name": "Punisher",
         "description": "Chance on attack to gain increased area of effect radius. Impale targets on hit dealing damage over time.",
         "maxRank": 3,
@@ -198,7 +198,7 @@
       {
         "id": "javelin_harbinger",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "dot", "byRank": [12, 24, 36], "note": "Value = bleed chance % on javelin hit (12r per use). Bleed 0.65r*d0 (card floor(d0*0.65r))."}, {"kind": "extra_hits", "byRank": [0.12, 0.24, 0.36], "per": "use", "note": "Javelin hit of d0 with chance 12r% per strike hit (one hit per use on dummy); pierces, direction is I."}], "confidence": "I", "note": "Card p13; javelin direction I.", "plannerFix": "Planner has the bleed proc but no javelin hit (+0.12r*d0 per use)."},
+        "dummy": {"effects": [{"kind": "dot", "byRank": [12, 24, 36], "note": "Value = bleed chance % on javelin hit (12r per use). Bleed 0.65r*d0 (card floor(d0*0.65r))."}, {"kind": "extra_hits", "byRank": [0.12, 0.24, 0.36, 0.48, 0.6, 0.72], "per": "use", "note": "Javelin hit of d0 with chance 12r% per strike hit (one hit per use on dummy); pierces, direction is I."}], "confidence": "I", "note": "Card p13; javelin direction I.", "plannerFix": "Planner has the bleed proc but no javelin hit (+0.12r*d0 per use)."},
         "name": "Javelin Harbinger",
         "description": "Increases the range of glorious strike significantly. Chance on attack to throw a piercing javelin inflicting bleeding on hit.",
         "maxRank": 3,
@@ -302,7 +302,7 @@
       {
         "id": "rampaging_assault",
         "positionIndex": 4,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.1, 0.15, 0.2, 0.25], "per": "use", "note": "Extra hit ~ d1 (card: floor(d0+d1+1+0.3r), flat add) with chance 5r% per hit."}], "confidence": "C", "note": "Card p4; rule 22 knock-up.", "plannerFix": "Planner applies arcane +30%/r on proc; card: extra hit is approximately one more d1 (chance 5r%)."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4], "per": "use", "note": "Extra hit ~ d1 (card: floor(d0+d1+1+0.3r), flat add) with chance 5r% per hit."}], "confidence": "C", "note": "Card p4; rule 22 knock-up.", "plannerFix": "Planner applies arcane +30%/r on proc; card: extra hit is approximately one more d1 (chance 5r%)."},
         "name": "Rampaging Assault",
         "description": "Chance to knock monsters up dealing increased damage on hit.",
         "maxRank": 5,
@@ -403,7 +403,7 @@
       {
         "id": "hyper_assault",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "cooldown_s", "byRank": [3, 3, 3], "note": "Cooldown +3 s (GetTalentCooldown), counted down with skill haste: >= 3 s/(1 + 0.005*h_eff) (>= 90 frames at h_eff 200). It binds the period: the sequence (4 charges ~2 + 3 x 12 frames + jump ~30 frames + t_wyw 13) is ~80 frames (I); the landing zeroes [142] before CheckTalentUse (Resztki)."}, {"kind": "extra_hits", "byRank": [8.25, 9.5, 10.75], "per": "use", "note": "Per use: 7 ring hits d1 (1 + 3 re-charges x 2 rings; 4 ring hits with p6 r2 when the trail ring falls >= 52 px) plus one landing hit d1*(1 + 1.25r) = 8 + 1.25r hits; minus the base 1 gives 7 + 1.25r (r = 1..3: 8.25 / 9.5 / 10.75). Was 4 + 1.25r (4 rings)."}], "confidence": "C", "note": "PoR4 (a) + Resztki B (bc2.py, bc3.py, C for p12): 4 charges (3 re-charges teleported 180 px at +90 deg), each re-charge starts 180 px from the target and gives exactly 2 rings (trail ring at ~99/49 px + end ring), independent of the angle; target = cursor - 6 px; the ring count depends on p6 (4 at p6 r2). Landing d1*(1 + 1.25r) is damage[1] = [767] (C). Card 'Pewnosc' line still lists the ring counts as I.", "plannerFix": "Planner gives +125%/r only; card: 7 ring hits d1 (1 + 3 x 2) plus one landing hit d1*(1 + 1.25r) per use with +3 s cooldown."},
+        "dummy": {"effects": [{"kind": "cooldown_s", "byRank": [3, 3, 3], "note": "Cooldown +3 s (GetTalentCooldown), counted down with skill haste: >= 3 s/(1 + 0.005*h_eff) (>= 90 frames at h_eff 200). It binds the period: the sequence (4 charges ~2 + 3 x 12 frames + jump ~30 frames + t_wyw 13) is ~80 frames (I); the landing zeroes [142] before CheckTalentUse (Resztki)."}, {"kind": "extra_hits", "byRank": [8.25, 9.5, 10.75, 12.0, 13.25, 14.5], "per": "use", "note": "Per use: 7 ring hits d1 (1 + 3 re-charges x 2 rings; 4 ring hits with p6 r2 when the trail ring falls >= 52 px) plus one landing hit d1*(1 + 1.25r) = 8 + 1.25r hits; minus the base 1 gives 7 + 1.25r (r = 1..3: 8.25 / 9.5 / 10.75). Was 4 + 1.25r (4 rings)."}], "confidence": "C", "note": "PoR4 (a) + Resztki B (bc2.py, bc3.py, C for p12): 4 charges (3 re-charges teleported 180 px at +90 deg), each re-charge starts 180 px from the target and gives exactly 2 rings (trail ring at ~99/49 px + end ring), independent of the angle; target = cursor - 6 px; the ring count depends on p6 (4 at p6 r2). Landing d1*(1 + 1.25r) is damage[1] = [767] (C). Card 'Pewnosc' line still lists the ring counts as I.", "plannerFix": "Planner gives +125%/r only; card: 7 ring hits d1 (1 + 3 x 2) plus one landing hit d1*(1 + 1.25r) per use with +3 s cooldown."},
         "name": "Hyper Assault",
         "description": "Charge multiple times in high speed at the target area, dealing area of effect damage damage before falling from the sky smashing the ground, knocking monsters up with increased damage.",
         "maxRank": 3,
@@ -590,7 +590,7 @@
       {
         "id": "two_for_one",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "use", "note": "Per landing: chance 4r% (irandom(99) < 4r) for a second Crushing_Lance_obj at instance_nth_nearest(2) = the dummy origin (n clamps to the single instance), 24-30 px from the first lance, falls 31 frames (~0.5 s delay); its AOE (r ~140 px) hits the dummy: 0.04r*(1 + pulses) hits of d0; pulses = 0 in the base, so 0.04r. The copy carries pulses, damage[0], [51], [1022], [179], [1019], [969], [769], [770], [18] but not [761]/shockWave (no recursion/chain). With p10 echo (pulses = 1 on a rolled use) the second lance repeats its AOE too (card formula 0.04r*(1 + pulses)); the [769] copy (p12) is not quantified by the card."}], "confidence": "I", "note": "R4 296#1 (C object type and position; nth_nearest clamp read from the decompilation, I). Same base number as before (0.04r), but the object type is resolved and the (1 + pulses) factor is new.", "plannerFix": "Planner proc has no second-lance effect; card: second Crushing_Lance_obj at the dummy with chance 4r% per landing, 0.04r*(1 + pulses) hits of d0."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2, 0.24, 0.28, 0.32], "per": "use", "note": "Per landing: chance 4r% (irandom(99) < 4r) for a second Crushing_Lance_obj at instance_nth_nearest(2) = the dummy origin (n clamps to the single instance), 24-30 px from the first lance, falls 31 frames (~0.5 s delay); its AOE (r ~140 px) hits the dummy: 0.04r*(1 + pulses) hits of d0; pulses = 0 in the base, so 0.04r. The copy carries pulses, damage[0], [51], [1022], [179], [1019], [969], [769], [770], [18] but not [761]/shockWave (no recursion/chain). With p10 echo (pulses = 1 on a rolled use) the second lance repeats its AOE too (card formula 0.04r*(1 + pulses)); the [769] copy (p12) is not quantified by the card."}], "confidence": "I", "note": "R4 296#1 (C object type and position; nth_nearest clamp read from the decompilation, I). Same base number as before (0.04r), but the object type is resolved and the (1 + pulses) factor is new.", "plannerFix": "Planner proc has no second-lance effect; card: second Crushing_Lance_obj at the dummy with chance 4r% per landing, 0.04r*(1 + pulses) hits of d0."},
         "name": "Two for One",
         "description": "Chance to unleash an additional crushing lance from the target to a nearby monster on hit.",
         "maxRank": 5,
@@ -642,7 +642,7 @@
       {
         "id": "scorching_quake",
         "positionIndex": 9,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "use", "note": "Echo: chance 4r% on cast to repeat the AOE once (pulses=1): +1 hit d0 per roll."}, {"kind": "dot", "byRank": [4, 8, 12, 16, 20], "note": "Value = burning chance % per use; burn amount 0.3r*d0 (card floor(d0*30%/r))."}], "confidence": "C", "note": "Card p10, asm L501/L540.", "plannerFix": "Planner has only the burning proc; the echo second AOE hit (+1 d0 at 4r%) is missing."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2, 0.24, 0.28, 0.32], "per": "use", "note": "Echo: chance 4r% on cast to repeat the AOE once (pulses=1): +1 hit d0 per roll."}, {"kind": "dot", "byRank": [4, 8, 12, 16, 20], "note": "Value = burning chance % per use; burn amount 0.3r*d0 (card floor(d0*30%/r))."}], "confidence": "C", "note": "Card p10, asm L501/L540.", "plannerFix": "Planner has only the burning proc; the echo second AOE hit (+1 d0 at 4r%) is missing."},
         "name": "Scorching Quake",
         "description": "Chance on cast to empower crushing lance causing it to echo an additional time inflicting burning on hit.",
         "maxRank": 5,
@@ -661,7 +661,7 @@
       {
         "id": "annihilating_salvo",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [4, 8, 12], "note": "Chain of 4r lances 96 px apart (shockWave = 4r)."}, {"kind": "extra_hits", "byRank": [1, 1, 1], "per": "use", "replacesProjectileHits": true, "note": "Only the second lance reaches the dummy (within r~140 px of the first AOE): +1 hit, rest too far."}], "confidence": "I", "note": "Card p11, AOE radius I.", "plannerFix": "Planner counts projectile_count 4r as hits; card: only +1 hit on a single dummy."},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [4, 8, 12, 16, 20, 24], "note": "Chain of 4r lances 96 px apart (shockWave = 4r)."}, {"kind": "extra_hits", "byRank": [1, 1, 1], "per": "use", "replacesProjectileHits": true, "note": "Only the second lance reaches the dummy (within r~140 px of the first AOE): +1 hit, rest too far."}], "confidence": "I", "note": "Card p11, AOE radius I.", "plannerFix": "Planner counts projectile_count 4r as hits; card: only +1 hit on a single dummy."},
         "name": "Annihilating Salvo",
         "description": "Unleash a shockwave of crushing lances towards target location.",
         "maxRank": 3,
@@ -685,7 +685,7 @@
       {
         "id": "seismic_perforation",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9], "note": "3r Seismic chains (N = seismicPerforation[0] = 3r, first node 44 px from the lance at angle 360/N*i, then every floor(48*1.25) = 60 px); their hits are given by the extra_hits below."}, {"kind": "extra_hits", "byRank": [1, 2, 4], "per": "use", "replacesProjectileHits": true, "note": "Only the FIRST node of each chain reaches the dummy (node mask r ~39.4 + dummy 12 = 51.4 px; later nodes >= 80 px). Lance at T = (x, y-30), 30 px from the dummy origin (Resztki E): 1 / 2 / 4 hits of d0 for r = 1..3 (card lists r = 1..5: 1 / 2 / 4 / 5 / 7; margin +-1, nodes at 0 and 180 deg sit ~50 px away). Cursor exactly on (x, y): all 3r nodes hit = 3 / 6 / 9 (r = 1..3)."}], "confidence": "I", "note": "R4 296#2 + Resztki E (asm 0x1466b1d59: Crushing Lance at T = (x, y-30)): 1 / 2 / 4 / 5 / 7 (old R4 2 / 4 / 5 / 7 / 8 was for 24 px). Was kind other 'not counted'. Geometry C, +-1 margin I.", "plannerFix": "Planner counts trail/projectile 3r as hits; card: only the first node of each chain reaches a lone dummy, 1 / 2 / 4 hits (r = 1..3) with the lance 30 px from the dummy."},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9, 12, 15, 18], "note": "3r Seismic chains (N = seismicPerforation[0] = 3r, first node 44 px from the lance at angle 360/N*i, then every floor(48*1.25) = 60 px); their hits are given by the extra_hits below."}, {"kind": "extra_hits", "byRank": [1, 2, 4, 5, 7], "per": "use", "replacesProjectileHits": true, "note": "Only the FIRST node of each chain reaches the dummy (node mask r ~39.4 + dummy 12 = 51.4 px; later nodes >= 80 px). Lance at T = (x, y-30), 30 px from the dummy origin (Resztki E): 1 / 2 / 4 hits of d0 for r = 1..3 (card lists r = 1..5: 1 / 2 / 4 / 5 / 7; margin +-1, nodes at 0 and 180 deg sit ~50 px away). Cursor exactly on (x, y): all 3r nodes hit = 3 / 6 / 9 (r = 1..3)."}], "confidence": "I", "note": "R4 296#2 + Resztki E (asm 0x1466b1d59: Crushing Lance at T = (x, y-30)): 1 / 2 / 4 / 5 / 7 (old R4 2 / 4 / 5 / 7 / 8 was for 24 px). Was kind other 'not counted'. Geometry C, +-1 margin I.", "plannerFix": "Planner counts trail/projectile 3r as hits; card: only the first node of each chain reaches a lone dummy, 1 / 2 / 4 hits (r = 1..3) with the lance 30 px from the dummy."},
         "name": "Seismic Perforation",
         "description": "Crushing lance hits the ground with force unleashing shockwaves into all directions.",
         "maxRank": 3,
@@ -697,7 +697,7 @@
       {
         "id": "marked_for_javelinstrike",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.75, 1.5, 2.25], "per": "use", "note": "One javelin per lance hit with damage 0.75r*d0: +0.75r hits per use."}], "confidence": "I", "note": "Card p14 (javelin path I); planner of_total_damage 75r matches."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.75, 1.5, 2.25, 3.0, 3.75, 4.5], "per": "use", "note": "One javelin per lance hit with damage 0.75r*d0: +0.75r hits per use."}], "confidence": "I", "note": "Card p14 (javelin path I); planner of_total_damage 75r matches."},
         "name": "Marked for Javelinstrike",
         "description": "Throw piercing javelins at monsters hit by crushing lance for a portion of the damage.",
         "maxRank": 3,
@@ -908,7 +908,7 @@
       {
         "id": "trust_in_the_thrust",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.5, 6, 13.5], "per": "use", "replacesProjectileHits": true, "note": "3r extra thrusts x floor(0.5r*d0) each per use (deterministic on the first hit, each aimed at the dummy origin: image_angle = angle - 180, ignoreHost, own hit pack) = 1.5r^2 hits (r = 1..3: 1.5 / 6 / 13.5)."}, {"kind": "projectiles", "byRank": [3, 6, 9], "note": "3r extra thrust objects (projectile_count); their hits are given by the extra_hits above."}], "confidence": "C", "note": "R4 293#1 (C, asm 0x145254ed9-0x1452555d1, 0x145255066, 0x145255542): every new thrust is aimed at the dummy origin and reaches it ~3 frames + 2 activation frames after the first hit; the card's number is confirmed (was I, 'thrust directions I')."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.5, 6, 13.5, 24, 37.5, 54], "per": "use", "replacesProjectileHits": true, "note": "3r extra thrusts x floor(0.5r*d0) each per use (deterministic on the first hit, each aimed at the dummy origin: image_angle = angle - 180, ignoreHost, own hit pack) = 1.5r^2 hits (r = 1..3: 1.5 / 6 / 13.5)."}, {"kind": "projectiles", "byRank": [3, 6, 9, 12, 15, 18], "note": "3r extra thrust objects (projectile_count); their hits are given by the extra_hits above."}], "confidence": "C", "note": "R4 293#1 (C, asm 0x145254ed9-0x1452555d1, 0x145255066, 0x145255542): every new thrust is aimed at the dummy origin and reaches it ~3 frames + 2 activation frames after the first hit; the card's number is confirmed (was I, 'thrust directions I')."},
         "name": "Trust in the Thrust",
         "description": "Unleash a circle of lances thrusting the first target on hit from all directions.",
         "maxRank": 3,

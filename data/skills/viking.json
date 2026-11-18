@@ -244,7 +244,7 @@
       {
         "id": "crashquake",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.9, 3.6, 7.83], "per": "use", "replacesProjectileHits": true}], "confidence": "I", "note": "card p12 (R4 11#3): 3r Crash Quake waves every 360/(3r) deg from the run direction pe[154], first segment 32 px from the player, then every 60 px (circle mask r ~40, singleHit, no pack); the player stops 18-41 px from the dummy. Segments hitting the dummy per use (segment 0 and 1 of each wave, threshold 52 px): mean ~0.65*n, n = 3r: 2.0 (1-3), 4.0 (3-6), 5.8 (4-9) for r = 1..3 (r = 4, 5 would be 8.0 and 9.8; planner maxRank 3). Each hit floor(0.45r*d1): extra = hits*0.45r = 0.9, 3.6, 7.83. Replaces the old '1-2 segments x 1 aimed wave'. C for directions/32 px/60 px, I for pe[154], the circular mask and the start phase.", "plannerFix": "Crashquake waves are 3r projectiles but only those aimed at the dummy hit; planner projectile_count 3/r with perExtraProjectile 0 gives 0 extra hits, and arcane 45/r is applied to every hit."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.9, 3.6, 7.83, 14.4, 22.05], "per": "use", "replacesProjectileHits": true}], "confidence": "I", "note": "card p12 (R4 11#3): 3r Crash Quake waves every 360/(3r) deg from the run direction pe[154], first segment 32 px from the player, then every 60 px (circle mask r ~40, singleHit, no pack); the player stops 18-41 px from the dummy. Segments hitting the dummy per use (segment 0 and 1 of each wave, threshold 52 px): mean ~0.65*n, n = 3r: 2.0 (1-3), 4.0 (3-6), 5.8 (4-9) for r = 1..3 (r = 4, 5 would be 8.0 and 9.8; planner maxRank 3). Each hit floor(0.45r*d1): extra = hits*0.45r = 0.9, 3.6, 7.83. Replaces the old '1-2 segments x 1 aimed wave'. C for directions/32 px/60 px, I for pe[154], the circular mask and the start phase.", "plannerFix": "Crashquake waves are 3r projectiles but only those aimed at the dummy hit; planner projectile_count 3/r with perExtraProjectile 0 gives 0 extra hits, and arcane 45/r is applied to every hit."},
         "name": "Crashquake",
         "description": "Unleash powerful shockwaves when crashing into monsters or terrain.",
         "maxRank": 3,
@@ -256,7 +256,7 @@
       {
         "id": "whirling_charge",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3.3, 5.1, 6.9]}], "confidence": "I", "note": "card p13 (R3, playerEffect[42]): whirlwinds damage d1*(1+1.2r) each; 1-2 hit the dummy per pass (I, midpoint 1.5), so set_hits = 1.5*(1+1.2r) = 3.3, 5.1, 6.9 per use.", "plannerFix": "Whirling Charge is a transformation: the charge passes through the dummy and leaves whirlwinds (every ~12 frames) instead of one ring; planner applies arcane 120/r and area 50/r to the ring only."},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3.3, 5.1, 6.9, 8.7, 10.5, 12.3]}], "confidence": "I", "note": "card p13 (R3, playerEffect[42]): whirlwinds damage d1*(1+1.2r) each; 1-2 hit the dummy per pass (I, midpoint 1.5), so set_hits = 1.5*(1+1.2r) = 3.3, 5.1, 6.9 per use.", "plannerFix": "Whirling Charge is a transformation: the charge passes through the dummy and leaves whirlwinds (every ~12 frames) instead of one ring; planner applies arcane 120/r and area 50/r to the ring only."},
         "name": "Whirling Charge",
         "description": "Charge forward in a straight line unleashing a massive whirlwind around you.",
         "maxRank": 3,
@@ -268,7 +268,7 @@
       {
         "id": "mountain_fall",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.35, 1.4, 3.15], "per": "use"}], "confidence": "C", "note": "card p14: [196] = [1/r, 35 %/r]: r boulders at each enemy within 80*[71] px, damage floor(d1*0.35r); the dummy at the ring centre gets all of them. Extra = r*0.35r = 0.35, 1.4, 3.15.", "plannerFix": "Mountain Fall adds r boulders per use, each 0.35r*d1 (extra hits = 0.35 r^2); planner gives projectile_count +1/r with perExtraProjectile 0 (0 hits) and arcane 35/r on the whole hit."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.35, 1.4, 3.15, 5.6, 8.75, 12.6], "per": "use"}], "confidence": "C", "note": "card p14: [196] = [1/r, 35 %/r]: r boulders at each enemy within 80*[71] px, damage floor(d1*0.35r); the dummy at the ring centre gets all of them. Extra = r*0.35r = 0.35, 1.4, 3.15.", "plannerFix": "Mountain Fall adds r boulders per use, each 0.35r*d1 (extra hits = 0.35 r^2); planner gives projectile_count +1/r with perExtraProjectile 0 (0 hits) and arcane 35/r on the whole hit."},
         "name": "Mountain Fall",
         "description": "The mountain breaks and huge boulders fall down on monsters around you when crashing into monsters or terrain.",
         "maxRank": 3,
@@ -639,7 +639,7 @@
       {
         "id": "pulsing_echo",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.2, 3.36, 8.256], "per": "use", "replacesProjectileHits": true}], "confidence": "C", "note": "card p12: pulseAmount=r, pulse k=1..r has d1*(1+0.2r)^k; extra hits per use = sum_{k=1..r}(1+0.2r)^k = 1.2 / 3.36 / 8.256 (r=1/2/3). Base hit 1.0 counts the main hit. Children inherit effects (C). Pulses use the same centre (in-zone).", "plannerFix": "Pulsing Echo is r extra pulses with damage d1*(1+0.2r)^k (growing per pulse, its own hit map); planner gives projectile_count +1/r with perExtraProjectile 0.0, so no extra hits; the 20/r arcane is a per-pulse growth, not LSSD."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.2, 3.36, 8.256, 21.37, 62.0, 206.03], "per": "use", "replacesProjectileHits": true}], "confidence": "C", "note": "card p12: pulseAmount=r, pulse k=1..r has d1*(1+0.2r)^k; extra hits per use = sum_{k=1..r}(1+0.2r)^k = 1.2 / 3.36 / 8.256 (r=1/2/3). Base hit 1.0 counts the main hit. Children inherit effects (C). Pulses use the same centre (in-zone).", "plannerFix": "Pulsing Echo is r extra pulses with damage d1*(1+0.2r)^k (growing per pulse, its own hit map); planner gives projectile_count +1/r with perExtraProjectile 0.0, so no extra hits; the 20/r arcane is a per-pulse growth, not LSSD."},
         "name": "Pulsing Echo",
         "description": "Now performs an echoing shout pulsating multiple times dealing increased damage with each pulse.",
         "maxRank": 3,
@@ -663,7 +663,7 @@
       {
         "id": "roaring_carnage",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.701, 1.402, 2.103], "per": "use"}], "confidence": "I", "note": "card p14 [139]=75/r lifts the dummy; landing hit floor(0.75r*sum d_t) once per lift (~46 frames, class 'brak': no crit/mults). Per use = 0.75r*min(1, period/46 frames) with the R4 cast period 43 frames (ceil(72/c)+1 at c = 1.75; was T_cast 34 frames): 0.75r*43/46 = 0.701r. The card tells to recompute period-derived formulas with the new period (R4 'Wzory pochodne'). Lift cadence and landing timing are I.", "plannerFix": "Roaring Carnage gives a landing hit of 0.75r*sum(d) per lift (not arcane +75/r damage); one landing per lift (~46 frames) and the lift is triggered by the dummy hit (buff 47), so per use it is ~0.75r*(34/46)."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.701, 1.402, 2.103, 2.804, 3.505, 4.206], "per": "use"}], "confidence": "I", "note": "card p14 [139]=75/r lifts the dummy; landing hit floor(0.75r*sum d_t) once per lift (~46 frames, class 'brak': no crit/mults). Per use = 0.75r*min(1, period/46 frames) with the R4 cast period 43 frames (ceil(72/c)+1 at c = 1.75; was T_cast 34 frames): 0.75r*43/46 = 0.701r. The card tells to recompute period-derived formulas with the new period (R4 'Wzory pochodne'). Lift cadence and landing timing are I.", "plannerFix": "Roaring Carnage gives a landing hit of 0.75r*sum(d) per lift (not arcane +75/r damage); one landing per lift (~46 frames) and the lift is triggered by the dummy hit (buff 47), so per use it is ~0.75r*(34/46)."},
         "name": "Roaring Carnage",
         "description": "Knock up monsters causing them to take damage when they land.",
         "maxRank": 3,
@@ -944,7 +944,7 @@
       {
         "id": "shattered_earth",
         "positionIndex": 10,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.052, 0.128, 0.228, 0.352, 0.5], "per": "use"}], "confidence": "C", "note": "card p10 Shattered Earth (L206, Viking_Shattered_Earth_obj at target, singleHit, copies crit/stun): expected extra hits per use = 0.04r*(1+0.3r) = 0.052, 0.128, 0.228, 0.352, 0.5.", "plannerFix": "card: separate object d0*(1+0.3r) rolled per USE (chance 4r %), not on hit; planner on_hit proc with 30 %/r physical."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.052, 0.128, 0.228, 0.352, 0.5, 0.672, 0.868, 1.088], "per": "use"}], "confidence": "C", "note": "card p10 Shattered Earth (L206, Viking_Shattered_Earth_obj at target, singleHit, copies crit/stun): expected extra hits per use = 0.04r*(1+0.3r) = 0.052, 0.128, 0.228, 0.352, 0.5.", "plannerFix": "card: separate object d0*(1+0.3r) rolled per USE (chance 4r %), not on hit; planner on_hit proc with 30 %/r physical."},
         "name": "Shattered Earth",
         "description": "Chance to strike target with an earth pillar on hit knocking them airborne dealing additional damage.",
         "maxRank": 5,
@@ -972,7 +972,7 @@
       {
         "id": "echoing_slam",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.35, 1.7, 2.05], "per": "use", "replacesProjectileHits": true, "requires": "seismic_crack"}], "confidence": "I", "note": "card p12 Echoing Slam: pulse k of the crack has d0 + k*floor(0.35r*d0) (Alarm_0 L34). Only pulse k=1 covers the dummy at the first-crack centre (264 px), so extra hits = 1 + 0.35r = 1.35, 1.70, 2.05 (requires p13). Geometry of the pulse positions is I.", "plannerFix": "Echoing Slam adds pulses only together with Seismic Crack (p13); without p13 it adds 0. Planner gives physical +35 %/r and projectile_count +1/r with no requirement."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.35, 1.7, 2.05, 2.4, 2.75, 3.1], "per": "use", "replacesProjectileHits": true, "requires": "seismic_crack"}], "confidence": "I", "note": "card p12 Echoing Slam: pulse k of the crack has d0 + k*floor(0.35r*d0) (Alarm_0 L34). Only pulse k=1 covers the dummy at the first-crack centre (264 px), so extra hits = 1 + 0.35r = 1.35, 1.70, 2.05 (requires p13). Geometry of the pulse positions is I.", "plannerFix": "Echoing Slam adds pulses only together with Seismic Crack (p13); without p13 it adds 0. Planner gives physical +35 %/r and projectile_count +1/r with no requirement."},
         "name": "Echoing Slam",
         "description": "Slam multiple waves on a short distance increasing damage with each wave.",
         "maxRank": 3,
@@ -984,7 +984,7 @@
       {
         "id": "seismic_crack",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [2, 2, 2]}, {"kind": "extra_hits", "byRank": [0.402, 0.804, 1.207], "per": "use"}], "confidence": "I", "note": "card p13 (main result, in-zone, aim line through the dummy centre: gap offset 0 px, PoR4 a): dummy at the first-crack centre (~264 px) gets 2 hits; at 160 px it gets 1 (set_hits 2 in-zone convention; base is in-zone 1). Landing hit floor(sum d*0.5r) once per lift (~46 frames, class 'brak', I): per use = 0.5r*min(1, period/46) with the R4 attack period (no jump) ceil(72/S)+1 = 37 frames at S = 2 (was T_att ~34 frames): 0.5r*37/46 = 0.402r (S = 1.2: period 61 -> 0.5r; S = 3: 25 frames -> 0.27r).", "plannerFix": "Seismic Crack is a transformation: no jump (period = T_att), a 483 px crack 64 px in front of the player, a lift and a landing hit floor(0.5r*sum d). Planner only applies physical +50 %/r to the jump hit."},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [2, 2, 2]}, {"kind": "extra_hits", "byRank": [0.402, 0.804, 1.207, 1.609, 2.012, 2.414], "per": "use"}], "confidence": "I", "note": "card p13 (main result, in-zone, aim line through the dummy centre: gap offset 0 px, PoR4 a): dummy at the first-crack centre (~264 px) gets 2 hits; at 160 px it gets 1 (set_hits 2 in-zone convention; base is in-zone 1). Landing hit floor(sum d*0.5r) once per lift (~46 frames, class 'brak', I): per use = 0.5r*min(1, period/46) with the R4 attack period (no jump) ceil(72/S)+1 = 37 frames at S = 2 (was T_att ~34 frames): 0.5r*37/46 = 0.402r (S = 1.2: period 61 -> 0.5r; S = 3: 25 frames -> 0.27r).", "plannerFix": "Seismic Crack is a transformation: no jump (period = T_att), a 483 px crack 64 px in front of the player, a lift and a landing hit floor(0.5r*sum d). Planner only applies physical +50 %/r to the jump hit."},
         "name": "Seismic Crack",
         "description": "Now smash in front of you in a long narrow line knocking monsters in air causing them to unleash an aoe pulse upon landing.",
         "maxRank": 3,
@@ -996,7 +996,7 @@
       {
         "id": "younger_dryas",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.75, 2.5, 3.25], "per": "use"}, {"kind": "cooldown_s", "byRank": [1.5, 1.5, 1.5]}], "confidence": "C", "note": "card p14 (Alarm_0 L38-48): comet lands 283.5 px from jump start (inside the 168-304 px zone) -> +1 hit d0*(1+0.75r) per use; at 160 px 0 hits. Cooldown +1.5 s (period max(T_att, 1.5 s)). Comet blast radius is I.", "plannerFix": "card: Younger Dryas is a separate cold comet hit d0*(1+0.75r) landing 283.5 px from the jump start plus +1.5 s cooldown; planner applies physical +75 %/r to the whole hit."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.75, 2.5, 3.25, 4.0, 4.75, 5.5], "per": "use"}, {"kind": "cooldown_s", "byRank": [1.5, 1.5, 1.5]}], "confidence": "C", "note": "card p14 (Alarm_0 L38-48): comet lands 283.5 px from jump start (inside the 168-304 px zone) -> +1 hit d0*(1+0.75r) per use; at 160 px 0 hits. Cooldown +1.5 s (period max(T_att, 1.5 s)). Comet blast radius is I.", "plannerFix": "card: Younger Dryas is a separate cold comet hit d0*(1+0.75r) landing 283.5 px from the jump start plus +1.5 s cooldown; planner applies physical +75 %/r to the whole hit."},
         "name": "Younger Dryas",
         "description": "Smashing the ground now drops a massive asteroid from the sky sending a huge tsunami dealing increased damage. Seismic Slam now has a cooldown.",
         "maxRank": 3,
@@ -1215,7 +1215,7 @@
       {
         "id": "bulls_eye",
         "positionIndex": 9,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.25, 0.5, 0.75, 1.0, 1.25], "per": "use"}], "confidence": "C", "note": "card p9 (handler L40): Universal_Damage_Return_obj with floor(d1*0.25r) on each explosion hit; 1 explosion hit per use -> 0.25r extra hits.", "plannerFix": "Bulls Eye adds a separate damage return hit of 0.25r*d1 (Universal_Damage_Return_obj); planner adds arcane +25 %/r to the hit instead."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0], "per": "use"}], "confidence": "C", "note": "card p9 (handler L40): Universal_Damage_Return_obj with floor(d1*0.25r) on each explosion hit; 1 explosion hit per use -> 0.25r extra hits.", "plannerFix": "Bulls Eye adds a separate damage return hit of 0.25r*d1 (Universal_Damage_Return_obj); planner adds arcane +25 %/r to the hit instead."},
         "name": "Bulls Eye",
         "description": "When directly hitting another monster, cause the monster to be knocked up dealing area of effect damage when landing.",
         "maxRank": 5,
@@ -1263,7 +1263,7 @@
       {
         "id": "dimensional_pitch",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 2, 3], "per": "use", "replacesProjectileHits": true}], "confidence": "I", "note": "card p13 (L708): loop of 1+1/r objects with the same myEnemy; each explosion is a separate hit. Assumed each object carries the dummy -> +r hits (I whether all carry it).", "plannerFix": "Dimensional Pitch gives +r throw objects, each with its own explosion (+r hits, base damage); planner adds arcane +40 %/r which the card does not contain, plus projectile_count 1/r converted by perExtraProjectile."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 2, 3, 4, 5, 6], "per": "use", "replacesProjectileHits": true}], "confidence": "I", "note": "card p13 (L708): loop of 1+1/r objects with the same myEnemy; each explosion is a separate hit. Assumed each object carries the dummy -> +r hits (I whether all carry it).", "plannerFix": "Dimensional Pitch gives +r throw objects, each with its own explosion (+r hits, base damage); planner adds arcane +40 %/r which the card does not contain, plus projectile_count 1/r converted by perExtraProjectile."},
         "name": "Dimensional Pitch",
         "description": "Additionally throw shadow copies of the monster with increased damage.",
         "maxRank": 3,
@@ -1275,7 +1275,7 @@
       {
         "id": "echoing_throw",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.25, 3.75, 10.172], "per": "use", "replacesProjectileHits": true}], "confidence": "I", "note": "card p14: [292] = 1/r impulses, [293] = 25 %/r growth per impulse (Explosion_Item_obj_Step_0 pulseDamage). Extra hits = sum_{k=1..r} (1+0.25r)^k = 1.25, 3.75, 10.172 (type of damage I).", "plannerFix": "Echoing Throw: r impulses, each x(1+0.25r) of the previous explosion (sum m^k); planner adds arcane +25 %/r to the hit and projectile_count 1/r (converted by perExtraProjectile 1.0)."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.25, 3.75, 10.172, 30.0, 101.997, 405.234], "per": "use", "replacesProjectileHits": true}], "confidence": "I", "note": "card p14: [292] = 1/r impulses, [293] = 25 %/r growth per impulse (Explosion_Item_obj_Step_0 pulseDamage). Extra hits = sum_{k=1..r} (1+0.25r)^k = 1.25, 3.75, 10.172 (type of damage I).", "plannerFix": "Echoing Throw: r impulses, each x(1+0.25r) of the previous explosion (sum m^k); planner adds arcane +25 %/r to the hit and projectile_count 1/r (converted by perExtraProjectile 1.0)."},
         "name": "Echoing Throw",
         "description": "When thrown monster lands it shocks the ground multiple times with increased damage.",
         "maxRank": 3,
@@ -1359,7 +1359,7 @@
       {
         "id": "rapid_striking",
         "positionIndex": 1,
-        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.5, 2.0, 2.5, 3.0, 3.5]}], "confidence": "C", "note": "card p1: series n = 2 + r strikes, then a 1 s pause. hits_mult = n/2 relative to the base series of 2 strikes. R4: the series period grows by 9 frames per extra strike (Zeal attack-speed base 10, strike period 9 frames, not T_att) plus the unchanged 3 + 60/(1 + 0.005h) tail; DPS effect = hits_mult divided by the period ratio (72 + 9r)/72 at h = 0 (engine series model).", "plannerFix": "Rapid Striking adds one strike per series (n = 2 + r), not a projectile; planner projectile_count 1/r is not a hit, and the planner has no series period 9*(n-1) + 3 + 60/(1 + 0.005h) frames (R4: strike period 9 frames, IAS-independent)."},
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]}], "confidence": "C", "note": "card p1: series n = 2 + r strikes, then a 1 s pause. hits_mult = n/2 relative to the base series of 2 strikes. R4: the series period grows by 9 frames per extra strike (Zeal attack-speed base 10, strike period 9 frames, not T_att) plus the unchanged 3 + 60/(1 + 0.005h) tail; DPS effect = hits_mult divided by the period ratio (72 + 9r)/72 at h = 0 (engine series model).", "plannerFix": "Rapid Striking adds one strike per series (n = 2 + r), not a projectile; planner projectile_count 1/r is not a hit, and the planner has no series period 9*(n-1) + 3 + 60/(1 + 0.005h) frames (R4: strike period 9 frames, IAS-independent)."},
         "name": "Rapid Striking",
         "description": "Increases the amount of attacks done by zeal.",
         "maxRank": 5,
@@ -1502,7 +1502,7 @@
       {
         "id": "blood_ripple",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.225, 0.6, 1.125], "per": "hit"}], "confidence": "C", "note": "card p12 (handler L103): chance 0.15r per hit of an Explosion_Item_obj with damage d0*(1+0.5r); per hit = c*m = 0.15r*(1+0.5r) = 0.225, 0.6, 1.125 (main-hit units).", "plannerFix": "Blood Ripple spawns an explosion on the hit with chance 15r % of floor(d0*(1+0.5r)); planner applies physical +50 %/r and area 20/r to the hit itself, not a separate hit."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.225, 0.6, 1.125, 1.8, 2.625, 3.6], "per": "hit"}], "confidence": "C", "note": "card p12 (handler L103): chance 0.15r per hit of an Explosion_Item_obj with damage d0*(1+0.5r); per hit = c*m = 0.15r*(1+0.5r) = 0.225, 0.6, 1.125 (main-hit units).", "plannerFix": "Blood Ripple spawns an explosion on the hit with chance 15r % of floor(d0*(1+0.5r)); planner applies physical +50 %/r and area 20/r to the hit itself, not a separate hit."},
         "name": "Blood Ripple",
         "description": "Each strike has a chance to unleash a ripple of blood dealing area of effect damage.",
         "maxRank": 3,
@@ -1713,7 +1713,7 @@
       {
         "id": "frosted_blow",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.045, 0.182, 0.409, 0.727, 1.136], "per": "use"}], "confidence": "C", "note": "card p8 (L791, handler L132): expected extra hits per use = (0.04r) * 2 axe hits * (0.25r * A/M) = 0.0454 r^2 in main-hit units (A/M = 2.27 at the planner reference L20, W=4; W-dependent).", "plannerFix": "Frosted Blow is rolled per USE (chance 4r %) and makes one nova per axe hit with damage 0.25r*(d0+d2); planner uses on_hit proc and +25 %/r damage."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.045, 0.182, 0.409, 0.727, 1.136, 1.636, 2.227, 2.908], "per": "use"}], "confidence": "C", "note": "card p8 (L791, handler L132): expected extra hits per use = (0.04r) * 2 axe hits * (0.25r * A/M) = 0.0454 r^2 in main-hit units (A/M = 2.27 at the planner reference L20, W=4; W-dependent).", "plannerFix": "Frosted Blow is rolled per USE (chance 4r %) and makes one nova per axe hit with damage 0.25r*(d0+d2); planner uses on_hit proc and +25 %/r damage."},
         "name": "Frosted Blow",
         "description": "Chance to unleash an ice nova on hit.",
         "maxRank": 5,
@@ -1741,7 +1741,7 @@
       {
         "id": "power_of_multitude",
         "positionIndex": 10,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [-1.135, -1.513, -1.703, -1.816], "per": "use"}], "confidence": "I", "note": "card p10: axes = 1+r, damage d/(1+r) each; the axe aimed at the dummy hits it 2x, others 1x -> axe total (2+r)/(1+r)*A vs base 2A. Delta = -r/(1+r)*A in main-hit units (A/M = 2.27): -1.135, -1.513, -1.703, -1.816. R3 sims are noisy (D-dependent, 1.4-1.9 d); analytic value used.", "plannerFix": "Power of Multitude splits axe damage by (1+r) across 1+r axes; the total axe damage falls to (2+r)/(1+r) of the base 2 hits. Planner only adds projectile_count 1/r without the division."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [-1.135, -1.513, -1.703, -1.816, -1.892, -1.946, -1.986], "per": "use"}], "confidence": "I", "note": "card p10: axes = 1+r, damage d/(1+r) each; the axe aimed at the dummy hits it 2x, others 1x -> axe total (2+r)/(1+r)*A vs base 2A. Delta = -r/(1+r)*A in main-hit units (A/M = 2.27): -1.135, -1.513, -1.703, -1.816. R3 sims are noisy (D-dependent, 1.4-1.9 d); analytic value used.", "plannerFix": "Power of Multitude splits axe damage by (1+r) across 1+r axes; the total axe damage falls to (2+r)/(1+r) of the base 2 hits. Planner only adds projectile_count 1/r without the division."},
         "name": "Power of Multitude",
         "description": "Increases axes amount but damage dealt is split between axes summoned.",
         "maxRank": 4,
@@ -1753,7 +1753,7 @@
       {
         "id": "collateral_damage",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.72, 5.45, 8.17], "per": "use"}], "confidence": "I", "note": "card p11 (handler L295): <= 1 flying axe per axe hit, damage 0.6r*A; 2 axe hits on the dummy per use -> 2*0.6r*A/M = 2.72r (flight direction and dummy hit by flying axe assumed, I).", "plannerFix": "Collateral Damage launches a flying axe on each axe hit (cooldown 0.5 s, 0.6r*(d0+d2) per flying axe); planner gives cold +60 %/r on the hit itself."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.72, 5.45, 8.17, 10.9, 13.62, 16.35], "per": "use"}], "confidence": "I", "note": "card p11 (handler L295): <= 1 flying axe per axe hit, damage 0.6r*A; 2 axe hits on the dummy per use -> 2*0.6r*A/M = 2.72r (flight direction and dummy hit by flying axe assumed, I).", "plannerFix": "Collateral Damage launches a flying axe on each axe hit (cooldown 0.5 s, 0.6r*(d0+d2) per flying axe); planner gives cold +60 %/r on the hit itself."},
         "name": "Collateral Damage",
         "description": "Whenever the axes hit a target they send another piercing axe outwards in a straight line towards the target.",
         "maxRank": 3,
@@ -1765,7 +1765,7 @@
       {
         "id": "chainslicing_tomahawk",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [9.08, 13.62, 18.16], "per": "use"}], "confidence": "C", "note": "card p12 (reg. 23, PC01Viking L276-L286): chain per axe hit, 1+r hits on the dummy, each axe damage A; per use 2 axe hits -> 2(1+r)*A/M = 4.54(1+r): 9.08, 13.62, 18.16.", "plannerFix": "Chainslicing Tomahawk chains from each axe hit onto the dummy (1+r chain hits of axe damage, the chain does not exclude the target); planner adds cold +35 %/r only and bounces 3/r."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [9.08, 13.62, 18.16, 22.7, 27.24, 31.78], "per": "use"}], "confidence": "C", "note": "card p12 (reg. 23, PC01Viking L276-L286): chain per axe hit, 1+r hits on the dummy, each axe damage A; per use 2 axe hits -> 2(1+r)*A/M = 4.54(1+r): 9.08, 13.62, 18.16.", "plannerFix": "Chainslicing Tomahawk chains from each axe hit onto the dummy (1+r chain hits of axe damage, the chain does not exclude the target); planner adds cold +35 %/r only and bounces 3/r."},
         "name": "Chainslicing Tomahawk",
         "description": "Axes now chain through monsters and then return back to you dealing damage to monsters in its path.",
         "maxRank": 3,
@@ -1789,7 +1789,7 @@
       {
         "id": "shattering_axes",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [4.413, 4.74, 5.067], "per": "use"}], "confidence": "I", "note": "card p14 (R4 14#5 + PoR4 e + Resztki B): Destroy_0 0x14b253ef0: 10 shards at absolute angles 36*i, start lengthdir(8, 36*i) from the axe (0x14f189528 = 8.0f), deltaSpeed 3, ~60 frames, Mask_Arrow_spr 16x16 unrotated, singleHit; each shard floor(d*(1 + 0.08r)) with d = the axe hit damage (physical V2 flat + cold V1, A). Shards hitting the dummy per axe, cursor through the dummy centre: D = 16/24/32/40/48/56/64/72 px = 4.1/3.6/2.85/2.25/1.8/1.5/1.3/1.1 (cursor (x, y-24): 2.6/2.2/1.9/1.6/1.4/1.3/1.1/1.0); at 160 px 0.46 per axe (0-1; D = 80..176: 0.99/0.80/0.68/0.59/0.52/0.46/0.41; independent of the p14 rank). Used here: D = 48 px (middle of the dummy-model ring 32-64) = 1.8 shards per axe, 1 axe, shard = A/M*(1 + 0.08r) main hits with A/M = 2.27 (planner reference L20, W = 4): 1.8*(1 + 0.08r)*2.27 = [4.413, 4.74, 5.067]. At the strict 160 px the extra would be 0.46*(1 + 0.08r)*2.27 = 1.13, 1.21, 1.29. With p10 the shards of each of the 1 + r10 axes are divided by (1 + r10) like the axe damage. C for angles/length/speed/mask, I for the axe position +-1 frame, the check phase and that a shard carries d0 and d2 like the axe.", "plannerFix": "Shattering Axes: 10 shards every 36 deg from the axe position when it dies (60 frames, radius 14-65 px, start 8 px from the axe along the shard angle), 3 px/frame for ~60 frames (reach ~204 px with the 16 px mask); they hit the dummy both in the ring (1.0-4.1 per axe) and at 160 px (0.46 per axe); planner adds cold +8 %/r to the hit."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [4.413, 4.74, 5.067, 5.394, 5.721, 6.048], "per": "use"}], "confidence": "I", "note": "card p14 (R4 14#5 + PoR4 e + Resztki B): Destroy_0 0x14b253ef0: 10 shards at absolute angles 36*i, start lengthdir(8, 36*i) from the axe (0x14f189528 = 8.0f), deltaSpeed 3, ~60 frames, Mask_Arrow_spr 16x16 unrotated, singleHit; each shard floor(d*(1 + 0.08r)) with d = the axe hit damage (physical V2 flat + cold V1, A). Shards hitting the dummy per axe, cursor through the dummy centre: D = 16/24/32/40/48/56/64/72 px = 4.1/3.6/2.85/2.25/1.8/1.5/1.3/1.1 (cursor (x, y-24): 2.6/2.2/1.9/1.6/1.4/1.3/1.1/1.0); at 160 px 0.46 per axe (0-1; D = 80..176: 0.99/0.80/0.68/0.59/0.52/0.46/0.41; independent of the p14 rank). Used here: D = 48 px (middle of the dummy-model ring 32-64) = 1.8 shards per axe, 1 axe, shard = A/M*(1 + 0.08r) main hits with A/M = 2.27 (planner reference L20, W = 4): 1.8*(1 + 0.08r)*2.27 = [4.413, 4.74, 5.067]. At the strict 160 px the extra would be 0.46*(1 + 0.08r)*2.27 = 1.13, 1.21, 1.29. With p10 the shards of each of the 1 + r10 axes are divided by (1 + r10) like the axe damage. C for angles/length/speed/mask, I for the axe position +-1 frame, the check phase and that a shard carries d0 and d2 like the axe.", "plannerFix": "Shattering Axes: 10 shards every 36 deg from the axe position when it dies (60 frames, radius 14-65 px, start 8 px from the axe along the shard angle), 3 px/frame for ~60 frames (reach ~204 px with the 16 px mask); they hit the dummy both in the ring (1.0-4.1 per axe) and at 160 px (0.46 per axe); planner adds cold +8 %/r to the hit."},
         "name": "Shattering Axes",
         "description": "At the end of their duration the axes shatter into weapon shards dealing additional damage.",
         "maxRank": 3,
@@ -1945,7 +1945,7 @@
       {
         "id": "second_wind",
         "positionIndex": 7,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.011, 0.044, 0.099, 0.176, 0.275], "per": "hit"}], "confidence": "C", "note": "card p7 (handler L151): per hit: chance 0.05r * tornado 0.22r*d0 = c*m = 0.011 r^2 = 0.011, 0.044, 0.099, 0.176, 0.275 (main-hit units).", "plannerFix": "Second Wind is a separate tornado (chance 5r % per hit, damage 0.22r*d0), not a physical damage increase; planner gives physical +22/r to the hit."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.011, 0.044, 0.099, 0.176, 0.275, 0.396, 0.539, 0.704], "per": "hit"}], "confidence": "C", "note": "card p7 (handler L151): per hit: chance 0.05r * tornado 0.22r*d0 = c*m = 0.011 r^2 = 0.011, 0.044, 0.099, 0.176, 0.275 (main-hit units).", "plannerFix": "Second Wind is a separate tornado (chance 5r % per hit, damage 0.22r*d0), not a physical damage increase; planner gives physical +22/r to the hit."},
         "name": "Second Wind",
         "description": "Chance on hit to unleash a twister.",
         "maxRank": 5,
@@ -2009,7 +2009,7 @@
       {
         "id": "sharpened_blades",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.5, 2.0, 2.5], "per": "use"}], "confidence": "C", "note": "card p11 (L1173-L1190; R4 17#2 C): the base blade L1152 is created unconditionally (the p6 branch L1148 skips only BuffAdd, 0x1462278f8) and p11 adds a SECOND Viking_Whirlwind_obj (sharpenedEdge = 1, damage[0] = floor(dmg*(1+0.5r))) in the same rotation, both singleHit without a shared pack: 2 hits per swing (dmg + dmg*(1+0.5r)). Extra = 1*(1+0.5r) = 1.5, 2.0, 2.5 per use. Scale of both blades +15 %/r, so reach R_full ~77.6*2*(1+0.15r) px: at 160 px the base hit is 1.0 instead of 0.70 from r11 = 1 (160-px-only gain, not in the in-zone number).", "plannerFix": "Sharpened Blades adds a second blade (sharpenedEdge) with damage d*(1+0.5r) on every swing; planner adds physical +50 %/r to the single blade and area 15/r."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.5, 2.0, 2.5, 3.0, 3.5, 4.0], "per": "use"}], "confidence": "C", "note": "card p11 (L1173-L1190; R4 17#2 C): the base blade L1152 is created unconditionally (the p6 branch L1148 skips only BuffAdd, 0x1462278f8) and p11 adds a SECOND Viking_Whirlwind_obj (sharpenedEdge = 1, damage[0] = floor(dmg*(1+0.5r))) in the same rotation, both singleHit without a shared pack: 2 hits per swing (dmg + dmg*(1+0.5r)). Extra = 1*(1+0.5r) = 1.5, 2.0, 2.5 per use. Scale of both blades +15 %/r, so reach R_full ~77.6*2*(1+0.15r) px: at 160 px the base hit is 1.0 instead of 0.70 from r11 = 1 (160-px-only gain, not in the in-zone number).", "plannerFix": "Sharpened Blades adds a second blade (sharpenedEdge) with damage d*(1+0.5r) on every swing; planner adds physical +50 %/r to the single blade and area 15/r."},
         "name": "Sharpened Blades",
         "description": "Greatly increases area of effect radius dealing increased damage at the outer edge.",
         "maxRank": 3,
@@ -2021,7 +2021,7 @@
       {
         "id": "detonation",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.15, 0.3, 0.45], "per": "hit", "note": "damage class 'brak' (no crit, no multipliers, no penetration): convert with d0/D_modified; only hits of the base blade and the tornadoes add to pe[49], not the p11 second blade"}], "confidence": "I", "note": "card p12 (R4 17#1): [302] = 15 %/r -> handler L203 pe[49] += floor(d0*0.15r) per blade/tornado hit; Whirlwind_Effect_obj (Step_0 0x14b2b08a0, detonationTimer 6 s) creates an Explosion_Item_obj (0x5d4 @0x14b2b15b6) with damage[0] = pe[49], scale pe[50]/64 = 4.625 (mask Mask_Explosion_spr reaches 138.8 px +x/down, 148 px -x/up from the effect centre host.y-8, I) -> dummy must be within ~150 px (160 px: 0); Destroy_0 detonates the rest when the effect ends. Steady state: one detonation every 6 s, on average 0.15r*d0 per blade hit (about x(1+0.15r) hits), but class 'brak': multiply 0.15r by d0/D_modified (<= 1). The 2nd p11 blade has no [302] (L1163-L1165).", "plannerFix": "Detonation is a separate explosion every 6 s (and when the effect disappears) of the sum of floor(d0*0.15r) over the blade/tornado hits, with NO InheritModifiers/SetAllModifiersNew (class 'brak': no crit, no multipliers, no penetration), radius <= ~150 px (0 at 160 px); planner of_total_damage 15/r multiplies the modified hit."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.15, 0.3, 0.45, 0.6, 0.75, 0.9], "per": "hit", "note": "damage class 'brak' (no crit, no multipliers, no penetration): convert with d0/D_modified; only hits of the base blade and the tornadoes add to pe[49], not the p11 second blade"}], "confidence": "I", "note": "card p12 (R4 17#1): [302] = 15 %/r -> handler L203 pe[49] += floor(d0*0.15r) per blade/tornado hit; Whirlwind_Effect_obj (Step_0 0x14b2b08a0, detonationTimer 6 s) creates an Explosion_Item_obj (0x5d4 @0x14b2b15b6) with damage[0] = pe[49], scale pe[50]/64 = 4.625 (mask Mask_Explosion_spr reaches 138.8 px +x/down, 148 px -x/up from the effect centre host.y-8, I) -> dummy must be within ~150 px (160 px: 0); Destroy_0 detonates the rest when the effect ends. Steady state: one detonation every 6 s, on average 0.15r*d0 per blade hit (about x(1+0.15r) hits), but class 'brak': multiply 0.15r by d0/D_modified (<= 1). The 2nd p11 blade has no [302] (L1163-L1165).", "plannerFix": "Detonation is a separate explosion every 6 s (and when the effect disappears) of the sum of floor(d0*0.15r) over the blade/tornado hits, with NO InheritModifiers/SetAllModifiersNew (class 'brak': no crit, no multipliers, no penetration), radius <= ~150 px (0 at 160 px); planner of_total_damage 15/r multiplies the modified hit."},
         "name": "Detonation",
         "description": "Store damage dealt to monsters unleashing it when whirlwind ends dealing damage on a large radius around you.",
         "maxRank": 3,
@@ -2052,7 +2052,7 @@
       {
         "id": "airborne",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.335, 0.67, 1.005], "per": "use"}], "confidence": "I", "note": "card p14: [139] = 40 %*r lifts the dummy (+60 px); landing hit floor(sum d*0.4r) once per flight (~37 frames for [110]=60). Per use = 0.4r * min(1, period/37 fr) with the R4 Whirlwind period ceil(60/S)+1 = 31 frames at S = 2 (was T_att ~34 fr): 0.4r*31/37 = 0.335r (S = 1.2: 51 frames -> 0.4r; S = 3: 21 -> 0.23r; S = 4: 16 -> 0.17r). Class 'brak'; lift length I.", "plannerFix": "Airborne lifts the dummy with buff 47; the landing explosion (0.4r*d0 per flight, class 'brak') is the damage, not a physical +40 %/r on the swing; planner adds physical 40/r to every hit."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.335, 0.67, 1.005, 1.34, 1.675, 2.01], "per": "use"}], "confidence": "I", "note": "card p14: [139] = 40 %*r lifts the dummy (+60 px); landing hit floor(sum d*0.4r) once per flight (~37 frames for [110]=60). Per use = 0.4r * min(1, period/37 fr) with the R4 Whirlwind period ceil(60/S)+1 = 31 frames at S = 2 (was T_att ~34 fr): 0.4r*31/37 = 0.335r (S = 1.2: 51 frames -> 0.4r; S = 3: 21 -> 0.23r; S = 4: 16 -> 0.17r). Class 'brak'; lift length I.", "plannerFix": "Airborne lifts the dummy with buff 47; the landing explosion (0.4r*d0 per flight, class 'brak') is the damage, not a physical +40 %/r on the swing; planner adds physical 40/r to every hit."},
         "name": "Airborne",
         "description": "Knock monsters high into air causing them to take increased damage upon landing.",
         "maxRank": 3,
@@ -2188,7 +2188,7 @@
       {
         "id": "multi_trail",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [-1.0, 1.0], "per": "use"}], "confidence": "I", "note": "card p5 (L949): (1+r) trails along the segment, each dealing x(0.25r) (s10 value uncertain, I); dummy hits = (1+r)*h*0.25r; extra = that minus base h = 2 -> -1.0, +1.0 for r = 1, 2 (maxRank 2).", "plannerFix": "Multi Trail adds 1+r trails whose damage is scaled by the card's per-rank value (of_total_damage); planner uses trail_count 1/r with of_total_damage -25 per rank, a different split."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [-1.0, 1.0, 4.0, 8.0, 13.0], "per": "use"}], "confidence": "I", "note": "card p5 (L949): (1+r) trails along the segment, each dealing x(0.25r) (s10 value uncertain, I); dummy hits = (1+r)*h*0.25r; extra = that minus base h = 2 -> -1.0, +1.0 for r = 1, 2 (maxRank 2).", "plannerFix": "Multi Trail adds 1+r trails whose damage is scaled by the card's per-rank value (of_total_damage); planner uses trail_count 1/r with of_total_damage -25 per rank, a different split."},
         "name": "Multi Trail",
         "description": "Adds an additional trail but decreases damage dealt by each shockwave.",
         "maxRank": 2,
@@ -2219,7 +2219,7 @@
       {
         "id": "meteorology",
         "positionIndex": 7,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.032, 0.128, 0.288, 0.512, 0.8], "per": "use"}], "confidence": "C", "note": "card p7 (L952, handler L263): expected extra hits per use = 0.04r * h(2) * 0.4r = 0.032, 0.128, 0.288, 0.512, 0.8 (meteor lands on the dummy with its segment).", "plannerFix": "Meteorology is rolled per USE (chance 4r %); when it procs every segment that hits the dummy drops a fire meteor of 0.4r*d0. Planner uses on_hit proc with +40 %/r physical."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.032, 0.128, 0.288, 0.512, 0.8, 1.152, 1.568, 2.048], "per": "use"}], "confidence": "C", "note": "card p7 (L952, handler L263): expected extra hits per use = 0.04r * h(2) * 0.4r = 0.032, 0.128, 0.288, 0.512, 0.8 (meteor lands on the dummy with its segment).", "plannerFix": "Meteorology is rolled per USE (chance 4r %); when it procs every segment that hits the dummy drops a fire meteor of 0.4r*d0. Planner uses on_hit proc with +40 %/r physical."},
         "name": "Meteorology",
         "description": "Chance on hit to drop a meteor on the target dealing additional damage.",
         "maxRank": 5,
@@ -2247,7 +2247,7 @@
       {
         "id": "afterquake",
         "positionIndex": 9,
-        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.03, 1.06, 1.09, 1.12, 1.15]}], "confidence": "C", "note": "card p9 Afterquake (L961): double cast chance 3 %*r per use (Universal_Double_Cast_obj) -> x(1+0.03r). Planner on_cast 3/r matches."},
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.03, 1.06, 1.09, 1.12, 1.15, 1.18, 1.21, 1.24]}], "confidence": "C", "note": "card p9 Afterquake (L961): double cast chance 3 %*r per use (Universal_Double_Cast_obj) -> x(1+0.03r). Planner on_cast 3/r matches."},
         "name": "Afterquake",
         "description": "Chance on cast to unleash an additional shockwave.",
         "maxRank": 5,
@@ -2263,7 +2263,7 @@
       {
         "id": "land_mass",
         "positionIndex": 10,
-        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.062, 1.123, 1.185, 1.246, 1.308]}], "confidence": "I", "note": "card p10 Land Mass: segment scale x(1+0.08r) -> coverage of the dummy (80*(1+0.08r)+24)/60 segment vs base (80+24)/60 (ratio applied as hits_mult, I)."},
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.062, 1.123, 1.185, 1.246, 1.308, 1.369, 1.431, 1.492]}], "confidence": "I", "note": "card p10 Land Mass: segment scale x(1+0.08r) -> coverage of the dummy (80*(1+0.08r)+24)/60 segment vs base (80+24)/60 (ratio applied as hits_mult, I)."},
         "name": "Land Mass",
         "description": "Increases the area of effect radius of shockwave.",
         "maxRank": 5,
@@ -2299,7 +2299,7 @@
       {
         "id": "forking_crust",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [45, 90, 135]}, {"kind": "extra_hits", "byRank": [0.268, 0.536, 0.804], "per": "use"}], "confidence": "I", "note": "card p13 (R4 16#2, Step_0 L74-L115): per segment with numb > 0, chance forkingCrustChance = 8r % (random(99) <), two forks with numb = 5 at lengthdir(30, direction -/+ A), A = choose(30, 50, 70), segments every 60 px, no recursion. forks.py (straight line, dummy at 80..240 px, circle mask r 40 = I): +0.2-0.3 hits per use at r13 = 1 ... +1.1-1.6 at r13 = 5 (on top of the base 2). Used: 0.08r * 3.35 (midpoint of the 2.7-4.0 hits per full fork) = [0.268, 0.536, 0.804] for r = 1..3 (planner maxRank 3). The card's own formula '5*0.08r*(2.7..4.0)' does not give its headline numbers (it would be 5x larger) - see cardIssues. LSSD +45 %/r is the main effect.", "plannerFix": "Forking Crust forks two branches of 5 segments (angles +-(30/50/70) deg) with chance 8r % per segment; the forks add ~0.27r hits per use on the dummy (R4 simulation) on top of the base 2; planner proc on_hit adds physical 45/r per fork to the hit."},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [45, 90, 135]}, {"kind": "extra_hits", "byRank": [0.268, 0.536, 0.804, 1.072, 1.34, 1.608], "per": "use"}], "confidence": "I", "note": "card p13 (R4 16#2, Step_0 L74-L115): per segment with numb > 0, chance forkingCrustChance = 8r % (random(99) <), two forks with numb = 5 at lengthdir(30, direction -/+ A), A = choose(30, 50, 70), segments every 60 px, no recursion. forks.py (straight line, dummy at 80..240 px, circle mask r 40 = I): +0.2-0.3 hits per use at r13 = 1 ... +1.1-1.6 at r13 = 5 (on top of the base 2). Used: 0.08r * 3.35 (midpoint of the 2.7-4.0 hits per full fork) = [0.268, 0.536, 0.804] for r = 1..3 (planner maxRank 3). The card's own formula '5*0.08r*(2.7..4.0)' does not give its headline numbers (it would be 5x larger) - see cardIssues. LSSD +45 %/r is the main effect.", "plannerFix": "Forking Crust forks two branches of 5 segments (angles +-(30/50/70) deg) with chance 8r % per segment; the forks add ~0.27r hits per use on the dummy (R4 simulation) on top of the base 2; planner proc on_hit adds physical 45/r per fork to the hit."},
         "effects": {
           "base": {"subtree_damage": 0},
           "perRank": {"subtree_damage": 45}
@@ -2319,7 +2319,7 @@
       {
         "id": "earthen_maelstrom",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [35, 70, 105]}, {"kind": "set_hits", "byRank": [0, 1.5, 8.5]}], "confidence": "I", "note": "card p14 (R4 16#2 + Resztki D): LSSD += 35 %/r; Step_0 L11-L14 pe[309] turn, numb = 5 + p1 + 6r14, v = 1 + r14 traces every (1 + r14)*8 deg. Total segment hits on the dummy (all traces, circle mask r 40 = I, sims spiral.py/sp2.py +-1) at D = 160 px, track from (x, y) + 52 px from (x, y+6), aim through the dummy centre: r14 = 1..5 = 0 / 1.5 / 8.5 / 8.5 / 15 (before the 6 px shift 0/2/9/8/15); cursor (x, y-24), R4 table: 0 / 1.5 / 8 / 9.7 / 13.4. Other D (centre | (x, y-24)): r14=1: D=100 3 | 2.9, 140 1 | 0.6, 200 0; r14=2: 100 4 | 5.2, 140 3 | 3.4, 200 0; r14=3: 140 10 | 9.6, 200 4 | 2.8. The spiral REPLACES the line pattern, hence set_hits (total hits per use at 160 px, assumes full damage per trace segment, I); the base 2.0 at 160 px does not apply.", "plannerFix": "Earthen Maelstrom turns every segment (max(20, 45-4k) deg, 41, 37, 33, ...) into a spiral with 6r more segments and 1+r traces at (1+r)*8 deg; the spiral wraps around the player, so the dummy at 160 px gets 0/1.5/8.5 hits for r14 = 1..3 (very D-dependent); planner projectile_count 6/r does not convert (perExtraProjectile 0)."},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [35, 70, 105]}, {"kind": "set_hits", "byRank": [0, 1.5, 8.5, 8.5, 15]}], "confidence": "I", "note": "card p14 (R4 16#2 + Resztki D): LSSD += 35 %/r; Step_0 L11-L14 pe[309] turn, numb = 5 + p1 + 6r14, v = 1 + r14 traces every (1 + r14)*8 deg. Total segment hits on the dummy (all traces, circle mask r 40 = I, sims spiral.py/sp2.py +-1) at D = 160 px, track from (x, y) + 52 px from (x, y+6), aim through the dummy centre: r14 = 1..5 = 0 / 1.5 / 8.5 / 8.5 / 15 (before the 6 px shift 0/2/9/8/15); cursor (x, y-24), R4 table: 0 / 1.5 / 8 / 9.7 / 13.4. Other D (centre | (x, y-24)): r14=1: D=100 3 | 2.9, 140 1 | 0.6, 200 0; r14=2: 100 4 | 5.2, 140 3 | 3.4, 200 0; r14=3: 140 10 | 9.6, 200 4 | 2.8. The spiral REPLACES the line pattern, hence set_hits (total hits per use at 160 px, assumes full damage per trace segment, I); the base 2.0 at 160 px does not apply.", "plannerFix": "Earthen Maelstrom turns every segment (max(20, 45-4k) deg, 41, 37, 33, ...) into a spiral with 6r more segments and 1+r traces at (1+r)*8 deg; the spiral wraps around the player, so the dummy at 160 px gets 0/1.5/8.5 hits for r14 = 1..3 (very D-dependent); planner projectile_count 6/r does not convert (perExtraProjectile 0)."},
         "name": "Earthen Maelstrom",
         "description": "Shockwaves twirl outwards around you dealing increased damage.",
         "maxRank": 3,
@@ -2435,7 +2435,7 @@
       {
         "id": "dual_swing",
         "positionIndex": 3,
-        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.06, 1.12, 1.18, 1.24, 1.3]}], "confidence": "C", "note": "card p3 (L1251; R4 18#1 C): roll per use chance 6r % sets pe[117] = 1 (TalentsViking @0x14622f78e inc [rbp+0x2ee8], store @0x146230bfe); attackClasses runs 1 + pe[117] volleys and singleHitPackId++ at the end of EVERY volley (0x1402c4f39-0x1402c4f4e), so the second volley has another pack id and hits the dummy separately: expected hits 1 + 0.06r (and a second Berserk stack when the 2nd projectile keeps its own [1052] copy - not modelled). Not 0.", "plannerFix": "Dual Swing is rolled per USE (chance 6r %) for an extra swing; planner uses on_hit proc with of_total_damage 100."},
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.06, 1.12, 1.18, 1.24, 1.3, 1.36, 1.42, 1.48]}], "confidence": "C", "note": "card p3 (L1251; R4 18#1 C): roll per use chance 6r % sets pe[117] = 1 (TalentsViking @0x14622f78e inc [rbp+0x2ee8], store @0x146230bfe); attackClasses runs 1 + pe[117] volleys and singleHitPackId++ at the end of EVERY volley (0x1402c4f39-0x1402c4f4e), so the second volley has another pack id and hits the dummy separately: expected hits 1 + 0.06r (and a second Berserk stack when the 2nd projectile keeps its own [1052] copy - not modelled). Not 0.", "plannerFix": "Dual Swing is rolled per USE (chance 6r %) for an extra swing; planner uses on_hit proc with of_total_damage 100."},
         "name": "Dual Swing",
         "description": "Chance on attack to perform an additional attack.",
         "maxRank": 5,
@@ -2479,7 +2479,7 @@
       {
         "id": "axe_throw",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use"}], "confidence": "C", "note": "card p6 (L1255): roll per use chance 3r % -> Viking_Ymirs_Champion_Flying_Axe_obj with damage = full swing (1 main-hit unit). Expected extra = 0.03r. Break [969] = 5 %*r for 5 s is not encoded here (no damage number for it).", "plannerFix": "Axe Throw is a flying axe with a full swing (chance 3r % per use) plus armor break 5 %*r; planner has armor_break 5/r on hit with chance 3r and no extra swing."},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15, 0.18, 0.21, 0.24], "per": "use"}], "confidence": "C", "note": "card p6 (L1255): roll per use chance 3r % -> Viking_Ymirs_Champion_Flying_Axe_obj with damage = full swing (1 main-hit unit). Expected extra = 0.03r. Break [969] = 5 %*r for 5 s is not encoded here (no damage number for it).", "plannerFix": "Axe Throw is a flying axe with a full swing (chance 3r % per use) plus armor break 5 %*r; planner has armor_break 5/r on hit with chance 3r and no extra swing."},
         "name": "Axe Throw",
         "description": "Chance on hit to throw a piercing axe towards your target inflicting armor break to all monsters hit.",
         "maxRank": 5,
@@ -2574,7 +2574,7 @@
       {
         "id": "graaaaagh",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "other", "byRank": [0.5625, 0.5625, 0.5625]}, {"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12], "per": "use"}], "confidence": "I", "note": "card p13 ([310] = 0.1 %*r): at full stacks an explosion floor(d0*S*M*0.001r) (~0.064r*d0 at M=8) and stacks reset to 0. byRank[0] = average stack ratio (M+1)/(2M) = 0.5625 at M = 8 (applies to the stack share only); extra_hits = 0.064r/M per use (one blast per M hits). Assumptions I. S11: [310] = 0.5 %*r, blast ~0.32r*d0 at M=8, extra_hits 0.04r per use.", "plannerFix": "GRAAAAAGH! resets stacks at full stacks (average stacks drop to ~(M+1)/2) and adds a small blast; planner records it as a gain."},
+        "dummy": {"effects": [{"kind": "other", "byRank": [0.5625, 0.5625, 0.5625]}, {"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2, 0.24], "per": "use"}], "confidence": "I", "note": "card p13 ([310] = 0.1 %*r): at full stacks an explosion floor(d0*S*M*0.001r) (~0.064r*d0 at M=8) and stacks reset to 0. byRank[0] = average stack ratio (M+1)/(2M) = 0.5625 at M = 8 (applies to the stack share only); extra_hits = 0.064r/M per use (one blast per M hits). Assumptions I. S11: [310] = 0.5 %*r, blast ~0.32r*d0 at M=8, extra_hits 0.04r per use.", "plannerFix": "GRAAAAAGH! resets stacks at full stacks (average stacks drop to ~(M+1)/2) and adds a small blast; planner records it as a gain."},
         "name": "GRAAAAAGH!",
         "description": "Every time you reach full stacks unleash a trembling pulse dealing increased damage scaling with full stat scaling consuming all stacks.",
         "maxRank": 3,

@@ -393,15 +393,18 @@ pub(crate) fn skill_spec_to_subskill_owner(
                                         AppliedStateValue::Name(n) => {
                                             AppliedStateSpec::Name(n.clone())
                                         }
-                                        AppliedStateValue::Full { state, amount } => {
-                                            AppliedStateSpec::Full {
-                                                state: state.clone(),
-                                                amount: amount.as_ref().map(|a| AmountSpec {
-                                                    base: a.base.unwrap_or(0.0),
-                                                    per_rank: a.per_rank.unwrap_or(0.0),
-                                                }),
-                                            }
-                                        }
+                                        AppliedStateValue::Full {
+                                            state,
+                                            amount,
+                                            conversion,
+                                        } => AppliedStateSpec::Full {
+                                            state: state.clone(),
+                                            amount: amount.as_ref().map(|a| AmountSpec {
+                                                base: a.base.unwrap_or(0.0),
+                                                per_rank: a.per_rank.unwrap_or(0.0),
+                                            }),
+                                            conversion: *conversion,
+                                        },
                                     })
                                     .collect()
                             })

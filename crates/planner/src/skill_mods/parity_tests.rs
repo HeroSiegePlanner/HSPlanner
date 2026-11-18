@@ -313,19 +313,11 @@ pub(crate) fn engine_skill_roll(
     ((100. + pool) / (100. + pool - added)) as f32
 }
 
-/// Each node of `class`'s `skill` at each rank, learned alone, whose hits over the base use
-/// differ by `within` or more between `sim` and `engine`.
-pub(crate) fn misses(
-    class: &str,
-    skill: &str,
-    sim: impl Fn(&[(&str, u32)]) -> f32,
-    engine: impl Fn(&[(&str, u32)]) -> f32,
-    within: f32,
-) -> Vec<String> {
-    misses_past(class, skill, sim, engine, within, 0)
-}
+/// Ranks Peg Leg, Overloaded Dice and Storm in a Vial can add above a node's highest (#238).
+pub(crate) const GRANTED: u32 = 3;
 
-/// The same up to `past` ranks above each node's highest, as granted sub-skill ranks reach.
+/// Each node of `class`'s `skill` at each rank up to `past` above its highest, learned alone,
+/// whose hits over the base use differ by `within` or more between `sim` and `engine`.
 pub(crate) fn misses_past(
     class: &str,
     skill: &str,

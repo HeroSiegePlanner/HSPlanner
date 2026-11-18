@@ -148,7 +148,7 @@
       {
         "id": "battle_screech",
         "positionIndex": 7,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.048, 0.112, 0.192, 0.288, 0.4], "per": "hit", "note": "screech object with chance 4r% per attack, damage D*(1+0.2r): expected extra = 0.04r*(1+0.2r) per base hit"}], "confidence": "C", "note": "card table p7 (C)", "plannerFix": "planner adds area_of_effect 15r which the card does not give; proc chance 4r and poison 20r match the card's chance and 0.2r damage ratio"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.048, 0.112, 0.192, 0.288, 0.4, 0.528, 0.672, 0.832], "per": "hit", "note": "screech object with chance 4r% per attack, damage D*(1+0.2r): expected extra = 0.04r*(1+0.2r) per base hit"}], "confidence": "C", "note": "card table p7 (C)", "plannerFix": "planner adds area_of_effect 15r which the card does not give; proc chance 4r and poison 20r match the card's chance and 0.2r damage ratio"},
         "name": "Battle Screech",
         "description": "Chance on attack to unleash a battle screech dealing area of effect damage in a cone in front of the raven.",
         "maxRank": 5,
@@ -205,7 +205,7 @@
       {
         "id": "honey_stinger",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [3, 4, 5], "note": "wasp (rangedSummon, isWasp) burstShot = 2+r salvos per attack (alarm[1] = 1 + 9i), each wasp a separate Prophet_Raven_Wasp_Projectile_obj (projType 1, 5.2 px/frame, life 90 frames, mask 11x11, multiShot 1 = no spread) created 16 px from the raven; R4: attackDirection = point_direction(raven -> nearest enemy) (SAS L13) = exactly the dummy centre, the raven fires from <= attackRangeMin 180 px (distance_to_object, SummonStepSeekTarget L47), i.e. from beside the player, so every wasp hits (rule 33): x(2+r) hits per raven attack. LSSD +10%/r is in the damage_pct below"}, {"kind": "damage_pct", "byRank": [10, 20, 30], "note": "LSSD +10%/r"}], "confidence": "C", "note": "card R4 418#0 (C): the wasps always hit the dummy; supersedes the 'may not fire at 160 px' caveat", "plannerFix": "planner has projectile_count 2+r with poison 10r; the wasp salvo count is in the card as x(2+r) hits; attackRangeMin 180 px is not modelled"},
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [3, 4, 5, 6, 7, 8], "note": "wasp (rangedSummon, isWasp) burstShot = 2+r salvos per attack (alarm[1] = 1 + 9i), each wasp a separate Prophet_Raven_Wasp_Projectile_obj (projType 1, 5.2 px/frame, life 90 frames, mask 11x11, multiShot 1 = no spread) created 16 px from the raven; R4: attackDirection = point_direction(raven -> nearest enemy) (SAS L13) = exactly the dummy centre, the raven fires from <= attackRangeMin 180 px (distance_to_object, SummonStepSeekTarget L47), i.e. from beside the player, so every wasp hits (rule 33): x(2+r) hits per raven attack. LSSD +10%/r is in the damage_pct below"}, {"kind": "damage_pct", "byRank": [10, 20, 30], "note": "LSSD +10%/r"}], "confidence": "C", "note": "card R4 418#0 (C): the wasps always hit the dummy; supersedes the 'may not fire at 160 px' caveat", "plannerFix": "planner has projectile_count 2+r with poison 10r; the wasp salvo count is in the card as x(2+r) hits; attackRangeMin 180 px is not modelled"},
         "name": "Honey Stinger",
         "description": "Ravens turn into wasps firing multiple projectiles per attack.",
         "maxRank": 3,
@@ -464,7 +464,7 @@
       {
         "id": "natures_path",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD +15%/r"}, {"kind": "projectiles", "byRank": [1, 2, 3], "note": "1+r root paths, 14 deg apart (planner trail_count 1/r)"}, {"kind": "extra_hits", "byRank": [1, 1, 1], "per": "use", "replacesProjectileHits": true, "note": "explicit hits per use, MAIN (aim through the centre, direction from y+6, Resztki B+D, C): total 3/3/3 for r = 1/2/3 (n = 2/3/4 paths; n=2: -4.85 deg -> 2 segments, 9.15 deg -> 1; n=3: -11.85 deg -> 1, 2.15 deg -> 2, 16.15 deg -> 0; n=4: -4.85 -> 2, 9.15 -> 1); extra = total - 2 (base hits) = 1/1/1. Axis exactly 0 deg would give 4/2/4 (extra 2/0/2); variant cursor (x, y-24) 2/3/3 (extra 0/1/1)"}], "confidence": "C", "note": "card Resztki B+D (p11 3/3/3 at axis 2.15 deg, C; stable for aim offset 5-9 px), supersedes Po R4 4/2/4 and R4 2/3/3"},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD +15%/r"}, {"kind": "projectiles", "byRank": [1, 2, 3, 4, 5, 6], "note": "1+r root paths, 14 deg apart (planner trail_count 1/r)"}, {"kind": "extra_hits", "byRank": [1, 1, 1], "per": "use", "replacesProjectileHits": true, "note": "explicit hits per use, MAIN (aim through the centre, direction from y+6, Resztki B+D, C): total 3/3/3 for r = 1/2/3 (n = 2/3/4 paths; n=2: -4.85 deg -> 2 segments, 9.15 deg -> 1; n=3: -11.85 deg -> 1, 2.15 deg -> 2, 16.15 deg -> 0; n=4: -4.85 -> 2, 9.15 -> 1); extra = total - 2 (base hits) = 1/1/1. Axis exactly 0 deg would give 4/2/4 (extra 2/0/2); variant cursor (x, y-24) 2/3/3 (extra 0/1/1)"}], "confidence": "C", "note": "card Resztki B+D (p11 3/3/3 at axis 2.15 deg, C; stable for aim offset 5-9 px), supersedes Po R4 4/2/4 and R4 2/3/3"},
         "name": "Nature´s Path",
         "description": "Unleash an additional trail of roots.",
         "maxRank": 3,
@@ -500,7 +500,7 @@
       {
         "id": "hungering_hive_mind",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.6, 2.2, 2.8], "per": "hit", "note": "one explosion per hitting segment with d5*(1+0.6r) (raw [151] = 1 consumed per segment): +(1+0.6r) main-hit units per BASE HIT (2 hitting segments in the R4 base -> 2 explosions per cast, scales with p6/p11 hit changes)"}], "confidence": "I", "note": "card table p14 (R4: 1-2 hitting segments, see base) (C mechanism, value I)", "plannerFix": "planner scales segment damage (poison_skill_damage 60r) and size; the game adds an extra explosion of d5*(1+0.6r) per hitting segment"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.6, 2.2, 2.8, 3.4, 4.0, 4.6], "per": "hit", "note": "one explosion per hitting segment with d5*(1+0.6r) (raw [151] = 1 consumed per segment): +(1+0.6r) main-hit units per BASE HIT (2 hitting segments in the R4 base -> 2 explosions per cast, scales with p6/p11 hit changes)"}], "confidence": "I", "note": "card table p14 (R4: 1-2 hitting segments, see base) (C mechanism, value I)", "plannerFix": "planner scales segment damage (poison_skill_damage 60r) and size; the game adds an extra explosion of d5*(1+0.6r) per hitting segment"},
         "name": "Hungering Hive Mind",
         "description": "Roots travel towards the next closest target after each hit unleashing an area of effect pulse.",
         "maxRank": 3,
@@ -686,7 +686,7 @@
       {
         "id": "linked_nervous_systems",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "hit", "note": "chance 4r% per worm hit -> Prophet_Worm_Linked_obj with d5 (1 hit on a lone dummy, rule 15); poison part ignored; expected extra hits per base hit = 0.04r"}], "confidence": "I", "note": "card table p8 (I)", "plannerFix": "planner has no linked chain hit; it models only a poison-skill proc (chance 4r, 20r poison)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2, 0.24, 0.28, 0.32], "per": "hit", "note": "chance 4r% per worm hit -> Prophet_Worm_Linked_obj with d5 (1 hit on a lone dummy, rule 15); poison part ignored; expected extra hits per base hit = 0.04r"}], "confidence": "I", "note": "card table p8 (I)", "plannerFix": "planner has no linked chain hit; it models only a poison-skill proc (chance 4r, 20r poison)"},
         "name": "Linked Nervous Systems",
         "description": "Chance to unleash a toxic chain inflicting poisoned on hit.",
         "maxRank": 5,
@@ -703,7 +703,7 @@
       {
         "id": "pulsating_touch",
         "positionIndex": 9,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.1, 0.15, 0.2, 0.25], "per": "hit", "note": "echo explosion 0.25 s after attack (worm still at dummy) with ~d5, chance 5r% per attack: 0.05r extra hits per base hit"}], "confidence": "C", "note": "card table p9 (C); planner proc chance 5r, 100% of damage matches"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4], "per": "hit", "note": "echo explosion 0.25 s after attack (worm still at dummy) with ~d5, chance 5r% per attack: 0.05r extra hits per base hit"}], "confidence": "C", "note": "card table p9 (C); planner proc chance 5r, 100% of damage matches"},
         "name": "Pulsating Touch",
         "description": "Chance for carrion worm´s attacks to echo an additional time.",
         "maxRank": 5,
@@ -924,7 +924,7 @@
       {
         "id": "thorned_splinters",
         "positionIndex": 4,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.052, 0.128, 0.228, 0.352, 0.5], "per": "use", "note": "per cast: chance 4r% (p4.s11, once per cast, L439) -> pack of 7 splinters with one shared singleHitPackId = 1 hit of floor(d5*(1+0.3r)) (R4: Branch_Destroy_0 L28 @0x14956dc0c-0x14956dd23 reads damage[5]*(1+thornedSplinters), thornedSplinters = 0.3r; the lifter had replaced the variable name). Expected 0.04r*(1+0.3r)"}, {"kind": "dot", "byRank": [30, 60, 90, 120, 150], "note": "poison x(1+0.3r) on the proc: the card gives +30%/r on the poison part of the splinter proc (I)"}], "confidence": "C", "note": "card R4 421#2 (C): splinter = floor(d5*(1+0.3r)); chance once per cast", "plannerFix": "planner models increased poisoned damage 30r and a poisoned proc; the game adds a splinter pack hit with chance 4r per cast"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.052, 0.128, 0.228, 0.352, 0.5, 0.672, 0.868, 1.088], "per": "use", "note": "per cast: chance 4r% (p4.s11, once per cast, L439) -> pack of 7 splinters with one shared singleHitPackId = 1 hit of floor(d5*(1+0.3r)) (R4: Branch_Destroy_0 L28 @0x14956dc0c-0x14956dd23 reads damage[5]*(1+thornedSplinters), thornedSplinters = 0.3r; the lifter had replaced the variable name). Expected 0.04r*(1+0.3r)"}, {"kind": "dot", "byRank": [30, 60, 90, 120, 150], "note": "poison x(1+0.3r) on the proc: the card gives +30%/r on the poison part of the splinter proc (I)"}], "confidence": "C", "note": "card R4 421#2 (C): splinter = floor(d5*(1+0.3r)); chance once per cast", "plannerFix": "planner models increased poisoned damage 30r and a poisoned proc; the game adds a splinter pack hit with chance 4r per cast"},
         "name": "Thorned Splinters",
         "description": "Chance for the branch to break when expiring unleashing splinters in all directions inflicting poisoned and dealing additional damage.",
         "maxRank": 5,
@@ -1039,7 +1039,7 @@
       {
         "id": "branched_multitude",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD +15%/r"}, {"kind": "projectiles", "byRank": [3, 4, 5], "note": "extra branches 2+r (n = 3+r branches in the fan, 15 deg apart)"}, {"kind": "extra_hits", "byRank": [4, 3, 4], "per": "use", "replacesProjectileHits": true, "note": "explicit total hits per cast at dummy 160 px, MAIN = aim through the centre (rule 38): r1/r2/r3 (n = 4/5/6) = 6/5/6 (Po R4 (a), Resztki B+D confirmed C, inputs @asm, oriented rectangle, image_angle from 0, rule 18); extra = total - 2 (base hits) = 4/3/4. Variant cursor (x, y-24): 5/6/5 (aim from y) or 4/5/4 (aim from y+6)"}], "confidence": "C", "note": "card Po R4 (a) + Resztki B+D (6/5/6 confirmed C); supersedes the Runda 3 ranges 6.9-7.9/6.0 (AABB, random phase)", "plannerFix": "planner poison 15r with projectile_count 2+r; the game's fan hit count is non-monotonic in rank (7.4 / 6.0 / 7.4 at 160 px) because of the mask orientation, so projectile count alone is wrong"},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD +15%/r"}, {"kind": "projectiles", "byRank": [3, 4, 5, 6, 7, 8], "note": "extra branches 2+r (n = 3+r branches in the fan, 15 deg apart)"}, {"kind": "extra_hits", "byRank": [4, 3, 4], "per": "use", "replacesProjectileHits": true, "note": "explicit total hits per cast at dummy 160 px, MAIN = aim through the centre (rule 38): r1/r2/r3 (n = 4/5/6) = 6/5/6 (Po R4 (a), Resztki B+D confirmed C, inputs @asm, oriented rectangle, image_angle from 0, rule 18); extra = total - 2 (base hits) = 4/3/4. Variant cursor (x, y-24): 5/6/5 (aim from y) or 4/5/4 (aim from y+6)"}], "confidence": "C", "note": "card Po R4 (a) + Resztki B+D (6/5/6 confirmed C); supersedes the Runda 3 ranges 6.9-7.9/6.0 (AABB, random phase)", "plannerFix": "planner poison 15r with projectile_count 2+r; the game's fan hit count is non-monotonic in rank (7.4 / 6.0 / 7.4 at 160 px) because of the mask orientation, so projectile count alone is wrong"},
         "name": "Branched Multitude",
         "description": "Throw multiple branches in an arc.",
         "maxRank": 3,
@@ -1071,7 +1071,7 @@
       {
         "id": "growth_of_death",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.198, 0.552, 1.062], "per": "hit", "note": "R4 421#0: Growth_obj is created at the position of the HIT enemy (the dummy) with direction = point_direction(dummy -> nth_nearest(2) = dummy) = 0; its Hitbox_obj 70x36 (origin left-middle) at image_angle 0 sits on the dummy centre -> 1 hit d5*(1+0.65r) per proc, chance 12r % per branch hit: 0.12r*(1+0.65r) per BASE HIT (2 hits per branch -> twice per branch). Geometry factor 1 (was assumed 0.5)"}], "confidence": "C", "note": "card R4 421#0 (C): +1 hit per proc, geometry factor 1"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.198, 0.552, 1.062, 1.728, 2.55, 3.528], "per": "hit", "note": "R4 421#0: Growth_obj is created at the position of the HIT enemy (the dummy) with direction = point_direction(dummy -> nth_nearest(2) = dummy) = 0; its Hitbox_obj 70x36 (origin left-middle) at image_angle 0 sits on the dummy centre -> 1 hit d5*(1+0.65r) per proc, chance 12r % per branch hit: 0.12r*(1+0.65r) per BASE HIT (2 hits per branch -> twice per branch). Geometry factor 1 (was assumed 0.5)"}], "confidence": "C", "note": "card R4 421#0 (C): +1 hit per proc, geometry factor 1"},
         "name": "Growth of Death",
         "description": "Each time you hit a monster with thorned branch, there is a chance a tree is grown which then falls on the nearest monster.",
         "maxRank": 3,
@@ -1087,7 +1087,7 @@
       {
         "id": "falling_branches",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.38, 1.84, 2.3], "per": "use", "note": "R4 421#0 + Resztki D: drops at 79.5 and 147 px of flight (Hitbox_obj 70x36 origin [0, 17], image_angle = irandom(360) inherited from Falling_Branch_obj Create_0); P(hit) per branch main (through the centre, axis 2.15 deg) = 0.114 + 0.806 = 0.92 (own pixel sim at axis 0 deg: 0.116 + 0.842 = 0.96; old card 0.99 was ~3 % high), each hit d5*(1+0.5r): value = 0.92*(1+0.5r) PER BRANCH (with p11 multiply by n, not representable). Variant cursor (x, y-24) with aim from y+6: 0.028 + 0.399 = 0.43"}], "confidence": "I", "note": "card R4 421#0 + Resztki D (P(hit) 0.92 main, 0.43 variant); numbers from a random-angle pixel sim (I)", "plannerFix": "planner adds poison 50r and area 20r to the skill; the game adds separate landing hits d5*(1+0.5r) (no area)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.38, 1.84, 2.3, 2.76, 3.22, 3.68], "per": "use", "note": "R4 421#0 + Resztki D: drops at 79.5 and 147 px of flight (Hitbox_obj 70x36 origin [0, 17], image_angle = irandom(360) inherited from Falling_Branch_obj Create_0); P(hit) per branch main (through the centre, axis 2.15 deg) = 0.114 + 0.806 = 0.92 (own pixel sim at axis 0 deg: 0.116 + 0.842 = 0.96; old card 0.99 was ~3 % high), each hit d5*(1+0.5r): value = 0.92*(1+0.5r) PER BRANCH (with p11 multiply by n, not representable). Variant cursor (x, y-24) with aim from y+6: 0.028 + 0.399 = 0.43"}], "confidence": "I", "note": "card R4 421#0 + Resztki D (P(hit) 0.92 main, 0.43 variant); numbers from a random-angle pixel sim (I)", "plannerFix": "planner adds poison 50r and area 20r to the skill; the game adds separate landing hits d5*(1+0.5r) (no area)"},
         "name": "Falling Branches",
         "description": "While traveling summon falling branches on its path dealing area of effect damage upon landing.",
         "maxRank": 3,
@@ -1242,7 +1242,7 @@
       {
         "id": "loaded_branch",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.12, 0.21, 0.32, 0.45], "per": "hit", "note": "chance 4r% per attack -> Colossus_Shockwave object with D*(1+0.25r) at the target: expected 0.04r*(1+0.25r) per base hit (I, shockwave contact assumed)"}], "confidence": "I", "note": "card table p6 (C chance, I hit)", "plannerFix": "planner models a poison 25r proc plus stun; the game adds a shockwave hit D*(1+0.25r) with chance 4r%"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.12, 0.21, 0.32, 0.45, 0.6, 0.77, 0.96], "per": "hit", "note": "chance 4r% per attack -> Colossus_Shockwave object with D*(1+0.25r) at the target: expected 0.04r*(1+0.25r) per base hit (I, shockwave contact assumed)"}], "confidence": "I", "note": "card table p6 (C chance, I hit)", "plannerFix": "planner models a poison 25r proc plus stun; the game adds a shockwave hit D*(1+0.25r) with chance 4r%"},
         "name": "Loaded Branch",
         "description": "Chance on attack to unleash a shockwave dealing damage and stunning monsters on hit.",
         "maxRank": 5,
@@ -1271,7 +1271,7 @@
       {
         "id": "unleash_the_roots",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.006, 0.012, 0.018, 0.024, 0.03], "per": "hit", "note": "R4 424#2 (C): SummonAttackScript L770-L772: on an attack chance r % -> TalentUseClass(417, Colossus, ..., attack direction) = a Thorned Roots cast from the Colossus (segments from 64 px toward the dummy; the dummy is ~80-90 px from the Colossus) -> 1-2 hits of d5(417), midpoint 1.5. Value per base hit = 0.01r * 1.5 * d5(417)/D(Colossus), ratio taken as the rank-20 V1 ratio 12L/30L = 0.4 (LSSD of 417 and M of the Colossus not included). Needs rank >= 1 in Thorned Roots"}], "confidence": "I", "note": "card R4 424#2 (C structure, hit count 1-2 and ratio I)", "plannerFix": "planner has a bare proc (chance 1r) with no effect; the game casts Thorned Roots"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.006, 0.012, 0.018, 0.024, 0.03, 0.036, 0.042, 0.048], "per": "hit", "note": "R4 424#2 (C): SummonAttackScript L770-L772: on an attack chance r % -> TalentUseClass(417, Colossus, ..., attack direction) = a Thorned Roots cast from the Colossus (segments from 64 px toward the dummy; the dummy is ~80-90 px from the Colossus) -> 1-2 hits of d5(417), midpoint 1.5. Value per base hit = 0.01r * 1.5 * d5(417)/D(Colossus), ratio taken as the rank-20 V1 ratio 12L/30L = 0.4 (LSSD of 417 and M of the Colossus not included). Needs rank >= 1 in Thorned Roots"}], "confidence": "I", "note": "card R4 424#2 (C structure, hit count 1-2 and ratio I)", "plannerFix": "planner has a bare proc (chance 1r) with no effect; the game casts Thorned Roots"},
         "name": "Unleash The Roots",
         "description": "Chance on attack for ent colossus to cast Thorned Roots (Prophet Skill).",
         "maxRank": 5,
@@ -1289,7 +1289,7 @@
       {
         "id": "center_of_the_forest",
         "positionIndex": 10,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.733, 1.467, 2.2, 2.933, 3.667], "per": "use", "note": "R4 424#3 (C logic, I distance): r Prophet_Ent_Colossus_Branch_obj on an orbit R = 48+8r px around the Colossus (4 deg/frame, image_angle += 12/frame, mask 26x112 oriented, map cleared every 90 frames = 1.5 s); the Colossus stands ~74-100 px from the dummy (attackRangeMin 62), outside the orbit, but a branch (reach 56+12 px) passes the dummy once per orbit and the 12 deg/frame spin sweeps every angle during the pass -> 1 hit per branch per revolution = r hits per 1.5 s, each ~D (damage[5] like the attack, modifier class: only pe[60], pe[61], no crit). Per Colossus attack (cadence 1.1 s at AS 0) = r*1.1/1.5 main-hit units. Time-based source (per second r/1.5 D/s, independent of the attack cadence/AS): DPS p10 ~ r*D/1.5 s (r = 5: +367 % vs the attack 1/1.1 s)"}], "confidence": "I", "note": "card R4 424#3 (C logic, I distance of the Colossus)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.733, 1.467, 2.2, 2.933, 3.667, 4.4, 5.134, 5.867], "per": "use", "note": "R4 424#3 (C logic, I distance): r Prophet_Ent_Colossus_Branch_obj on an orbit R = 48+8r px around the Colossus (4 deg/frame, image_angle += 12/frame, mask 26x112 oriented, map cleared every 90 frames = 1.5 s); the Colossus stands ~74-100 px from the dummy (attackRangeMin 62), outside the orbit, but a branch (reach 56+12 px) passes the dummy once per orbit and the 12 deg/frame spin sweeps every angle during the pass -> 1 hit per branch per revolution = r hits per 1.5 s, each ~D (damage[5] like the attack, modifier class: only pe[60], pe[61], no crit). Per Colossus attack (cadence 1.1 s at AS 0) = r*1.1/1.5 main-hit units. Time-based source (per second r/1.5 D/s, independent of the attack cadence/AS): DPS p10 ~ r*D/1.5 s (r = 5: +367 % vs the attack 1/1.1 s)"}], "confidence": "I", "note": "card R4 424#3 (C logic, I distance of the Colossus)"},
         "name": "Center of the Forest",
         "description": "Rotating branches orbit the ent colossus dealing damage and rooting monsters in place on hit.",
         "maxRank": 5,
@@ -1301,7 +1301,7 @@
       {
         "id": "scorched_branchsmash",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.15, 0.36, 0.63], "per": "hit", "note": "chance 12r% per attack -> Branchsmash object on the target with D*(1+0.25r): expected 0.12r*(1+0.25r) per base hit"}, {"kind": "dot", "byRank": [0.12, 0.576, 1.512], "note": "burn 0.8r of the object's damage on the same proc: expected burn per attack = 0.12r*(1+0.25r)*0.8r of D (fraction of D, I)"}], "confidence": "C", "note": "card table p11 (C); planner proc chance 12r, poison 25r, burning 80r match"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.15, 0.36, 0.63, 0.96, 1.35, 1.8], "per": "hit", "note": "chance 12r% per attack -> Branchsmash object on the target with D*(1+0.25r): expected 0.12r*(1+0.25r) per base hit"}, {"kind": "dot", "byRank": [0.12, 0.576, 1.512], "note": "burn 0.8r of the object's damage on the same proc: expected burn per attack = 0.12r*(1+0.25r)*0.8r of D (fraction of D, I)"}], "confidence": "C", "note": "card table p11 (C); planner proc chance 12r, poison 25r, burning 80r match"},
         "name": "Scorched Branchsmash",
         "description": "Chance when attacking to smash the ground unleashing burning fissures knocking monsters in air and inflicting burning.",
         "maxRank": 3,
@@ -1336,7 +1336,7 @@
       {
         "id": "blood_hungry_roots",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.4, 0.94, 1.69], "per": "use", "note": "root impulse every 1.25*(1-0.125r) s on the n-th nearest enemy with damage floor(D*0.4r): per 1.1 s Ent attack, impulses = 1.1/(1.25*(1-0.125r)) and value = impulses*0.4r; assumes the dummy is hit by each impulse (I)"}, {"kind": "utility", "note": "attack speed x not used here"}], "confidence": "I", "note": "card table p13 (C structure, I hits)", "plannerFix": "planner models poison_skill_damage 40r and summon attack speed 12.5r; the game is a periodic root impulse with damage 0.4r*D, its cadence is 1.25*(1-0.125r) s"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.4, 0.94, 1.69, 2.82, 4.69, 8.45], "per": "use", "note": "root impulse every 1.25*(1-0.125r) s on the n-th nearest enemy with damage floor(D*0.4r): per 1.1 s Ent attack, impulses = 1.1/(1.25*(1-0.125r)) and value = impulses*0.4r; assumes the dummy is hit by each impulse (I)"}, {"kind": "utility", "note": "attack speed x not used here"}], "confidence": "I", "note": "card table p13 (C structure, I hits)", "plannerFix": "planner models poison_skill_damage 40r and summon attack speed 12.5r; the game is a periodic root impulse with damage 0.4r*D, its cadence is 1.25*(1-0.125r) s"},
         "name": "Blood Hungry Roots",
         "description": "Ent colossus constantly sends roots towards nearby monsters dealing damage and rooting them for a short duration.",
         "maxRank": 3,
@@ -1586,7 +1586,7 @@
       {
         "id": "throwing_branches",
         "positionIndex": 10,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0167, 0.0333, 0.05, 0.0667, 0.0833], "per": "hit", "note": "R4 420#0 (C): SummonAttackScript L719-L721: on an Ent attack chance r % (irandom(99) < r) and effective level of talent 421 > 0 -> TalentUseClass(421, Ent, ..., attack direction) = an extra Thorned Branch cast from the Ent position; the branch starts 12 px further and the Ent stands <= 50 px from the dummy, so it is in rod range from the first frames: 1 hit (map cleared only at frame ~33 when the branch is ~136 px further) of d5(421). Value per base hit = 0.01r * d5(421)/D(Ent); ratio taken as the rank-20 V1 ratio 15L/9L = 1.667 (LSSD of 421 and M of the Ent are not included, the real ratio depends on gear and on the rank of 421). Needs rank >= 1 in Thorned Branch"}], "confidence": "I", "note": "card R4 420#0 (C structure, ratio I)", "plannerFix": "planner has a bare proc (chance 1r) with no effect; the game re-casts a branch skill, adding its hits"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0167, 0.0333, 0.05, 0.0667, 0.0833, 0.1, 0.1166, 0.1333], "per": "hit", "note": "R4 420#0 (C): SummonAttackScript L719-L721: on an Ent attack chance r % (irandom(99) < r) and effective level of talent 421 > 0 -> TalentUseClass(421, Ent, ..., attack direction) = an extra Thorned Branch cast from the Ent position; the branch starts 12 px further and the Ent stands <= 50 px from the dummy, so it is in rod range from the first frames: 1 hit (map cleared only at frame ~33 when the branch is ~136 px further) of d5(421). Value per base hit = 0.01r * d5(421)/D(Ent); ratio taken as the rank-20 V1 ratio 15L/9L = 1.667 (LSSD of 421 and M of the Ent are not included, the real ratio depends on gear and on the rank of 421). Needs rank >= 1 in Thorned Branch"}], "confidence": "I", "note": "card R4 420#0 (C structure, ratio I)", "plannerFix": "planner has a bare proc (chance 1r) with no effect; the game re-casts a branch skill, adding its hits"},
         "name": "Throwing Branches",
         "description": "Chance on attack for ents to cast Thorned Branch (Prophet Skill).",
         "maxRank": 5,
@@ -1638,7 +1638,7 @@
       {
         "id": "flaming_branch",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.156, 0.384, 0.684], "per": "hit", "note": "chance 12r% per attack -> fiery pulse D*(1+0.3r): expected extra = 0.12r*(1+0.3r) per base hit"}, {"kind": "dot", "byRank": [0.156, 0.768, 2.052], "note": "burn [18] = pulse*r on the same proc: expected burn per attack = 0.12r*(1+0.3r)*r of D (fraction of D, I)"}], "confidence": "C", "note": "card table p14 (C); planner chance 12r, burn 100r and pulse 30r match"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.156, 0.384, 0.684, 1.056, 1.5, 2.016], "per": "hit", "note": "chance 12r% per attack -> fiery pulse D*(1+0.3r): expected extra = 0.12r*(1+0.3r) per base hit"}, {"kind": "dot", "byRank": [0.156, 0.768, 2.052], "note": "burn [18] = pulse*r on the same proc: expected burn per attack = 0.12r*(1+0.3r)*r of D (fraction of D, I)"}], "confidence": "C", "note": "card table p14 (C); planner chance 12r, burn 100r and pulse 30r match"},
         "name": "Flaming Branch",
         "description": "Ents have a chance on attack to unleash a fiery pulse knocking monsters back dealing damage and inflicting burning on hit.",
         "maxRank": 3,
@@ -2428,7 +2428,7 @@
       {
         "id": "shuriken_of_claws",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.45, 1.9, 2.35], "per": "use", "note": "transformation adds one Shuriken object per cycle (1 s) with d0 = W*V1%*(1+LSSD+0.45r): one extra hit with ratio (1+0.45r) at LSSD 0; the charge still follows (I, cadence of the shuriken not read)"}], "confidence": "I", "note": "card table p13 (C structure, I cadence)", "plannerFix": "planner applies physical 45r as a skill-damage multiplier and area 20r; the game adds a separate shuriken hit with ratio (1+0.45r)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.45, 1.9, 2.35, 2.8, 3.25, 3.7], "per": "use", "note": "transformation adds one Shuriken object per cycle (1 s) with d0 = W*V1%*(1+LSSD+0.45r): one extra hit with ratio (1+0.45r) at LSSD 0; the charge still follows (I, cadence of the shuriken not read)"}], "confidence": "I", "note": "card table p13 (C structure, I cadence)", "plannerFix": "planner applies physical 45r as a skill-damage multiplier and area 20r; the game adds a separate shuriken hit with ratio (1+0.45r)"},
         "name": "Shuriken of Claws",
         "description": "Throw a shuriken of claws dealing damage to monsters on hit and forcing you to charge towards it after a short delay.",
         "maxRank": 3,
@@ -2549,7 +2549,7 @@
       {
         "id": "hawks_focus",
         "positionIndex": 4,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.104, 0.256, 0.456, 0.704, 1.0], "per": "use", "note": "chance 4r% per attack -> Storm_Hawk_Lightning_Bolt with d4 = W*(1+0.3r); the handler runs for the projectile and for the chain (which copies [155]), so 2 bolts: expected 2*0.04r*(1+0.3r) per attack"}], "confidence": "C", "note": "card table p4 (C); planner base hits None so values are extra per attack", "plannerFix": "planner models one bolt per proc (chance 4r, lightning 30r); the game fires the bolt on both the projectile and the chain hit, i.e. 2 bolts"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.104, 0.256, 0.456, 0.704, 1.0, 1.344, 1.736, 2.176], "per": "use", "note": "chance 4r% per attack -> Storm_Hawk_Lightning_Bolt with d4 = W*(1+0.3r); the handler runs for the projectile and for the chain (which copies [155]), so 2 bolts: expected 2*0.04r*(1+0.3r) per attack"}], "confidence": "C", "note": "card table p4 (C); planner base hits None so values are extra per attack", "plannerFix": "planner models one bolt per proc (chance 4r, lightning 30r); the game fires the bolt on both the projectile and the chain hit, i.e. 2 bolts"},
         "name": "Hawk´s Focus",
         "description": "Chance on hit to strike the target with a lightning bolt while in hawk form.",
         "maxRank": 5,
@@ -2654,7 +2654,7 @@
       {
         "id": "stormbolts",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 4, 5], "note": "2+r extra Projectile_Player_obj in a 12 deg fan with W*(1+0.15r) and one shared singleHitPackId"}, {"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "shared pack: 0 extra hits on a lone dummy (card C/I)"}], "confidence": "C", "note": "card table p11 (C/I)", "plannerFix": "planner counts projectile_count 2+r as extra hits with lightning 15r; the game's pack shares one hit list, so 0 extra hits on a lone dummy"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 4, 5, 6, 7, 8], "note": "2+r extra Projectile_Player_obj in a 12 deg fan with W*(1+0.15r) and one shared singleHitPackId"}, {"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "shared pack: 0 extra hits on a lone dummy (card C/I)"}], "confidence": "C", "note": "card table p11 (C/I)", "plannerFix": "planner counts projectile_count 2+r as extra hits with lightning 15r; the game's pack shares one hit list, so 0 extra hits on a lone dummy"},
         "name": "Stormbolts",
         "description": "When attacking fire multiple stormbolts in an arc while in hawk form.",
         "maxRank": 3,
@@ -2697,7 +2697,7 @@
       {
         "id": "electric_screech",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.162, 0.408, 0.738], "per": "use", "note": "chance 12r% per attack -> Storm_Hawk_Screech_obj with d4 = floor(W*(1+0.35r)): expected 0.12r*(1+0.35r) per attack"}], "confidence": "C", "note": "card table p14 (C)", "plannerFix": "planner adds area_of_effect 15r which the card does not give for the screech object; chance 12r and lightning 35r match"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.162, 0.408, 0.738, 1.152, 1.65, 2.232], "per": "use", "note": "chance 12r% per attack -> Storm_Hawk_Screech_obj with d4 = floor(W*(1+0.35r)): expected 0.12r*(1+0.35r) per attack"}], "confidence": "C", "note": "card table p14 (C)", "plannerFix": "planner adds area_of_effect 15r which the card does not give for the screech object; chance 12r and lightning 35r match"},
         "name": "Electric Screech",
         "description": "Chance when attacking in hawk form to unleash an electric screech causing monsters to be struck by lightning bolts on hit.",
         "maxRank": 3,
@@ -3120,7 +3120,7 @@
       {
         "id": "intense_temperature",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.111, 1.25, 1.429, 1.667, 2.0], "note": "tick x(1-10%r): hits per cast = 1+floor(30/tick) scale as 1/(1-0.1r); base 30 hits at 160 px"}], "confidence": "C", "note": "card table p6 (C)", "plannerFix": "planner models faster_cast_rate 10r; the game shortens the tick (more hits per cast), not the cast rate"},
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.111, 1.25, 1.429, 1.667, 2.0, 2.5, 3.333, 5.0], "note": "tick x(1-10%r): hits per cast = 1+floor(30/tick) scale as 1/(1-0.1r); base 30 hits at 160 px"}], "confidence": "C", "note": "card table p6 (C)", "plannerFix": "planner models faster_cast_rate 10r; the game shortens the tick (more hits per cast), not the cast rate"},
         "name": "Intense Temperature",
         "description": "Increases the tick frequency of maelstrom of frost.",
         "maxRank": 5,
@@ -3207,7 +3207,7 @@
       {
         "id": "meteor_of_ice",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.06, 0.16, 0.3], "per": "hit", "note": "per tick chance 4r% (on the hit of the Maelstrom) -> Prophet_Maelstrom_Meteor_obj created at the position of the hit enemy (r13 = self = the dummy, @0x1452a54b2); after the fall (yy 320, g 1.25, ~23 frames) Destroy_0 (0x1495a9cb0) creates an Explosion_Item_obj (index 0x5d4, scale x3.5) at the meteor position with damage[2], damage[0] (x(1+0.5r)) and InheritModifiers (one call) -> centred on the dummy: +1 hit per proc with d*(1+0.5r); expected 0.04r*(1+0.5r) per base hit (R4 maelstrom 430#2: hit on the dummy is certain)"}], "confidence": "C", "note": "card R4 430#2 (C): the meteor explosion lands on the dummy", "plannerFix": "planner adds an area 20r to the proc; the card gives a meteor object (landing damage) with no area term"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.06, 0.16, 0.3, 0.48, 0.7, 0.96], "per": "hit", "note": "per tick chance 4r% (on the hit of the Maelstrom) -> Prophet_Maelstrom_Meteor_obj created at the position of the hit enemy (r13 = self = the dummy, @0x1452a54b2); after the fall (yy 320, g 1.25, ~23 frames) Destroy_0 (0x1495a9cb0) creates an Explosion_Item_obj (index 0x5d4, scale x3.5) at the meteor position with damage[2], damage[0] (x(1+0.5r)) and InheritModifiers (one call) -> centred on the dummy: +1 hit per proc with d*(1+0.5r); expected 0.04r*(1+0.5r) per base hit (R4 maelstrom 430#2: hit on the dummy is certain)"}], "confidence": "C", "note": "card R4 430#2 (C): the meteor explosion lands on the dummy", "plannerFix": "planner adds an area 20r to the proc; the card gives a meteor object (landing damage) with no area term"},
         "name": "Meteor of Ice",
         "description": "Chance on hit to drop a meteor of ice on its location dealing increased damage on a large radius.",
         "maxRank": 3,
@@ -3516,7 +3516,7 @@
       {
         "id": "clawarang",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.4, 1.8, 2.2], "per": "use", "note": "each form attack throws Clawarang (1 hit on departure) with W*(1+0.4r): extra = 1*(1+0.4r) per attack; return trip adds no hit (map not cleared, 10 px/kl.)"}], "confidence": "C", "note": "card table p12 (C)", "plannerFix": "planner models a 40r physical skill damage and projectile size 15r; the game adds one Clawarang hit W*(1+0.4r) per form attack"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.4, 1.8, 2.2, 2.6, 3.0, 3.4], "per": "use", "note": "each form attack throws Clawarang (1 hit on departure) with W*(1+0.4r): extra = 1*(1+0.4r) per attack; return trip adds no hit (map not cleared, 10 px/kl.)"}], "confidence": "C", "note": "card table p12 (C)", "plannerFix": "planner models a 40r physical skill damage and projectile size 15r; the game adds one Clawarang hit W*(1+0.4r) per form attack"},
         "name": "Clawarang",
         "description": "Throw a boomerang of claws when attacking while in vendigo form. Catching the boomerang increases your damage for a short duration.",
         "maxRank": 3,
@@ -3551,7 +3551,7 @@
       {
         "id": "blood_carnage",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.167, 0.143, 0.125], "per": "use", "note": "at full player stacks (max 4+r, 3 s) one Blood Carnage object with d0 (ratio 1) per cycle: 1 hit every (5+r) attacks -> 1/(5+r) per attack (I, stack bonus not read)"}], "confidence": "I", "note": "card table p14 (C structure, I cadence)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.167, 0.143, 0.125, 0.111, 0.1, 0.091], "per": "use", "note": "at full player stacks (max 4+r, 3 s) one Blood Carnage object with d0 (ratio 1) per cycle: 1 hit every (5+r) attacks -> 1/(5+r) per attack (I, stack bonus not read)"}], "confidence": "I", "note": "card table p14 (C structure, I cadence)"},
         "name": "Blood Carnage",
         "description": "Every attack adds a stack of blood carnage, at maximum stacks become empowered unleashing ripples of blood on hit.",
         "maxRank": 3,

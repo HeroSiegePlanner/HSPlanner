@@ -166,7 +166,7 @@
       {
         "id": "tiny_stones",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3], "note": "extra projectiles (n = 1 + 1/r), half-size boulders"}, {"kind": "extra_hits", "byRank": [2, 4, 2], "per": "use", "replacesProjectileHits": true, "note": "card 160 px counts: r1 2 boulders hit, r2 3, r3 2 of 4; each hitting boulder 2 hits; hits added per use (value = extra hits, central)"}], "confidence": "I", "note": "card table p11, reguła 24", "plannerFix": "planner perExtraProjectile 2.0 gives 2/4/6 extra hits; card gives about 2/4/2 (r3 only 2 of 4 boulders hit)"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5, 6], "note": "extra projectiles (n = 1 + 1/r), half-size boulders"}, {"kind": "extra_hits", "byRank": [2, 4, 2], "per": "use", "replacesProjectileHits": true, "note": "card 160 px counts: r1 2 boulders hit, r2 3, r3 2 of 4; each hitting boulder 2 hits; hits added per use (value = extra hits, central)"}], "confidence": "I", "note": "card table p11, reguła 24", "plannerFix": "planner perExtraProjectile 2.0 gives 2/4/6 extra hits; card gives about 2/4/2 (r3 only 2 of 4 boulders hit)"},
         "name": "Tiny Stones",
         "description": "Unleash multiple smaller boulders in an arc.",
         "maxRank": 3,
@@ -271,7 +271,7 @@
       {
         "id": "twistering_multitude",
         "positionIndex": 2,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5], "note": "n = 3 + 1/r extra twisters"}, {"kind": "extra_hits", "byRank": [0.0, 0.36, 1.36, 2.36, 2.36], "per": "use", "replacesProjectileHits": true, "note": "hits per use vs base 1.36 from extra twisters at -20 (r1, misses) / -10 / 0 / +10 / +20 deg with reversed sway; centre model H = 1.36 / 1.36 / 1.72 / 2.72 / 3.72 / 3.72 for r = 0..5 (PoR4; cursor model 1.4 / 1.4 / 1.9 / 2.9 / 3.5 / 3.6)"}], "confidence": "I", "note": "card table p2, PoR4 (a) rule 38 (R3 poz. 1 simulation, centre column)", "plannerFix": "projectile_count 1/r matches n, but planner's perExtraProjectile 0.5 is linear while the card's hits per extra twister depend on the azimuth cycle (-10 deg hits ~50 %, 0 deg dir 0 hits, +10 deg ~57 %, +20 deg ~15 %)"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5, 6, 7, 8], "note": "n = 3 + 1/r extra twisters"}, {"kind": "extra_hits", "byRank": [0.0, 0.36, 1.36, 2.36, 2.36], "per": "use", "replacesProjectileHits": true, "note": "hits per use vs base 1.36 from extra twisters at -20 (r1, misses) / -10 / 0 / +10 / +20 deg with reversed sway; centre model H = 1.36 / 1.36 / 1.72 / 2.72 / 3.72 / 3.72 for r = 0..5 (PoR4; cursor model 1.4 / 1.4 / 1.9 / 2.9 / 3.5 / 3.6)"}], "confidence": "I", "note": "card table p2, PoR4 (a) rule 38 (R3 poz. 1 simulation, centre column)", "plannerFix": "projectile_count 1/r matches n, but planner's perExtraProjectile 0.5 is linear while the card's hits per extra twister depend on the azimuth cycle (-10 deg hits ~50 %, 0 deg dir 0 hits, +10 deg ~57 %, +20 deg ~15 %)"},
         "name": "Twistering Multitude",
         "description": "Increases the amount of twisters.",
         "maxRank": 5,
@@ -307,7 +307,7 @@
       {
         "id": "winds_trajectory",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45, 60, 75], "note": "LSSD += 15%/r"}, {"kind": "extra_hits", "byRank": [0.0345, 0.078, 0.1305, 0.192, 0.2625], "per": "hit", "note": "proc chance 3r % per hit, extra twister d1*(1+0.15r): value = c*m per hit"}], "confidence": "C", "note": "card table p5 (extra twister is an on-hit proc)"},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45, 60, 75], "note": "LSSD += 15%/r"}, {"kind": "extra_hits", "byRank": [0.0345, 0.078, 0.1305, 0.192, 0.2625, 0.342, 0.4305, 0.528], "per": "hit", "note": "proc chance 3r % per hit, extra twister d1*(1+0.15r): value = c*m per hit"}], "confidence": "C", "note": "card table p5 (extra twister is an on-hit proc)"},
         "effects": {
           "base": {"subtree_damage": 0},
           "perRank": {"subtree_damage": 15}
@@ -339,7 +339,7 @@
       {
         "id": "windstruck",
         "positionIndex": 7,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0345, 0.078, 0.1305, 0.192, 0.2625], "per": "hit", "note": "proc chance 3r % per hit, Windstruck d1*(1+0.15r) (singleHit lightning at the target)"}], "confidence": "C", "note": "card table p7"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0345, 0.078, 0.1305, 0.192, 0.2625, 0.342, 0.4305, 0.528], "per": "hit", "note": "proc chance 3r % per hit, Windstruck d1*(1+0.15r) (singleHit lightning at the target)"}], "confidence": "C", "note": "card table p7"},
         "name": "Windstruck",
         "description": "Chance to strike monsters with lightning on hit dealing additional damage.",
         "maxRank": 5,
@@ -367,7 +367,7 @@
       {
         "id": "upward_spiral",
         "positionIndex": 9,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0345, 0.078, 0.1305, 0.192, 0.2625], "per": "hit", "note": "proc chance 3r % per hit, Upward Spiral d1*(1+0.15r), [110]=35"}], "confidence": "C", "note": "card table p9"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0345, 0.078, 0.1305, 0.192, 0.2625, 0.342, 0.4305, 0.528], "per": "hit", "note": "proc chance 3r % per hit, Upward Spiral d1*(1+0.15r), [110]=35"}], "confidence": "C", "note": "card table p9"},
         "name": "Upward Spiral",
         "description": "Chance to send monsters airborne dealing increased damage on hit.",
         "maxRank": 5,
@@ -492,7 +492,7 @@
       {
         "id": "multistone_fragments",
         "positionIndex": 1,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5], "note": "n = 5 + 1/r fragments"}, {"kind": "extra_hits", "byRank": [0, 1, 1, 1, 2], "per": "use", "replacesProjectileHits": true, "note": "hits = ceil(n/3) (midpoint base 2 at n=5): n=6..10 gives 2,3,3,3,4 hits (card r0..r4: 2,2,3,3,3; kursor 2.36/2.49/3.49/3.60/3.73)"}], "confidence": "I", "note": "card table p1, Runda 3 poz. 2", "plannerFix": "projectile_count 1/r matches n, but the planner counts fragments as hits; in game only ceil(n/3) fragments hit the dummy (cycle 0/+15/-15 deg)"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5, 6, 7, 8], "note": "n = 5 + 1/r fragments"}, {"kind": "extra_hits", "byRank": [0, 1, 1, 1, 2, 2, 2, 3], "per": "use", "replacesProjectileHits": true, "note": "hits = ceil(n/3) (midpoint base 2 at n=5): n=6..10 gives 2,3,3,3,4 hits (card r0..r4: 2,2,3,3,3; kursor 2.36/2.49/3.49/3.60/3.73)"}], "confidence": "I", "note": "card table p1, Runda 3 poz. 2", "plannerFix": "projectile_count 1/r matches n, but the planner counts fragments as hits; in game only ceil(n/3) fragments hit the dummy (cycle 0/+15/-15 deg)"},
         "name": "Multistone Fragments",
         "description": "Increases the amount of rock fragments.",
         "maxRank": 5,
@@ -540,7 +540,7 @@
       {
         "id": "arcanastone",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "hit", "note": "on each explosion hit chance 3r % (x2 with p12) for an Arcanastone object with d1 (singleHit, 0.32 s)"}], "confidence": "C", "note": "card table p5, handler L541-L581", "plannerFix": "planner has the on_hit proc chance 3/r but no effect; in game the proc adds an extra d1 hit to the dummy"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15, 0.18, 0.21, 0.24], "per": "hit", "note": "on each explosion hit chance 3r % (x2 with p12) for an Arcanastone object with d1 (singleHit, 0.32 s)"}], "confidence": "C", "note": "card table p5, handler L541-L581", "plannerFix": "planner has the on_hit proc chance 3/r but no effect; in game the proc adds an extra d1 hit to the dummy"},
         "name": "Arcanastone",
         "description": "Fragments have a chance of being imbued with arcana creating an arcane nova where they explode dealing damage over time.",
         "maxRank": 5,
@@ -630,7 +630,7 @@
       {
         "id": "elemental_fragments",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.06, 0.12, 0.18], "per": "hit", "note": "only with p5 (gate [655] > 0): chance x2 per explosion; one of Storm projectile (chain N0 = 1 hit), Pyromancer Firenova (d1 + burning), Arcanastone d1*(1+0.15r): +0.06r hits per explosion hit"}], "confidence": "I", "note": "card table p12, reguła 23", "plannerFix": "planner models projectile_bounces 5/r and burning 50/r; in game the chain is N0 = 1 hit regardless of bounces, the effect is gated by p5"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.06, 0.12, 0.18, 0.24, 0.3, 0.36], "per": "hit", "note": "only with p5 (gate [655] > 0): chance x2 per explosion; one of Storm projectile (chain N0 = 1 hit), Pyromancer Firenova (d1 + burning), Arcanastone d1*(1+0.15r): +0.06r hits per explosion hit"}], "confidence": "I", "note": "card table p12, reguła 23", "plannerFix": "planner models projectile_bounces 5/r and burning 50/r; in game the chain is N0 = 1 hit regardless of bounces, the effect is gated by p5"},
         "name": "Elemental Fragments",
         "description": "Arcanastone proc chance is doubled and additionally selects a random element between lightning, arcane, and fire. Lightning causes chain lightning, fire causes enemies to burn, and arcane leaves an arcane nova.",
         "maxRank": 3,
@@ -649,7 +649,7 @@
       {
         "id": "colossus_stone_fragment",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [2.05, 3.1, 4.15], "note": "transformation: the colossus fragment (1.00 hit of D at the dummy) + children and grandchildren, each hitting for floor(0.3*r13*D) = 0.3r main hits. Hits of children + grandchildren by n = 5 + r1 (centre, R4 Runda 4 220#1 + PoR4): n = 5: 3.5, 6: 0.9, 7: 0.7, 8: 6.8, 9: 7.9, 10: 1.1 (a grandchild flying back 180 deg from its child lands exactly on the parent explosion point only when floor(n/2) is even: n = 5, 8, 9). byRank = 1 + 3.5*0.3r for n = 5 (r1 = 0); n = 8: 1 + 6.8*0.3r = 3.04 / 5.08 / 7.12, n = 9: 3.37 / 5.74 / 8.11, n = 6: 1.27 / 1.54 / 1.81, n = 7: 1.21 / 1.42 / 1.63, n = 10: 1.33 / 1.66 / 1.99 (cursor (x, y-24) variant: children + grandchildren 4.2 / 0.3 / 0.9 / 6.0 / 7.7 / 0.9)"}], "confidence": "I", "note": "card table p13, R4 Runda 4 220#1 + PoR4 (a); the old entry said 1 hit plus a small wave that rarely touches the dummy (DPS about x0.5)", "plannerFix": "planner adds of_total_damage 30/r; in game the colossus fragment is followed by a wave of children and grandchildren whose hits (0.3r of D each) land on the dummy depending on the parity of floor((5 + p1)/2)"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [2.05, 3.1, 4.15, 5.2, 6.25, 7.3], "note": "transformation: the colossus fragment (1.00 hit of D at the dummy) + children and grandchildren, each hitting for floor(0.3*r13*D) = 0.3r main hits. Hits of children + grandchildren by n = 5 + r1 (centre, R4 Runda 4 220#1 + PoR4): n = 5: 3.5, 6: 0.9, 7: 0.7, 8: 6.8, 9: 7.9, 10: 1.1 (a grandchild flying back 180 deg from its child lands exactly on the parent explosion point only when floor(n/2) is even: n = 5, 8, 9). byRank = 1 + 3.5*0.3r for n = 5 (r1 = 0); n = 8: 1 + 6.8*0.3r = 3.04 / 5.08 / 7.12, n = 9: 3.37 / 5.74 / 8.11, n = 6: 1.27 / 1.54 / 1.81, n = 7: 1.21 / 1.42 / 1.63, n = 10: 1.33 / 1.66 / 1.99 (cursor (x, y-24) variant: children + grandchildren 4.2 / 0.3 / 0.9 / 6.0 / 7.7 / 0.9)"}], "confidence": "I", "note": "card table p13, R4 Runda 4 220#1 + PoR4 (a); the old entry said 1 hit plus a small wave that rarely touches the dummy (DPS about x0.5)", "plannerFix": "planner adds of_total_damage 30/r; in game the colossus fragment is followed by a wave of children and grandchildren whose hits (0.3r of D each) land on the dummy depending on the parity of floor((5 + p1)/2)"},
         "name": "Colossus Stone Fragment",
         "description": "Throw a giant rock onto the target location that explodes into multiple rock fragments that explode into smaller fragments.",
         "maxRank": 3,
@@ -661,7 +661,7 @@
       {
         "id": "mad_rockslinger",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [5, 10, 15], "note": "n = 5 + p1 + 5/r with random directions"}, {"kind": "set_hits", "byRank": [0.47, 0.7, 0.94], "note": "random directions with the dummy in the landing zone (301 px, rule 24; the dummy_model base is in-zone): P = 16.8 deg/360 = 4.7 %, E = 0.047*n; n = 10/15/20 for r1..r3 (160 px variant 0.054*n = 0.54 / 0.81 / 1.08)"}], "confidence": "I", "note": "card table p14 (rule 24, in-zone figure 0.047n; the card text lists 0.054n at 160 px and 0.047n in the zone); no new card section - convention fix", "plannerFix": "planner counts all fragments (+5/r) as hits; in game random directions give E = 0.054*n hits (about 1.1 at r3 vs 2 base)"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [5, 10, 15], "note": "n = 5 + p1 + 5/r with random directions"}, {"kind": "set_hits", "byRank": [0.47, 0.7, 0.94, 1.18, 1.41, 1.65], "note": "random directions with the dummy in the landing zone (301 px, rule 24; the dummy_model base is in-zone): P = 16.8 deg/360 = 4.7 %, E = 0.047*n; n = 10/15/20 for r1..r3 (160 px variant 0.054*n = 0.54 / 0.81 / 1.08)"}], "confidence": "I", "note": "card table p14 (rule 24, in-zone figure 0.047n; the card text lists 0.054n at 160 px and 0.047n in the zone); no new card section - convention fix", "plannerFix": "planner counts all fragments (+5/r) as hits; in game random directions give E = 0.054*n hits (about 1.1 at r3 vs 2 base)"},
         "name": "Mad Rockslinger",
         "description": "Throw increased amount of rocks in random directions.",
         "maxRank": 3,
@@ -759,7 +759,7 @@
       {
         "id": "rooting_wave",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use", "note": "chance 3r % per cast for extra rings every 128 px; ring i=1 hits the dummy at 0.03r hits per cast (aim-dependent, kursor vs centre)"}], "confidence": "I", "note": "card table p5, reguła 22"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15, 0.18, 0.21, 0.24], "per": "use", "note": "chance 3r % per cast for extra rings every 128 px; ring i=1 hits the dummy at 0.03r hits per cast (aim-dependent, kursor vs centre)"}], "confidence": "I", "note": "card table p5, reguła 22"},
         "name": "Rooting Wave",
         "description": "Chance to unleash additional earth binds on cast.",
         "maxRank": 5,
@@ -775,7 +775,7 @@
       {
         "id": "expanding_roots",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "hit", "note": "chance 2r % per hit for an Expanding object (scale 4, d5, DoT) that adds 2 hits D: value = 2 * 0.02r per hit"}], "confidence": "C", "note": "card table p6, handler L139, Destroy_0", "plannerFix": "planner models 1 extra projectile per proc (chance 2/r); in game the proc adds 2 hits of D and the object re-triggers via numb"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2, 0.24, 0.28, 0.32], "per": "hit", "note": "chance 2r % per hit for an Expanding object (scale 4, d5, DoT) that adds 2 hits D: value = 2 * 0.02r per hit"}], "confidence": "C", "note": "card table p6, handler L139, Destroy_0", "plannerFix": "planner models 1 extra projectile per proc (chance 2/r); in game the proc adds 2 hits of D and the object re-triggers via numb"},
         "name": "Expanding Roots",
         "description": "Chance for earth bind to grow on hit.",
         "maxRank": 5,
@@ -858,7 +858,7 @@
       {
         "id": "wildfire_growth",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.8, 3.6, 5.4], "per": "hit", "note": "chance 15r % per hit for a fire Augment_Hellfire controller (d3 = D) that starts at the PLAYER (argument[1]) and walks to the dummy: 1-2 flames reach it, 6 hits of D per flame (tick 15 frames, life 88 frames, tick_hits 88 15 = 6): 12 hits per proc at 160 px (6 at 150-155 px and 120 px, 12 at 140 and 165-200 px); value = 12 * 0.15r per hit"}], "confidence": "I", "note": "card table p12, R4 Runda 4 221#2 (was 7 hits per proc)", "plannerFix": "planner gives poison_skill_damage 35/r on proc; in game the proc spawns a fire object with d3 = D that hits up to 7 times"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.8, 3.6, 5.4, 7.2, 9.0, 10.8], "per": "hit", "note": "chance 15r % per hit for a fire Augment_Hellfire controller (d3 = D) that starts at the PLAYER (argument[1]) and walks to the dummy: 1-2 flames reach it, 6 hits of D per flame (tick 15 frames, life 88 frames, tick_hits 88 15 = 6): 12 hits per proc at 160 px (6 at 150-155 px and 120 px, 12 at 140 and 165-200 px); value = 12 * 0.15r per hit"}], "confidence": "I", "note": "card table p12, R4 Runda 4 221#2 (was 7 hits per proc)", "plannerFix": "planner gives poison_skill_damage 35/r on proc; in game the proc spawns a fire object with d3 = D that hits up to 7 times"},
         "name": "Wildfire Growth",
         "description": "Chance to send a trail of hellfire towards targets on hit.",
         "maxRank": 3,
@@ -982,7 +982,7 @@
       {
         "id": "meteoric_fragmentation",
         "positionIndex": 4,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.77, 1.55, 2.32, 3.1, 3.87], "per": "use", "note": "chance 3r % per meteor for 5 fragments (d1) landing 16 / 26 / 36 / 53 / 74 px from the blast; 1.37 fragments reach the dummy per fragmented meteor (R = 96, controller 24 px) -> +0.041r hits per meteor; x0.945 for the 30 px controller (Resztki: rows computed from P(96) = 0.422 must be scaled, I); x20 meteors per use (scales with p3/p14 meteor count); with p2 the per-meteor figure falls to 1.19 .. 0.79 fragments"}], "confidence": "I", "note": "card table p4, R4 Runda 4 224#1 + Resztki po R4 E (x0.945)", "plannerFix": "planner models of_total_damage 50 on_hit; in game each meteor rolls 3r % for 5 fragments with d1, of which only a share reaches the dummy"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.77, 1.55, 2.32, 3.1, 3.87, 4.65, 5.42, 6.2], "per": "use", "note": "chance 3r % per meteor for 5 fragments (d1) landing 16 / 26 / 36 / 53 / 74 px from the blast; 1.37 fragments reach the dummy per fragmented meteor (R = 96, controller 24 px) -> +0.041r hits per meteor; x0.945 for the 30 px controller (Resztki: rows computed from P(96) = 0.422 must be scaled, I); x20 meteors per use (scales with p3/p14 meteor count); with p2 the per-meteor figure falls to 1.19 .. 0.79 fragments"}], "confidence": "I", "note": "card table p4, R4 Runda 4 224#1 + Resztki po R4 E (x0.945)", "plannerFix": "planner models of_total_damage 50 on_hit; in game each meteor rolls 3r % for 5 fragments with d1, of which only a share reaches the dummy"},
         "name": "Meteoric Fragmentation",
         "description": "Meteors have a chance of exploding into smaller fragments that deal additional damage.",
         "maxRank": 5,
@@ -1032,7 +1032,7 @@
       {
         "id": "rolling_meteorite",
         "positionIndex": 7,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [-0.12, -0.25, -0.37, -0.49, -0.61], "per": "use", "note": "chance 3r % per meteor to roll radially away from the controller (PDP, deadly): it hits the dummy once with p = 0.20 instead of the blast 0.42 and its end blast misses: -0.0065r hits per meteor (R = 96), x0.945 for the 30 px controller (Resztki, I), x20 meteors per use"}], "confidence": "I", "note": "card table p7, R4 Runda 4 224#1 + Resztki po R4 E (x0.945)", "plannerFix": "planner models of_total_damage 50 on_hit; in game the rolling meteor hits the dummy only when it passes it and its blast mostly misses"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [-0.12, -0.25, -0.37, -0.49, -0.61, -0.74, -0.86, -0.98], "per": "use", "note": "chance 3r % per meteor to roll radially away from the controller (PDP, deadly): it hits the dummy once with p = 0.20 instead of the blast 0.42 and its end blast misses: -0.0065r hits per meteor (R = 96), x0.945 for the 30 px controller (Resztki, I), x20 meteors per use"}], "confidence": "I", "note": "card table p7, R4 Runda 4 224#1 + Resztki po R4 E (x0.945)", "plannerFix": "planner models of_total_damage 50 on_hit; in game the rolling meteor hits the dummy only when it passes it and its blast mostly misses"},
         "name": "Rolling Meteorite",
         "description": "Chance for meteors to roll for a short duration when landing dealing additional damage.",
         "maxRank": 5,
@@ -1096,7 +1096,7 @@
       {
         "id": "storm_of_comets",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [10.7, 7.9, 6.4], "note": "transformation: 40 meteors on radius x(1+50%/r), blast scale stays 1 (skillSize scales only the meteor sprite), contact 44 px: P = 38.3/R gives 11.3 / 8.4 / 6.8 hits per cast at the 24 px model (R4); x0.945 for the 30 px controller (Resztki scaling rule applied by the extractor - the card does not list p12) = 10.7 / 7.9 / 6.4; cursor on (x, y): 12.2 / 9.2 / 7.3 (24 px model)"}, {"kind": "damage_pct", "byRank": [100, 200, 300], "note": "LSSD += 100%/r"}, {"kind": "cooldown_s", "byRank": [5, 5, 5], "note": "cooldown set to 5 s (assignment, not sum with p13); replaces the 0 base cooldown"}], "confidence": "I", "note": "card table p12, R4 Runda 4 224#0 (blast scale 1) + Resztki po R4 E scaling x0.945 (derived, I)", "plannerFix": "planner has no 5 s cooldown and no 40-meteor model (20.6/15.4/12.3 hits per cast instead of 1 cast per T_cast)"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [10.7, 7.9, 6.4, 5.3, 4.6, 4.0], "note": "transformation: 40 meteors on radius x(1+50%/r), blast scale stays 1 (skillSize scales only the meteor sprite), contact 44 px: P = 38.3/R gives 11.3 / 8.4 / 6.8 hits per cast at the 24 px model (R4); x0.945 for the 30 px controller (Resztki scaling rule applied by the extractor - the card does not list p12) = 10.7 / 7.9 / 6.4; cursor on (x, y): 12.2 / 9.2 / 7.3 (24 px model)"}, {"kind": "damage_pct", "byRank": [100, 200, 300], "note": "LSSD += 100%/r"}, {"kind": "cooldown_s", "byRank": [5, 5, 5], "note": "cooldown set to 5 s (assignment, not sum with p13); replaces the 0 base cooldown"}], "confidence": "I", "note": "card table p12, R4 Runda 4 224#0 (blast scale 1) + Resztki po R4 E scaling x0.945 (derived, I)", "plannerFix": "planner has no 5 s cooldown and no 40-meteor model (20.6/15.4/12.3 hits per cast instead of 1 cast per T_cast)"},
         "name": "Storm of Comets",
         "description": "Call down a rain of colossal meteors from the sky over a greater area dealing increased damage. Meteor storm now has a cooldown.",
         "maxRank": 3,
@@ -1108,7 +1108,7 @@
       {
         "id": "back_into_orbit",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [6.65, 7.98, 9.31], "note": "transformation: n = 4 + r orbiting controllers (130 px orbit), 20 meteors each; 1.33 hits per controller on the dummy at 120-130 px, per 5 s cast: 1.33*(4+r)"}, {"kind": "cooldown_s", "byRank": [5, 5, 5], "note": "cooldown 5 s (assignment)"}], "confidence": "I", "note": "card table p13, Zmiany 6", "plannerFix": "planner models projectile_count 3 + 1/r and no 5 s cooldown; card has n = 4 + r controllers, 1.33 hits each per 5 s cast"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [6.65, 7.98, 9.31, 10.64, 11.97, 13.3], "note": "transformation: n = 4 + r orbiting controllers (130 px orbit), 20 meteors each; 1.33 hits per controller on the dummy at 120-130 px, per 5 s cast: 1.33*(4+r)"}, {"kind": "cooldown_s", "byRank": [5, 5, 5], "note": "cooldown 5 s (assignment)"}], "confidence": "I", "note": "card table p13, Zmiany 6", "plannerFix": "planner models projectile_count 3 + 1/r and no 5 s cooldown; card has n = 4 + r controllers, 1.33 hits each per 5 s cast"},
         "name": "Back Into Orbit",
         "description": "Summon multiple storms orbiting you. Meteor storm now has a cooldown.",
         "maxRank": 3,
@@ -1189,7 +1189,7 @@
       {
         "id": "sudden_winds",
         "positionIndex": 2,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.16, 0.36, 0.64, 1.0], "per": "use", "note": "once per cast with chance 4r %: n = 1 + 1/r extra tornados (0/+15/-15 deg), r extra hits; expected value 0.04r * r per use"}], "confidence": "C", "note": "card table p2, L526", "plannerFix": "planner rolls the extra projectiles on_hit (chance 4/r); in game the roll is once per cast (L526)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.16, 0.36, 0.64, 1.0, 1.44, 1.96, 2.56], "per": "use", "note": "once per cast with chance 4r %: n = 1 + 1/r extra tornados (0/+15/-15 deg), r extra hits; expected value 0.04r * r per use"}], "confidence": "C", "note": "card table p2, L526", "plannerFix": "planner rolls the extra projectiles on_hit (chance 4/r); in game the roll is once per cast (L526)"},
         "name": "Sudden Winds",
         "description": "Chance to increase the amount of tornados.",
         "maxRank": 5,
@@ -1297,7 +1297,7 @@
       {
         "id": "afterflow",
         "positionIndex": 10,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use", "note": "chance 3r % once per cast (L534) adds a second full tornado: x(1+0.03r) of the 1 base hit"}], "confidence": "C", "note": "card table p10, asm 0x14656cae8", "plannerFix": "planner rolls the extra tornado on_hit (chance 3/r); in game the roll is once per cast (L534) and the outer loop +1"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15, 0.18, 0.21, 0.24], "per": "use", "note": "chance 3r % once per cast (L534) adds a second full tornado: x(1+0.03r) of the 1 base hit"}], "confidence": "C", "note": "card table p10, asm 0x14656cae8", "plannerFix": "planner rolls the extra tornado on_hit (chance 3/r); in game the roll is once per cast (L534) and the outer loop +1"},
         "name": "Afterflow",
         "description": "Chance to unleash an additional tornado.",
         "maxRank": 5,
@@ -1349,7 +1349,7 @@
       {
         "id": "absolute_tempest",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.275, 0.55, 0.825], "per": "use", "note": "landing hit: after the knock-up (zSpeed 8, gravity 0.35) the landing adds floor(0.55*r*D) (physical, class none) once per lift; value = hits per use with lambda = 0.5 (T = 34.3 frames); D + lambda*floor(0.55 r D)"}, {"kind": "other", "byRank": [0, 0, 0], "note": "pull blocked on the dummy (em[26]=1); no LSSD on the card; size +25%/r"}], "confidence": "I", "note": "card table p14, Runda 3 poz. 1 (reguly 22/27)", "plannerFix": "planner gives arcane_skill_damage 55/r as LSSD; in game p14 has no LSSD, the value 55 r feeds the knock-up and the landing hit floor(0.55 r D) (buff 47) instead"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.275, 0.55, 0.825, 1.1, 1.375, 1.65], "per": "use", "note": "landing hit: after the knock-up (zSpeed 8, gravity 0.35) the landing adds floor(0.55*r*D) (physical, class none) once per lift; value = hits per use with lambda = 0.5 (T = 34.3 frames); D + lambda*floor(0.55 r D)"}, {"kind": "other", "byRank": [0, 0, 0], "note": "pull blocked on the dummy (em[26]=1); no LSSD on the card; size +25%/r"}], "confidence": "I", "note": "card table p14, Runda 3 poz. 1 (reguly 22/27)", "plannerFix": "planner gives arcane_skill_damage 55/r as LSSD; in game p14 has no LSSD, the value 55 r feeds the knock-up and the landing hit floor(0.55 r D) (buff 47) instead"},
         "name": "Absolute Tempest",
         "description": "Conjure a tornado with increased size catching monsters in it till hitting terrain throwing any monsters caught in the air and causing them to deal area of effect damage upon landing.",
         "maxRank": 3,
@@ -1435,7 +1435,7 @@
       {
         "id": "trembling_earth",
         "positionIndex": 1,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 3, 4, 6, 7], "per": "use", "note": "fissureAmount = floor(10*(1+15%/r)) = 11/13/14/16/17 pulses (base 10)"}], "confidence": "C", "note": "card table p1, L833-L837", "plannerFix": "planner models skill_duration +15%/r; in game the pulse count is fissureAmount = floor(10*(1+0.15r)) (11..17 hits)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1, 3, 4, 6, 7, 9, 10, 12], "per": "use", "note": "fissureAmount = floor(10*(1+15%/r)) = 11/13/14/16/17 pulses (base 10)"}], "confidence": "C", "note": "card table p1, L833-L837", "plannerFix": "planner models skill_duration +15%/r; in game the pulse count is fissureAmount = floor(10*(1+0.15r)) (11..17 hits)"},
         "name": "Trembling Earth",
         "description": "Increases duration of fissures.",
         "maxRank": 5,
@@ -1493,7 +1493,7 @@
       {
         "id": "earth_crack",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "hit", "note": "chance 3r % per hit for Viking_Shattered_Earth (d1, singleHit): +0.03r hits per hit"}], "confidence": "C", "note": "card table p6, handler L368", "plannerFix": "planner models of_total_damage 50 on_hit; in game the proc adds a full d1 hit"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15, 0.18, 0.21, 0.24], "per": "hit", "note": "chance 3r % per hit for Viking_Shattered_Earth (d1, singleHit): +0.03r hits per hit"}], "confidence": "C", "note": "card table p6, handler L368", "plannerFix": "planner models of_total_damage 50 on_hit; in game the proc adds a full d1 hit"},
         "name": "Earth Crack",
         "description": "Chance to crack the earth impaling monsters with a stone pillar on hit dealing additional damage.",
         "maxRank": 5,
@@ -1509,7 +1509,7 @@
       {
         "id": "comet_fall",
         "positionIndex": 7,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "hit", "note": "chance 3r % per hit for Shaman_Meteor_Storm_obj (d1) + explosion: +0.03r hits per hit"}], "confidence": "C", "note": "card table p7, handler L526", "plannerFix": "planner models of_total_damage 50 on_hit; in game the proc adds a full d1 meteor hit and an explosion"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15, 0.18, 0.21, 0.24], "per": "hit", "note": "chance 3r % per hit for Shaman_Meteor_Storm_obj (d1) + explosion: +0.03r hits per hit"}], "confidence": "C", "note": "card table p7, handler L526", "plannerFix": "planner models of_total_damage 50 on_hit; in game the proc adds a full d1 meteor hit and an explosion"},
         "name": "Comet Fall",
         "description": "Chance to drop a comet on hit dealing additional damage.",
         "maxRank": 5,
@@ -1549,7 +1549,7 @@
       {
         "id": "frequent_shaking",
         "positionIndex": 10,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, 0, 1, 1, 1], "per": "use", "note": "tick t = max(15*(1-8%/r), 6) frames; hits = n + floor(12/t): +1 from r3 (t < 12); cooldown-limited DPS otherwise unchanged"}], "confidence": "C", "note": "card table p10, L833", "plannerFix": "planner models faster_cast_rate 8/r; in game it shortens the pulse tick (t) and adds 1 hit from r3"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0, 0, 1, 1, 1, 1, 1, 2], "per": "use", "note": "tick t = max(15*(1-8%/r), 6) frames; hits = n + floor(12/t): +1 from r3 (t < 12); cooldown-limited DPS otherwise unchanged"}], "confidence": "C", "note": "card table p10, L833", "plannerFix": "planner models faster_cast_rate 8/r; in game it shortens the pulse tick (t) and adds 1 hit from r3"},
         "name": "Frequent Shaking",
         "description": "Increases the tick frequency of fissures.",
         "maxRank": 5,
@@ -1561,7 +1561,7 @@
       {
         "id": "enlargening_earthquake",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.71, 4.65, 4.52], "per": "use", "note": "n = floor(10*(1+0.45r)) = 14/19/23 pulses with d_k = D*(1-0.015r)^k; hits in main-hit units = sum of damage factors - 10 (12.71/14.65/14.52 - 10)"}], "confidence": "C", "note": "card table p11, Step_0 L52-L56", "plannerFix": "planner models arcane_skill_damage -1.5/r flat; in game the pulse count grows by 45%/r and each pulse loses (1-0.015r)^k of D"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.71, 4.65, 4.52, 3.72, 2.23, 0.77], "per": "use", "note": "n = floor(10*(1+0.45r)) = 14/19/23 pulses with d_k = D*(1-0.015r)^k; hits in main-hit units = sum of damage factors - 10 (12.71/14.65/14.52 - 10)"}], "confidence": "C", "note": "card table p11, Step_0 L52-L56", "plannerFix": "planner models arcane_skill_damage -1.5/r flat; in game the pulse count grows by 45%/r and each pulse loses (1-0.015r)^k of D"},
         "name": "Enlargening Earthquake",
         "description": "Increases the duration of fissures. Increase the size but decrease the damage dealt.",
         "maxRank": 3,
@@ -1573,7 +1573,7 @@
       {
         "id": "electrocharged_fissures",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.1, 0.2, 0.3], "per": "hit", "note": "chance 5r % per hit for a lightning object (d4 = d1, tick 0.25 s, about 2 hits): 0.05r*2 per hit"}, {"kind": "dot", "byRank": [0.6, 1.2, 1.8], "note": "Stasis [26] = floor(D*60%/r) (buff 61) from each hit; value = fraction of D"}], "confidence": "I", "note": "card table p12, handler L400", "plannerFix": "planner has the stasis proc (chance 5/r, 60/r increased stasis) but not the lightning object (about 2 extra hits per proc)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6], "per": "hit", "note": "chance 5r % per hit for a lightning object (d4 = d1, tick 0.25 s, about 2 hits): 0.05r*2 per hit"}, {"kind": "dot", "byRank": [0.6, 1.2, 1.8], "note": "Stasis [26] = floor(D*60%/r) (buff 61) from each hit; value = fraction of D"}], "confidence": "I", "note": "card table p12, handler L400", "plannerFix": "planner has the stasis proc (chance 5/r, 60/r increased stasis) but not the lightning object (about 2 extra hits per proc)"},
         "name": "Electrocharged Fissures",
         "description": "Inflicts stasis and has a chance to strike monsters with bolts of lightning on hit.",
         "maxRank": 3,
@@ -1604,7 +1604,7 @@
       {
         "id": "natural_disaster",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.2, 0.4, 0.6], "per": "hit", "note": "[665] and [666] chance +10r % each: +0.1r extra d1 hit per proc, two procs (assumes p6 and p7 are taken, I)"}, {"kind": "other", "byRank": [0, 0, 0], "note": "arcane break 15r % (buff 5 s) on every hit; no hit change"}], "confidence": "C", "note": "card table p14", "plannerFix": "planner rolls arcane break on_hit with chance 10/r; in game it is applied on every hit (chance 100 %)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.2, 0.4, 0.6, 0.8, 1.0, 1.2], "per": "hit", "note": "[665] and [666] chance +10r % each: +0.1r extra d1 hit per proc, two procs (assumes p6 and p7 are taken, I)"}, {"kind": "other", "byRank": [0, 0, 0], "note": "arcane break 15r % (buff 5 s) on every hit; no hit change"}], "confidence": "C", "note": "card table p14", "plannerFix": "planner rolls arcane break on_hit with chance 10/r; in game it is applied on every hit (chance 100 %)"},
         "name": "Natural Disaster",
         "description": "Increases the proc chance of earth crack and comet fall inflicting arcane break on hit.",
         "maxRank": 3,
@@ -1684,7 +1684,7 @@
       {
         "id": "fragmenting_totemstones",
         "positionIndex": 3,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.2, 0.4, 0.6, 0.8, 1.0], "per": "use", "note": "per shot: chance 4r % for 5 shrapnel (d1) from the impact point; up to +5 hits, expected 5*0.04r per shot (I)"}], "confidence": "I", "note": "card table p3, Step_0 L45-L61", "plannerFix": "planner models of_total_damage 50 on_hit (chance 4/r); in game each shot rolls 4r % for 5 shrapnel with d1"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6], "per": "use", "note": "per shot: chance 4r % for 5 shrapnel (d1) from the impact point; up to +5 hits, expected 5*0.04r per shot (I)"}], "confidence": "I", "note": "card table p3, Step_0 L45-L61", "plannerFix": "planner models of_total_damage 50 on_hit (chance 4/r); in game each shot rolls 4r % for 5 shrapnel with d1"},
         "name": "Fragmenting Totemstones",
         "description": "Chance for rocks to unleash fragments upon landing dealing additional damage.",
         "maxRank": 5,
@@ -1962,7 +1962,7 @@
       {
         "id": "wolfs_claw",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.1, 0.15, 0.2, 0.25], "per": "hit", "note": "on each hit into a bleeding dummy (EnemyGetBuff(3) > 0, from p6): Universal_Damage_Return d1 = floor(D_w*0.05r), collision list includes the hit target; +0.05r hits per hit"}], "confidence": "I", "note": "card table p5, PC13Shaman L453-L474, reguly 25/17", "plannerFix": "planner positions 5 and 6 are swapped against the game: planner p5 is the bleed proc (3/r, +15/r bleed damage), the game p5 is an on-hit extra hit of 0.05r*D_w on bleeding targets"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4], "per": "hit", "note": "on each hit into a bleeding dummy (EnemyGetBuff(3) > 0, from p6): Universal_Damage_Return d1 = floor(D_w*0.05r), collision list includes the hit target; +0.05r hits per hit"}], "confidence": "I", "note": "card table p5, PC13Shaman L453-L474, reguly 25/17", "plannerFix": "planner positions 5 and 6 are swapped against the game: planner p5 is the bleed proc (3/r, +15/r bleed damage), the game p5 is an on-hit extra hit of 0.05r*D_w on bleeding targets"},
         "name": "Wolf´s Claw",
         "description": "Chance to inflict bleeding on hit.",
         "maxRank": 5,
@@ -2073,7 +2073,7 @@
       {
         "id": "lightning_fangs",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.28, 0.8, 1.56], "per": "hit", "note": "N0 chain (1 hit, not bounced): chance 16r % per wolf hit of floor(D_w*(1+0.75r)): hits per hit = 0.16r*(1+0.75r)"}], "confidence": "C", "note": "card table p13, PC13Shaman L188-L200, reguly 23/25", "plannerFix": "projectile_bounces 4/r has no effect on the chain (N0 = 1 hit); the card gives one extra hit of D_w*(1+0.75r) at chance 16r %, which the planner does not turn into a hit"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.28, 0.8, 1.56, 2.56, 3.8, 5.28], "per": "hit", "note": "N0 chain (1 hit, not bounced): chance 16r % per wolf hit of floor(D_w*(1+0.75r)): hits per hit = 0.16r*(1+0.75r)"}], "confidence": "C", "note": "card table p13, PC13Shaman L188-L200, reguly 23/25", "plannerFix": "projectile_bounces 4/r has no effect on the chain (N0 = 1 hit); the card gives one extra hit of D_w*(1+0.75r) at chance 16r %, which the planner does not turn into a hit"},
         "name": "Lightning Fangs",
         "description": "Chance to unleash surges of chain lightning on hit dealing increased damage.",
         "maxRank": 3,
@@ -2193,7 +2193,7 @@
       {
         "id": "static_duality",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.06, 0.12, 0.18, 0.24, 0.3], "per": "use", "note": "per shot: chance 3r % for a temporary copy totem (2 s, about 2 shots), expected 2*0.03r per shot (I)"}], "confidence": "I", "note": "card table p5, Alarm_1 L8-L24", "plannerFix": "planner models of_total_damage 100 on_hit (chance 3/r); in game the copy is a temporary totem firing about 2 shots, chance per shot"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.06, 0.12, 0.18, 0.24, 0.3, 0.36, 0.42, 0.48], "per": "use", "note": "per shot: chance 3r % for a temporary copy totem (2 s, about 2 shots), expected 2*0.03r per shot (I)"}], "confidence": "I", "note": "card table p5, Alarm_1 L8-L24", "plannerFix": "planner models of_total_damage 100 on_hit (chance 3/r); in game the copy is a temporary totem firing about 2 shots, chance per shot"},
         "name": "Static Duality",
         "description": "Chance to summon an additional storm totem on attack for a short period.",
         "maxRank": 5,
@@ -2209,7 +2209,7 @@
       {
         "id": "connected_by_storm",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.53, 1.05, 1.58], "per": "use", "note": "connection object between consecutive totems (tick 0.4 s, d4 = floor(D*75%/r)): on a line 2.5 ticks/s * 0.75r * about 1.4 s per shot = 2.63r, but R4 225#12 narrowed the dummy-on-the-beam probability to 10-30 % (CreateInFreePos scatters the totems 8-128 px, Connected_obj 0x149e2dfb0 unread): midpoint 0.2 -> 0.53 / 1.05 / 1.58 (range 0.26-0.79 for r1, 0.53-1.58 for r2, 0.79-2.37 for r3)"}], "confidence": "I", "note": "card table p6, R4 Runda 4 229#1 (zawezone, I)", "plannerFix": "planner has no connected-storm ticks; the card gives a tick of floor(D*0.75r) every 0.4 s between totems"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.53, 1.05, 1.58, 2.1, 2.63, 3.16], "per": "use", "note": "connection object between consecutive totems (tick 0.4 s, d4 = floor(D*75%/r)): on a line 2.5 ticks/s * 0.75r * about 1.4 s per shot = 2.63r, but R4 225#12 narrowed the dummy-on-the-beam probability to 10-30 % (CreateInFreePos scatters the totems 8-128 px, Connected_obj 0x149e2dfb0 unread): midpoint 0.2 -> 0.53 / 1.05 / 1.58 (range 0.26-0.79 for r1, 0.53-1.58 for r2, 0.79-2.37 for r3)"}], "confidence": "I", "note": "card table p6, R4 Runda 4 229#1 (zawezone, I)", "plannerFix": "planner has no connected-storm ticks; the card gives a tick of floor(D*0.75r) every 0.4 s between totems"},
         "name": "Connected by Storm",
         "description": "Storm totems are now linked together with electric current dealing damage to monsters on hit.",
         "maxRank": 3,
@@ -2233,7 +2233,7 @@
       {
         "id": "storming_bolt",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "hit", "note": "chance 4r % per bolt for Storm_Bolt_obj (d4, 0.24 s): +0.04r hits per hit"}], "confidence": "C", "note": "card table p8, handler L385", "plannerFix": "planner models of_total_damage 50 on_hit; in game the proc is a full d4 object"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2, 0.24, 0.28, 0.32], "per": "hit", "note": "chance 4r % per bolt for Storm_Bolt_obj (d4, 0.24 s): +0.04r hits per hit"}], "confidence": "C", "note": "card table p8, handler L385", "plannerFix": "planner models of_total_damage 50 on_hit; in game the proc is a full d4 object"},
         "name": "Storming Bolt",
         "description": "Chance to strike monsters with a bolt of lightning on hit dealing additional damage.",
         "maxRank": 5,
@@ -2298,7 +2298,7 @@
       {
         "id": "stormclaw_totem",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "cooldown_s", "byRank": [-0.08, -0.16, -0.24], "note": "extraAttackSpeed += 20%/r: shot period -0.4*20r/100 s"}, {"kind": "extra_hits", "byRank": [2, 3, 4], "per": "use", "note": "[681] = SUB(p13, s11) = r + s8 (1) = 1 + r claws per bolt (Shaman_Stormclaw_obj, d4 at the target), assumed to hit (I, upper bound)"}, {"kind": "damage_pct", "byRank": [20, 40, 60], "note": "LSSD += 20%/r"}], "confidence": "I", "note": "card table p13, R4 Runda 4 (Zmiany liczb: Storm Totem p13 [681] = 1 + r)", "plannerFix": "planner counts claws as extra bolts (projectile_count 1 per rank with base 1); the card gives up to r claws per bolt at the target and a faster sentry period"},
+        "dummy": {"effects": [{"kind": "cooldown_s", "byRank": [-0.08, -0.16, -0.24], "note": "extraAttackSpeed += 20%/r: shot period -0.4*20r/100 s"}, {"kind": "extra_hits", "byRank": [2, 3, 4, 5, 6, 7], "per": "use", "note": "[681] = SUB(p13, s11) = r + s8 (1) = 1 + r claws per bolt (Shaman_Stormclaw_obj, d4 at the target), assumed to hit (I, upper bound)"}, {"kind": "damage_pct", "byRank": [20, 40, 60], "note": "LSSD += 20%/r"}], "confidence": "I", "note": "card table p13, R4 Runda 4 (Zmiany liczb: Storm Totem p13 [681] = 1 + r)", "plannerFix": "planner counts claws as extra bolts (projectile_count 1 per rank with base 1); the card gives up to r claws per bolt at the target and a faster sentry period"},
         "name": "Stormclaw Totem",
         "description": "Increases the attack speed and damage dealt by storm totem unleashing an arc of lightning bolts on hit.",
         "maxRank": 3,
@@ -2471,7 +2471,7 @@
       {
         "id": "light_the_soil",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.063, 0.252, 0.567, 1.008, 1.575], "per": "hit", "note": "chance 3r % per hit for a Light_Soil object (PDP, lives 3 s = 180 frames overriding the 2.5 s of Create_0, tick 30 frames): tick_hits 178 30 = 6 hits of floor(0.35r*D) per proc: 0.03r * 6 * 0.35r = 0.063 r^2 hits of D per hit (r5 = 1.6)"}], "confidence": "C", "note": "card table p6, R4 Runda 4 232#0 (C)", "plannerFix": "planner models of_total_damage 35/r on_hit with burning; the game spawns a separate Light the Soil object (3 s) with chance 3r % per hit"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.063, 0.252, 0.567, 1.008, 1.575, 2.268, 3.087, 4.032], "per": "hit", "note": "chance 3r % per hit for a Light_Soil object (PDP, lives 3 s = 180 frames overriding the 2.5 s of Create_0, tick 30 frames): tick_hits 178 30 = 6 hits of floor(0.35r*D) per proc: 0.03r * 6 * 0.35r = 0.063 r^2 hits of D per hit (r5 = 1.6)"}], "confidence": "C", "note": "card table p6, R4 Runda 4 232#0 (C)", "plannerFix": "planner models of_total_damage 35/r on_hit with burning; the game spawns a separate Light the Soil object (3 s) with chance 3r % per hit"},
         "name": "Light the Soil",
         "description": "Chance to leave ground burning beneath monsters on hit dealing additional damage.",
         "maxRank": 5,
@@ -2488,7 +2488,7 @@
       {
         "id": "arcfire",
         "positionIndex": 7,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.07, 0.28, 0.63, 1.12, 1.75], "per": "use", "note": "arcFire = r extra projectiles with chance 7r % per shot: expected extra hits 0.07r*r per shot"}], "confidence": "C", "note": "card table p7, Alarm_1", "plannerFix": "planner rolls arcfire on_hit (chance 7/r); in game the roll is once per shot (arcFireChance at creation), adding r projectiles"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.07, 0.28, 0.63, 1.12, 1.75, 2.52, 3.43, 4.48], "per": "use", "note": "arcFire = r extra projectiles with chance 7r % per shot: expected extra hits 0.07r*r per shot"}], "confidence": "C", "note": "card table p7, Alarm_1", "plannerFix": "planner rolls arcfire on_hit (chance 7/r); in game the roll is once per shot (arcFireChance at creation), adding r projectiles"},
         "name": "Arcfire",
         "description": "Chance to unleash additional flames in an arc.",
         "maxRank": 5,
@@ -2532,7 +2532,7 @@
       {
         "id": "flamescarred_sentry",
         "positionIndex": 10,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.09, 0.18, 0.27, 0.36, 0.45], "per": "use", "note": "aura on the totem: tick 0.5 s, d3 = floor(D*0.1r); per shot (0.45 s) about 0.9 ticks: 0.9*0.1r (I, aura applies while the dummy is at the totem)"}], "confidence": "I", "note": "card table p10, Alarm_2", "plannerFix": "planner models splash_of_total_damage 10/r; in game it is an aura on the totem ticking every 0.5 s with floor(D*0.1r)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.09, 0.18, 0.27, 0.36, 0.45, 0.54, 0.63, 0.72], "per": "use", "note": "aura on the totem: tick 0.5 s, d3 = floor(D*0.1r); per shot (0.45 s) about 0.9 ticks: 0.9*0.1r (I, aura applies while the dummy is at the totem)"}], "confidence": "I", "note": "card table p10, Alarm_2", "plannerFix": "planner models splash_of_total_damage 10/r; in game it is an aura on the totem ticking every 0.5 s with floor(D*0.1r)"},
         "name": "Flamescarred Sentry",
         "description": "Fire totem now burns monsters around it for a portion of its damage.",
         "maxRank": 5,
@@ -2568,7 +2568,7 @@
       {
         "id": "multiplying_fire",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.189, 0.378, 0.567], "per": "hit", "note": "chance 5r % per projectile hit: a new totem near the target fires (1 + 1.25/T_shot) = 3.78 shots: 0.05r*3.78 per hit; applies at kursor (x, y-24), at (x, y) the totem blocks it (0)"}, {"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD += 15%/r"}], "confidence": "I", "note": "card table p13, handler L324-L339", "plannerFix": "planner has the proc chance 5/r with fire_skill_damage 15/r but no temporary totem (about 3.8 shots per proc); the 12 px placement condition also depends on the cursor"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.189, 0.378, 0.567, 0.756, 0.945, 1.134], "per": "hit", "note": "chance 5r % per projectile hit: a new totem near the target fires (1 + 1.25/T_shot) = 3.78 shots: 0.05r*3.78 per hit; applies at kursor (x, y-24), at (x, y) the totem blocks it (0)"}, {"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD += 15%/r"}], "confidence": "I", "note": "card table p13, handler L324-L339", "plannerFix": "planner has the proc chance 5/r with fire_skill_damage 15/r but no temporary totem (about 3.8 shots per proc); the 12 px placement condition also depends on the cursor"},
         "effects": {
           "base": {"subtree_damage": 0},
           "perRank": {"subtree_damage": 15}
@@ -2718,7 +2718,7 @@
       {
         "id": "chaos_aura",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0107, 0.0213, 0.032, 0.0427, 0.0533], "per": "use", "note": "Chaos Meteors aura object every 30 frames hits the dummy once ([675] = [floor(D/2), 4r]): chance 4r % of a Chaos_Meteor_obj with floor(D/2) on the dummy (1 hit of 0.5 D) = +0.04r main hits per second per totem (about +0.5 %*r of a totem DPS of ~7.5 D/s); converted per entity action at T_shot = 16 frames (0.267 s, no sentry attack speed): 0.04r * 16/60; the aura rate is independent of the shot cadence"}], "confidence": "C", "note": "card table p5, R4 Runda 4 235#3 (C)", "plannerFix": "planner has the on_hit chance 4/r with no effect; in game it is a 0.5 s aura object spawning Chaos Meteor objects near enemies"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0107, 0.0213, 0.032, 0.0427, 0.0533, 0.064, 0.0746, 0.0853], "per": "use", "note": "Chaos Meteors aura object every 30 frames hits the dummy once ([675] = [floor(D/2), 4r]): chance 4r % of a Chaos_Meteor_obj with floor(D/2) on the dummy (1 hit of 0.5 D) = +0.04r main hits per second per totem (about +0.5 %*r of a totem DPS of ~7.5 D/s); converted per entity action at T_shot = 16 frames (0.267 s, no sentry attack speed): 0.04r * 16/60; the aura rate is independent of the shot cadence"}], "confidence": "C", "note": "card table p5, R4 Runda 4 235#3 (C)", "plannerFix": "planner has the on_hit chance 4/r with no effect; in game it is a 0.5 s aura object spawning Chaos Meteor objects near enemies"},
         "name": "Chaos Aura",
         "description": "Monsters around the chaos totem have a chance for a chaos meteor to drop down from the sky dealing area of effect damage.",
         "maxRank": 5,
@@ -2727,7 +2727,7 @@
       {
         "id": "chaos_arc",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.06, 0.24, 0.54, 0.96, 1.5], "per": "use", "note": "chaosArc = r extra projectiles (2 hits each) with chance 3r % per shot: expected 0.03r * r * 2 per shot"}], "confidence": "C", "note": "card table p6, L9-L10", "plannerFix": "planner rolls the extra projectiles on_hit (chance 3/r); in game the roll is per shot (chaosArcChance)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.06, 0.24, 0.54, 0.96, 1.5, 2.16, 2.94, 3.84], "per": "use", "note": "chaosArc = r extra projectiles (2 hits each) with chance 3r % per shot: expected 0.03r * r * 2 per shot"}], "confidence": "C", "note": "card table p6, L9-L10", "plannerFix": "planner rolls the extra projectiles on_hit (chance 3/r); in game the roll is per shot (chaosArcChance)"},
         "name": "Chaos Arc",
         "description": "Chance on attack to fire multiple chaos bolts in an arc.",
         "maxRank": 5,
@@ -2743,7 +2743,7 @@
       {
         "id": "split_chaos",
         "positionIndex": 7,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.06, 0.12, 0.18, 0.24, 0.3], "per": "hit", "note": "chance 3r % per hit for 2 new projectiles (projType 0, [56]=1) starting at the dummy: about 2 hits per proc (I)"}], "confidence": "I", "note": "card table p7, handler L482-L515", "plannerFix": "planner has the on_hit chance 3/r with no effect; in game the proc adds 2 projectiles that start on the dummy"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.06, 0.12, 0.18, 0.24, 0.3, 0.36, 0.42, 0.48], "per": "hit", "note": "chance 3r % per hit for 2 new projectiles (projType 0, [56]=1) starting at the dummy: about 2 hits per proc (I)"}], "confidence": "I", "note": "card table p7, handler L482-L515", "plannerFix": "planner has the on_hit chance 3/r with no effect; in game the proc adds 2 projectiles that start on the dummy"},
         "name": "Split Chaos",
         "description": "Chance for chaos bolts to split into two bolts on hit.",
         "maxRank": 5,
@@ -2776,7 +2776,7 @@
       {
         "id": "chaos_pulse",
         "positionIndex": 10,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0045, 0.018, 0.0405, 0.072, 0.1125], "per": "hit", "note": "chance 3r % per hit for a Chaos Pulse object (146x145, 1 s) with d1*0.15r: 0.03r*0.15r hits of D per hit; its burning floor(d1*0.15r*0.15r) is a DoT not included here"}], "confidence": "C", "note": "card table p10, handler L432", "plannerFix": "planner gives arcane_skill_damage +15%/r and burning 15/r on the proc; in game the pulse is an extra object of 0.15r*D at chance 3r % with a burn of d1*0.15r*0.15r"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0045, 0.018, 0.0405, 0.072, 0.1125, 0.162, 0.2205, 0.288], "per": "hit", "note": "chance 3r % per hit for a Chaos Pulse object (146x145, 1 s) with d1*0.15r: 0.03r*0.15r hits of D per hit; its burning floor(d1*0.15r*0.15r) is a DoT not included here"}], "confidence": "C", "note": "card table p10, handler L432", "plannerFix": "planner gives arcane_skill_damage +15%/r and burning 15/r on the proc; in game the pulse is an extra object of 0.15r*D at chance 3r % with a burn of d1*0.15r*0.15r"},
         "name": "Chaos Pulse",
         "description": "Chance to unleash a pulse of shadow on hit inflicting burning and dealing additional damage.",
         "maxRank": 5,

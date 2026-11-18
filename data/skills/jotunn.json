@@ -130,7 +130,7 @@
       {
         "id": "pulsing_monolith",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.35, 0.7, 1.05, 1.4, 1.75], "per": "use", "note": "1 nova per cast (at landing 2, 162.5 px, hits dummy); damage floor(dmg*35r%) times f_nova (modifier class 'brak', f_nova ~0.45 example, equipment-dependent, I): multiply by f_nova"}], "confidence": "C", "note": "card p8 row + Runda 3 (R3S) nova class 'brak'", "plannerFix": "nova is a reduced-modifier object (no crit, LDM, [178], pen); multiply by f_nova (equipment dependent, ~0.45 example), planner uses full of_total_damage"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.35, 0.7, 1.05, 1.4, 1.75, 2.1, 2.45, 2.8], "per": "use", "note": "1 nova per cast (at landing 2, 162.5 px, hits dummy); damage floor(dmg*35r%) times f_nova (modifier class 'brak', f_nova ~0.45 example, equipment-dependent, I): multiply by f_nova"}], "confidence": "C", "note": "card p8 row + Runda 3 (R3S) nova class 'brak'", "plannerFix": "nova is a reduced-modifier object (no crit, LDM, [178], pen); multiply by f_nova (equipment dependent, ~0.45 example), planner uses full of_total_damage"},
         "name": "Pulsing Monolith",
         "description": "Frozen boulder unleashes a frozen nova with each bounce dealing a portion of its damage.",
         "maxRank": 5,
@@ -206,7 +206,7 @@
       {
         "id": "boulder_barrage",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 35, "note": "LSSD +35%/r (p14.s10)"}, {"kind": "projectiles", "byRank": [3, 4, 5], "note": "boulders n = XSP(1 + p14.s9) = 3 + r (PoR4 b: SUB[p14 s9] = r + 2), i.e. 2 + r extra over the base 1 boulder (planner projectile_count 2 + r); hits come from the explicit extra_hits below"}, {"kind": "extra_hits", "byRank": [2, 0, 2], "per": "use", "replacesProjectileHits": true, "note": "H at 160 px = 4 (n even, 2 boulders at +-6 deg x2 hits) / 2 (n odd, centre boulder only) -> extra vs base 2 = 2/0/2 for r=1/2/3; boulder scale 0.36"}, {"kind": "cooldown_s", "byRank": [4, 4, 4], "note": "cooldown 4 s (period = 4 s instead of 1/castRate); absolute value"}], "confidence": "C", "note": "card p14 row (L85, L97, L78; cooldown GetTalentCooldown 326 -> 4 s), reguly 14/26", "plannerFix": "planner gives projectile_count +1/r with no cooldown; game: cooldown 4 s and hits 4/2/4 at 160 px (even/odd n), +35%/r LSSD"},
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 35, "note": "LSSD +35%/r (p14.s10)"}, {"kind": "projectiles", "byRank": [3, 4, 5, 6, 7, 8], "note": "boulders n = XSP(1 + p14.s9) = 3 + r (PoR4 b: SUB[p14 s9] = r + 2), i.e. 2 + r extra over the base 1 boulder (planner projectile_count 2 + r); hits come from the explicit extra_hits below"}, {"kind": "extra_hits", "byRank": [2, 0, 2, 0, 2, 0], "per": "use", "replacesProjectileHits": true, "note": "H at 160 px = 4 (n even, 2 boulders at +-6 deg x2 hits) / 2 (n odd, centre boulder only) -> extra vs base 2 = 2/0/2 for r=1/2/3; boulder scale 0.36"}, {"kind": "cooldown_s", "byRank": [4, 4, 4], "note": "cooldown 4 s (period = 4 s instead of 1/castRate); absolute value"}], "confidence": "C", "note": "card p14 row (L85, L97, L78; cooldown GetTalentCooldown 326 -> 4 s), reguly 14/26", "plannerFix": "planner gives projectile_count +1/r with no cooldown; game: cooldown 4 s and hits 4/2/4 at 160 px (even/odd n), +35%/r LSSD"},
         "name": "Boulder Barrage",
         "description": "Unleash a barrage of smaller frozen boulders in an arc. Frozen boulder has a cooldown.",
         "maxRank": 3,
@@ -334,7 +334,7 @@
       {
         "id": "ice_skating",
         "positionIndex": 7,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.624, 2.496, 5.616, 9.984, 15.6], "per": "use", "note": "per cast chance 4r%; each proc = 4 plates at 45..225 px, ~39 plate hits on dummy (36-46) each 40r%*dmg; value = 0.04r*39*0.40r (I: plate count from 160 px geometry)"}], "confidence": "C", "note": "card p7 row (L178-227), reguly 14/15", "plannerFix": "planner gives one extra hit of 40r% per proc (on_cast); game: 5-plate skating chain with ~39 hits per proc"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.624, 2.496, 5.616, 9.984, 15.6, 22.464, 30.576, 39.936], "per": "use", "note": "per cast chance 4r%; each proc = 4 plates at 45..225 px, ~39 plate hits on dummy (36-46) each 40r%*dmg; value = 0.04r*39*0.40r (I: plate count from 160 px geometry)"}], "confidence": "C", "note": "card p7 row (L178-227), reguly 14/15", "plannerFix": "planner gives one extra hit of 40r% per proc (on_cast); game: 5-plate skating chain with ~39 hits per proc"},
         "name": "Ice Skating",
         "description": "Chance on cast to conjure a trail of ice dealing damage over time and slowing monsters on hit.",
         "maxRank": 5,
@@ -370,7 +370,7 @@
       {
         "id": "cascading_exhale",
         "positionIndex": 9,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.1701, 0.3629, 0.5826, 0.8345, 1.125], "per": "use", "note": "per breath hit chance 4r% (flag [797]); cascade hits the dummy again (instance_nth_nearest 2 returns it), 2 hits per cascade; value = 2*q2/(1-q2), q2=1-(1-0.04r)^2 (card: r1 0.17, r3 0.58, r5 1.13)"}], "confidence": "C", "note": "card p9 row + reguly 17 (instance_nth_nearest)", "plannerFix": "planner models one extra hit of 100% per proc; game: 2 hits per cascade with per-hit chance and geometric repeats"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.1701, 0.3629, 0.5826, 0.8345, 1.125, 1.4626, 1.858, 2.3253], "per": "use", "note": "per breath hit chance 4r% (flag [797]); cascade hits the dummy again (instance_nth_nearest 2 returns it), 2 hits per cascade; value = 2*q2/(1-q2), q2=1-(1-0.04r)^2 (card: r1 0.17, r3 0.58, r5 1.13)"}], "confidence": "C", "note": "card p9 row + reguly 17 (instance_nth_nearest)", "plannerFix": "planner models one extra hit of 100% per proc; game: 2 hits per cascade with per-hit chance and geometric repeats"},
         "name": "Cascading Exhale",
         "description": "Chance to unleash additional breath of ice from target location on hit.",
         "maxRank": 5,
@@ -395,7 +395,7 @@
       {
         "id": "frostbitten_lungs",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.5, 1.5, 2.0], "note": "tick every 30*(1-12.5r%) frames over lifetime 30*(1+p4+17.5r%); hits = 1 + floor(T/tick) + 1 (alarm); r1 -> 3, r2 -> 3, r3 -> 4 hits; relative to base 2. Card also lists r5 -> 6 (planner max rank 3)"}], "confidence": "C", "note": "card p11 row (asm 0x146741c2d-0x146741dd6), p4=0 assumed", "plannerFix": "planner gives faster_cast_rate 12.5r and skill_duration 17.5r; game: damage tick frequency (hits 3/3/4) for the breath"},
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.5, 1.5, 2.0, 2.5, 3.0, 5.0], "note": "tick every 30*(1-12.5r%) frames over lifetime 30*(1+p4+17.5r%); hits = 1 + floor(T/tick) + 1 (alarm); r1 -> 3, r2 -> 3, r3 -> 4 hits; relative to base 2. Card also lists r5 -> 6 (planner max rank 3)"}], "confidence": "C", "note": "card p11 row (asm 0x146741c2d-0x146741dd6), p4=0 assumed", "plannerFix": "planner gives faster_cast_rate 12.5r and skill_duration 17.5r; game: damage tick frequency (hits 3/3/4) for the breath"},
         "name": "Frostbitten Lungs",
         "description": "Increases breath of ice duration dealing damage over time.",
         "maxRank": 3,
@@ -431,7 +431,7 @@
       {
         "id": "frosted_throat",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3], "note": "breaths n = 1 + r (planner perExtra 1.5 per extra breath; replaced by explicit H)"}, {"kind": "extra_hits", "byRank": [2, 3, 2], "per": "use", "replacesProjectileHits": true, "note": "H(n) at 160 px = 4 (n=2, +-10 deg), 5 (n=3, -20/0/+20), 4 (n=4, +-30 misses) -> extra vs base 2 = 2/3/2 for r=1/2/3 (rectangle oriented, rule 26)"}, {"kind": "crit", "byRank": [10, 20, 30], "note": "spell crit chance +10r% (p14.s10); crit damage +50r% (p14.s11)"}], "confidence": "C", "note": "card p14 row, Runda 4 (R4 rule 26)", "plannerFix": "planner converts extra breaths at 1.5 hits each; game 4/5/4 hits at 160 px (oriented cone, +-30 deg misses)"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5, 6], "note": "breaths n = 1 + r (planner perExtra 1.5 per extra breath; replaced by explicit H)"}, {"kind": "extra_hits", "byRank": [2, 3, 2, 3, 2, 3], "per": "use", "replacesProjectileHits": true, "note": "H(n) at 160 px = 4 (n=2, +-10 deg), 5 (n=3, -20/0/+20), 4 (n=4, +-30 misses) -> extra vs base 2 = 2/3/2 for r=1/2/3 (rectangle oriented, rule 26)"}, {"kind": "crit", "byRank": [10, 20, 30], "note": "spell crit chance +10r% (p14.s10); crit damage +50r% (p14.s11)"}], "confidence": "C", "note": "card p14 row, Runda 4 (R4 rule 26)", "plannerFix": "planner converts extra breaths at 1.5 hits each; game 4/5/4 hits at 160 px (oriented cone, +-30 deg misses)"},
         "name": "Frosted Throat",
         "description": "Unleash multiple breaths of ice with chance to critically hit dealing increased critical strike damage.",
         "maxRank": 3,
@@ -638,7 +638,7 @@
       {
         "id": "multicicles",
         "positionIndex": 9,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0904, 0.3616, 0.8136, 1.4464, 2.26], "per": "use", "replacesProjectileHits": true, "note": "per salvo (6 per cast) chance 4r% of +r icicles; expected extra icicle hits = 6*0.04r^2*(11.3/30) = 0.0904 r^2 per use, assuming equal hit rate per icicle (I); marked replacesProjectileHits because these are extra icicles"}], "confidence": "I", "note": "card p9 row marked C/I (relative formula p9.s10*p9.s9/(5+p2)); I", "plannerFix": "planner rolls on_hit with projectile_count +r; game rolls per salvo (6 per cast) and adds ~0.09r^2 hits per cast"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.0904, 0.3616, 0.8136, 1.4464, 2.26, 3.2544, 4.4296, 5.7856], "per": "use", "replacesProjectileHits": true, "note": "per salvo (6 per cast) chance 4r% of +r icicles; expected extra icicle hits = 6*0.04r^2*(11.3/30) = 0.0904 r^2 per use, assuming equal hit rate per icicle (I); marked replacesProjectileHits because these are extra icicles"}], "confidence": "I", "note": "card p9 row marked C/I (relative formula p9.s10*p9.s9/(5+p2)); I", "plannerFix": "planner rolls on_hit with projectile_count +r; game rolls per salvo (6 per cast) and adds ~0.09r^2 hits per cast"},
         "name": "Multicicles",
         "description": "Chance on pulse to unleash additional icicles.",
         "maxRank": 5,
@@ -690,7 +690,7 @@
       {
         "id": "chaining_frost",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD +15%/r"}, {"kind": "hits_mult", "byRank": [3.0081, 3.6585, 3.9837], "note": "PoR4 rule 39: chainBounces = 2r + 3 (base s7 = 3), n = 5/7/9; H(n) per touching icicle = 3.0/3.7/4.0 (I: start distribution 0-36 px; Resztki chain_sim gives 2.7/3.7/4.3/4.7/5.7, differences <= 0.4, left unchanged); N_c 11.7 icicles touch the dummy -> chains 35/43/47, own icicle hits 0.9, plus the orb 1: total per use 37/45/49 hits (r=1..3, planner max 3; r4-5 would be 59+1.9/67+1.9 chains+own); value = total/12.3"}], "confidence": "I", "note": "card p13 row + PoR4 b (n = 2r+3) + Resztki B (stays I: chain H(n) start distribution); rule 26 oriented rectangles", "plannerFix": "planner adds max_targets/chain params but no hit model; game: each icicle touching the dummy dies and chains ~2-3 hits (total 25-37 per cast at r1-3)"},
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD +15%/r"}, {"kind": "hits_mult", "byRank": [3.0081, 3.6585, 3.9837, 5.0325, 5.6829], "note": "PoR4 rule 39: chainBounces = 2r + 3 (base s7 = 3), n = 5/7/9; H(n) per touching icicle = 3.0/3.7/4.0 (I: start distribution 0-36 px; Resztki chain_sim gives 2.7/3.7/4.3/4.7/5.7, differences <= 0.4, left unchanged); N_c 11.7 icicles touch the dummy -> chains 35/43/47, own icicle hits 0.9, plus the orb 1: total per use 37/45/49 hits (r=1..3, planner max 3; r4-5 would be 59+1.9/67+1.9 chains+own); value = total/12.3"}], "confidence": "I", "note": "card p13 row + PoR4 b (n = 2r+3) + Resztki B (stays I: chain H(n) start distribution); rule 26 oriented rectangles", "plannerFix": "planner adds max_targets/chain params but no hit model; game: each icicle touching the dummy dies and chains ~2-3 hits (total 25-37 per cast at r1-3)"},
         "name": "Chaining Frost",
         "description": "Icicles from orb of frost chain from targets unleashing frozen pulses on hit dealing a portion of the damage.",
         "maxRank": 3,
@@ -702,7 +702,7 @@
       {
         "id": "orb_of_duality",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 10, "note": "LSSD +10%/r"}, {"kind": "projectiles", "byRank": [1, 2, 3], "note": "orbs n = 1 + r (planner perExtra orb); replaced by explicit totals below"}, {"kind": "extra_hits", "byRank": [0.3, 6.0, 6.1], "per": "use", "replacesProjectileHits": true, "note": "total orb+icicle hits for n = 2/3/4 orbs (half-size orbs at 16 deg, icicleAmount*0.75): 12.6/18.3/18.4 (R4, rule 26); value = total - 12.3"}], "confidence": "C", "note": "card p14 row (L343, icicleAmount*0.75), R4", "plannerFix": "planner converts extra orbs at perExtraProjectile 3.0 each; game: 12.6/18.3/18.4 total hits for 2/3/4 orbs (small gain at r1)"},
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 10, "note": "LSSD +10%/r"}, {"kind": "projectiles", "byRank": [1, 2, 3, 4, 5, 6], "note": "orbs n = 1 + r (planner perExtra orb); replaced by explicit totals below"}, {"kind": "extra_hits", "byRank": [0.3, 6.0, 6.1], "per": "use", "replacesProjectileHits": true, "note": "total orb+icicle hits for n = 2/3/4 orbs (half-size orbs at 16 deg, icicleAmount*0.75): 12.6/18.3/18.4 (R4, rule 26); value = total - 12.3"}], "confidence": "C", "note": "card p14 row (L343, icicleAmount*0.75), R4", "plannerFix": "planner converts extra orbs at perExtraProjectile 3.0 each; game: 12.6/18.3/18.4 total hits for 2/3/4 orbs (small gain at r1)"},
         "name": "Orb of Duality",
         "description": "Unleash multiple smaller orbs of frost in an arc.",
         "maxRank": 3,
@@ -810,7 +810,7 @@
       {
         "id": "spiky_approach",
         "positionIndex": 3,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.16, 0.36, 0.64, 1.0], "per": "use", "note": "per cast chance 4r%; 5 icicles (r 24+1/kl. around arrival point), 4 of 5 hit dummy, each floor(dmg*25r%): value = 0.04r*4*0.25r = 0.04r^2 hits per use"}], "confidence": "C", "note": "card p3 row (L415, L161-174)", "plannerFix": "planner proc on_cast adds one 25r% hit; game: 5 icicles, 4 hit, per proc (4x more)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.16, 0.36, 0.64, 1.0, 1.44, 1.96, 2.56], "per": "use", "note": "per cast chance 4r%; 5 icicles (r 24+1/kl. around arrival point), 4 of 5 hit dummy, each floor(dmg*25r%): value = 0.04r*4*0.25r = 0.04r^2 hits per use"}], "confidence": "C", "note": "card p3 row (L415, L161-174)", "plannerFix": "planner proc on_cast adds one 25r% hit; game: 5 icicles, 4 hit, per proc (4x more)"},
         "name": "Spiky Approach",
         "description": "Chance on cast to conjure multiple orbiting icicles dealing a portion of the damage.",
         "maxRank": 5,
@@ -929,7 +929,7 @@
       {
         "id": "winter_aparition",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD +15%/r"}, {"kind": "extra_hits", "byRank": [0.0817, 0.3269, 0.7355], "per": "use", "note": "per nova hit chance 6r% spawns blizzard controller with 3r flakes, each flake hits dummy with P=0.454 at full dmg: value = 0.06r*3r*0.454 per use (1 nova hit per use)"}], "confidence": "C", "note": "card p12 row (ProjectileCollision18Jotunn L270-286)", "plannerFix": "planner keeps cold 15r and projectile_count 3r inside the on_hit proc; game: LSSD 15r always, flakes spawn with chance 6r% per hit and hit with P=0.454"},
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD +15%/r"}, {"kind": "extra_hits", "byRank": [0.0817, 0.3269, 0.7355, 1.3075, 2.043, 2.9419], "per": "use", "note": "per nova hit chance 6r% spawns blizzard controller with 3r flakes, each flake hits dummy with P=0.454 at full dmg: value = 0.06r*3r*0.454 per use (1 nova hit per use)"}], "confidence": "C", "note": "card p12 row (ProjectileCollision18Jotunn L270-286)", "plannerFix": "planner keeps cold 15r and projectile_count 3r inside the on_hit proc; game: LSSD 15r always, flakes spawn with chance 6r% per hit and hit with P=0.454"},
         "effects": {
           "base": {"subtree_damage": 0},
           "perRank": {"subtree_damage": 15}
@@ -961,7 +961,7 @@
       {
         "id": "crystallized_pinnacles",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD +15%/r"}, {"kind": "extra_hits", "byRank": [0.06, 0.12, 0.18], "per": "use", "note": "per nova hit chance 6r% a nova (scale 0.5) with dmg: value = 0.06r per use"}, {"kind": "dot", "base": 0, "perRank": 50, "note": "frostbite from nova: floor(dmg*50r%) per application, chance 6r% per hit (tick per reports/dot_debuffs.md)"}], "confidence": "C", "note": "card p14 row (ProjectileCollision18Jotunn L176-192)", "plannerFix": "planner puts cold 15r (should be LSSD) and nova/frostbite on the on_hit proc with chance 6r; game LSSD 15r always plus nova 6r% per hit"},
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD +15%/r"}, {"kind": "extra_hits", "byRank": [0.06, 0.12, 0.18, 0.24, 0.3, 0.36], "per": "use", "note": "per nova hit chance 6r% a nova (scale 0.5) with dmg: value = 0.06r per use"}, {"kind": "dot", "base": 0, "perRank": 50, "note": "frostbite from nova: floor(dmg*50r%) per application, chance 6r% per hit (tick per reports/dot_debuffs.md)"}], "confidence": "C", "note": "card p14 row (ProjectileCollision18Jotunn L176-192)", "plannerFix": "planner puts cold 15r (should be LSSD) and nova/frostbite on the on_hit proc with chance 6r; game LSSD 15r always plus nova 6r% per hit"},
         "name": "Crystallized Pinnacles",
         "description": "Chance to unleash small frost novas on hit inflicting frostbite.",
         "maxRank": 3,
@@ -1035,7 +1035,7 @@
       {
         "id": "eternal_winter",
         "positionIndex": 2,
-        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.2, 1.4, 1.6, 1.8, 2.0], "note": "flake count x(1+20r%) (XSP(25*(1+p2))); hits x(1+20r%) at 160 px"}], "confidence": "C", "note": "card p2 row", "plannerFix": "planner models skill_duration 20/r; game raises the flake count, i.e. hits x(1+20r%)"},
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6], "note": "flake count x(1+20r%) (XSP(25*(1+p2))); hits x(1+20r%) at 160 px"}], "confidence": "C", "note": "card p2 row", "plannerFix": "planner models skill_duration 20/r; game raises the flake count, i.e. hits x(1+20r%)"},
         "name": "Eternal Winter",
         "description": "Increases the duration of blizzard.",
         "maxRank": 5,
@@ -1126,7 +1126,7 @@
       {
         "id": "winter_echoes",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.005, 1.01, 1.0149, 1.0199, 1.0249], "note": "per cast chance 6r% of a second controller at 128*(1+p3) px (P ~0.026 per flake, 25 flakes): x(1+0.083*chance) = x(1+0.00498r)"}], "confidence": "C", "note": "card p8 row", "plannerFix": "planner proc on_cast adds of_total_damage 100 (a full extra hit); game: second controller hits with P~0.026 per flake, x(1+0.083*6r%)"},
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.005, 1.01, 1.0149, 1.0199, 1.0249, 1.0298, 1.0348, 1.0398], "note": "per cast chance 6r% of a second controller at 128*(1+p3) px (P ~0.026 per flake, 25 flakes): x(1+0.083*chance) = x(1+0.00498r)"}], "confidence": "C", "note": "card p8 row", "plannerFix": "planner proc on_cast adds of_total_damage 100 (a full extra hit); game: second controller hits with P~0.026 per flake, x(1+0.083*6r%)"},
         "name": "Winter Echoes",
         "description": "Chance on cast to summon an additional blizzard.",
         "maxRank": 5,
@@ -1556,7 +1556,7 @@
       {
         "id": "echoing_frostquake",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.07, 0.14, 0.21, 0.28, 0.35], "per": "use", "note": "extra echo of landing object with chance 7r% per leap; echo is a full-damage hit: value = 0.07r"}], "confidence": "C", "note": "card p6 row (skillsLeap L895-896)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.07, 0.14, 0.21, 0.28, 0.35, 0.42, 0.49, 0.56], "per": "use", "note": "extra echo of landing object with chance 7r% per leap; echo is a full-damage hit: value = 0.07r"}], "confidence": "C", "note": "card p6 row (skillsLeap L895-896)"},
         "name": "Echoing Frostquake",
         "description": "Chance to unleash an additional shockwave when landing.",
         "maxRank": 5,
@@ -1615,7 +1615,7 @@
       {
         "id": "frosted_territory",
         "positionIndex": 10,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [3.5, 7.0, 10.5, 14.0, 17.5], "per": "use", "note": "ice slab (+-100 x +-76) lands 6 px above the cursor (30 px from the dummy, Resztki E) and hits at every cleared tick (model tick 24 frames -> map clears at frame 26 + 25k) for 3 s and in the fade: 14 hits (16 at cursor (x, y), 15 in the old 24 px model); value = 14 * 0.25r; overlaps of slabs from consecutive leaps ignored"}], "confidence": "I", "note": "card p10 row (skillsLeap L918-928), Resztki B/E (15 -> 14 at cursor (x, y-24); coverage ~348 frames vs the 351 threshold for the 15th hit, I)", "plannerFix": "planner of_total_damage 25/r once; game: ice slab ticks ~15 times, each 25r% of dmg"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [3.5, 7.0, 10.5, 14.0, 17.5, 21.0, 24.5, 28.0], "per": "use", "note": "ice slab (+-100 x +-76) lands 6 px above the cursor (30 px from the dummy, Resztki E) and hits at every cleared tick (model tick 24 frames -> map clears at frame 26 + 25k) for 3 s and in the fade: 14 hits (16 at cursor (x, y), 15 in the old 24 px model); value = 14 * 0.25r; overlaps of slabs from consecutive leaps ignored"}], "confidence": "I", "note": "card p10 row (skillsLeap L918-928), Resztki B/E (15 -> 14 at cursor (x, y-24); coverage ~348 frames vs the 351 threshold for the 15th hit, I)", "plannerFix": "planner of_total_damage 25/r once; game: ice slab ticks ~15 times, each 25r% of dmg"},
         "name": "Frosted Territory",
         "description": "Ground below landing location is left frosted dealing damage over time and slowing monsters.",
         "maxRank": 5,
@@ -1627,7 +1627,7 @@
       {
         "id": "superhero_landing",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.92, 4.48, 7.68], "per": "use", "note": "p11.s10 = 2r chains, the dummy now stands 30 px from the landing (Resztki E): the first wave of a chain directed away from the dummy (+-36 deg from the opposite direction) misses (distance sqrt(30^2+15^2+2*30*15) = 45 > 31*s+12 = 43), so hits ~ 0.8*p11.s10 (I, chain angles unread, <= 20 %), each dmg*(1+20r%): value = 0.8 * 2r*(1+0.2r); later waves ignored (>= 63 px)"}], "confidence": "I", "note": "card p11 row (L933-950) + Resztki E (first wave 0.8*p11.s10 instead of p11.s10)", "plannerFix": "planner projectile_count 3r and cold 20r with no chain model; game: 2r waves each hitting once at dmg*(1+20r%)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.92, 4.48, 7.68, 11.52, 16.0, 21.12], "per": "use", "note": "p11.s10 = 2r chains, the dummy now stands 30 px from the landing (Resztki E): the first wave of a chain directed away from the dummy (+-36 deg from the opposite direction) misses (distance sqrt(30^2+15^2+2*30*15) = 45 > 31*s+12 = 43), so hits ~ 0.8*p11.s10 (I, chain angles unread, <= 20 %), each dmg*(1+20r%): value = 0.8 * 2r*(1+0.2r); later waves ignored (>= 63 px)"}], "confidence": "I", "note": "card p11 row (L933-950) + Resztki E (first wave 0.8*p11.s10 instead of p11.s10)", "plannerFix": "planner projectile_count 3r and cold 20r with no chain model; game: 2r waves each hitting once at dmg*(1+20r%)"},
         "name": "Superhero Landing",
         "description": "Unleash an arc of shockwaves towards target location when landing.",
         "maxRank": 3,
@@ -1639,7 +1639,7 @@
       {
         "id": "seismic_icequake",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 40, "note": "LSSD +40%/r"}, {"kind": "extra_hits", "byRank": [1, 2, 3], "per": "use", "note": "landing object echo +1 per rank (full damage), each echo a hit"}], "confidence": "C", "note": "card p12 row ([814] = p12.s10)", "plannerFix": "planner projectile_count +1/r has perExtraProjectile 0, so no hit is added; game: +r echo hits at full damage"},
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 40, "note": "LSSD +40%/r"}, {"kind": "extra_hits", "byRank": [1, 2, 3, 4, 5, 6], "per": "use", "note": "landing object echo +1 per rank (full damage), each echo a hit"}], "confidence": "C", "note": "card p12 row ([814] = p12.s10)", "plannerFix": "planner projectile_count +1/r has perExtraProjectile 0, so no hit is added; game: +r echo hits at full damage"},
         "name": "Seismic Icequake",
         "description": "Leave the ground trembling after landing causing additional echos.",
         "maxRank": 3,
@@ -1651,7 +1651,7 @@
       {
         "id": "tectonic_stampede",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 50, "note": "LSSD +50%/r"}, {"kind": "extra_hits", "byRank": [2, 2, 1], "per": "use", "note": "shockwave cascade along the aim line (rule 38: aim through the dummy centre), s = [71] = 1 + 0.2*r13 without other subskills: waves every floor(48 s) px, r = 31 s + 12: r1 (57, 114, 171) -> 114 and 171 hit; r2 (67, 134, 201) -> 134 and 201; r3 (76, 152, 228) -> only 152; (r4: only 172, r5: both; planner max rank 3). Variant with the cursor at (x, y-24): 1 for r1 (114 px misses by ~1 px), note only. Other subskills (p4/p5/p14) change s and shift the thresholds (I)"}], "confidence": "I", "note": "card p13 row (L837-850) + PoR4 (a) rule 38 + Resztki B (rank-dependent 2/2/1/1/2)", "plannerFix": "planner models area_of_effect 20/r and cold 50/r only; game adds one stampede wave hit"},
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 50, "note": "LSSD +50%/r"}, {"kind": "extra_hits", "byRank": [2, 2, 1, 1, 2, 2], "per": "use", "note": "shockwave cascade along the aim line (rule 38: aim through the dummy centre), s = [71] = 1 + 0.2*r13 without other subskills: waves every floor(48 s) px, r = 31 s + 12: r1 (57, 114, 171) -> 114 and 171 hit; r2 (67, 134, 201) -> 134 and 201; r3 (76, 152, 228) -> only 152; (r4: only 172, r5: both; planner max rank 3). Variant with the cursor at (x, y-24): 1 for r1 (114 px misses by ~1 px), note only. Other subskills (p4/p5/p14) change s and shift the thresholds (I)"}], "confidence": "I", "note": "card p13 row (L837-850) + PoR4 (a) rule 38 + Resztki B (rank-dependent 2/2/1/1/2)", "plannerFix": "planner models area_of_effect 20/r and cold 50/r only; game adds one stampede wave hit"},
         "name": "Tectonic Stampede",
         "description": "Charge towards target location followed by a shockwave of ice.",
         "maxRank": 3,
@@ -1853,7 +1853,7 @@
       {
         "id": "further_collapse",
         "positionIndex": 9,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use", "note": "per cast chance 3r% of a full-damage echo (+1 hit with map clear): value = 0.03r"}], "confidence": "C", "note": "card p9 row (L1046-1047, echo L1116)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15, 0.18, 0.21, 0.24], "per": "use", "note": "per cast chance 3r% of a full-damage echo (+1 hit with map clear): value = 0.03r"}], "confidence": "C", "note": "card p9 row (L1046-1047, echo L1116)"},
         "name": "Further Collapse",
         "description": "Chance on cast for the avalanche to echo an additional time.",
         "maxRank": 5,
@@ -1905,7 +1905,7 @@
       {
         "id": "snowshade_bait",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3, 4, 7], "note": "transformation: bait stands at cast point for 2 s*(1+25r%) and drops an avalanche every 1.2 s*(1-20r%) after 0.5 s: hits = 1+floor((T-0.5)/freq) = 3/4/7 for r1/r2/r3 (+-1 by cast animation, I); avalanche scale 1.35*(1+p2) so it covers the dummy"}], "confidence": "I", "note": "card p13 row (scale C, count I)", "plannerFix": "planner faster_cast_rate 20/r and skill_duration 25/r; game: bait drops avalanches at its position (3/4/7 hits)"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3, 4, 7, 15], "note": "transformation: bait stands at cast point for 2 s*(1+25r%) and drops an avalanche every 1.2 s*(1-20r%) after 0.5 s: hits = 1+floor((T-0.5)/freq) = 3/4/7 for r1/r2/r3 (+-1 by cast animation, I); avalanche scale 1.35*(1+p2) so it covers the dummy"}], "confidence": "I", "note": "card p13 row (scale C, count I)", "plannerFix": "planner faster_cast_rate 20/r and skill_duration 25/r; game: bait drops avalanches at its position (3/4/7 hits)"},
         "name": "Snowshade Bait",
         "description": "Casting Avalanche leaves an ice clone on the target area that taunts enemies and casts shouts for a set duration.",
         "maxRank": 3,
@@ -1917,7 +1917,7 @@
       {
         "id": "nordic_stigma",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.7, 2.4, 3.1], "per": "use", "note": "on avalanche hit a stigma explosion with dmg*(1+0.7r) (explosion created on dummy, C): extra hits per use = 1+0.7r"}], "confidence": "C", "note": "card p14 row (ProjectileCollision18Jotunn L31-40)", "plannerFix": "planner cold 70/r as a bonus; game: an extra explosion of dmg*(1+70r%) per avalanche hit (x(2+0.7r) total)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.7, 2.4, 3.1, 3.8, 4.5, 5.2], "per": "use", "note": "on avalanche hit a stigma explosion with dmg*(1+0.7r) (explosion created on dummy, C): extra hits per use = 1+0.7r"}], "confidence": "C", "note": "card p14 row (ProjectileCollision18Jotunn L31-40)", "plannerFix": "planner cold 70/r as a bonus; game: an extra explosion of dmg*(1+70r%) per avalanche hit (x(2+0.7r) total)"},
         "name": "Nordic Stigma",
         "description": "Mark monsters with nordic stigma on hit causing them to be hit with lightning after a short delay.",
         "maxRank": 3,
@@ -2131,7 +2131,7 @@
       {
         "id": "frost_sunder_onslaught",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [3.0, 6.0, 9.0], "per": "use", "note": "every icicle hit spawns an explosion with 75r% of dmg (phys and cold); 4 icicle hits in zone -> value = 4*0.75r; at 160 px (2 icicle hits) it would be 1.5r"}], "confidence": "C", "note": "card p11 row (ProjectileCollision18Jotunn L225-245, reguly 15)", "plannerFix": "planner of_total_damage/area_of_effect; game: an explosion on EVERY icicle hit (no chance) at 75r% of both damage types"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [3.0, 6.0, 9.0, 12.0, 15.0, 18.0], "per": "use", "note": "every icicle hit spawns an explosion with 75r% of dmg (phys and cold); 4 icicle hits in zone -> value = 4*0.75r; at 160 px (2 icicle hits) it would be 1.5r"}], "confidence": "C", "note": "card p11 row (ProjectileCollision18Jotunn L225-245, reguly 15)", "plannerFix": "planner of_total_damage/area_of_effect; game: an explosion on EVERY icicle hit (no chance) at 75r% of both damage types"},
         "name": "Frost Sunder Onslaught",
         "description": "Icicles explode on contact unleashing an explosion dealing damage on a large radius.",
         "maxRank": 3,
@@ -2155,7 +2155,7 @@
       {
         "id": "gelid_riptide",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.6, 2.4, 5.4], "per": "use", "note": "per cast chance 15r% of 1+r extra volleys (r salvos): value = 0.15r * r * 4 icicle hits in zone (0.3r^2 at 160 px)"}], "confidence": "C", "note": "card p13 row (L914)", "plannerFix": "planner on_hit chance 15r with extra_volleys 100r%; game rolls per cast and each extra volley is ~4 icicle hits (in zone)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.6, 2.4, 5.4, 9.6, 15.0, 21.6], "per": "use", "note": "per cast chance 15r% of 1+r extra volleys (r salvos): value = 0.15r * r * 4 icicle hits in zone (0.3r^2 at 160 px)"}], "confidence": "C", "note": "card p13 row (L914)", "plannerFix": "planner on_hit chance 15r with extra_volleys 100r%; game rolls per cast and each extra volley is ~4 icicle hits (in zone)"},
         "name": "Gelid Riptide",
         "description": "Chance to unleash multiple waves of icicles.",
         "maxRank": 3,

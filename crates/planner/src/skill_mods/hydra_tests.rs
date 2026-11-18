@@ -343,7 +343,7 @@ fn burning_essence_lands_the_auras_a_grown_hydra_pulses_in_one_attack_period() {
 fn the_engines_subskill_hits_follow_the_sim() {
     let (sim, base) = (expected(&[]), engine(&[]));
     assert!(near(sim, 1.) && near(base, 1.), "sim {sim}, engine {base}");
-    let wrong = parity::misses(CLASS, "hydra", expected, engine, 0.01);
+    let wrong = parity::misses_past(CLASS, "hydra", expected, engine, 0.01, parity::GRANTED);
     assert!(wrong.is_empty(), "\n{}", wrong.join("\n"));
 }
 

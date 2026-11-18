@@ -10,3 +10,5 @@
 ## Calculations
 
 - Sub-skill ranks from Peg Leg, Overloaded Dice or Storm in a Vial keep raising Scorching Aura's subskills past their highest rank (#238).
+- Those granted ranks now also raise the dummy hits of the other skills' subskills (#238).
+- Burn Them All! burns for its Conversion share of Scorching Aura's damage each second; its Burning Damage line, which the game never reads, no longer counts (#239).

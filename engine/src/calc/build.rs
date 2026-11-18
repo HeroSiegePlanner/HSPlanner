@@ -694,22 +694,28 @@ fn proc_trigger_assumption(trigger: &str) -> &'static str {
 
 /// Per-state chance (%) that the main skill's subtree inflicts a state; nodes that
 /// apply a state without an amount count too. `ailment::AILMENTS` filters to damage.
+/// The second map holds the hit share a `conversion` state deals each second.
 fn subtree_apply_chances(
     spec: Option<&SkillSpec>,
     subskill_ranks: &HashMap<String, u32>,
     enemy_conditions: &HashMap<String, bool>,
-) -> HashMap<String, f64> {
-    let mut out: HashMap<String, f64> = HashMap::new();
+) -> (HashMap<String, f64>, HashMap<String, f64>) {
+    let mut chances: HashMap<String, f64> = HashMap::new();
+    let mut shares: HashMap<String, f64> = HashMap::new();
     let Some(spec) = spec else {
-        return out;
+        return (chances, shares);
     };
     let owner = super::stats::skill_spec_to_subskill_owner(spec);
     let agg =
         super::subskill::aggregate_subskill_stats(&owner, subskill_ranks, Some(enemy_conditions));
     for state in agg.applied_states {
-        *out.entry(state.state).or_insert(0.0) += state.chance;
+        if state.conversion {
+            *shares.entry(state.state.clone()).or_insert(0.0) +=
+                state.amount.unwrap_or(0.0) / 100.0;
+        }
+        *chances.entry(state.state).or_insert(0.0) += state.chance;
     }
-    out
+    (chances, shares)
 }
 
 struct ProcContext<'a> {
@@ -2229,7 +2235,7 @@ pub(crate) fn performance_from_stats(
             proc_dps_max += per_sec.1 * hit.1;
         }
     }
-    let apply_chances =
+    let (apply_chances, hit_shares) =
         subtree_apply_chances(active_skill, deps.subskill_ranks, deps.enemy_conditions);
     // Volley averages include projectiles and repeated casts; ailments use
     // one contact's mean damage and the same individual-contact rate as procs.
@@ -2266,6 +2272,7 @@ pub(crate) fn performance_from_stats(
                 &computed.stats,
                 main_scoped,
                 &apply_chances,
+                &hit_shares,
                 target_dot_immune,
             )
         } else {
@@ -2275,6 +2282,7 @@ pub(crate) fn performance_from_stats(
                 &computed.stats,
                 main_scoped,
                 &apply_chances,
+                &hit_shares,
                 target_dot_immune,
             )
         }
