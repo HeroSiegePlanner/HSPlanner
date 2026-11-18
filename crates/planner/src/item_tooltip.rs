@@ -28,6 +28,51 @@ use std::{
     sync::{Arc, LazyLock},
 };
 
+static ITEM_STAT_ORDER: LazyLock<HashMap<String, ItemStatOrder>> = LazyLock::new(|| {
+    [
+        include_str!("../../../data/items/amulets.json"),
+        include_str!("../../../data/items/armors.json"),
+        include_str!("../../../data/items/belts.json"),
+        include_str!("../../../data/items/boots.json"),
+        include_str!("../../../data/items/charms.json"),
+        include_str!("../../../data/items/gloves.json"),
+        include_str!("../../../data/items/helmets.json"),
+        include_str!("../../../data/items/potions.json"),
+        include_str!("../../../data/items/relics.json"),
+        include_str!("../../../data/items/rings.json"),
+        include_str!("../../../data/items/shields.json"),
+        include_str!("../../../data/items/weapons.json"),
+    ]
+    .into_iter()
+    .flat_map(|json| {
+        serde_json::from_str::<Vec<ItemStatOrder>>(json)
+            .expect("embedded item display metadata must be valid")
+    })
+    .map(|order| (order.id.clone(), order))
+    .collect()
+});
+
+const RANDOM_SKILL_NAME: &str = "Random Skill";
+const RANDOM_ELEMENT_KEY: &str = "random_skill_element";
+const ALL_SKILLS_CLASS_KEY: &str = "all_skills_class";
+const SUBSKILL_BOOST_KEY: &str = "subskill_boost";
+const UNHOLY_EFFECT: &str = "Unholy";
+const BONUS_SOCKET_MOD_ID: &str = "crystal_add_socket";
+const EQUIPPED_MARK: &str = "✓";
+const NOT_SUPPORTED_FOOTNOTE: &str = "item.unsupported_footnote";
+const RECOGNIZED_EFFECTS: [&str; 10] = [
+    "attacks can hit multiple enemies",
+    "cannot be frozen",
+    "unholy",
+    "movement phasing",
+    "piercing attack",
+    "half freeze duration",
+    "double jump",
+    "herobound",
+    "all skills class",
+    "mirrors your other ring",
+];
+
 type Ranged = (f64, f64);
 
 // The calculation model intentionally uses maps. Keep the authored display order
@@ -69,30 +114,6 @@ struct ItemStatOrder {
     #[serde(default, rename = "skillBonuses")]
     skill_bonuses: OrderedKeys,
 }
-
-static ITEM_STAT_ORDER: LazyLock<HashMap<String, ItemStatOrder>> = LazyLock::new(|| {
-    [
-        include_str!("../../../data/items/amulets.json"),
-        include_str!("../../../data/items/armors.json"),
-        include_str!("../../../data/items/belts.json"),
-        include_str!("../../../data/items/boots.json"),
-        include_str!("../../../data/items/charms.json"),
-        include_str!("../../../data/items/gloves.json"),
-        include_str!("../../../data/items/helmets.json"),
-        include_str!("../../../data/items/potions.json"),
-        include_str!("../../../data/items/relics.json"),
-        include_str!("../../../data/items/rings.json"),
-        include_str!("../../../data/items/shields.json"),
-        include_str!("../../../data/items/weapons.json"),
-    ]
-    .into_iter()
-    .flat_map(|json| {
-        serde_json::from_str::<Vec<ItemStatOrder>>(json)
-            .expect("embedded item display metadata must be valid")
-    })
-    .map(|order| (order.id.clone(), order))
-    .collect()
-});
 
 fn ordered_keys<'a, V>(
     values: &'a HashMap<String, V>,
@@ -149,27 +170,6 @@ pub(crate) fn skill_bonus_keys(base: &ItemBase) -> Vec<&String> {
         )
     })
 }
-
-const RANDOM_SKILL_NAME: &str = "Random Skill";
-const RANDOM_ELEMENT_KEY: &str = "random_skill_element";
-const ALL_SKILLS_CLASS_KEY: &str = "all_skills_class";
-const SUBSKILL_BOOST_KEY: &str = "subskill_boost";
-const UNHOLY_EFFECT: &str = "Unholy";
-const BONUS_SOCKET_MOD_ID: &str = "crystal_add_socket";
-const EQUIPPED_MARK: &str = "✓";
-const NOT_SUPPORTED_FOOTNOTE: &str = "item.unsupported_footnote";
-const RECOGNIZED_EFFECTS: [&str; 10] = [
-    "attacks can hit multiple enemies",
-    "cannot be frozen",
-    "unholy",
-    "movement phasing",
-    "piercing attack",
-    "half freeze duration",
-    "double jump",
-    "herobound",
-    "all skills class",
-    "mirrors your other ring",
-];
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub(crate) enum LineStyle {

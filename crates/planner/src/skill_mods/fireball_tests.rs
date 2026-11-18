@@ -12,6 +12,8 @@ const PATCH: &str = "Pyromancer_Blazing_Trail_obj";
 const METEOR: &str = "Pyromancer_Armageddon_obj";
 const DUMMY: [f32; 2] = [160., 0.];
 
+const CLASS: &str = "pyromancer";
+
 fn mods(ranks: &[(&str, u32)]) -> Mods {
     let ranks: HashMap<String, u32> = ranks
         .iter()
@@ -320,8 +322,6 @@ fn orbital_fire_circles_balls_out_from_the_player_until_they_touch_or_time_out()
     let small = play(&spawns(&[("orbital_fire", 1)]));
     assert!(small.hits.is_empty(), "{:?}", small.hits);
 }
-
-const CLASS: &str = "pyromancer";
 
 use super::parity::expected;
 

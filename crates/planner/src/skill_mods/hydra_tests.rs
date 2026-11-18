@@ -13,6 +13,8 @@ const BREATH: &str = "Pyromancer_Breath_of_Fire_Hydra_obj";
 const DUMMY: [f32; 2] = [160., 0.];
 const CURSOR: [f32; 2] = [160., -30.];
 
+const CLASS: &str = "pyromancer";
+
 fn mods(ranks: &[(&str, u32)]) -> Mods {
     let ranks: HashMap<String, u32> = ranks
         .iter()
@@ -305,8 +307,6 @@ fn only_the_nodes_the_game_reads_its_own_way_keep_their_damage_off_the_hit() {
     let owned = crate::skill_mods::parity_tests::owned("pyromancer", "hydra");
     assert_eq!(owned, ["burstfire", "burning_essence"]);
 }
-
-const CLASS: &str = "pyromancer";
 
 use super::parity::{auras_per_attack, expected};
 

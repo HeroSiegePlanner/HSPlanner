@@ -8,6 +8,13 @@ const SKILL: &str = "solar_flare";
 const BURNING: &str = "everburning_fire";
 const BURST: &str = "burst_of_power";
 
+/// Rings past both maxima that outgrow the preview's 256 live objects; the engine counts them all.
+const OUTGROWN: [[(&str, u32); 2]; 3] = [
+    [("solar_orbs", 5), ("searing_flares", 6)],
+    [("solar_orbs", 6), ("searing_flares", 5)],
+    [("solar_orbs", 6), ("searing_flares", 6)],
+];
+
 type Ranks = Vec<(&'static str, u32)>;
 
 /// The odds, 0 to 1, of `node`'s cast roll in `ranks`.
@@ -161,13 +168,6 @@ fn the_engine_follows_the_transformations_and_the_flares_they_ring_out() {
     together.retain(|ranks| !ranks.is_empty() && !OUTGROWN.iter().any(|c| ranks.as_slice() == c));
     agree(expected, &together);
 }
-
-/// Rings past both maxima that outgrow the preview's 256 live objects; the engine counts them all.
-const OUTGROWN: [[(&str, u32); 2]; 3] = [
-    [("solar_orbs", 5), ("searing_flares", 6)],
-    [("solar_orbs", 6), ("searing_flares", 5)],
-    [("solar_orbs", 6), ("searing_flares", 6)],
-];
 
 #[test]
 fn explosive_flares_go_off_only_on_a_cast_that_burns() {

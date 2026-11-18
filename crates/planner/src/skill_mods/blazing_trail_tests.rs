@@ -16,6 +16,8 @@ const COMET_BLAST: &str = "Explosion_Item_obj:Pyromancer_Explosion_spr";
 const MINE: &str = "Pyromancer_Blazing_Detonation_Field_obj";
 const MINE_BLAST: &str = "Explosion_Item_obj";
 
+const CLASS: &str = "pyromancer";
+
 fn mods(ranks: &[(&str, u32)]) -> Mods {
     let ranks: HashMap<String, u32> = ranks
         .iter()
@@ -366,8 +368,6 @@ fn only_the_nodes_the_game_reads_its_own_way_keep_their_damage_off_the_hit() {
     let owned = crate::skill_mods::parity_tests::owned("pyromancer", "blazing_trail");
     assert_eq!(owned, ["forking_flames"]);
 }
-
-const CLASS: &str = "pyromancer";
 
 /// Damage-weighted hits the game lands on the dummy in one use, uncapped, the rolls at their odds.
 fn expected(ranks: &[(&str, u32)]) -> f32 {

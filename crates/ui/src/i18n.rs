@@ -9,6 +9,20 @@ use std::{
     },
 };
 
+static CURRENT: AtomicU8 = AtomicU8::new(Language::English as u8);
+static COMPONENT_TRANSLATIONS: ComponentTranslations = ComponentTranslations;
+static REGISTER_COMPONENT_TRANSLATIONS: std::sync::Once = std::sync::Once::new();
+
+static CATALOGS: LazyLock<[HashMap<String, String>; 4]> = LazyLock::new(|| {
+    [
+        include_str!("../locales/en.json"),
+        include_str!("../locales/ko.json"),
+        include_str!("../locales/ru.json"),
+        include_str!("../locales/zh-CN.json"),
+    ]
+    .map(|source| serde_json::from_str(source).expect("valid bundled translations"))
+});
+
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 #[repr(u8)]
 pub enum Language {
@@ -58,10 +72,6 @@ impl Locale {
     }
 }
 
-static CURRENT: AtomicU8 = AtomicU8::new(Language::English as u8);
-static COMPONENT_TRANSLATIONS: ComponentTranslations = ComponentTranslations;
-static REGISTER_COMPONENT_TRANSLATIONS: std::sync::Once = std::sync::Once::new();
-
 // GPUI Kit's bundled catalog has no Korean/Russian. Its documented rust-i18n
 // extension seam lets our JSON also translate standard controls and edit menus.
 struct ComponentTranslations;
@@ -93,15 +103,6 @@ impl rust_i18n::Backend for ComponentTranslations {
         )
     }
 }
-static CATALOGS: LazyLock<[HashMap<String, String>; 4]> = LazyLock::new(|| {
-    [
-        include_str!("../locales/en.json"),
-        include_str!("../locales/ko.json"),
-        include_str!("../locales/ru.json"),
-        include_str!("../locales/zh-CN.json"),
-    ]
-    .map(|source| serde_json::from_str(source).expect("valid bundled translations"))
-});
 
 pub fn language() -> Language {
     Language::ALL[CURRENT.load(Ordering::Relaxed) as usize]

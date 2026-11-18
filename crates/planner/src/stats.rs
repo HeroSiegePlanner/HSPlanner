@@ -26,97 +26,9 @@ use hsplanner_ui::{
 };
 use std::{collections::HashSet, sync::Arc};
 
-#[derive(Clone, Copy, PartialEq, Eq)]
-enum Filter {
-    All,
-    Damage,
-    Stats,
-    Skills,
-}
-impl Filter {
-    fn name(self) -> &'static str {
-        match self {
-            Self::All => tr("planner.stats.all"),
-            Self::Damage => tr("planner.stats.damage"),
-            Self::Stats => tr("planner.common.stats"),
-            Self::Skills => tr("planner.common.skills"),
-        }
-    }
-}
-// Virtualized page rows. Stat rows pair the two balanced columns so only visible
-// pairs of the 669 definitions are laid out; the top block stays one measured item.
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
-enum Cell {
-    Heading(Group),
-    Stat(usize),
-}
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
-enum Row {
-    Calculating,
-    Top,
-    StatsStart,
-    StatsPair {
-        left: Option<Cell>,
-        right: Option<Cell>,
-    },
-    StatsEmpty,
-    StatsEnd,
-}
 const LIST_OVERDRAW: Pixels = px(400.);
 const TOP_ROW: usize = 0;
 
-fn pair_columns([left, right]: [Vec<Cell>; 2]) -> Vec<Row> {
-    if left.is_empty() && right.is_empty() {
-        return vec![Row::StatsStart, Row::StatsEmpty, Row::StatsEnd];
-    }
-    let mut rows = vec![Row::StatsStart];
-    let (mut left, mut right) = (left.into_iter(), right.into_iter());
-    loop {
-        let (left, right) = (left.next(), right.next());
-        if left.is_none() && right.is_none() {
-            break;
-        }
-        rows.push(Row::StatsPair { left, right });
-    }
-    rows.push(Row::StatsEnd);
-    rows
-}
-
-#[derive(Clone, Copy, PartialEq, Eq, Debug)]
-enum Group {
-    Offense,
-    Mitigation,
-    Resistances,
-    Resources,
-    Skills,
-    World,
-    Other,
-}
-impl Group {
-    fn title(self) -> &'static str {
-        match self {
-            Self::Offense => tr("planner.common.offense"),
-            Self::Mitigation => tr("planner.stats.mitigation"),
-            Self::Resistances => tr("planner.common.resistances"),
-            Self::Resources => tr("planner.stats.resources"),
-            Self::Skills => tr("planner.stats.skill_bonuses"),
-            Self::World => tr("planner.stats.world_loot"),
-            Self::Other => tr("planner.stats.other"),
-        }
-    }
-    fn visible(self, filter: Filter) -> bool {
-        filter == Filter::All
-            || matches!(
-                (self, filter),
-                (Self::Offense, Filter::Damage)
-                    | (
-                        Self::Mitigation | Self::Resistances | Self::Resources,
-                        Filter::Stats
-                    )
-                    | (Self::Skills, Filter::Skills)
-            )
-    }
-}
 const RESISTANCE_KEYS: &[&str] = &[
     "fire_resistance",
     "cold_resistance",
@@ -212,6 +124,96 @@ const WORLD_KEYS: &[&str] = &[
     "merchant_prices",
     "increased_all_attributes",
 ];
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Filter {
+    All,
+    Damage,
+    Stats,
+    Skills,
+}
+impl Filter {
+    fn name(self) -> &'static str {
+        match self {
+            Self::All => tr("planner.stats.all"),
+            Self::Damage => tr("planner.stats.damage"),
+            Self::Stats => tr("planner.common.stats"),
+            Self::Skills => tr("planner.common.skills"),
+        }
+    }
+}
+// Virtualized page rows. Stat rows pair the two balanced columns so only visible
+// pairs of the 669 definitions are laid out; the top block stays one measured item.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+enum Cell {
+    Heading(Group),
+    Stat(usize),
+}
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+enum Row {
+    Calculating,
+    Top,
+    StatsStart,
+    StatsPair {
+        left: Option<Cell>,
+        right: Option<Cell>,
+    },
+    StatsEmpty,
+    StatsEnd,
+}
+
+fn pair_columns([left, right]: [Vec<Cell>; 2]) -> Vec<Row> {
+    if left.is_empty() && right.is_empty() {
+        return vec![Row::StatsStart, Row::StatsEmpty, Row::StatsEnd];
+    }
+    let mut rows = vec![Row::StatsStart];
+    let (mut left, mut right) = (left.into_iter(), right.into_iter());
+    loop {
+        let (left, right) = (left.next(), right.next());
+        if left.is_none() && right.is_none() {
+            break;
+        }
+        rows.push(Row::StatsPair { left, right });
+    }
+    rows.push(Row::StatsEnd);
+    rows
+}
+
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+enum Group {
+    Offense,
+    Mitigation,
+    Resistances,
+    Resources,
+    Skills,
+    World,
+    Other,
+}
+impl Group {
+    fn title(self) -> &'static str {
+        match self {
+            Self::Offense => tr("planner.common.offense"),
+            Self::Mitigation => tr("planner.stats.mitigation"),
+            Self::Resistances => tr("planner.common.resistances"),
+            Self::Resources => tr("planner.stats.resources"),
+            Self::Skills => tr("planner.stats.skill_bonuses"),
+            Self::World => tr("planner.stats.world_loot"),
+            Self::Other => tr("planner.stats.other"),
+        }
+    }
+    fn visible(self, filter: Filter) -> bool {
+        filter == Filter::All
+            || matches!(
+                (self, filter),
+                (Self::Offense, Filter::Damage)
+                    | (
+                        Self::Mitigation | Self::Resistances | Self::Resources,
+                        Filter::Stats
+                    )
+                    | (Self::Skills, Filter::Skills)
+            )
+    }
+}
 fn group(key: &str, category: &str) -> Group {
     if RESISTANCE_KEYS.contains(&key) {
         Group::Resistances

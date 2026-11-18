@@ -1,6 +1,12 @@
 use super::*;
 use crate::calc::types::EquippedItem;
 
+static NO_STACKS: std::sync::LazyLock<HashMap<String, u32>> =
+    std::sync::LazyLock::new(HashMap::new);
+
+static DEFAULT_RATES: std::sync::LazyLock<HashMap<String, f64>> =
+    std::sync::LazyLock::new(|| entity_rates(1.0));
+
 #[allow(clippy::too_many_arguments)]
 fn empty_deps<'a>(
     allocated: &'a HashMap<String, u32>,
@@ -42,12 +48,6 @@ fn empty_deps<'a>(
         difficulty: None,
     }
 }
-
-static NO_STACKS: std::sync::LazyLock<HashMap<String, u32>> =
-    std::sync::LazyLock::new(HashMap::new);
-
-static DEFAULT_RATES: std::sync::LazyLock<HashMap<String, f64>> =
-    std::sync::LazyLock::new(|| entity_rates(1.0));
 
 fn entity_rates(rate: f64) -> HashMap<String, f64> {
     ["sentry", "summon", "guardian"]

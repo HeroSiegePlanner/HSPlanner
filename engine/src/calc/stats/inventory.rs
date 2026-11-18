@@ -5,6 +5,11 @@ use std::borrow::Cow;
 const RANDOM_ELEMENT_KEY: &str = "random_skill_element";
 const ALL_SKILLS_CLASS_KEY: &str = "all_skills_class";
 
+thread_local! {
+    static AUGMENT_UPTIMES: std::cell::RefCell<Option<HashMap<String, Ranged>>> =
+        const { std::cell::RefCell::new(None) };
+}
+
 // Rolled keys stay inert until the user says what the item landed on.
 // The resolved all_skills_{class} only pays out for a build of that class.
 fn resolved_stat_key<'a>(
@@ -321,11 +326,6 @@ pub fn apply_inventory(
     }
 
     weapon_has_attack_speed
-}
-
-thread_local! {
-    static AUGMENT_UPTIMES: std::cell::RefCell<Option<HashMap<String, Ranged>>> =
-        const { std::cell::RefCell::new(None) };
 }
 
 /// RAII guard scaling switched-on proc buffs by their uptime; !Send.

@@ -1,5 +1,24 @@
 use super::*;
 
+// ponytail: unmodeled S10 mechanics — drop an entry once the engine learns it.
+const EXEMPT_PATTERNS: &[&str] = &[
+    "+#### Lightning Damage dealt by odin",
+    "+###% Living Carcass Explosion Damage",
+    "+##% Arcana Destruction Damage",
+    "+##% Avalanche of Boulders Damage",
+    "+##% Chance on hit to unleash multiple piercing daggers flying in a cone dealing damage.",
+    "+##% Heart of Fire Damage",
+    "+##% Storm Turbulence Damage",
+    "+##% Vile Pustules Damage",
+    "+##% Wallbanger Damage",
+    "+##% of Maximum life dealt as Arcane Damage",
+    "+#% Chance to unleash Arcana Destruction on hit",
+    "+#% Chance to unleash Avalanche of Boulders on hit",
+    "+#% Chance to unleash Heart of Fire on hit",
+    "+#% Chance to unleash Storm Turbulence on hit",
+    "+#% Chance to unleash Vile Pustules on hit",
+];
+
 #[test]
 fn subskill_aggregation_unknown_skill_returns_empty() {
     let input = SubskillAggregationInput {
@@ -65,25 +84,6 @@ fn classify_tree_nodes_impl() -> HashMap<String, NodeLineClassification> {
 // list below; a new pattern on either side fails the test.
 #[test]
 fn s10_incarnation_node_lines_parse_coverage() {
-    // ponytail: unmodeled S10 mechanics — drop an entry once the engine learns it.
-    const EXEMPT_PATTERNS: &[&str] = &[
-        "+#### Lightning Damage dealt by odin",
-        "+###% Living Carcass Explosion Damage",
-        "+##% Arcana Destruction Damage",
-        "+##% Avalanche of Boulders Damage",
-        "+##% Chance on hit to unleash multiple piercing daggers flying in a cone dealing damage.",
-        "+##% Heart of Fire Damage",
-        "+##% Storm Turbulence Damage",
-        "+##% Vile Pustules Damage",
-        "+##% Wallbanger Damage",
-        "+##% of Maximum life dealt as Arcane Damage",
-        "+#% Chance to unleash Arcana Destruction on hit",
-        "+#% Chance to unleash Avalanche of Boulders on hit",
-        "+#% Chance to unleash Heart of Fire on hit",
-        "+#% Chance to unleash Storm Turbulence on hit",
-        "+#% Chance to unleash Vile Pustules on hit",
-    ];
-
     let map = classify_tree_nodes_impl();
     let mut parsed = 0usize;
     let mut unsupported: std::collections::BTreeSet<String> = std::collections::BTreeSet::new();

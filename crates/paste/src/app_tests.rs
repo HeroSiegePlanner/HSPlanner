@@ -9,6 +9,8 @@ use crate::store::Store;
 
 const ADDRESS: IpAddr = IpAddr::V4(Ipv4Addr::LOCALHOST);
 
+const ATTACK: &str = "<script>alert(1)</script>\"'><img src=x onerror=alert(1)>";
+
 fn fixture_code() -> String {
     let fixtures: Value = serde_json::from_str(include_str!(
         "../../../engine/tests/fixtures/native-share-codes.json"
@@ -147,7 +149,6 @@ fn sharing_is_limited_per_address() {
 
 #[test]
 fn hostile_build_text_never_reaches_the_page_as_markup() {
-    const ATTACK: &str = "<script>alert(1)</script>\"'><img src=x onerror=alert(1)>";
     let (app, _dir) = app();
     let mut snapshot = BuildSnapshot {
         class_id: Some(ATTACK.into()),

@@ -33,6 +33,14 @@ const LOADOUT_PARAMS: [(&str, LoadoutKind); 4] = [
 const EMPTY_LOADOUT: &str =
     "<section class=\"panel\"><p class=\"pad muted\">This loadout is empty.</p></section>";
 
+// Each extra active skill costs a full damage pass, so shared builds get a fixed budget.
+const MAX_ACTIVE_SKILLS: usize = 6;
+
+const RESISTANCES: [&str; 5] = ["fire", "cold", "lightning", "poison", "arcane"];
+/// Chat apps cut a link preview at about this many characters.
+const MAX_PREVIEW: usize = 340;
+const PREVIEW_SKILLS: usize = 3;
+
 /// Which loadout of each kind to show, by position; `None` keeps the one the build was shared with.
 #[derive(Clone, Copy, Default, PartialEq, Eq, Hash)]
 pub struct Selection([Option<usize>; 4]);
@@ -99,9 +107,6 @@ fn loadout_form(
         esc(id)
     )
 }
-
-// Each extra active skill costs a full damage pass, so shared builds get a fixed budget.
-const MAX_ACTIVE_SKILLS: usize = 6;
 
 pub fn home(error: Option<&str>, draft: &str) -> String {
     let error = error.map_or_else(String::new, |error| {
@@ -327,11 +332,6 @@ pub fn resistance(value: f64, cap: Option<f64>) -> String {
         _ => format!("{}%", compact(value)),
     }
 }
-
-const RESISTANCES: [&str; 5] = ["fire", "cold", "lightning", "poison", "arcane"];
-/// Chat apps cut a link preview at about this many characters.
-const MAX_PREVIEW: usize = 340;
-const PREVIEW_SKILLS: usize = 3;
 
 /// The link preview: damage, defence, the five resistances and the main skills,
 /// one `➤` line each, dropping whole lines that would not fit.

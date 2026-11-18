@@ -26,6 +26,18 @@ const MAX_FRAMES: u32 = 3600;
 /// Live objects of a use at most: what procs make past it is left out, to keep cascades drawable.
 const MAX_LIVE: usize = 256;
 
+static FX: LazyLock<SkillFxFile> = LazyLock::new(|| {
+    serde_json::from_str(include_str!("../../../data/skill-fx.json"))
+        .expect("embedded skill motion must be valid")
+});
+
+/// Uses replayed with other dice when chance plays a part in a use.
+const CHANCY_USES: u64 = 8;
+
+/// The last uses simulated per skill.
+static TIMELINES: LazyLock<Mutex<HashMap<String, Simulated>>> =
+    LazyLock::new(|| Mutex::new(HashMap::new()));
+
 #[derive(Deserialize)]
 struct SkillFxFile {
     skills: HashMap<String, SkillFx>,
@@ -161,11 +173,6 @@ pub(crate) struct Grow {
     pub max: Option<f32>,
     pub x_only: bool,
 }
-
-static FX: LazyLock<SkillFxFile> = LazyLock::new(|| {
-    serde_json::from_str(include_str!("../../../data/skill-fx.json"))
-        .expect("embedded skill motion must be valid")
-});
 
 pub(crate) fn skill(id: &str) -> Option<&'static SkillFx> {
     FX.skills.get(id)
@@ -545,15 +552,8 @@ pub(crate) fn simulate(skill_id: &str, projectiles: u32) -> Option<Vec<u32>> {
     run(skill_id, &Mods::default(), projectiles).map(|timeline| timeline.hits)
 }
 
-/// Uses replayed with other dice when chance plays a part in a use.
-const CHANCY_USES: u64 = 8;
-
 /// The modifiers uses were simulated with, and the uses.
 type Simulated = (Mods, Arc<[Timeline]>);
-
-/// The last uses simulated per skill.
-static TIMELINES: LazyLock<Mutex<HashMap<String, Simulated>>> =
-    LazyLock::new(|| Mutex::new(HashMap::new()));
 
 /// Uses of a skill with motion data under the build's modifiers, kept until they change: one, or
 /// several rolled with other dice when chance plays a part.

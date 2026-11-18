@@ -1,5 +1,95 @@
 use super::*;
 
+const ELEMS: [&str; 5] = [
+    "fire_resistance",
+    "cold_resistance",
+    "lightning_resistance",
+    "poison_resistance",
+    "arcane_resistance",
+];
+
+// (item display key, target key, label, target is an attribute → attr_sources)
+const MAP: [(&str, &str, &str, bool); 13] = [
+    (
+        "mana_based_on_level",
+        "mana",
+        "Mana (Based on Level)",
+        false,
+    ),
+    (
+        "life_based_on_level",
+        "life",
+        "Life (Based on Level)",
+        false,
+    ),
+    (
+        "damage_based_on_level",
+        "additive_physical_damage",
+        "Damage (Based on Level)",
+        false,
+    ),
+    (
+        "enhanced_damage_based_on_level",
+        "enhanced_damage",
+        "Enhanced Damage (Based on Level)",
+        false,
+    ),
+    (
+        "enhanced_defense_based_on_level",
+        "enhanced_defense",
+        "Enhanced Defense (Based on Level)",
+        false,
+    ),
+    (
+        "magic_find_based_on_level",
+        "magic_find",
+        "Magic Find (Based on Level)",
+        false,
+    ),
+    (
+        "attack_rating_based_on_level",
+        "attack_rating",
+        "Attack Rating (Based on Level)",
+        false,
+    ),
+    (
+        "strength_based_on_level",
+        "strength",
+        "Strength (Based on Level)",
+        true,
+    ),
+    (
+        "dexterity_based_on_level",
+        "dexterity",
+        "Dexterity (Based on Level)",
+        true,
+    ),
+    (
+        "vitality_based_on_level",
+        "vitality",
+        "Vitality (Based on Level)",
+        true,
+    ),
+    (
+        "energy_based_on_level",
+        "energy",
+        "Energy (Based on Level)",
+        true,
+    ),
+    (
+        "intelligence_based_on_level",
+        "intelligence",
+        "Intelligence (Based on Level)",
+        true,
+    ),
+    (
+        "armor_based_on_level",
+        "armor",
+        "Armor (Based on Level)",
+        true,
+    ),
+];
+
 // ---------- base attributes + class baseline + per-level ----------
 
 // Seeds attribute sources: default base + class base + allocated points.
@@ -808,13 +898,6 @@ pub fn apply_damage_per_resist(stat_sources: &mut SourceMap) {
     if rate.0 == 0.0 && rate.1 == 0.0 {
         return;
     }
-    const ELEMS: [&str; 5] = [
-        "fire_resistance",
-        "cold_resistance",
-        "lightning_resistance",
-        "poison_resistance",
-        "arcane_resistance",
-    ];
     let mut resist = (0.0, 0.0);
     for e in ELEMS.iter() {
         if let Some(list) = stat_sources.get(*e) {
@@ -846,87 +929,6 @@ pub fn apply_stats_based_on_level(
     attr_sources: &mut SourceMap,
     stat_sources: &mut SourceMap,
 ) {
-    // (item display key, target key, label, target is an attribute → attr_sources)
-    const MAP: [(&str, &str, &str, bool); 13] = [
-        (
-            "mana_based_on_level",
-            "mana",
-            "Mana (Based on Level)",
-            false,
-        ),
-        (
-            "life_based_on_level",
-            "life",
-            "Life (Based on Level)",
-            false,
-        ),
-        (
-            "damage_based_on_level",
-            "additive_physical_damage",
-            "Damage (Based on Level)",
-            false,
-        ),
-        (
-            "enhanced_damage_based_on_level",
-            "enhanced_damage",
-            "Enhanced Damage (Based on Level)",
-            false,
-        ),
-        (
-            "enhanced_defense_based_on_level",
-            "enhanced_defense",
-            "Enhanced Defense (Based on Level)",
-            false,
-        ),
-        (
-            "magic_find_based_on_level",
-            "magic_find",
-            "Magic Find (Based on Level)",
-            false,
-        ),
-        (
-            "attack_rating_based_on_level",
-            "attack_rating",
-            "Attack Rating (Based on Level)",
-            false,
-        ),
-        (
-            "strength_based_on_level",
-            "strength",
-            "Strength (Based on Level)",
-            true,
-        ),
-        (
-            "dexterity_based_on_level",
-            "dexterity",
-            "Dexterity (Based on Level)",
-            true,
-        ),
-        (
-            "vitality_based_on_level",
-            "vitality",
-            "Vitality (Based on Level)",
-            true,
-        ),
-        (
-            "energy_based_on_level",
-            "energy",
-            "Energy (Based on Level)",
-            true,
-        ),
-        (
-            "intelligence_based_on_level",
-            "intelligence",
-            "Intelligence (Based on Level)",
-            true,
-        ),
-        (
-            "armor_based_on_level",
-            "armor",
-            "Armor (Based on Level)",
-            true,
-        ),
-    ];
     let f = level as f64 / 100.0;
     for (source, target, label, is_attr) in MAP.iter() {
         let per100 = match stat_sources.get(*source) {

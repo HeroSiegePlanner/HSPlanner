@@ -9,15 +9,6 @@ use super::{
 use crate::calc::affix_tags;
 use crate::calc::types::{AffixEffect, DamageScaling};
 
-pub(super) struct ElementKeys {
-    pub skills: &'static str,
-    pub skill_damage: &'static str,
-    pub skill_damage_more: &'static str,
-    pub flat_skill_damage: &'static str,
-    pub ignore_res: &'static str,
-    pub legacy_ignore_res: &'static str,
-}
-
 const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
     (
         "fire",
@@ -108,6 +99,15 @@ const ELEMENT_KEYS: &[(&str, ElementKeys)] = &[
         },
     ),
 ];
+
+pub(super) struct ElementKeys {
+    pub skills: &'static str,
+    pub skill_damage: &'static str,
+    pub skill_damage_more: &'static str,
+    pub flat_skill_damage: &'static str,
+    pub ignore_res: &'static str,
+    pub legacy_ignore_res: &'static str,
+}
 
 pub(super) fn element_keys(damage_type: &str) -> Option<&'static ElementKeys> {
     ELEMENT_KEYS

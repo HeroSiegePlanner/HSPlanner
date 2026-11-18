@@ -5,6 +5,33 @@ use std::{
     sync::{Arc, LazyLock},
 };
 
+static ICONS: LazyLock<HashMap<&str, Arc<Image>>> = LazyLock::new(|| {
+    [
+        ("star", include_bytes!("../assets/star.svg").as_slice()),
+        (
+            "star-filled",
+            include_bytes!("../assets/star-filled.svg").as_slice(),
+        ),
+        ("import", include_bytes!("../assets/import.svg").as_slice()),
+        ("copy", include_bytes!("../assets/copy.svg").as_slice()),
+        ("rename", include_bytes!("../assets/rename.svg").as_slice()),
+        ("delete", include_bytes!("../assets/delete.svg").as_slice()),
+        (
+            "newfolder",
+            include_bytes!("../assets/newfolder.svg").as_slice(),
+        ),
+        ("search", include_bytes!("../assets/search.svg").as_slice()),
+    ]
+    .into_iter()
+    .map(|(name, bytes)| {
+        (
+            name,
+            Arc::new(Image::from_bytes(ImageFormat::Svg, bytes.to_vec())),
+        )
+    })
+    .collect()
+});
+
 pub(super) fn portrait(class: Option<&str>, large: bool, cx: &App) -> Div {
     let palette = cx.global::<TooltipTheme>();
     div()
@@ -98,32 +125,6 @@ pub(super) fn toolbar_button(
 }
 
 pub(super) fn action_icon(name: &str) -> impl IntoElement {
-    static ICONS: LazyLock<HashMap<&str, Arc<Image>>> = LazyLock::new(|| {
-        [
-            ("star", include_bytes!("../assets/star.svg").as_slice()),
-            (
-                "star-filled",
-                include_bytes!("../assets/star-filled.svg").as_slice(),
-            ),
-            ("import", include_bytes!("../assets/import.svg").as_slice()),
-            ("copy", include_bytes!("../assets/copy.svg").as_slice()),
-            ("rename", include_bytes!("../assets/rename.svg").as_slice()),
-            ("delete", include_bytes!("../assets/delete.svg").as_slice()),
-            (
-                "newfolder",
-                include_bytes!("../assets/newfolder.svg").as_slice(),
-            ),
-            ("search", include_bytes!("../assets/search.svg").as_slice()),
-        ]
-        .into_iter()
-        .map(|(name, bytes)| {
-            (
-                name,
-                Arc::new(Image::from_bytes(ImageFormat::Svg, bytes.to_vec())),
-            )
-        })
-        .collect()
-    });
     img(ICONS[name].clone()).size(rems(12. / 13.)).flex_none()
 }
 

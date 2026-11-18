@@ -12,13 +12,6 @@ const DOT_FREQUENCY_DIMINISH: DiminishDef = DiminishDef {
     cap: None,
 };
 
-pub struct Ailment {
-    pub state: &'static str,
-    pub damage_key: &'static str,
-    pub frequency_key: Option<&'static str>,
-    pub chance_key: Option<&'static str>,
-}
-
 /// Ailments the engine models as damage over time; `state` matches the
 /// `proc.appliesStates` spelling used by subskill trees and game-config.
 pub const AILMENTS: &[Ailment] = &[
@@ -71,6 +64,13 @@ pub const AILMENTS: &[Ailment] = &[
         chance_key: None,
     },
 ];
+
+pub struct Ailment {
+    pub state: &'static str,
+    pub damage_key: &'static str,
+    pub frequency_key: Option<&'static str>,
+    pub chance_key: Option<&'static str>,
+}
 
 /// Per-second share of the triggering hit that a freshly applied ailment deals.
 /// Calibrated in `game-config.json` -> `ailmentBaseFraction`.

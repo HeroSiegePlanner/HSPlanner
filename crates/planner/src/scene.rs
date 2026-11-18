@@ -9,16 +9,6 @@ use std::{
     time::Instant,
 };
 
-include!(concat!(env!("OUT_DIR"), "/icons.rs"));
-
-pub(crate) fn render_image(mut rgba: image::RgbaImage) -> Arc<RenderImage> {
-    // GPUI's sprite atlas consumes BGRA pixels.
-    for pixel in rgba.pixels_mut() {
-        pixel.0.swap(0, 2);
-    }
-    Arc::new(RenderImage::new(vec![image::Frame::new(rgba)]))
-}
-
 static BACKGROUND: LazyLock<Arc<RenderImage>> = LazyLock::new(|| {
     render_image(
         image::load_from_memory_with_format(
@@ -42,6 +32,16 @@ static VIGNETTE: LazyLock<Arc<RenderImage>> = LazyLock::new(|| {
         image::Rgba([0, 0, 0, (opacity * maximum_opacity * 255.).round() as u8])
     }))
 });
+
+include!(concat!(env!("OUT_DIR"), "/icons.rs"));
+
+pub(crate) fn render_image(mut rgba: image::RgbaImage) -> Arc<RenderImage> {
+    // GPUI's sprite atlas consumes BGRA pixels.
+    for pixel in rgba.pixels_mut() {
+        pixel.0.swap(0, 2);
+    }
+    Arc::new(RenderImage::new(vec![image::Frame::new(rgba)]))
+}
 
 pub struct Scene {
     pub graph: Graph,

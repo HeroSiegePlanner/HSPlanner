@@ -13,6 +13,8 @@ const NOVA: &str = "Pyromancer_Firenova_obj";
 /// px inside a round mask's reach where it surely meets the dummy's 12 px disk.
 const SURE_MARGIN: f32 = 3.;
 
+static KNOWN: LazyLock<Mutex<HashMap<String, [f32; 2]>>> = LazyLock::new(Default::default);
+
 /// Damage-weighted hits the game lands on the dummy in one use with `ranks`: every fork heading
 /// and roll at its odds and every object counted apart. Forking Flames' 1 + 45 % × rank is left
 /// out: the engine adds its fire damage to every hit instead.
@@ -155,7 +157,6 @@ impl<'a> Game<'a> {
 
 /// Expectations already worked out, by what they depend on.
 fn cached(key: String, work: impl FnOnce() -> [f32; 2]) -> [f32; 2] {
-    static KNOWN: LazyLock<Mutex<HashMap<String, [f32; 2]>>> = LazyLock::new(Default::default);
     if let Some(known) = KNOWN.lock().expect("cache").get(&key) {
         return *known;
     }

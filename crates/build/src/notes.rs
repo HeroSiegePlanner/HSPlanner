@@ -1,5 +1,8 @@
 use serde::{Deserialize, Serialize};
 
+const MAX_HTML_DEPTH: usize = 128;
+const VOID_TAGS: [&str; 6] = ["area", "br", "col", "hr", "img", "wbr"];
+
 #[derive(Debug, Clone, Default, Deserialize, Serialize, PartialEq, Eq)]
 #[serde(default, rename_all = "camelCase")]
 pub struct Notes {
@@ -32,9 +35,6 @@ impl Notes {
         ammonia::clean(&html)
     }
 }
-
-const MAX_HTML_DEPTH: usize = 128;
-const VOID_TAGS: [&str; 6] = ["area", "br", "col", "hr", "img", "wbr"];
 
 /// Deepest element nesting in sanitised HTML, where every non-void tag is closed.
 fn html_depth(html: &str) -> usize {

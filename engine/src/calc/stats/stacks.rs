@@ -1,6 +1,16 @@
 use super::*;
 use crate::calc::skills::calculation::range;
 
+pub const CRUSHING_BLOW_KEY: &str = "crushing_blow";
+const CRUSHING_BLOW_BASE_STACKS: f64 = 5.0;
+const CRUSHING_BLOW_BASE_BREAK: f64 = 10.0;
+const CRUSHING_BLOW_DURATION_SECS: f64 = 3.0;
+
+thread_local! {
+    static CRUSHING_BLOW_CONTACTS: std::cell::RefCell<Option<Ranged>> =
+        const { std::cell::RefCell::new(None) };
+}
+
 /// In-combat stacks (Rage today). Count is a Config knob that defaults to the
 /// build's own cap, so an unconfigured build reads as full uptime.
 pub fn apply_stack_effects(
@@ -98,16 +108,6 @@ pub fn apply_stack_effects(
             }
         }
     }
-}
-
-pub const CRUSHING_BLOW_KEY: &str = "crushing_blow";
-const CRUSHING_BLOW_BASE_STACKS: f64 = 5.0;
-const CRUSHING_BLOW_BASE_BREAK: f64 = 10.0;
-const CRUSHING_BLOW_DURATION_SECS: f64 = 3.0;
-
-thread_local! {
-    static CRUSHING_BLOW_CONTACTS: std::cell::RefCell<Option<Ranged>> =
-        const { std::cell::RefCell::new(None) };
 }
 
 /// Main-skill contacts per second for the stats rerun that estimates Crushing Blow stacks.

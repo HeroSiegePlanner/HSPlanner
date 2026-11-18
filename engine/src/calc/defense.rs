@@ -12,12 +12,13 @@ pub const RES_HARD_CAP: f64 = 90.0;
 /// StatPhysical/MagicDamageReduction cap the player at 75% (raised by `max_*`).
 pub const DAMAGE_REDUCTION_CAP: f64 = 75.0;
 
-fn capped_reduction(stats: &Stats, key: &str) -> f64 {
-    stat_pct(stats, key).min(DAMAGE_REDUCTION_CAP + stat_pct(stats, &format!("max_{key}")))
-}
 const INSIGHT_MIN_GAIN_PCT: f64 = 2.0;
 const INSIGHT_MAX_COUNT: usize = 3;
 pub const DAMAGE_TYPES: [&str; 6] = ["physical", "fire", "cold", "lightning", "poison", "arcane"];
+
+fn capped_reduction(stats: &Stats, key: &str) -> f64 {
+    stat_pct(stats, key).min(DAMAGE_REDUCTION_CAP + stat_pct(stats, &format!("max_{key}")))
+}
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]

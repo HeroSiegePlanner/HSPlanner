@@ -22,6 +22,43 @@ const RUNES_TRIM: &str = "()[]{}| ";
 const AUGMENT_MAX_LEVEL: i64 = 7;
 const MINOR_WORDS: [&str; 5] = ["of", "to", "per", "and", "low"];
 
+static IGNORED_PREFIXES: LazyLock<Vec<Regex>> = LazyLock::new(|| {
+    [
+        r"(?i)^defen",
+        r"(?i)^damage\s*[:.]",
+        r"(?i)^attack damage\s*[:.]",
+        r"(?i)^attacks per second",
+        r"(?i)^attack speed",
+        r"(?i)^block",
+        r"(?i)^\(gem",
+        r"(?i)^tier\s",
+        r"(?i)requires level",
+        r"(?i)^currently has",
+        r"(?i)^flask cooldown",
+        r"(?i)^effect duration",
+        r"(?i)^runeword",
+    ]
+    .iter()
+    .map(|p| Regex::new(p).expect("ignored prefix"))
+    .collect()
+});
+
+/// The game's wording of each stat key, from affix descriptions ("Chance for a Crushing Blow").
+static GAME_PHRASES: LazyLock<HashMap<&'static str, Vec<String>>> = LazyLock::new(|| {
+    let mut out: HashMap<&'static str, Vec<String>> = HashMap::new();
+    for affix in data::data().affixes.values() {
+        let Some(key) = affix.stat_key.as_deref() else {
+            continue;
+        };
+        let phrase = canon_phrase(&affix.description);
+        let phrases = out.entry(key).or_default();
+        if !phrase.is_empty() && !phrases.contains(&phrase) {
+            phrases.push(phrase);
+        }
+    }
+    out
+});
+
 macro_rules! re {
     ($name:ident, $pat:expr) => {
         static $name: LazyLock<Regex> =
@@ -57,27 +94,6 @@ re!(HANDEDNESS, r"(?i)\b(1|2|i|l|one|two)[\s-]*handed\b");
 // "+5 to All Skills [2-5] Tier S" — the tier tag follows the range on base affixes.
 // OCR sometimes glues the grade on ("TIERS" for "TIER S").
 re!(TRAILING_TIER, r"(?i)\s+tier(?:\s+\S+|[a-z]{1,2})\s*$");
-
-static IGNORED_PREFIXES: LazyLock<Vec<Regex>> = LazyLock::new(|| {
-    [
-        r"(?i)^defen",
-        r"(?i)^damage\s*[:.]",
-        r"(?i)^attack damage\s*[:.]",
-        r"(?i)^attacks per second",
-        r"(?i)^attack speed",
-        r"(?i)^block",
-        r"(?i)^\(gem",
-        r"(?i)^tier\s",
-        r"(?i)requires level",
-        r"(?i)^currently has",
-        r"(?i)^flask cooldown",
-        r"(?i)^effect duration",
-        r"(?i)^runeword",
-    ]
-    .iter()
-    .map(|p| Regex::new(p).expect("ignored prefix"))
-    .collect()
-});
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "lowercase")]
@@ -774,22 +790,6 @@ fn is_percent_stat(key: &str) -> bool {
         == Some("percent")
 }
 
-/// The game's wording of each stat key, from affix descriptions ("Chance for a Crushing Blow").
-static GAME_PHRASES: LazyLock<HashMap<&'static str, Vec<String>>> = LazyLock::new(|| {
-    let mut out: HashMap<&'static str, Vec<String>> = HashMap::new();
-    for affix in data::data().affixes.values() {
-        let Some(key) = affix.stat_key.as_deref() else {
-            continue;
-        };
-        let phrase = canon_phrase(&affix.description);
-        let phrases = out.entry(key).or_default();
-        if !phrase.is_empty() && !phrases.contains(&phrase) {
-            phrases.push(phrase);
-        }
-    }
-    out
-});
-
 /// Also "<name> increased by N%" for percent stats, and game wording for a fixed implicit.
 fn implicit_score(key: &str, phrase: &str, fixed: bool) -> f64 {
     let name = canon_phrase(&stat_name(key));
@@ -1342,10 +1342,6 @@ pub fn parse_tooltip_colored(raw_lines: &[(String, Option<[u8; 3]>)]) -> Tooltip
 mod tests {
     use super::*;
 
-    fn parse(text: &str) -> TooltipParseResult {
-        parse_tooltip(&text.lines().map(str::to_string).collect::<Vec<_>>())
-    }
-
     const AURORA: &str = "\
 AURORA'S MIGHT
 RUNEWORD 1-HANDED MACE
@@ -1374,6 +1370,150 @@ EARTH WAS BRUTALLY SLAIN, BUT HER SOUL WAS
 INFUSED INTO THIS WEAPON SO SHE CAN LIVE ON
 AND AVENGE HER DEATH.
 TIER S, REQUIRES LEVEL 57";
+
+    // Real ocrs output for engine/tests/fixtures/tooltips/tooltip1.png (Tundra
+    // Hunter's Long Coat) — mangled brackets and OCR noise included on purpose.
+    const TOOLTIP1: &str = "TUNDRA HUNTER'S LONG COAT
+HEROIC BODY ARMOR
+(GEM, GEM. GEM, GEM, GEM)
+DEFENSE: 1333 [227] [210-2401
+35% CHANCE WHEN STRUCK SET SAIL LEVEL 30
+TEMPORARILY INCREASES YOUR COLD SKILL DAMAGE AND
+MANA REPLENISH.
+COLD SKILL DAMAGE 75%
+MANA REPLENISH 65%
++487% ENHANCED DEFENSE 1450-525]
++3 TO ALL SKILLS [2-3]
++3 TO COLD SKILLS |3-51
+AUGMENT: LETHAL TEMPO [LEVEL5|
+INCREASES YOUR ATTACK SPEED AND CRITICAL STRIKE DAMAGE
+FOR A SHORT PERIOD
+ATTACK SPEED 80%
+CRITICAL STRIKE DAMAGE 40%
+EXTRA DAMAGE TO DEEP FROZEN MONSTERS 15% 115-25
++30 TO ALL ATTRIBUTES
++2560 TO ADDITIVE COLD DAMAGE
++100 TO COLD SKILL DAMAGE
+COLD SKILL DAMAGE INCREASED BY 25% 125-40)
+-23% TO ENEMY COLD RESISTANCE [15-30)
++40% TO COLD RESISTANCE 130-50]
+SOCKETS (5) [3-61
+IN THE STORMS OF A COLD AND FROZEN TUNDRA. A LONE HUNTER IS
+STALKING HIS PREY.
+B. Pick up TIER SS. REQUIRES LEVEL 94";
+
+    const TOOLTIP2: &str = "GRIMBONE'S VISAGE
+HEROIC HELMET
+(GEM, GEM, GEM, GEM)
+DEFENSF: 135 [63][60-80]
++113% ENHANCED DEFENSE 110-140])
++2 TO ALL SKILLS [2-3]
+AILMENT DAMAGE INCREASED BY 17% [15-20]
++20 TO INTFLLIGFNCF [15-25]
++2048 TO ADDITIVE COLD DAMAGF
++80 TO COLD SKILL DAMAGE
+MAGIC SKILL DAMAGE INCREASED BY 36% [20-50]
+REPLENISH MANA 115% 100-150]
++600 TO MANA (BASED ON LEVEL) [4-8]
++50% TO ALL RESISTANCES
+SOCKETS (4) 11-4)
+GRIMBONE THE HIVEMIND OF TORMENTED SOULS,
+FACE OF TERROR TO ALL THOSE WHO MEET THEIR FATE
+IN NIFLHEL.
+TIER SS. REQUIRES LEVEL 100
+2E";
+
+    const MYTHIC_RING: &str = "\
+CANNIBAL GOLDEN RING OF MANA WRAITH
+MYTHIC RING
++6% INCREASED ATTACK RATING [6-20 TIER A
++7% MANA STOLEN PER HIT [5-12 TIERS
++23 LIFE AFTER EACH KILL[5-25 TIER S
++25% MAGIC FIND (BASED ON LEVEL) TIER A
++11% INCREASED MAGIC FIND [10-28]
+TIER S, REQUIRES LEVEL 67";
+
+    const SACRED_WHIP: &str = "\
+SACRED WHIP
+SATANIC 1-HANDED MACE
+ATTACK DAMAGE: 100 TO 143 [35[32-36]
+ATTACKS PER SECOND: 2.27 [1.75]
++308% ENHANCED DAMAGE 280-320]
++30% NCREASED ATTACK SPEED
++50% CHANCE FOR A CRUSHING BLOW
++763 TO ADDITIVE LIGHTNING DAMAGE [675-785)
+-25% TO ENEMY LIGHTNING RESISTANCE
++15% TO ALL RESISTANCES
++9% EXTRA GOLD DROPPED FROM KILLS [5-10]
++40% NCREASED MAGIC FIND [25-40]
+SOCKETS (3) 10-4)
+TIER A, REQUIRES LEVEL 65";
+
+    const SIGNET_OF_SHADOWS: &str = "\
+SIGNET OF SHADOWS
+HEROIC RING
++4 TO ARCANE SKILLS
++20% NCREASED MOVEMENT SPEED [10-20]
+AILMENT DAMAGE INCREASED BY 15%
++33 TO ARCANE SKILL DAMAGE
+ARCANE SKILL DAMAGE INCREASED BY 15%
++5% NCREASED EXPERIENCE GAIN [1-5]
+FROM DEATH ENDLESS POWER IS REBORN..
+TIER SS, REQUIRES LEVEL 100
+T
+?";
+
+    const TOOLTIP3: &str = "GRYPHON'S CLAW
+HEROIC AMULET
++12 TO EXECUTF |12-18]
+DEAL EXTRA ATTACK DAMAGE TO MONSTERS BELOW 30% LIFE.
+ATTACK DAMAGE 72%
++18% INCREASED CRITICAL STRIKE CHANCE [18-25]
++46% NCREASED CRITICAL STRIKE DAMAGF [40-50]
++23% CHANCE TO OPEN WOUNDS [15-25]
++27 TO ALL ATTRIBUTES 120-30]
+TIER SS, REQUIRES LEVEL 100";
+
+    const TOOLTIP4: &str = "GHOSTLY POTION
+POTION
+CURRENTLY HAS 1 CHARGFS OUT OF 1
+FLASK COOLDOWN 45 SECONDS
+EFFECT DURATION 15 SECONDS
++5 TO PARALLEL DIMENSION
+INCREASES YOUR SKILL DAMAGE FOR A SHORT PERIOD OF TIME
+MAGIC SKILL DAMAGE 57%
+PO
+TH
+ENHANCES MAGIC SKILL DAMAGE.
+TIER S, REQUIRES LEVEL 1
+TO";
+
+    // "(JÖTUNN)" arrives as "U?TUNN)".
+    const TOOLTIP5: &str = "TORCH OF SHADOWS
+HEROIC CHARM (1X2) (UNIQUE EQUIPPED)
+5% CHANCE WHEN STRIKING ISHADOWFLAMES LEVEL3
+UNLEASH FLAMES OF SHADOW TRAVELING FORWARD DEALING
+ARCANE DAMAGE
+ARCANE DAMAGE 1573072
++3 TO ALL SKILLS U?TUNN) [1-3]
++23 TO ALL ATTRIBUTES 120-30]
++8 TO LIGHT RADIUS
++20% TO ALL RESISTANCES 110-20)
+Napd
+d
+TORCH FORGED AND LIGHTED IN THE SHADOW REALMS THAT HAS
+SOME ODD PROPERTIES, SPREADING DARKNESS IN THE MORTAL WORLD
+WHERE THERE SHOULD BE LIGHT:
+TIER SS, REQUIRES LEVEL 100
+TO";
+
+    const RED: [u8; 3] = [0x96, 0x2e, 0x55];
+
+    const LAVENDER: [u8; 3] = [0x6c, 0x62, 0xbf];
+
+    fn parse(text: &str) -> TooltipParseResult {
+        parse_tooltip(&text.lines().map(str::to_string).collect::<Vec<_>>())
+    }
 
     #[test]
     fn runeword_tooltip_maps_runes_base_type_and_stats() {
@@ -1520,37 +1660,6 @@ TIER S, REQUIRES LEVEL 57";
             .any(|l| l.status == LineStatus::Ignored && l.text.to_lowercase().contains(needle))
     }
 
-    // Real ocrs output for engine/tests/fixtures/tooltips/tooltip1.png (Tundra
-    // Hunter's Long Coat) — mangled brackets and OCR noise included on purpose.
-    const TOOLTIP1: &str = "TUNDRA HUNTER'S LONG COAT
-HEROIC BODY ARMOR
-(GEM, GEM. GEM, GEM, GEM)
-DEFENSE: 1333 [227] [210-2401
-35% CHANCE WHEN STRUCK SET SAIL LEVEL 30
-TEMPORARILY INCREASES YOUR COLD SKILL DAMAGE AND
-MANA REPLENISH.
-COLD SKILL DAMAGE 75%
-MANA REPLENISH 65%
-+487% ENHANCED DEFENSE 1450-525]
-+3 TO ALL SKILLS [2-3]
-+3 TO COLD SKILLS |3-51
-AUGMENT: LETHAL TEMPO [LEVEL5|
-INCREASES YOUR ATTACK SPEED AND CRITICAL STRIKE DAMAGE
-FOR A SHORT PERIOD
-ATTACK SPEED 80%
-CRITICAL STRIKE DAMAGE 40%
-EXTRA DAMAGE TO DEEP FROZEN MONSTERS 15% 115-25
-+30 TO ALL ATTRIBUTES
-+2560 TO ADDITIVE COLD DAMAGE
-+100 TO COLD SKILL DAMAGE
-COLD SKILL DAMAGE INCREASED BY 25% 125-40)
--23% TO ENEMY COLD RESISTANCE [15-30)
-+40% TO COLD RESISTANCE 130-50]
-SOCKETS (5) [3-61
-IN THE STORMS OF A COLD AND FROZEN TUNDRA. A LONE HUNTER IS
-STALKING HIS PREY.
-B. Pick up TIER SS. REQUIRES LEVEL 94";
-
     #[test]
     fn tundra_hunter_matches_base_and_pins_implicits() {
         let result = parse(TOOLTIP1);
@@ -1622,53 +1731,6 @@ B. Pick up TIER SS. REQUIRES LEVEL 94";
         assert!(ignored_matching(&result, "temporarily increases"));
     }
 
-    const TOOLTIP2: &str = "GRIMBONE'S VISAGE
-HEROIC HELMET
-(GEM, GEM, GEM, GEM)
-DEFENSF: 135 [63][60-80]
-+113% ENHANCED DEFENSE 110-140])
-+2 TO ALL SKILLS [2-3]
-AILMENT DAMAGE INCREASED BY 17% [15-20]
-+20 TO INTFLLIGFNCF [15-25]
-+2048 TO ADDITIVE COLD DAMAGF
-+80 TO COLD SKILL DAMAGE
-MAGIC SKILL DAMAGE INCREASED BY 36% [20-50]
-REPLENISH MANA 115% 100-150]
-+600 TO MANA (BASED ON LEVEL) [4-8]
-+50% TO ALL RESISTANCES
-SOCKETS (4) 11-4)
-GRIMBONE THE HIVEMIND OF TORMENTED SOULS,
-FACE OF TERROR TO ALL THOSE WHO MEET THEIR FATE
-IN NIFLHEL.
-TIER SS. REQUIRES LEVEL 100
-2E";
-
-    const MYTHIC_RING: &str = "\
-CANNIBAL GOLDEN RING OF MANA WRAITH
-MYTHIC RING
-+6% INCREASED ATTACK RATING [6-20 TIER A
-+7% MANA STOLEN PER HIT [5-12 TIERS
-+23 LIFE AFTER EACH KILL[5-25 TIER S
-+25% MAGIC FIND (BASED ON LEVEL) TIER A
-+11% INCREASED MAGIC FIND [10-28]
-TIER S, REQUIRES LEVEL 67";
-
-    const SACRED_WHIP: &str = "\
-SACRED WHIP
-SATANIC 1-HANDED MACE
-ATTACK DAMAGE: 100 TO 143 [35[32-36]
-ATTACKS PER SECOND: 2.27 [1.75]
-+308% ENHANCED DAMAGE 280-320]
-+30% NCREASED ATTACK SPEED
-+50% CHANCE FOR A CRUSHING BLOW
-+763 TO ADDITIVE LIGHTNING DAMAGE [675-785)
--25% TO ENEMY LIGHTNING RESISTANCE
-+15% TO ALL RESISTANCES
-+9% EXTRA GOLD DROPPED FROM KILLS [5-10]
-+40% NCREASED MAGIC FIND [25-40]
-SOCKETS (3) 10-4)
-TIER A, REQUIRES LEVEL 65";
-
     #[test]
     fn fixed_implicits_match_the_games_phrasing() {
         let result = parse(SACRED_WHIP);
@@ -1678,20 +1740,6 @@ TIER A, REQUIRES LEVEL 65";
         assert!(result.equipped.as_ref().unwrap().affixes.is_empty());
         assert_eq!(implicit(&result, "enhanced_damage"), Some(308.));
     }
-
-    const SIGNET_OF_SHADOWS: &str = "\
-SIGNET OF SHADOWS
-HEROIC RING
-+4 TO ARCANE SKILLS
-+20% NCREASED MOVEMENT SPEED [10-20]
-AILMENT DAMAGE INCREASED BY 15%
-+33 TO ARCANE SKILL DAMAGE
-ARCANE SKILL DAMAGE INCREASED BY 15%
-+5% NCREASED EXPERIENCE GAIN [1-5]
-FROM DEATH ENDLESS POWER IS REBORN..
-TIER SS, REQUIRES LEVEL 100
-T
-?";
 
     #[test]
     fn same_named_variants_pick_the_one_whose_implicits_match() {
@@ -1712,8 +1760,6 @@ T
 
     #[test]
     fn red_lines_are_unholy_affixes_on_items_that_roll_them() {
-        const RED: [u8; 3] = [0x96, 0x2e, 0x55];
-        const LAVENDER: [u8; 3] = [0x6c, 0x62, 0xbf];
         let lines: Vec<(String, Option<[u8; 3]>)> = SIGNET_OF_SHADOWS
             .lines()
             .map(|text| {
@@ -1747,7 +1793,6 @@ T
 
     #[test]
     fn red_lines_without_an_unholy_pool_are_crystal_mods() {
-        const RED: [u8; 3] = [0x96, 0x2e, 0x55];
         let text = format!("{TOOLTIP3}\n+15% INCREASED MOVEMENT SPEED [10-20]");
         let lines: Vec<(String, Option<[u8; 3]>)> = text
             .lines()
@@ -1766,7 +1811,6 @@ T
 
     #[test]
     fn red_lines_try_the_items_unholy_pool_before_crystals() {
-        const RED: [u8; 3] = [0x96, 0x2e, 0x55];
         let text = SIGNET_OF_SHADOWS.replace(
             "+5% NCREASED EXPERIENCE GAIN [1-5]",
             "+20% TO ALL RESISTANCES",
@@ -1848,17 +1892,6 @@ T
         assert!(warnings(&result).is_empty());
     }
 
-    const TOOLTIP3: &str = "GRYPHON'S CLAW
-HEROIC AMULET
-+12 TO EXECUTF |12-18]
-DEAL EXTRA ATTACK DAMAGE TO MONSTERS BELOW 30% LIFE.
-ATTACK DAMAGE 72%
-+18% INCREASED CRITICAL STRIKE CHANCE [18-25]
-+46% NCREASED CRITICAL STRIKE DAMAGF [40-50]
-+23% CHANCE TO OPEN WOUNDS [15-25]
-+27 TO ALL ATTRIBUTES 120-30]
-TIER SS, REQUIRES LEVEL 100";
-
     #[test]
     fn gryphon_pins_granted_skill_and_implicits() {
         let result = parse(TOOLTIP3);
@@ -1871,20 +1904,6 @@ TIER SS, REQUIRES LEVEL 100";
         assert_eq!(implicit(&result, "crit_damage"), Some(46.0));
         assert_eq!(implicit(&result, "all_attributes"), Some(27.0));
     }
-
-    const TOOLTIP4: &str = "GHOSTLY POTION
-POTION
-CURRENTLY HAS 1 CHARGFS OUT OF 1
-FLASK COOLDOWN 45 SECONDS
-EFFECT DURATION 15 SECONDS
-+5 TO PARALLEL DIMENSION
-INCREASES YOUR SKILL DAMAGE FOR A SHORT PERIOD OF TIME
-MAGIC SKILL DAMAGE 57%
-PO
-TH
-ENHANCES MAGIC SKILL DAMAGE.
-TIER S, REQUIRES LEVEL 1
-TO";
 
     #[test]
     fn potion_pins_granted_skill_and_ignores_hud() {
@@ -1905,25 +1924,6 @@ TO";
         assert!(ignored_matching(&result, "chargfs"));
         assert!(ignored_matching(&result, "flask cooldown"));
     }
-
-    // "(JÖTUNN)" arrives as "U?TUNN)".
-    const TOOLTIP5: &str = "TORCH OF SHADOWS
-HEROIC CHARM (1X2) (UNIQUE EQUIPPED)
-5% CHANCE WHEN STRIKING ISHADOWFLAMES LEVEL3
-UNLEASH FLAMES OF SHADOW TRAVELING FORWARD DEALING
-ARCANE DAMAGE
-ARCANE DAMAGE 1573072
-+3 TO ALL SKILLS U?TUNN) [1-3]
-+23 TO ALL ATTRIBUTES 120-30]
-+8 TO LIGHT RADIUS
-+20% TO ALL RESISTANCES 110-20)
-Napd
-d
-TORCH FORGED AND LIGHTED IN THE SHADOW REALMS THAT HAS
-SOME ODD PROPERTIES, SPREADING DARKNESS IN THE MORTAL WORLD
-WHERE THERE SHOULD BE LIGHT:
-TIER SS, REQUIRES LEVEL 100
-TO";
 
     #[test]
     fn torch_of_shadow_recovers_class_scoped_skills() {

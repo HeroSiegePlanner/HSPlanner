@@ -20,6 +20,14 @@ const GEAR_SLOTS: &[&str] = &[
     "weapon", "offhand", "helmet", "armor", "gloves", "boots", "belt", "amulet", "ring_1", "ring_2",
 ];
 
+/// Rakhul's Ritual Band carries no stats of its own — it mirrors the other ring.
+const MIRROR_RING_ID: &str = "ring_heroic_rakhul_s_ritual_band";
+
+const SATANIC_CRYSTAL_RARITIES: &[&str] =
+    &["satanic", "satanic_set", "heroic", "angelic", "unholy"];
+
+static GAME_DATA: LazyLock<GameData> = LazyLock::new(load);
+
 pub fn is_gear_slot(slot: &str) -> bool {
     GEAR_SLOTS.contains(&slot)
 }
@@ -35,9 +43,6 @@ pub fn can_star_forge(slot: &str, rarity: &str) -> bool {
     }
     is_gear_slot(slot)
 }
-
-/// Rakhul's Ritual Band carries no stats of its own — it mirrors the other ring.
-const MIRROR_RING_ID: &str = "ring_heroic_rakhul_s_ritual_band";
 
 /// Inventory as the stat pipeline should see it: every equipped slot, plus a
 /// second pass over the ring that Rakhul's Ritual Band mirrors. Entries are
@@ -60,9 +65,6 @@ pub fn inventory_entries(inventory: &Inventory) -> Vec<(&str, &EquippedItem, boo
     }
     entries
 }
-
-const SATANIC_CRYSTAL_RARITIES: &[&str] =
-    &["satanic", "satanic_set", "heroic", "angelic", "unholy"];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
 #[serde(rename_all = "snake_case")]
@@ -102,8 +104,6 @@ pub struct GameData {
     pub tree_warp_ids: HashSet<u32>,
     pub tree_jewelry_ids: HashSet<u32>,
 }
-
-static GAME_DATA: LazyLock<GameData> = LazyLock::new(load);
 
 fn index_by_id<T, F: Fn(&T) -> String>(list: Vec<T>, key: F) -> HashMap<String, T> {
     let mut out: HashMap<String, T> = HashMap::with_capacity(list.len());

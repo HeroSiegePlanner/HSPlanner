@@ -3,6 +3,34 @@ use super::empty_input;
 use crate::calc::skills::collect_extra_damage;
 use crate::calc::subskill::subskill_key;
 
+const HELLSENT: TemporaryNodeBuff = TemporaryNodeBuff {
+    skill: "butchers_hook",
+    node: "hellsent",
+    name: "Hellsent",
+    effects: &[("movement_speed", 0.0, 15.0), ("phasing", 1.0, 0.0)],
+    trigger: "on_cast",
+    duration: 1.75,
+};
+const KILLING_SPREE: TemporaryNodeBuff = TemporaryNodeBuff {
+    skill: "chain_swing",
+    node: "killing_spree",
+    name: "Killing Spree",
+    effects: &[("increased_attack_speed", 0.0, 8.0)],
+    trigger: "on_skill_complete",
+    duration: 5.0,
+};
+const RAGE_TRANCE: TemporaryNodeBuff = TemporaryNodeBuff {
+    skill: "chain_rip",
+    node: "rage_trance",
+    name: "Rage Trance",
+    effects: &[
+        ("physical_damage_reduction", 0.0, 8.0),
+        ("magic_damage_reduction", 0.0, 8.0),
+    ],
+    trigger: "on_cast",
+    duration: 3.0,
+};
+
 fn prey_stats(
     parent_rank: u32,
     node_rank: u32,
@@ -220,34 +248,6 @@ struct TemporaryNodeBuff {
     trigger: &'static str,
     duration: f64,
 }
-
-const HELLSENT: TemporaryNodeBuff = TemporaryNodeBuff {
-    skill: "butchers_hook",
-    node: "hellsent",
-    name: "Hellsent",
-    effects: &[("movement_speed", 0.0, 15.0), ("phasing", 1.0, 0.0)],
-    trigger: "on_cast",
-    duration: 1.75,
-};
-const KILLING_SPREE: TemporaryNodeBuff = TemporaryNodeBuff {
-    skill: "chain_swing",
-    node: "killing_spree",
-    name: "Killing Spree",
-    effects: &[("increased_attack_speed", 0.0, 8.0)],
-    trigger: "on_skill_complete",
-    duration: 5.0,
-};
-const RAGE_TRANCE: TemporaryNodeBuff = TemporaryNodeBuff {
-    skill: "chain_rip",
-    node: "rage_trance",
-    name: "Rage Trance",
-    effects: &[
-        ("physical_damage_reduction", 0.0, 8.0),
-        ("magic_damage_reduction", 0.0, 8.0),
-    ],
-    trigger: "on_cast",
-    duration: 3.0,
-};
 
 #[allow(clippy::too_many_arguments)]
 fn temporary_node_stats(

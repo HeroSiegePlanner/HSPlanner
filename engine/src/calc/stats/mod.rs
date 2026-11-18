@@ -22,32 +22,6 @@ use super::types::{CustomStat, Inventory, SkillKind, SocketType, StatDef, TreeSo
 
 pub const RAINBOW_MULTIPLIER: f64 = 1.5;
 
-/// Rainbow bonuses are floored per socket, before equal stats are combined.
-pub fn socket_stat_value(value: f64, rainbow: bool) -> f64 {
-    if rainbow {
-        (value * RAINBOW_MULTIPLIER).floor()
-    } else {
-        value
-    }
-}
-
-// ---------- top-level types ----------
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize)]
-#[serde(rename_all = "snake_case")]
-pub enum SourceType {
-    Class,
-    Allocated,
-    Level,
-    Attribute,
-    Item,
-    Socket,
-    Skill,
-    Subskill,
-    Custom,
-    Tree,
-}
-
 pub const CUSTOM_SOURCE_LABEL: &str = "Custom Config";
 
 // Stats whose total fans out to per-element variants
@@ -84,6 +58,32 @@ pub const STAT_FAN_OUTS: &[(&str, &[&str])] = &[
         ],
     ),
 ];
+
+/// Rainbow bonuses are floored per socket, before equal stats are combined.
+pub fn socket_stat_value(value: f64, rainbow: bool) -> f64 {
+    if rainbow {
+        (value * RAINBOW_MULTIPLIER).floor()
+    } else {
+        value
+    }
+}
+
+// ---------- top-level types ----------
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SourceType {
+    Class,
+    Allocated,
+    Level,
+    Attribute,
+    Item,
+    Socket,
+    Skill,
+    Subskill,
+    Custom,
+    Tree,
+}
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]

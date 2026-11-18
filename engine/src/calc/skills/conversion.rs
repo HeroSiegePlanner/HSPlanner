@@ -1,32 +1,6 @@
 use super::calculation::{number, scalar, CalculationStep};
 use super::{r_max, rg, AttrMap, StatMap};
 
-/// Where a `conversion_*` subtree note takes its value from.
-pub enum Source {
-    Attribute(&'static str),
-    Stat(&'static str),
-    /// `attacks_per_second` after increased-attack-speed, the same product the
-    /// attack path uses.
-    EffectiveAttackSpeed,
-    /// "A portion of the skill's own damage" — no external source.
-    OwnDamage,
-    /// How many entities *this* skill fields: sentries for a Sentry skill,
-    /// summons for a Summon one. Never the other kind's count.
-    EntityCount,
-    /// Keys the build model cannot read (block rating, summon life); kept in the
-    /// table so they are accounted for rather than resolving to something else.
-    Unresolved,
-}
-
-pub enum Mode {
-    /// `pct%` of the source becomes flat skill damage.
-    Flat,
-    /// `pct%` per full 500 points of the source becomes additive skill damage.
-    Per500,
-    /// `pct%` per unit of the source becomes additive skill damage.
-    PctPerUnit,
-}
-
 /// Resolved once from `mapping.json` -> `conversionSources`. A key carries one
 /// mode here; the two `per500` outliers are listed in the E3 report.
 pub const CONVERSIONS: &[(&str, Source, Mode)] = &[
@@ -92,6 +66,32 @@ pub const CONVERSIONS: &[(&str, Source, Mode)] = &[
     ("conversion_summon_life", Source::Unresolved, Mode::Flat),
     ("conversion_skill_damage", Source::OwnDamage, Mode::Flat),
 ];
+
+/// Where a `conversion_*` subtree note takes its value from.
+pub enum Source {
+    Attribute(&'static str),
+    Stat(&'static str),
+    /// `attacks_per_second` after increased-attack-speed, the same product the
+    /// attack path uses.
+    EffectiveAttackSpeed,
+    /// "A portion of the skill's own damage" — no external source.
+    OwnDamage,
+    /// How many entities *this* skill fields: sentries for a Sentry skill,
+    /// summons for a Summon one. Never the other kind's count.
+    EntityCount,
+    /// Keys the build model cannot read (block rating, summon life); kept in the
+    /// table so they are accounted for rather than resolving to something else.
+    Unresolved,
+}
+
+pub enum Mode {
+    /// `pct%` of the source becomes flat skill damage.
+    Flat,
+    /// `pct%` per full 500 points of the source becomes additive skill damage.
+    Per500,
+    /// `pct%` per unit of the source becomes additive skill damage.
+    PctPerUnit,
+}
 
 #[derive(Debug, Clone, Copy, Default, PartialEq)]
 pub struct Conversions {

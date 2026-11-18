@@ -18,9 +18,10 @@ pub const LOG_NAME: &str = "crash.log";
 const REPORT_FLAG: &str = "--crash-report";
 const LANGUAGE_FLAG: &str = "--language";
 
+static REPORTED: AtomicBool = AtomicBool::new(false);
+
 /// Saves the first panic of this process to `log`, then opens the crash window.
 pub fn install(log: PathBuf) {
-    static REPORTED: AtomicBool = AtomicBool::new(false);
     let previous = std::panic::take_hook();
     std::panic::set_hook(Box::new(move |info| {
         previous(info);

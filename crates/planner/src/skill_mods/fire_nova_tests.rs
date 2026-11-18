@@ -12,6 +12,8 @@ const PATCH: &str = "Pyromancer_Blazing_Trail_obj";
 const CONTROLLER: &str = "Pyromancer_Blazing_Trail_Controller_obj";
 const DUMMY: [f32; 2] = [100., 0.];
 
+const CLASS: &str = "pyromancer";
+
 fn mods(ranks: &[(&str, u32)]) -> Mods {
     let ranks: HashMap<String, u32> = ranks
         .iter()
@@ -268,8 +270,6 @@ fn only_the_nodes_the_game_reads_its_own_way_keep_their_damage_off_the_hit() {
     let owned = crate::skill_mods::parity_tests::owned("pyromancer", "fire_nova");
     assert_eq!(owned, ["mirror_flames", "armageddon_bolts", "molten_trail"]);
 }
-
-const CLASS: &str = "pyromancer";
 
 /// Damage-weighted hits a cast is expected to land, its rolls counted at their odds.
 fn expected(ranks: &[(&str, u32)]) -> f32 {

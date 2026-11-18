@@ -15,6 +15,18 @@ const DUMMY: [f32; 2] = [160., 0.];
 /// A volley's meteors are drawn two frames after the base use's, every 6 frames from frame 1.
 const FIRST_METEOR: usize = 3;
 
+const CLASS: &str = "pyromancer";
+
+/// The cast's rolls: a nova deals the damage of the meteor that made it, Ball of Fire's included,
+/// and Pyrokinetic Madness recasts both.
+const ROLLS: [&str; 3] = ["ball_of_fire", "blazing_pulse", "pyrokinetic_madness"];
+const MODES: [&[(&str, u32)]; 4] = [
+    &[],
+    &[("warm_shower", 1)],
+    &[("warped_doom", 1)],
+    &[("blistering_bolt", 2)],
+];
+
 fn mods(ranks: &[(&str, u32)]) -> Mods {
     let ranks: HashMap<String, u32> = ranks
         .iter()
@@ -464,8 +476,6 @@ fn every_node_at_its_top_rank_still_plays_through_the_preview() {
     }
 }
 
-const CLASS: &str = "pyromancer";
-
 fn engine(ranks: &[(&str, u32)]) -> f32 {
     parity::engine_weighted(CLASS, "armageddon", ranks)
 }
@@ -506,16 +516,6 @@ fn the_engine_follows_every_node_under_warm_shower_warped_doom_and_blistering_bo
     }
     agree(&together);
 }
-
-/// The cast's rolls: a nova deals the damage of the meteor that made it, Ball of Fire's included,
-/// and Pyrokinetic Madness recasts both.
-const ROLLS: [&str; 3] = ["ball_of_fire", "blazing_pulse", "pyrokinetic_madness"];
-const MODES: [&[(&str, u32)]; 4] = [
-    &[],
-    &[("warm_shower", 1)],
-    &[("warped_doom", 1)],
-    &[("blistering_bolt", 2)],
-];
 
 #[test]
 fn the_engine_follows_the_procs_that_roll_each_other() {

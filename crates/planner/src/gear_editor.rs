@@ -15,6 +15,8 @@ use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use hsplanner_ui::tooltip_text::TooltipText;
 
+const KEY: &str = "relic-tier";
+
 impl GearView {
     fn card(&self, section: Section, cx: &Context<Self>) -> Stateful<Div> {
         let (key, default_open) = (section.id, section.default_open);
@@ -707,7 +709,6 @@ impl GearView {
         window: &Window,
         cx: &mut Context<Self>,
     ) -> Stateful<Div> {
-        const KEY: &str = "relic-tier";
         let p = cx.global::<TooltipTheme>();
         let (accent_hot, faint) = (p.accent_hot, p.faint);
         let tier = gear::relic_tier(item);

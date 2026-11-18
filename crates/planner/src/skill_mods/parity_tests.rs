@@ -13,6 +13,9 @@ use std::collections::{HashMap, HashSet};
 const LEVEL: u32 = 100;
 const SKILL_RANK: u32 = 20;
 
+/// Ranks Peg Leg, Overloaded Dice and Storm in a Vial can add above a node's highest (#238).
+pub(crate) const GRANTED: u32 = 3;
+
 /// The preview's modifiers of `skill` with only `ranks` learned.
 pub(crate) fn mods(skill: &str, ranks: &[(&str, u32)]) -> Mods {
     let ranks: HashMap<String, u32> = ranks
@@ -312,9 +315,6 @@ pub(crate) fn engine_skill_roll(
     let pool = perf.damage.map_or(0., |d| d.skill_damage_max_pct);
     ((100. + pool) / (100. + pool - added)) as f32
 }
-
-/// Ranks Peg Leg, Overloaded Dice and Storm in a Vial can add above a node's highest (#238).
-pub(crate) const GRANTED: u32 = 3;
 
 /// Each node of `class`'s `skill` at each rank up to `past` above its highest, learned alone,
 /// whose hits over the base use differ by `within` or more between `sim` and `engine`.

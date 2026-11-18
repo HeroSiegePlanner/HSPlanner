@@ -3,6 +3,11 @@ use serde::Deserialize;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+static DATA: LazyLock<MercenaryData> = LazyLock::new(|| {
+    serde_json::from_str(include_str!("../../../data/mercenaries.json"))
+        .expect("valid mercenary catalog")
+});
+
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct MercenaryData {
@@ -28,10 +33,6 @@ pub struct MercenarySkill {
     pub shared: bool,
     pub description: String,
 }
-static DATA: LazyLock<MercenaryData> = LazyLock::new(|| {
-    serde_json::from_str(include_str!("../../../data/mercenaries.json"))
-        .expect("valid mercenary catalog")
-});
 pub fn data() -> &'static MercenaryData {
     &DATA
 }

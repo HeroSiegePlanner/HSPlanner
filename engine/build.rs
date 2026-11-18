@@ -2,15 +2,15 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 
+// Bundled: upstream no longer guarantees its model download URLs (robertknight/ocrs#282).
+#[cfg(feature = "ocr")]
+const OCR_MODELS: &[&str] = &["text-detection.onnx", "text-recognition.onnx"];
+
 fn main() {
     emit_data_includes();
     #[cfg(feature = "ocr")]
     emit_ocr_includes();
 }
-
-// Bundled: upstream no longer guarantees its model download URLs (robertknight/ocrs#282).
-#[cfg(feature = "ocr")]
-const OCR_MODELS: &[&str] = &["text-detection.onnx", "text-recognition.onnx"];
 
 #[cfg(feature = "ocr")]
 fn emit_ocr_includes() {

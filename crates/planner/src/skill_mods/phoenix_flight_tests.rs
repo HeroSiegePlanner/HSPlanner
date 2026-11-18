@@ -22,6 +22,8 @@ const LANDING: f32 = 129.733;
 /// dummy brings it back 23 px off it.
 const LOOPED: [f32; 2] = [166.7, -22.];
 
+const CLASS: &str = "pyromancer";
+
 fn mods(ranks: &[(&str, u32)]) -> Mods {
     let ranks: HashMap<String, u32> = ranks
         .iter()
@@ -439,8 +441,6 @@ fn only_the_nodes_the_game_reads_its_own_way_keep_their_damage_off_the_hit() {
         ]
     );
 }
-
-const CLASS: &str = "pyromancer";
 
 /// Damage-weighted hits a use is expected to land: Afterburn's cast roll at its own odds and the
 /// chains at theirs.

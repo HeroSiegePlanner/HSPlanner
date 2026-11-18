@@ -67,6 +67,48 @@ static ICONS: LazyLock<HashMap<&'static str, Arc<Image>>> = LazyLock::new(|| {
 const CELL: f32 = 84.;
 const STEP: f32 = 102.;
 
+const SUB_POSITIONS: [(f32, f32); 15] = [
+    (0.5, 0.87),
+    (0.453, 0.724),
+    (0.547, 0.724),
+    (0.253, 0.579),
+    (0.406, 0.579),
+    (0.5, 0.579),
+    (0.594, 0.579),
+    (0.747, 0.579),
+    (0.347, 0.399),
+    (0.653, 0.399),
+    (0.5, 0.289),
+    (0.1, 0.579),
+    (0.253, 0.109),
+    (0.747, 0.109),
+    (0.9, 0.579),
+];
+const SUB_EDGES: [(usize, usize); 20] = [
+    (0, 1),
+    (0, 2),
+    (1, 4),
+    (2, 6),
+    (3, 4),
+    (3, 11),
+    (4, 5),
+    (4, 8),
+    (5, 6),
+    (6, 7),
+    (6, 9),
+    (7, 14),
+    (8, 10),
+    (8, 11),
+    (8, 12),
+    (9, 10),
+    (9, 13),
+    (9, 14),
+    (10, 12),
+    (10, 13),
+];
+// Tile diameter as a share of the board, by template role (minor, notable, keystone).
+const TILE_PCT: [f32; 3] = [7.8, 9.8, 12.4];
+
 fn units(value: f32) -> Rems {
     rems(value / 13.)
 }
@@ -1125,47 +1167,6 @@ impl Render for SkillsView {
     }
 }
 
-const SUB_POSITIONS: [(f32, f32); 15] = [
-    (0.5, 0.87),
-    (0.453, 0.724),
-    (0.547, 0.724),
-    (0.253, 0.579),
-    (0.406, 0.579),
-    (0.5, 0.579),
-    (0.594, 0.579),
-    (0.747, 0.579),
-    (0.347, 0.399),
-    (0.653, 0.399),
-    (0.5, 0.289),
-    (0.1, 0.579),
-    (0.253, 0.109),
-    (0.747, 0.109),
-    (0.9, 0.579),
-];
-const SUB_EDGES: [(usize, usize); 20] = [
-    (0, 1),
-    (0, 2),
-    (1, 4),
-    (2, 6),
-    (3, 4),
-    (3, 11),
-    (4, 5),
-    (4, 8),
-    (5, 6),
-    (6, 7),
-    (6, 9),
-    (7, 14),
-    (8, 10),
-    (8, 11),
-    (8, 12),
-    (9, 10),
-    (9, 13),
-    (9, 14),
-    (10, 12),
-    (10, 13),
-];
-// Tile diameter as a share of the board, by template role (minor, notable, keystone).
-const TILE_PCT: [f32; 3] = [7.8, 9.8, 12.4];
 fn tile_role(position: usize) -> usize {
     if position == 0 {
         2
@@ -2204,6 +2205,12 @@ impl Render for SubskillTooltip {
 mod tests {
     use super::*;
 
+    const KNOWN_GAPS: &[&str] = &[
+        "necromancer/summon_mastery",
+        "pirate/grenade_jump",
+        "viking/defensive_shout",
+    ];
+
     fn scorching_aura_node(id: &str) -> &'static SubskillNodeSpec {
         let aura = data::get_skills_by_class("pyromancer")
             .iter()
@@ -2257,11 +2264,6 @@ mod tests {
 
     #[::core::prelude::v1::test]
     fn every_positioned_skill_has_an_icon_except_known_gaps() {
-        const KNOWN_GAPS: &[&str] = &[
-            "necromancer/summon_mastery",
-            "pirate/grenade_jump",
-            "viking/defensive_shout",
-        ];
         let mut missing: Vec<&str> = visuals::SKILL_POSITIONS
             .iter()
             .map(|&(id, _, _)| id)

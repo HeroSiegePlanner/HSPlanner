@@ -27,6 +27,9 @@ const DOWNLOAD_TIMEOUT: Duration = Duration::from_secs(600);
 const CHUNK: usize = 64 * 1024;
 const UNSIZED_REPORT_STEP: u64 = 1024 * 1024;
 
+/// A pre-release build such as 1.2.2-beta.3.
+pub const PRE_RELEASE: bool = !env!("CARGO_PKG_VERSION_PRE").is_empty();
+
 #[derive(Deserialize)]
 struct Release {
     tag_name: String,
@@ -268,9 +271,6 @@ fn advance(state: State, step: Step) -> State {
         (state, _) => state,
     }
 }
-
-/// A pre-release build such as 1.2.2-beta.3.
-pub const PRE_RELEASE: bool = !env!("CARGO_PKG_VERSION_PRE").is_empty();
 
 pub fn current_version() -> Version {
     Version::parse(env!("CARGO_PKG_VERSION")).expect("valid crate version")

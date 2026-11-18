@@ -18,6 +18,18 @@ const DUMMY: [f32; 2] = [120., 0.];
 /// Pulses a lucky roll is looked for in.
 const TRIES: u64 = 101;
 
+const CLASS: &str = "pyromancer";
+
+/// The on-hit procs, each of whose objects rolls the others; Release the Chaos' balls are Ignite
+/// the Flames' objects.
+const PROCS: [&str; 5] = [
+    "flaming_fissure",
+    "ignite_the_flames",
+    "ground_blaze",
+    "scorching_harvester",
+    "release_the_chaos",
+];
+
 fn mods(ranks: &[(&str, u32)]) -> Mods {
     let ranks: HashMap<String, u32> = ranks
         .iter()
@@ -440,8 +452,6 @@ fn only_the_nodes_the_game_reads_its_own_way_keep_their_damage_off_the_hit() {
     );
 }
 
-const CLASS: &str = "pyromancer";
-
 /// The engine's damage-weighted hits per pulse.
 fn engine(ranks: &[(&str, u32)]) -> f32 {
     parity::engine_hits(CLASS, SKILL, ranks)
@@ -530,16 +540,6 @@ fn granted_ranks_past_the_highest_keep_following_the_sim() {
         ("scorched_lands", 5 + GRANTED),
     ));
 }
-
-/// The on-hit procs, each of whose objects rolls the others; Release the Chaos' balls are Ignite
-/// the Flames' objects.
-const PROCS: [&str; 5] = [
-    "flaming_fissure",
-    "ignite_the_flames",
-    "ground_blaze",
-    "scorching_harvester",
-    "release_the_chaos",
-];
 
 #[test]
 fn the_engine_chains_three_and_more_procs_as_the_sim_does() {

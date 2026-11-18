@@ -20,14 +20,6 @@ use hsplanner_ui::{
 };
 use std::sync::Arc;
 
-/// A skill's own Combined DPS; Hit DPS alone leaves out crits and ailments.
-fn skill_dps(performance: &BuildPerformance) -> Option<Ranged> {
-    let p = performance;
-    p.combined_dps_min
-        .zip(p.combined_dps_max)
-        .or(p.hit_dps_min.zip(p.hit_dps_max))
-}
-
 const ATTRIBUTES: &[&str] = &[
     "strength",
     "dexterity",
@@ -55,6 +47,15 @@ const DEFENSE: &[&str] = &[
     "physical_damage_reduction",
     "magic_damage_reduction",
 ];
+
+/// A skill's own Combined DPS; Hit DPS alone leaves out crits and ailments.
+fn skill_dps(performance: &BuildPerformance) -> Option<Ranged> {
+    let p = performance;
+    p.combined_dps_min
+        .zip(p.combined_dps_max)
+        .or(p.hit_dps_min.zip(p.hit_dps_max))
+}
+
 fn units(value: f32) -> Rems {
     rems(value / 13.)
 }

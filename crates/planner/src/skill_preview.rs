@@ -28,9 +28,16 @@ const FROST_TINT: [u8; 3] = [150, 205, 255];
 const BUFF_ABOVE: f32 = 66.;
 /// Fewest frames between two uses, however fast the game lets the skill be used.
 const MIN_PERIOD: f64 = 6.;
+
+static PLAYBACK: Mutex<Option<Playing>> = Mutex::new(None);
+
+/// Classes whose skills show a Preview: every subskill of theirs is read from the game.
+const CLASSES: [&str; 2] = ["exo", "pyromancer"];
+
+static PENDING: AtomicBool = AtomicBool::new(false);
+
 /// Uses on screen and when their loop started.
 type Playing = (Arc<[Timeline]>, Instant);
-static PLAYBACK: Mutex<Option<Playing>> = Mutex::new(None);
 
 #[derive(Clone, Copy)]
 struct Palette {
@@ -148,9 +155,6 @@ struct Now {
     /// The use follows the walking player, whom the town shows standing.
     walks: bool,
 }
-
-/// Classes whose skills show a Preview: every subskill of theirs is read from the game.
-const CLASSES: [&str; 2] = ["exo", "pyromancer"];
 
 /// Whether skills of `class_id` show a Preview.
 fn previews(class_id: &str) -> bool {
@@ -557,7 +561,6 @@ fn paint_line(window: &mut Window, from: [f32; 2], to: [f32; 2], color: Hsla) {
 
 /// Draws the window again after `delay`; frames painted meanwhile ride on the same redraw.
 fn redraw_after(delay: Duration, window: &Window, cx: &App) {
-    static PENDING: AtomicBool = AtomicBool::new(false);
     if PENDING.swap(true, Ordering::AcqRel) {
         return;
     }

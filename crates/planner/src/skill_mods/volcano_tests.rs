@@ -20,6 +20,8 @@ const SHOTS: [usize; 13] = [34, 50, 66, 82, 98, 114, 130, 146, 162, 178, 194, 21
 const DRAWN: usize = 1;
 const EXPLODES: usize = 62;
 
+const CLASS: &str = "pyromancer";
+
 fn mods(ranks: &[(&str, u32)]) -> Mods {
     let ranks: HashMap<String, u32> = ranks
         .iter()
@@ -473,8 +475,6 @@ fn only_the_nodes_the_game_reads_its_own_way_keep_their_damage_off_the_hit() {
     let owned = crate::skill_mods::parity_tests::owned("pyromancer", "volcano");
     assert_eq!(owned, ["too_hot_to_touch"]);
 }
-
-const CLASS: &str = "pyromancer";
 
 fn engine(ranks: &[(&str, u32)]) -> f32 {
     parity::engine_hits(CLASS, super::SKILL, ranks)

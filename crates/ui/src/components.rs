@@ -14,6 +14,10 @@ use gpui_kit::{prelude::*, *};
 /// Every planner dialog fades in and settles briefly instead of sliding down from the top.
 pub const DIALOG_ENTRANCE: DialogEntrance = DialogEntrance::FadeSlide;
 
+/// Share of the window above a modal, and the most of its height a modal takes.
+const MODAL_TOP: f32 = 0.06;
+const MODAL_HEIGHT: f32 = 0.88;
+
 /// Modal widths in planner pixels (13 px rem), chosen by the decision the modal holds.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum ModalSize {
@@ -72,10 +76,6 @@ impl PlannerDialogExt for Window {
         });
     }
 }
-
-/// Share of the window above a modal, and the most of its height a modal takes.
-const MODAL_TOP: f32 = 0.06;
-const MODAL_HEIGHT: f32 = 0.88;
 
 /// The shared modal surface: no stock padding (header, body and footer bring their own),
 /// the panel gradient, a width by size and the top at 6% of the window. Dismissal is

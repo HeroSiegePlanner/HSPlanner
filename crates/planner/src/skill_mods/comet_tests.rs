@@ -11,6 +11,19 @@ const PATCH: &str = "Pyromancer_Blazing_Trail_obj";
 const SHRAPNEL: &str = "Marksman_Frag_Grenade_Shrapnel_obj";
 const CURSOR: [f32; 2] = [160., -30.];
 
+const CLASS: &str = "pyromancer";
+const SKILL: &str = "comet";
+/// The cast's rolls whose objects deal damage, each its own draw (L0x3ce-L0x3e4).
+const ROLLED: [&str; 4] = [
+    "comet_fragments",
+    "molten_aftershock",
+    "flaming_terrain",
+    "searing_shrapnel",
+];
+
+/// The rolls the engine follows past Bouncing Comets' landings; their novas are not modelled.
+const BOUNCED: [&str; 3] = ["comet_fragments", "flaming_terrain", "searing_shrapnel"];
+
 fn mods(ranks: &[(&str, u32)]) -> Mods {
     let ranks: HashMap<String, u32> = ranks
         .iter()
@@ -355,16 +368,6 @@ fn only_the_nodes_the_game_reads_its_own_way_keep_their_damage_off_the_hit() {
     );
 }
 
-const CLASS: &str = "pyromancer";
-const SKILL: &str = "comet";
-/// The cast's rolls whose objects deal damage, each its own draw (L0x3ce-L0x3e4).
-const ROLLED: [&str; 4] = [
-    "comet_fragments",
-    "molten_aftershock",
-    "flaming_terrain",
-    "searing_shrapnel",
-];
-
 /// Damage-weighted hits a cast is expected to land, each node's roll at its own odds.
 fn expected(ranks: &[(&str, u32)]) -> f32 {
     let rolled: Vec<(&str, f32)> = (ranks.iter())
@@ -447,9 +450,6 @@ fn all_pairs(procs: &[&'static str]) -> Vec<Vec<(&'static str, u32)>> {
     }
     together
 }
-
-/// The rolls the engine follows past Bouncing Comets' landings; their novas are not modelled.
-const BOUNCED: [&str; 3] = ["comet_fragments", "flaming_terrain", "searing_shrapnel"];
 
 /// `sets`, each with Bouncing Comets at every rank.
 fn bouncing(sets: &[Vec<(&'static str, u32)>]) -> Vec<Vec<(&'static str, u32)>> {

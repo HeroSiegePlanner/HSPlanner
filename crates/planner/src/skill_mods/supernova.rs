@@ -57,6 +57,8 @@ const ASTEROID_HEIGHT: f32 = 320.;
 const ASTEROID_GRAVITY: f32 = 0.25;
 const ASTEROID_BLAST: f32 = 1.85;
 
+const KINDS: [Kind; 4] = [Kind::Chain, Kind::Outflux, Kind::Connected, Kind::Planetary];
+
 /// The on-hit procs case 352 pushes to the nova's collision list, in its order.
 #[derive(Clone, Copy, PartialEq)]
 enum Kind {
@@ -65,8 +67,6 @@ enum Kind {
     Connected,
     Planetary,
 }
-
-const KINDS: [Kind; 4] = [Kind::Chain, Kind::Outflux, Kind::Connected, Kind::Planetary];
 
 pub(super) fn apply(spawns: &[Spawn], tree: &Tree) -> Vec<Spawn> {
     spawns.iter().flat_map(|spawn| cast(spawn, tree)).collect()

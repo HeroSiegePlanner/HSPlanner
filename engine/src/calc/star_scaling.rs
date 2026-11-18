@@ -2,14 +2,23 @@ use serde::Deserialize;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+const STAR_SCALING_JSON: &str = include_str!("../../../data/star-scaling.json");
+
+static STAR_SCALING: LazyLock<StarScaling> = LazyLock::new(|| {
+    let dto: StarScalingData =
+        serde_json::from_str(STAR_SCALING_JSON).expect("data/star-scaling.json must be valid");
+    StarScaling {
+        max_stars: dto.max_stars,
+        map: dto.map.into_iter().map(|(k, v)| (k, v.into())).collect(),
+    }
+});
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum StarScaleConfig {
     Percent { per_star: f64 },
     Flat { per_star: f64 },
     None,
 }
-
-const STAR_SCALING_JSON: &str = include_str!("../../../data/star-scaling.json");
 
 #[derive(Deserialize, Clone, Copy)]
 #[serde(tag = "kind")]
@@ -49,15 +58,6 @@ struct StarScaling {
     max_stars: u32,
     map: HashMap<String, StarScaleConfig>,
 }
-
-static STAR_SCALING: LazyLock<StarScaling> = LazyLock::new(|| {
-    let dto: StarScalingData =
-        serde_json::from_str(STAR_SCALING_JSON).expect("data/star-scaling.json must be valid");
-    StarScaling {
-        max_stars: dto.max_stars,
-        map: dto.map.into_iter().map(|(k, v)| (k, v.into())).collect(),
-    }
-});
 
 fn configs() -> &'static StarScaling {
     &STAR_SCALING

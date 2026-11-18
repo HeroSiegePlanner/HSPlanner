@@ -13,6 +13,14 @@ const BLAST: &str = "Explosion_Item_obj";
 /// The base wave touches the in-zone dummy 16 moves into its flight.
 const BASE_HIT: u32 = 17;
 
+const CLASS: &str = "pyromancer";
+const MOLTEN: &str = "molten_ground";
+const FLIES: &str = "flies_of_agony";
+const IGNITING: &str = "igniting_wind";
+/// Objects a parity play may hold at once, well under the 256 past which the sim drops what procs
+/// make.
+const UNCUT: usize = 192;
+
 fn mods(ranks: &[(&str, u32)]) -> Mods {
     let ranks: HashMap<String, u32> = ranks
         .iter()
@@ -340,14 +348,6 @@ fn infernal_cleave_scales_the_fire_part_and_the_weapon_bonus_but_not_the_base_we
 fn shares_of(mods: &Mods) -> Vec<f32> {
     shares(&play(&spawns_with(mods, 0)))
 }
-
-const CLASS: &str = "pyromancer";
-const MOLTEN: &str = "molten_ground";
-const FLIES: &str = "flies_of_agony";
-const IGNITING: &str = "igniting_wind";
-/// Objects a parity play may hold at once, well under the 256 past which the sim drops what procs
-/// make.
-const UNCUT: usize = 192;
 
 /// Damage-weighted hits the game lands in one use, each of the attack's rolls counted at its own
 /// node's odds, against the full hit of a build without a weapon (all fire). Infernal Cleave's

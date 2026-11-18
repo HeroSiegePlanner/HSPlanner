@@ -11,6 +11,8 @@ use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::theme::TooltipTheme;
 use std::{rc::Rc, sync::Arc, time::Duration};
 
+const WINDOW_FIT_RATIO: f32 = 0.9;
+
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Section {
     Library,
@@ -725,8 +727,6 @@ pub fn run(
             }
         });
 }
-
-const WINDOW_FIT_RATIO: f32 = 0.9;
 
 fn fit_window(work_area: Bounds<Pixels>, desired: Size<Pixels>) -> Bounds<Pixels> {
     let limit = size(

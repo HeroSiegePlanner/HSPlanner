@@ -5,6 +5,8 @@ use std::{borrow::Cow, time::Duration};
 pub const FONT_FAMILY: &str = "Inter";
 pub const MONO_FONT_FAMILY: &str = "JetBrains Mono";
 
+pub const UI_ZOOM_STEPS: [f32; 6] = [1., 1.15, 1.25, 1.5, 1.75, 2.];
+
 /// Canvas and floating-control roles from the shipping TreeView/EtherView.
 /// Node dimensions are game-space geometry; controls use the window's rem scale.
 #[derive(Clone, Copy)]
@@ -417,8 +419,6 @@ pub fn rarity_color(rarity: &str, cx: &App) -> Hsla {
         _ => rgb(0xffffff).into(),
     }
 }
-
-pub const UI_ZOOM_STEPS: [f32; 6] = [1., 1.15, 1.25, 1.5, 1.75, 2.];
 
 pub fn normalize_zoom(zoom: f32) -> f32 {
     UI_ZOOM_STEPS

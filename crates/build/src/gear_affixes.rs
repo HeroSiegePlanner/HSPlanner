@@ -8,11 +8,6 @@ use std::{
     sync::LazyLock,
 };
 
-struct Pools {
-    groups: HashMap<String, Vec<String>>,
-    random: HashSet<String>,
-}
-
 static POOLS: LazyLock<Pools> = LazyLock::new(|| Pools {
     groups: serde_json::from_str(include_str!("../../../data/affix-pools.json"))
         .expect("valid affix pools"),
@@ -22,6 +17,11 @@ static POOLS: LazyLock<Pools> = LazyLock::new(|| Pools {
         .filter_map(|base| base.random_affix_group_id.clone())
         .collect(),
 });
+
+struct Pools {
+    groups: HashMap<String, Vec<String>>,
+    random: HashSet<String>,
+}
 
 fn pools() -> &'static Pools {
     &POOLS

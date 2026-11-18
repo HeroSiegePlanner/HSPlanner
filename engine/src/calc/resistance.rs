@@ -14,6 +14,13 @@ const LEGACY_KEYS: &[(&str, &str)] = &[
     ("enemy_arcane_resist", "ignore_arcane_res"),
 ];
 
+static LEGACY: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(
+        r"(?i)\b(?:to\s+)?enemy\s+(all|fire|cold|lightning|poison|arcane)\s+resist(?:ance)?s?\b",
+    )
+    .unwrap()
+});
+
 pub fn canonical_key(key: &str) -> &str {
     LEGACY_KEYS
         .iter()
@@ -23,11 +30,6 @@ pub fn canonical_key(key: &str) -> &str {
 
 /// Import compatibility only; target resistance settings are not item bonuses.
 pub fn canonical_text(text: &str) -> Cow<'_, str> {
-    static LEGACY: LazyLock<Regex> = LazyLock::new(|| {
-        Regex::new(
-        r"(?i)\b(?:to\s+)?enemy\s+(all|fire|cold|lightning|poison|arcane)\s+resist(?:ance)?s?\b"
-    ).unwrap()
-    });
     let replaced = LEGACY.replace_all(text, "Ignore $1 Resistance");
     if matches!(replaced, Cow::Owned(_)) && replaced.trim_start().starts_with('-') {
         // Old minus-enemy wording denotes a positive amount of ignore.

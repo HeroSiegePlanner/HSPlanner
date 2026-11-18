@@ -1,6 +1,10 @@
 use super::super::*;
 use crate::calc::types::{EquippedAffix, EquippedItem};
 
+const AFFIX_ID: &str = "15_30_to_life_t1_bear";
+
+const UNIQUE_CHARM: &str = "charm_angelic_air_melon";
+
 #[test]
 fn fuel_to_fire_consumed_count_scales_only_its_active_learned_payload() {
     for count in [None, Some(0), Some(5), Some(u32::MAX)] {
@@ -1768,9 +1772,6 @@ fn random_skill_element_is_inert_until_an_element_is_picked() {
 // Only common charms (Small/Large/Grand) take stars — unique charms never do.
 #[test]
 fn stars_scale_common_charms_only() {
-    const AFFIX_ID: &str = "15_30_to_life_t1_bear";
-    const UNIQUE_CHARM: &str = "charm_angelic_air_melon";
-
     let charm = |base_id: &str, stars: u32| {
         let mut inv: Inventory = HashMap::new();
         inv.insert(

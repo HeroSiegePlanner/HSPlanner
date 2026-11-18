@@ -12,22 +12,6 @@ use crate::html::{ASSET_REV, esc};
 const CROP_MARGIN: f64 = 90.;
 const MIN_CROP: f64 = 520.;
 
-struct Node {
-    x: f64,
-    y: f64,
-    radius: f64,
-}
-
-pub struct Tree {
-    pub file: &'static str,
-    view: [f64; 4],
-    nodes: HashMap<u32, Node>,
-    edges: Vec<(u32, u32)>,
-    node_color: &'static str,
-    edge_color: &'static str,
-    backdrop: OnceLock<String>,
-}
-
 pub static INCARNATION: LazyLock<Tree> = LazyLock::new(|| {
     Tree::parse(
         include_str!("../../../data/incarnation-tree.json"),
@@ -45,6 +29,22 @@ pub static ETHER: LazyLock<Tree> = LazyLock::new(|| {
         "#8a5fb0",
     )
 });
+
+struct Node {
+    x: f64,
+    y: f64,
+    radius: f64,
+}
+
+pub struct Tree {
+    pub file: &'static str,
+    view: [f64; 4],
+    nodes: HashMap<u32, Node>,
+    edges: Vec<(u32, u32)>,
+    node_color: &'static str,
+    edge_color: &'static str,
+    backdrop: OnceLock<String>,
+}
 
 impl Tree {
     fn parse(

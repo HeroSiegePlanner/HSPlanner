@@ -12,6 +12,8 @@ const BATCH: usize = 2048;
 /// px inside an object's reach where a solid round mask surely meets the dummy's 12 px disk.
 const SURE_MARGIN: f32 = 3.;
 
+static KNOWN: LazyLock<Mutex<HashMap<String, f32>>> = LazyLock::new(Default::default);
+
 /// Damage-weighted hits the game lands on the dummy in one use with `ranks`: every random spot
 /// and roll at its odds and every object counted apart.
 pub(super) fn uncapped(ranks: &[(&str, u32)]) -> f32 {
@@ -209,7 +211,6 @@ fn bolt(cast: &Cast) -> f32 {
 
 /// Expectations already worked out, by what they depend on.
 fn cached(key: String, work: impl FnOnce() -> f32) -> f32 {
-    static KNOWN: LazyLock<Mutex<HashMap<String, f32>>> = LazyLock::new(Default::default);
     if let Some(known) = KNOWN.lock().expect("cache").get(&key) {
         return *known;
     }

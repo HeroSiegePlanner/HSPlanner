@@ -10,6 +10,8 @@ const BLAST: &str = "Explosion_Item_obj";
 const ORB: &str = "Pyromancer_Breath_Molten_Orb_obj";
 const DUMMY: [f32; 2] = [160., 0.];
 
+const CLASS: &str = "pyromancer";
+
 fn mods(ranks: &[(&str, u32)]) -> Mods {
     let ranks: HashMap<String, u32> = ranks
         .iter()
@@ -279,8 +281,6 @@ fn only_the_nodes_the_game_reads_its_own_way_keep_their_damage_off_the_hit() {
         ]
     );
 }
-
-const CLASS: &str = "pyromancer";
 
 use super::parity::expected;
 

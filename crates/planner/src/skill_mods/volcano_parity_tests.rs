@@ -21,6 +21,9 @@ const LAVA_WAY: f32 = 605.;
 /// Walks of Trail of Volcanoes' chain averaged.
 const WALKS: u64 = 1024;
 
+static KNOWN: LazyLock<Mutex<HashMap<String, f32>>> = LazyLock::new(Default::default);
+static KNOWN_STOPS: LazyLock<Mutex<HashMap<(u32, u32), Stops>>> = LazyLock::new(Default::default);
+
 /// `f` on the module's cast for `ranks`.
 fn with_cast<T>(ranks: &[(&str, u32)], f: impl FnOnce(&Cast) -> T) -> T {
     let mods = parity::mods(super::SKILL, ranks);
@@ -72,7 +75,6 @@ fn reach_of(object: &str) -> f32 {
 
 /// Expectations already worked out, by what they depend on.
 fn cached(key: String, work: impl FnOnce() -> f32) -> f32 {
-    static KNOWN: LazyLock<Mutex<HashMap<String, f32>>> = LazyLock::new(Default::default);
     if let Some(known) = KNOWN.lock().expect("cache").get(&key) {
         return *known;
     }
@@ -142,13 +144,15 @@ fn thrown(cast: &Cast, mount: &Mount, bounces: u32) -> f32 {
 /// Where a fragment's blasts go off, px along its heading, and how far each reaches the dummy's
 /// centre: one fragment replayed far from the dummy.
 fn stops(cast: &Cast, bounces: u32) -> Stops {
-    static KNOWN: LazyLock<Mutex<HashMap<(u32, u32), Stops>>> = LazyLock::new(Default::default);
     let key = (cast.speed.to_bits(), bounces);
-    if let Some(known) = KNOWN.lock().expect("stops").get(&key) {
+    if let Some(known) = KNOWN_STOPS.lock().expect("stops").get(&key) {
         return known.clone();
     }
     let measured = measure_stops(cast, bounces);
-    KNOWN.lock().expect("stops").insert(key, measured.clone());
+    KNOWN_STOPS
+        .lock()
+        .expect("stops")
+        .insert(key, measured.clone());
     measured
 }
 

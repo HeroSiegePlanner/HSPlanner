@@ -60,6 +60,8 @@ const FLAME_LIFE: u32 = 180;
 const FLAME_FADE: u32 = 14;
 const FLAME_SHRINK: f32 = 0.075;
 
+const KINDS: [Kind; 4] = [Kind::Burst, Kind::Aid, Kind::Blast, Kind::Flame];
+
 /// The whip's on-hit procs, in the order case 344 fills projEffect 824-827.
 #[derive(Clone, Copy, PartialEq)]
 enum Kind {
@@ -68,8 +70,6 @@ enum Kind {
     Blast,
     Flame,
 }
-
-const KINDS: [Kind; 4] = [Kind::Burst, Kind::Aid, Kind::Blast, Kind::Flame];
 
 pub(super) fn apply(spawns: &[Spawn], tree: &Tree) -> Vec<Spawn> {
     spawns.iter().flat_map(|spawn| cast(spawn, tree)).collect()
