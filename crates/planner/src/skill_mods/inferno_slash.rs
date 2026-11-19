@@ -39,6 +39,10 @@ const AFTER_FORK: u32 = 3;
 const FUMES_FRAMES: u32 = 120;
 const STACKED_FRAMES: u32 = 300;
 
+/// The nodes whose chance the attack rolls itself (L0x14a-L0x15d).
+#[cfg(test)]
+pub(super) const ROLLED: [&str; 4] = [MOLTEN, STACKED, FUMES, IGNITING];
+
 /// The attack's own chance rolls (L0x14a-L0x15d), each its own draw.
 struct Rolls {
     molten: bool,
@@ -75,10 +79,6 @@ pub(super) fn apply_rolled(
 ) -> Vec<Spawn> {
     attack(spawns, tree, rolls(tree, |node, _| lucky(node)))
 }
-
-/// The nodes whose chance the attack rolls itself (L0x14a-L0x15d).
-#[cfg(test)]
-pub(super) const ROLLED: [&str; 4] = [MOLTEN, STACKED, FUMES, IGNITING];
 
 fn attack(spawns: &[Spawn], tree: &Tree, rolls: Rolls) -> Vec<Spawn> {
     let [swing, wave] = spawns else {

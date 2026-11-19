@@ -14,6 +14,9 @@ use gpui_kit::{
 /// Above gpui-base popups (100) and dialogs (10 + layer).
 const TOOLTIP_PRIORITY: usize = 200;
 
+/// Component tooltips (`.tooltip()`) appear about as quickly as the cursor tooltips.
+const COMPONENT_TOOLTIP_DELAY: Duration = Duration::from_millis(200);
+
 type Builder = Rc<dyn Fn(&mut Window, &mut App) -> AnyView>;
 
 /// Zero-size absolute child covering its trigger; while hovered it defers the
@@ -136,9 +139,6 @@ impl Element for CursorTooltipAnchor {
         });
     }
 }
-
-/// Component tooltips (`.tooltip()`) appear about as quickly as the cursor tooltips.
-const COMPONENT_TOOLTIP_DELAY: Duration = Duration::from_millis(200);
 
 pub fn init(cx: &mut App) {
     gpui_kit::base::TooltipDefaults::new()

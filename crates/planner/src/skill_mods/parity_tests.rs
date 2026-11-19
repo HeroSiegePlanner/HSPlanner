@@ -13,6 +13,9 @@ use std::collections::{HashMap, HashSet};
 const LEVEL: u32 = 100;
 const SKILL_RANK: u32 = 20;
 
+/// Ranks Peg Leg, Overloaded Dice and Storm in a Vial can add above a node's highest (#238).
+pub(crate) const GRANTED: u32 = 3;
+
 /// The preview's modifiers of `skill` with only `ranks` learned.
 pub(crate) fn mods(skill: &str, ranks: &[(&str, u32)]) -> Mods {
     let ranks: HashMap<String, u32> = ranks
@@ -313,19 +316,20 @@ pub(crate) fn engine_skill_roll(
     ((100. + pool) / (100. + pool - added)) as f32
 }
 
-/// Each node of `class`'s `skill` at each rank, learned alone, whose hits over the base use
-/// differ by `within` or more between `sim` and `engine`.
-pub(crate) fn misses(
+/// Each node of `class`'s `skill` at each rank up to `past` above its highest, learned alone,
+/// whose hits over the base use differ by `within` or more between `sim` and `engine`.
+pub(crate) fn misses_past(
     class: &str,
     skill: &str,
     sim: impl Fn(&[(&str, u32)]) -> f32,
     engine: impl Fn(&[(&str, u32)]) -> f32,
     within: f32,
+    past: u32,
 ) -> Vec<String> {
     let (sim_base, engine_base) = (sim(&[]), engine(&[]));
     let mut wrong = Vec::new();
     for node in nodes(class, skill) {
-        for rank in 1..=node.max_rank {
+        for rank in 1..=node.max_rank + past {
             let ranks = [(node.id.as_str(), rank)];
             let (sim, engine) = (sim(&ranks) - sim_base, engine(&ranks) - engine_base);
             if (sim - engine).abs() >= within {

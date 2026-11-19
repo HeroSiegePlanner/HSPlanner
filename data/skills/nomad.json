@@ -43,7 +43,7 @@
       {
         "id": "desert_mix",
         "positionIndex": 1,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.49, 0.99, 1.48, 1.97], "per": "use", "note": "2 grains/r, each 2*asin(28/40)/360 = 0.247 at D=40 px (planner uses 0.29 = D~35 px); grains are 1 main hit each"}], "confidence": "C", "note": "card row p1 + R3 E(D)", "plannerFix": "planner gives projectile_count 2r converted at 0.29/grain (D~35); card D=40 gives 0.25/grain; close, ok in magnitude"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.49, 0.99, 1.48, 1.97, 2.46, 2.96, 3.45], "per": "use", "note": "2 grains/r, each 2*asin(28/40)/360 = 0.247 at D=40 px (planner uses 0.29 = D~35 px); grains are 1 main hit each"}], "confidence": "C", "note": "card row p1 + R3 E(D)", "plannerFix": "planner gives projectile_count 2r converted at 0.29/grain (D~35); card D=40 gives 0.25/grain; close, ok in magnitude"},
         "name": "Desert Mix",
         "description": "Increases the amount of sand thrown.",
         "maxRank": 4,
@@ -55,7 +55,7 @@
       {
         "id": "concentrated_sand",
         "positionIndex": 2,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.11, 0.22, 0.33, 0.44, 0.56], "per": "use", "note": "grain-only multiplier (1+0.15r) on base grain hits E=3*0.247=0.74 at D=40: extra = 0.74*0.15r; does not touch the strike"}], "confidence": "C", "note": "card row p2 (grain-only multiplier)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.11, 0.22, 0.33, 0.44, 0.56, 0.67, 0.78, 0.89], "per": "use", "note": "grain-only multiplier (1+0.15r) on base grain hits E=3*0.247=0.74 at D=40: extra = 0.74*0.15r; does not touch the strike"}], "confidence": "C", "note": "card row p2 (grain-only multiplier)"},
         "name": "Concentrated Sand",
         "description": "Increases the damage dealt by sand carver.",
         "maxRank": 5,
@@ -98,7 +98,7 @@
       {
         "id": "vortex_master",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.975, 1.95, 2.925, 3.9], "per": "use", "note": "chance 5r% per cast -> vortex on the strike hit: tick_hits(298..320, 15) = 19-20 hits at d0 (vortexSize 0.25, 5 s + ~20 fade frames, tick 0.25 s); midpoint 19.5: 0.05r*19.5 = 0.975r per use (R4 74#0; was 22 from the naive formula). Vortices of consecutive attacks overlap in time (their hits add)."}], "confidence": "C", "note": "R4 74#0 (card row p5 + tick_hits); fade frames are I (range 19-20)", "plannerFix": "planner proc is on_kill; card: on_hit of the strike (vortex lives 5 s and ticks on the dummy)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.975, 1.95, 2.925, 3.9, 4.875, 5.85, 6.825], "per": "use", "note": "chance 5r% per cast -> vortex on the strike hit: tick_hits(298..320, 15) = 19-20 hits at d0 (vortexSize 0.25, 5 s + ~20 fade frames, tick 0.25 s); midpoint 19.5: 0.05r*19.5 = 0.975r per use (R4 74#0; was 22 from the naive formula). Vortices of consecutive attacks overlap in time (their hits add)."}], "confidence": "C", "note": "R4 74#0 (card row p5 + tick_hits); fade frames are I (range 19-20)", "plannerFix": "planner proc is on_kill; card: on_hit of the strike (vortex lives 5 s and ticks on the dummy)"},
         "name": "Vortex Master",
         "description": "Chance on kill to spawn a small sand vortex.",
         "maxRank": 4,
@@ -179,7 +179,7 @@
       {
         "id": "eviscerate",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [45, 90, 135], "note": "LSSD += 45%/r (unconditional)"}, {"kind": "extra_hits", "byRank": [1.23, 2.47, 3.7], "per": "use", "note": "on CRIT of the strike only: +5r grains x 0.247 each; value is for 100% crit chance, multiply by P(crit)"}], "confidence": "I", "note": "card row p11 + grain E", "plannerFix": "planner gives 5r projectile grains unconditionally; card: extra grains only on a critical strike"},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [45, 90, 135], "note": "LSSD += 45%/r (unconditional)"}, {"kind": "extra_hits", "byRank": [1.23, 2.47, 3.7, 4.94, 6.17, 7.41], "per": "use", "note": "on CRIT of the strike only: +5r grains x 0.247 each; value is for 100% crit chance, multiply by P(crit)"}], "confidence": "I", "note": "card row p11 + grain E", "plannerFix": "planner gives 5r projectile grains unconditionally; card: extra grains only on a critical strike"},
         "name": "Eviscerate",
         "description": "Critical strikes cause the nomad to throw sand in a circle around him stunning and dealing additional damage.",
         "maxRank": 3,
@@ -191,7 +191,7 @@
       {
         "id": "parasitical_sand",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [11.83, 16.7, 21.58], "per": "use", "note": "every hit (strike + each grain, 1+E = 1.74 at D=40) spawns a parasite: 4 hits of d*(1+0.7r) each: 4*(1+0.7r)*1.74"}], "confidence": "C", "note": "card row p12 (handler, Create, Destroy); explosion hit I", "plannerFix": "planner gives physical_skill_damage 70r on the skill; card: 4 extra parasite hits per hit of strike and grains, damage d*(1+0.7r)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [11.83, 16.7, 21.58, 26.45, 31.33, 36.2], "per": "use", "note": "every hit (strike + each grain, 1+E = 1.74 at D=40) spawns a parasite: 4 hits of d*(1+0.7r) each: 4*(1+0.7r)*1.74"}], "confidence": "C", "note": "card row p12 (handler, Create, Destroy); explosion hit I", "plannerFix": "planner gives physical_skill_damage 70r on the skill; card: 4 extra parasite hits per hit of strike and grains, damage d*(1+0.7r)"},
         "name": "Parasitical Sand",
         "description": "Thrown sand now sticks to the targets dealing damage over time for a short period.",
         "maxRank": 3,
@@ -223,7 +223,7 @@
       {
         "id": "deserts_blade",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.11, 0.45, 1.01], "per": "use", "note": "Desert's Blade: chance 0.15r per cast x one hit of 0.75r*W-damage: 0.15r*0.75r"}], "confidence": "I", "note": "card row p14 (blade path I)", "plannerFix": "planner adds +75%/r to the same hit; card: separate blade object with its own hit at 0.75r of the strike, chance 15%*r"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.11, 0.45, 1.01, 1.8, 2.81, 4.05], "per": "use", "note": "Desert's Blade: chance 0.15r per cast x one hit of 0.75r*W-damage: 0.15r*0.75r"}], "confidence": "I", "note": "card row p14 (blade path I)", "plannerFix": "planner adds +75%/r to the same hit; card: separate blade object with its own hit at 0.75r of the strike, chance 15%*r"},
         "name": "Desert´s Blade",
         "description": "Chance on attack to summon a big tornado pulling in and dealing additional damage to nearby monsters.",
         "maxRank": 3,
@@ -299,7 +299,7 @@
       {
         "id": "sand_twisters",
         "positionIndex": 3,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.5, 1.0, 1.5, 2.0, 2.5], "per": "use", "note": "r Orbiting tornadoes at the landing point per cycle, <=1 hit each (singleHit, no tick); cycle = 2 uses so per use = r/2 (upper bound, I)"}], "confidence": "I", "note": "card row p3", "plannerFix": "planner projectile_count 1r converts at perExtraProjectile 0, so it gives 0 hits; card: r tornado hits per landing"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0], "per": "use", "note": "r Orbiting tornadoes at the landing point per cycle, <=1 hit each (singleHit, no tick); cycle = 2 uses so per use = r/2 (upper bound, I)"}], "confidence": "I", "note": "card row p3", "plannerFix": "planner projectile_count 1r converts at perExtraProjectile 0, so it gives 0 hits; card: r tornado hits per landing"},
         "name": "Sand Twisters",
         "description": "Teleporting into the cloud now unleashes multiple sand tornados around the cloud.",
         "maxRank": 5,
@@ -335,7 +335,7 @@
       {
         "id": "sandbender",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.355, 0.71, 1.065, 1.42, 1.775], "per": "use", "note": "Nomad_Cloud_Trail_obj (one per >36 px of cloud track, singleHit, own map, 2 s, snake-like flight) with damage[1] = floor(d1*0.2*r) ARCANE ONLY: ~3.55 trail hits per 2-use cycle (dummy on the cloud's flight line, rule 38; 2.55 when the landing happens at cloud age 17-19 frames; 3.63/2.63 for the opposite lateral offset; 3.6 for p7 r2-r3 speed 9.6-10.4); per use = 3.55*0.2r/2. UNIT: d1-hits (not main-hit units): multiply by the arcane share d1/(d1 + d0) of the cloud hit for main-hit equivalents, so this is an upper bound. With cursor (x, y-24) the card had 3.1/2.1 per cycle."}], "confidence": "I", "note": "R4 75#1 + PoR4 (rule 38) + Resztki D (3.55/2.55); mask approximated by an ellipse (+-0.1), spawn spacing C", "plannerFix": "planner of_total_damage 20r is an unverified guess; card: separate Nomad_Cloud_Trail_obj hits of floor(d1*0.2r) arcane (~3.55 per cycle)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.355, 0.71, 1.065, 1.42, 1.775, 2.13, 2.485, 2.84], "per": "use", "note": "Nomad_Cloud_Trail_obj (one per >36 px of cloud track, singleHit, own map, 2 s, snake-like flight) with damage[1] = floor(d1*0.2*r) ARCANE ONLY: ~3.55 trail hits per 2-use cycle (dummy on the cloud's flight line, rule 38; 2.55 when the landing happens at cloud age 17-19 frames; 3.63/2.63 for the opposite lateral offset; 3.6 for p7 r2-r3 speed 9.6-10.4); per use = 3.55*0.2r/2. UNIT: d1-hits (not main-hit units): multiply by the arcane share d1/(d1 + d0) of the cloud hit for main-hit equivalents, so this is an upper bound. With cursor (x, y-24) the card had 3.1/2.1 per cycle."}], "confidence": "I", "note": "R4 75#1 + PoR4 (rule 38) + Resztki D (3.55/2.55); mask approximated by an ellipse (+-0.1), spawn spacing C", "plannerFix": "planner of_total_damage 20r is an unverified guess; card: separate Nomad_Cloud_Trail_obj hits of floor(d1*0.2r) arcane (~3.55 per cycle)"},
         "name": "Sandbender",
         "description": "Cloud of sand now leaves behind a trail of tornados.",
         "maxRank": 5,
@@ -414,7 +414,7 @@
       {
         "id": "field_of_quicksand",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [20, 40, 60], "note": "LSSD += 20%/r"}, {"kind": "extra_hits", "byRank": [2.925, 5.85, 8.775], "per": "use", "note": "landing places 3r Sand_Vortex (vortexSize 0.35, default 5 s + ~20 fade frames, tick 15 frames: tick_hits = 19-20, midpoint 19.5 ticks of d1+d0, was 22) on a 96 px ring; dummy under one vortex with P = 0.1*3r (arc coverage), per use = 19.5*P/2 (I; needs landing 96 px from the dummy)"}], "confidence": "I", "note": "card row p12 (R4: 19-20 vortex hits via tick_hits, was 22)", "plannerFix": "planner gives projectile_count 3r with perExtraProjectile 0 (0 hits); vortex geometry (96 px ring) is missing"},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [20, 40, 60], "note": "LSSD += 20%/r"}, {"kind": "extra_hits", "byRank": [2.925, 5.85, 8.775, 9.75, 9.75, 9.75], "per": "use", "note": "landing places 3r Sand_Vortex (vortexSize 0.35, default 5 s + ~20 fade frames, tick 15 frames: tick_hits = 19-20, midpoint 19.5 ticks of d1+d0, was 22) on a 96 px ring; dummy under one vortex with P = 0.1*3r (arc coverage), per use = 19.5*P/2 (I; needs landing 96 px from the dummy)"}], "confidence": "I", "note": "card row p12 (R4: 19-20 vortex hits via tick_hits, was 22)", "plannerFix": "planner gives projectile_count 3r with perExtraProjectile 0 (0 hits); vortex geometry (96 px ring) is missing"},
         "name": "Field of Quicksand",
         "description": "Teleporting to the cloud now summons multiple small sand vortexes around it.",
         "maxRank": 3,
@@ -426,7 +426,7 @@
       {
         "id": "deserts_echo",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD += 15%/r"}, {"kind": "extra_hits", "byRank": [2, 4, 6], "per": "use", "note": "2r extra clouds per cast, each crossing the aimed dummy: +2r hits per use"}, {"kind": "cooldown_s", "byRank": [-0.75, -0.75, -0.75], "note": "branch removes landing and its 0.75 s cooldown; period becomes T_cast"}], "confidence": "I", "note": "card row p13 + R3 'Z p13'", "plannerFix": "planner gives projectile_count 2r with perExtraProjectile 0 (no hits), and the landing/cooldown change is missing"},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [15, 30, 45], "note": "LSSD += 15%/r"}, {"kind": "extra_hits", "byRank": [2, 4, 6, 8, 10, 12], "per": "use", "note": "2r extra clouds per cast, each crossing the aimed dummy: +2r hits per use"}, {"kind": "cooldown_s", "byRank": [-0.75, -0.75, -0.75], "note": "branch removes landing and its 0.75 s cooldown; period becomes T_cast"}], "confidence": "I", "note": "card row p13 + R3 'Z p13'", "plannerFix": "planner gives projectile_count 2r with perExtraProjectile 0 (no hits), and the landing/cooldown change is missing"},
         "name": "Desert´s Echo",
         "description": "Summon multiple clouds dealing increased damage. You are no longer able to teleport into the cloud.",
         "maxRank": 3,
@@ -491,7 +491,7 @@
       {
         "id": "amplified_frequency",
         "positionIndex": 1,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.2, 0.45, 0.8, 1.25], "per": "use", "note": "extra waves = r (extraTremors) with chance 5r% per cast: expected 0.05r*r per use, each a 1 main hit wave at the same place"}], "confidence": "C", "note": "card row p1", "plannerFix": "planner gives projectile_count 1r with perExtraProjectile 0 and chance on hit; card: r extra waves at 5%*r chance"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.2, 0.45, 0.8, 1.25, 1.8, 2.45, 3.2], "per": "use", "note": "extra waves = r (extraTremors) with chance 5r% per cast: expected 0.05r*r per use, each a 1 main hit wave at the same place"}], "confidence": "C", "note": "card row p1", "plannerFix": "planner gives projectile_count 1r with perExtraProjectile 0 and chance on hit; card: r extra waves at 5%*r chance"},
         "name": "Amplified Frequency",
         "description": "Chance on attack to spawn additional tremors.",
         "maxRank": 5,
@@ -586,7 +586,7 @@
       {
         "id": "conjuring_winds",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.07, 0.15, 0.24, 0.36, 0.48], "per": "use", "note": "tornado on the dummy with damage d0*(1+0.12r): chance 6r% * (1+0.12r) per use"}], "confidence": "I", "note": "card row p8", "plannerFix": "planner gives physical_skill_damage 12r on the proc; card: a separate tornado hit with d0*(1+0.12r)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.07, 0.15, 0.24, 0.36, 0.48, 0.62, 0.77, 0.94], "per": "use", "note": "tornado on the dummy with damage d0*(1+0.12r): chance 6r% * (1+0.12r) per use"}], "confidence": "I", "note": "card row p8", "plannerFix": "planner gives physical_skill_damage 12r on the proc; card: a separate tornado hit with d0*(1+0.12r)"},
         "name": "Conjuring Winds",
         "description": "Chance on hit to send a sand tornado towards the target dealing additional damage.",
         "maxRank": 5,
@@ -669,7 +669,7 @@
       {
         "id": "dune_warrior",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.075, 0.3, 0.675], "per": "use", "note": "burst on every 6th wave hit (5 stacks of buff 31, the 6th consumes them): 3r Orbiting_Tornado_obj created 8 px from the dummy centre, each hits once (wave has no hit pack, singleHitPackId = -1) for floor(d0_wave*3r*5) = 15r x the wave hit (value 3r x 5 stacks, no x0.01). Per attack: 0.5r tornadoes x 15r = 7.5r^2 main-hit units. Formula read from asm (C); I that BuffAdd stores the value 1:1 and the missing x0.01 is not a game bug (if it were, 0.075r^2)."}], "confidence": "I", "note": "R4 79#1 (card row p14): +0.5r hits per attack at 15r x d0; units and BuffAdd value are I S11: the missing x0.01 was a game bug, fixed: 0.075r^2 main-hit units per attack.", "plannerFix": "planner gives physical 3r and projectile_count 3r; card (R4): a burst every 6th wave hit makes 3r tornadoes that each hit the dummy once for floor(d0*3r*5)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.075, 0.3, 0.675, 1.2, 1.875, 2.7], "per": "use", "note": "burst on every 6th wave hit (5 stacks of buff 31, the 6th consumes them): 3r Orbiting_Tornado_obj created 8 px from the dummy centre, each hits once (wave has no hit pack, singleHitPackId = -1) for floor(d0_wave*3r*5) = 15r x the wave hit (value 3r x 5 stacks, no x0.01). Per attack: 0.5r tornadoes x 15r = 7.5r^2 main-hit units. Formula read from asm (C); I that BuffAdd stores the value 1:1 and the missing x0.01 is not a game bug (if it were, 0.075r^2)."}], "confidence": "I", "note": "R4 79#1 (card row p14): +0.5r hits per attack at 15r x d0; units and BuffAdd value are I S11: the missing x0.01 was a game bug, fixed: 0.075r^2 main-hit units per attack.", "plannerFix": "planner gives physical 3r and projectile_count 3r; card (R4): a burst every 6th wave hit makes 3r tornadoes that each hit the dummy once for floor(d0*3r*5)"},
         "name": "Dune Warrior",
         "description": "Striking monsters adds a stack of dune warrior sending multiple tornados dealing additional damage in an arc upon reaching maximum stacks.",
         "maxRank": 3,
@@ -767,7 +767,7 @@
       {
         "id": "gushing_winds",
         "positionIndex": 2,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.93, 3.86, 5.79], "per": "use", "requires": "sandstorm|sand_tornado", "note": "only the controller's tornadoes reach the dummy; tornado damage x(1+0.14r) (not a chance): 13.8 tornado hits per cast at D<=20 times 0.14r; tornado size 0.6*(1+p2.s10%) effect not quantified"}], "confidence": "C", "note": "card row p2", "plannerFix": "planner makes it on_cast chance 14r with arcane +14r on the whole skill; card: deterministic bonus on tornado hits only"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.93, 3.86, 5.79, 7.72, 9.65, 11.58], "per": "use", "requires": "sandstorm|sand_tornado", "note": "only the controller's tornadoes reach the dummy; tornado damage x(1+0.14r) (not a chance): 13.8 tornado hits per cast at D<=20 times 0.14r; tornado size 0.6*(1+p2.s10%) effect not quantified"}], "confidence": "C", "note": "card row p2", "plannerFix": "planner makes it on_cast chance 14r with arcane +14r on the whole skill; card: deterministic bonus on tornado hits only"},
         "name": "Gushing Winds",
         "description": "Chance on cast to increase the size and damage of tornados.",
         "maxRank": 3,
@@ -832,13 +832,13 @@
         "maxRank": 5,
         "effects": {
           "base": {"projectile_speed_pct": 0},
-          "perRank": {"projectile_speed_pct": 15}
+          "perRank": {"projectile_speed_pct": 8}
         }
       },
       {
         "id": "desert_storm",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4], "note": "+1 tornado per wave per rank (XSP 2+p7.s9); their hits come from the extra_hits below"}, {"kind": "extra_hits", "byRank": [6.9, 13.8, 20.7, 27.6], "per": "use", "requires": "sandstorm|sand_tornado", "note": "18 controller waves x 0.38 per extra tornado at D<=20 (card 6.84); the base skill's own tornadoes never reach the dummy"}, {"kind": "damage_pct", "byRank": [4, 8, 12, 16], "note": "LSSD += 4%/r (p7.s10)"}], "confidence": "C", "note": "card row p7 (tornado count + LSSD)"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4], "note": "+1 tornado per wave per rank (XSP 2+p7.s9); their hits come from the extra_hits below"}, {"kind": "extra_hits", "byRank": [6.9, 13.8, 20.7, 27.6, 34.5, 41.4, 48.3], "per": "use", "requires": "sandstorm|sand_tornado", "note": "18 controller waves x 0.38 per extra tornado at D<=20 (card 6.84); the base skill's own tornadoes never reach the dummy"}, {"kind": "damage_pct", "byRank": [4, 8, 12, 16], "note": "LSSD += 4%/r (p7.s10)"}], "confidence": "C", "note": "card row p7 (tornado count + LSSD)"},
         "name": "Desert Storm",
         "description": "Increases the amount of sand tornados.",
         "maxRank": 4,
@@ -893,7 +893,7 @@
       {
         "id": "desert_cyclones",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [13.8, 55.2, 124.2], "per": "use", "requires": "sandstorm|sand_tornado", "note": "only the controller's tornadoes reach the dummy; per tornado hit on dummy, 2r new tornadoes spawn on the target with damage 0.5r*d1: 2r*0.5r per tornado hit = r^2, 13.8 tornado hits per cast; no recursion assumed (I)"}], "confidence": "I", "note": "card row p11", "plannerFix": "planner of_total_damage 50r and projectile_count 2r (converted at 6.9 each, i.e. linear); card: new tornadoes spawn per tornado hit, so the count is quadratic in r"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [13.8, 55.2, 124.2, 220.8, 345.0, 496.8], "per": "use", "requires": "sandstorm|sand_tornado", "note": "only the controller's tornadoes reach the dummy; per tornado hit on dummy, 2r new tornadoes spawn on the target with damage 0.5r*d1: 2r*0.5r per tornado hit = r^2, 13.8 tornado hits per cast; no recursion assumed (I)"}], "confidence": "I", "note": "card row p11", "plannerFix": "planner of_total_damage 50r and projectile_count 2r (converted at 6.9 each, i.e. linear); card: new tornadoes spawn per tornado hit, so the count is quadratic in r"},
         "name": "Desert Cyclones",
         "description": "Tornados spawn multiple small cyclones on hit.",
         "maxRank": 3,
@@ -929,7 +929,7 @@
       {
         "id": "dust_devils",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6], "note": "+2 tornadoes per wave per rank (XSP 2+p7.s9+p14.s10); their hits come from the extra_hits below"}, {"kind": "extra_hits", "byRank": [13.8, 27.6, 41.4], "per": "use", "requires": "sandstorm|sand_tornado", "note": "2 extra tornadoes per controller wave per rank x 6.9; upper bound, tornado size x0.5 lowers the per-tornado hit chance (not quantified)"}, {"kind": "damage_pct", "byRank": [75, 150, 225], "note": "LSSD += 65%/r"}], "confidence": "C", "note": "card row p14"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6], "note": "+2 tornadoes per wave per rank (XSP 2+p7.s9+p14.s10); their hits come from the extra_hits below"}, {"kind": "extra_hits", "byRank": [13.8, 27.6, 41.4, 55.2, 69.0, 82.8], "per": "use", "requires": "sandstorm|sand_tornado", "note": "2 extra tornadoes per controller wave per rank x 6.9; upper bound, tornado size x0.5 lowers the per-tornado hit chance (not quantified)"}, {"kind": "damage_pct", "byRank": [75, 150, 225], "note": "LSSD += 65%/r"}], "confidence": "C", "note": "card row p14"},
         "name": "Dust Devils",
         "description": "Unleash small dust devils bouncing off of walls and unleashing a pulse of sand on hit.",
         "maxRank": 3,
@@ -1178,7 +1178,7 @@
       {
         "id": "cycloning_kraken",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [9.0, 15.6, 23.8], "per": "use", "note": "Kraken tornadoes: count 1+floor((4-0.25)/(1-0.15r)) = 5/6/7 per cast, each damage d1*(1+0.8r) (ratio 1.8/2.6/3.4)"}], "confidence": "C", "note": "card row p13 (I on timing)", "plannerFix": "planner gives faster_cast_rate 15r and arcane 80r; card: extra orbiting tornadoes with d1*(1+0.8r) and frequency 1/(1-0.15r)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [9.0, 15.6, 23.8, 42.0, 80.0, 220.4], "per": "use", "note": "Kraken tornadoes: count 1+floor((4-0.25)/(1-0.15r)) = 5/6/7 per cast, each damage d1*(1+0.8r) (ratio 1.8/2.6/3.4)"}], "confidence": "C", "note": "card row p13 (I on timing)", "plannerFix": "planner gives faster_cast_rate 15r and arcane 80r; card: extra orbiting tornadoes with d1*(1+0.8r) and frequency 1/(1-0.15r)"},
         "name": "Cycloning Kraken",
         "description": "Sand vortex now spawns cycling tornados from its center.",
         "maxRank": 3,
@@ -1314,7 +1314,7 @@
       {
         "id": "catch_up_blade",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.09, 0.19, 0.31, 0.45, 0.6], "per": "use", "note": "thrown blade (separate hit) with chance 8r% and damage W*(1+0.10r) (ratio ~1+0.1r): 0.08r*(1+0.1r)"}], "confidence": "I", "note": "card row p6", "plannerFix": "planner gives +10%*r physical damage on the proc; card: a separate thrown hit of W*(1+0.1r) at chance 8%*r"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.09, 0.19, 0.31, 0.45, 0.6, 0.77, 0.95, 1.15], "per": "use", "note": "thrown blade (separate hit) with chance 8r% and damage W*(1+0.10r) (ratio ~1+0.1r): 0.08r*(1+0.1r)"}], "confidence": "I", "note": "card row p6", "plannerFix": "planner gives +10%*r physical damage on the proc; card: a separate thrown hit of W*(1+0.1r) at chance 8%*r"},
         "name": "Catch Up Blade",
         "description": "Chance on attack to throw your weapon with force dealing additional damage and bouncing from terrain.",
         "maxRank": 5,
@@ -1342,7 +1342,7 @@
       {
         "id": "agile_striker",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.06, 0.12, 0.18, 0.24, 0.3], "per": "use", "note": "second salvo with chance 6%*r per attack (+1 hit)"}], "confidence": "I", "note": "card row p8"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.06, 0.12, 0.18, 0.24, 0.3, 0.36, 0.42, 0.48], "per": "use", "note": "second salvo with chance 6%*r per attack (+1 hit)"}], "confidence": "I", "note": "card row p8"},
         "name": "Agile Striker",
         "description": "Chance on attack to strike additional times.",
         "maxRank": 5,
@@ -1414,7 +1414,7 @@
       {
         "id": "stacked_blade",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.4, 1.6, 3.6], "per": "use", "note": "burst on every 6th strike hit (GetBuffStack(34) >= 5, BuffRemove; otherwise BuffAdd): 6r Nomad_Blade_Strike_Stacked_Blade_obj spawned 8 px from the dummy, each hits once with floor(d0*0.08r*N), N = 5 -> 0.4r*d0. Per attack: r hits x 0.4r = 0.4r^2 main-hit units (r1/2/3: 0.4/1.6/3.6). Stacks are added by every strike, p6 throw and p8 salvo hit; crit rolled per blade."}], "confidence": "I", "note": "R4 83#0 (card row p13, C/I): formula and threshold C, hit of the rectangular mask in the first frame I", "plannerFix": "planner gives physical 8r and projectile_count 6r with perExtraProjectile 0; card (R4): burst every 6th hit, 6r blades, +r hits per attack at 0.4r x d0"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.4, 1.6, 3.6, 6.4, 10.0, 14.4], "per": "use", "note": "burst on every 6th strike hit (GetBuffStack(34) >= 5, BuffRemove; otherwise BuffAdd): 6r Nomad_Blade_Strike_Stacked_Blade_obj spawned 8 px from the dummy, each hits once with floor(d0*0.08r*N), N = 5 -> 0.4r*d0. Per attack: r hits x 0.4r = 0.4r^2 main-hit units (r1/2/3: 0.4/1.6/3.6). Stacks are added by every strike, p6 throw and p8 salvo hit; crit rolled per blade."}], "confidence": "I", "note": "R4 83#0 (card row p13, C/I): formula and threshold C, hit of the rectangular mask in the first frame I", "plannerFix": "planner gives physical 8r and projectile_count 6r with perExtraProjectile 0; card (R4): burst every 6th hit, 6r blades, +r hits per attack at 0.4r x d0"},
         "name": "Stacked Blade",
         "description": "Striking a monster applies a debuff which when reaching max stacks will unleash multiple blades dealing additional damage and bouncing from terrain.",
         "maxRank": 3,
@@ -1649,7 +1649,7 @@
       {
         "id": "orbiting_the_sun",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [5, 11, 17], "per": "use", "note": "orbs replace the chain: 2r orbs x 3 hits each = 6r, minus the 1 chain hit = 6r-1 (I); with p12 both replace the same chain once (overlap caveat)"}], "confidence": "I", "note": "card row p13", "plannerFix": "planner gives projectile_count 2r with perExtraProjectile 0; card: orbs replace the chain with 6r hits total"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [5, 11, 17, 23, 29, 35], "per": "use", "note": "orbs replace the chain: 2r orbs x 3 hits each = 6r, minus the 1 chain hit = 6r-1 (I); with p12 both replace the same chain once (overlap caveat)"}], "confidence": "I", "note": "card row p13", "plannerFix": "planner gives projectile_count 2r with perExtraProjectile 0; card: orbs replace the chain with 6r hits total"},
         "name": "Orbiting the Sun",
         "description": "Unleash multiple light pillars orbiting you dealing increased damage.",
         "maxRank": 3,
@@ -1661,7 +1661,7 @@
       {
         "id": "lightbringer",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [14.2, 16.9, 19.0], "per": "use", "note": "Lightbringer: S = 21/25/28 motes (floor(18*(1+0.2r))) * P(hit) 0.68 at d0 each; chain dies on the dummy so this is added after the chain hit"}], "confidence": "I", "note": "card row p14 (count C, geometry I)", "plannerFix": "planner gives of_total_damage 30r (not a hit count) and skill_duration 20r; card: 14-19 extra motes hits, not a damage bonus (30%/r does not multiply damage)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [14.2, 16.9, 19.0, 21.8, 24.5, 26.5], "per": "use", "note": "Lightbringer: S = 21/25/28 motes (floor(18*(1+0.2r))) * P(hit) 0.68 at d0 each; chain dies on the dummy so this is added after the chain hit"}], "confidence": "I", "note": "card row p14 (count C, geometry I)", "plannerFix": "planner gives of_total_damage 30r (not a hit count) and skill_duration 20r; card: 14-19 extra motes hits, not a damage bonus (30%/r does not multiply damage)"},
         "name": "Lightbringer",
         "description": "Eye of Ra unleashes a storm of light pillars at the last target.",
         "maxRank": 3,
@@ -1842,7 +1842,7 @@
       {
         "id": "flying_swarm",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0, 1.4, 1.8], "note": "damage per scimitar x(0.6+0.4r)"}, {"kind": "projectiles", "byRank": [3, 6, 9], "note": "+3r scimitars (n = 1 + 3r = 4/7/10) in an 8 deg fan around the aim line (RV_setInt(8)); engine would convert them at perExtraProjectile 2.0 (upper bound) - replaced by the explicit extra_hits below"}, {"kind": "extra_hits", "byRank": [6, 6, 8], "per": "use", "replacesProjectileHits": true, "note": "deterministic rectangle-circle simulation (fs3.py, spin 80 -> 20 deg/frame, mask 46x72 rotated, dummy on the aim line, rule 38): total hits per cast n = 4/7/10 -> 8/8/10 (Resztki D; 8/10/10 in Resztki B, 7.9/9.9/10.4 in PoR4, 7.0/9.6/10.3 with cursor (x, y-24)); extra over the base 2 hits = 6/6/8. n = 7: scimitars at -13.9..10.1 deg hit (4 x 2), +18.1 and -21.9 miss; n = 10: 5 scimitars (-17.9..14.1). Sensitivity +-1 frame of activation/spin: n = 7: 8-10, n = 10: 9-11. Each hit x(0.6 + 0.4r) (damage_mult above)."}], "confidence": "C", "note": "Resztki D (8/8/10) over Resztki B and PoR4 (a); card row p11 marked C", "plannerFix": "planner converts +3r projectiles at perExtraProjectile 2.0 (8/14/20 total hits); card: 8/8/10 hits per cast because the outer scimitars of the 8 deg fan miss the dummy"},
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [1.0, 1.4, 1.8], "note": "damage per scimitar x(0.6+0.4r)"}, {"kind": "projectiles", "byRank": [3, 6, 9, 12, 15, 18], "note": "+3r scimitars (n = 1 + 3r = 4/7/10) in an 8 deg fan around the aim line (RV_setInt(8)); engine would convert them at perExtraProjectile 2.0 (upper bound) - replaced by the explicit extra_hits below"}, {"kind": "extra_hits", "byRank": [6, 6, 8], "per": "use", "replacesProjectileHits": true, "note": "deterministic rectangle-circle simulation (fs3.py, spin 80 -> 20 deg/frame, mask 46x72 rotated, dummy on the aim line, rule 38): total hits per cast n = 4/7/10 -> 8/8/10 (Resztki D; 8/10/10 in Resztki B, 7.9/9.9/10.4 in PoR4, 7.0/9.6/10.3 with cursor (x, y-24)); extra over the base 2 hits = 6/6/8. n = 7: scimitars at -13.9..10.1 deg hit (4 x 2), +18.1 and -21.9 miss; n = 10: 5 scimitars (-17.9..14.1). Sensitivity +-1 frame of activation/spin: n = 7: 8-10, n = 10: 9-11. Each hit x(0.6 + 0.4r) (damage_mult above)."}], "confidence": "C", "note": "Resztki D (8/8/10) over Resztki B and PoR4 (a); card row p11 marked C", "plannerFix": "planner converts +3r projectiles at perExtraProjectile 2.0 (8/14/20 total hits); card: 8/8/10 hits per cast because the outer scimitars of the 8 deg fan miss the dummy"},
         "name": "Flying Swarm",
         "description": "Throw multiple smaller scimitars with decreased damage.",
         "maxRank": 3,
@@ -1878,7 +1878,7 @@
       {
         "id": "orbital_blade_strike",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [0.5, 1.0, 1.5], "note": "transformation: damage x0.5r on all scimitars"}, {"kind": "projectiles", "byRank": [4, 8, 12], "note": "+4r scimitars (n = 1 + 4r = 5/9/13) in a ring 360/n*i; engine would convert them at perExtraProjectile 2.0 (8/16/24 extra hits) - replaced by the explicit extra_hits below"}, {"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "ring: only scimitar i = 0 flies at the dummy (out and back = the base 2 hits), the neighbours are >= 27.7 deg off the axis and miss: total 2.0 / 2.0 / 2.0 hits per cast (r1/2/3), so +0 over the base (PoR4 (a), rule 38, dummy on the aim line; with cursor (x, y-24) r3 would be 3.4). Each hit x0.5r (damage_mult above)."}, {"kind": "cooldown_s", "byRank": [2, 2, 2], "note": "cooldown 2 s on the attack"}], "confidence": "I", "note": "card row p14 + Transformacje; R4 87#0 / PoR4 (a) / Resztki B (2/2/2 confirmed); card row marked C/I", "plannerFix": "planner has of_total_damage 50r, projectile_count 4r (engine would add 8/16/24 hits) and speed 10r but no cooldown 2 s; card: ring, only 1 scimitar reaches the dummy (2.0 hits), cooldown 2 s"},
+        "dummy": {"effects": [{"kind": "damage_mult", "byRank": [0.5, 1.0, 1.5], "note": "transformation: damage x0.5r on all scimitars"}, {"kind": "projectiles", "byRank": [4, 8, 12, 16, 20, 24], "note": "+4r scimitars (n = 1 + 4r = 5/9/13) in a ring 360/n*i; engine would convert them at perExtraProjectile 2.0 (8/16/24 extra hits) - replaced by the explicit extra_hits below"}, {"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "ring: only scimitar i = 0 flies at the dummy (out and back = the base 2 hits), the neighbours are >= 27.7 deg off the axis and miss: total 2.0 / 2.0 / 2.0 hits per cast (r1/2/3), so +0 over the base (PoR4 (a), rule 38, dummy on the aim line; with cursor (x, y-24) r3 would be 3.4). Each hit x0.5r (damage_mult above)."}, {"kind": "cooldown_s", "byRank": [2, 2, 2], "note": "cooldown 2 s on the attack"}], "confidence": "I", "note": "card row p14 + Transformacje; R4 87#0 / PoR4 (a) / Resztki B (2/2/2 confirmed); card row marked C/I", "plannerFix": "planner has of_total_damage 50r, projectile_count 4r (engine would add 8/16/24 hits) and speed 10r but no cooldown 2 s; card: ring, only 1 scimitar reaches the dummy (2.0 hits), cooldown 2 s"},
         "name": "Orbital Blade Strike",
         "description": "Scimitars are now spawned in a circle around the nomad with increased projectile speed and pulled back dealing increased damage. Scimitar Throw now has a cooldown.",
         "maxRank": 3,
@@ -1951,7 +1951,7 @@
       {
         "id": "slice_and_dice",
         "positionIndex": 1,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2, 3, 4], "per": "use", "note": "Slice and Dice: n = 4+4*r1 chain jumps, hits 1+floor((n+1)/3): 2/4/5/6 chain hits vs 2 at r0, so +2/+3/+4 over base 3 (I shown as C in card)"}], "confidence": "C", "note": "card row p1 + R2c/R3 chain model", "plannerFix": "planner gives projectile_bounces 4r with perExtraProjectile 0 (0 hits); card: H(n) grows with bounces"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2, 3, 4, 6, 7, 8], "per": "use", "note": "Slice and Dice: n = 4+4*r1 chain jumps, hits 1+floor((n+1)/3): 2/4/5/6 chain hits vs 2 at r0, so +2/+3/+4 over base 3 (I shown as C in card)"}], "confidence": "C", "note": "card row p1 + R2c/R3 chain model", "plannerFix": "planner gives projectile_bounces 4r with perExtraProjectile 0 (0 hits); card: H(n) grows with bounces"},
         "name": "Slice and Dice",
         "description": "Increases the amount of bounces for chainslice.",
         "maxRank": 3,
@@ -2085,7 +2085,7 @@
       {
         "id": "bloodburn",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.25, 4.5, 6.75], "per": "use", "note": "Bloodburn per hit of strike and of each chain hit (1+H = 3 at r1=0): 3*0.75r; at r1>0 H grows (I)"}], "confidence": "I", "note": "card row p11"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.25, 4.5, 6.75, 9.0, 11.25, 13.5], "per": "use", "note": "Bloodburn per hit of strike and of each chain hit (1+H = 3 at r1=0): 3*0.75r; at r1>0 H grows (I)"}], "confidence": "I", "note": "card row p11"},
         "name": "Bloodburn",
         "description": "Unleash small blood novas on hit dealing increased damage.",
         "maxRank": 3,
@@ -2097,7 +2097,7 @@
       {
         "id": "ghost_blade",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.5, 1.0, 1.5], "per": "use", "note": "Ghost Blade: one extra hit with damage 0.5r*d0 (lands on the target)"}], "confidence": "I", "note": "card row p12", "plannerFix": "planner gives of_total_damage 50r of the whole total (1.5r at 3 hits); card: one extra hit of 0.5r*d0"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.5, 1.0, 1.5, 2.0, 2.5, 3.0], "per": "use", "note": "Ghost Blade: one extra hit with damage 0.5r*d0 (lands on the target)"}], "confidence": "I", "note": "card row p12", "plannerFix": "planner gives of_total_damage 50r of the whole total (1.5r at 3 hits); card: one extra hit of 0.5r*d0"},
         "name": "Ghost Blade",
         "description": "Each chainslice hit scatters a flying blade spawning a phantom blade when landing.",
         "maxRank": 3,
@@ -2109,7 +2109,7 @@
       {
         "id": "critical_shred",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.8, 3.2, 7.2], "per": "use", "note": "Critical Shred: on crit, 2r scimitars with d0*0.4r each: 2r*0.4r = 0.8r^2 per use; value is for 100% crit, multiply by P(crit)"}], "confidence": "I", "note": "card row p13", "plannerFix": "planner gives of_total_damage 40r and projectile_count 2r (0 hits); card: 2r scimitars with damage 0.4r on crit"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.8, 3.2, 7.2, 12.8, 20.0, 28.8], "per": "use", "note": "Critical Shred: on crit, 2r scimitars with d0*0.4r each: 2r*0.4r = 0.8r^2 per use; value is for 100% crit, multiply by P(crit)"}], "confidence": "I", "note": "card row p13", "plannerFix": "planner gives of_total_damage 40r and projectile_count 2r (0 hits); card: 2r scimitars with damage 0.4r on crit"},
         "name": "Critical Shred",
         "description": "When chainslice critically strikes it sends out additional scimitars in all directions.",
         "maxRank": 3,
@@ -2300,7 +2300,7 @@
       {
         "id": "doubleslash",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "use", "note": "Doubleslash: chance 4%*r for 2 scimitar objects (+1 hit)"}], "confidence": "I", "note": "card row p8"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2, 0.24, 0.28, 0.32], "per": "use", "note": "Doubleslash: chance 4%*r for 2 scimitar objects (+1 hit)"}], "confidence": "I", "note": "card row p8"},
         "name": "Doubleslash",
         "description": "Chance to swirl an additional time on hit.",
         "maxRank": 5,
@@ -2341,7 +2341,7 @@
       {
         "id": "scimitar_storm",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [4, 8, 12], "per": "use", "note": "Scimitar Storm: on hit, 4r flying scimitars (no return) from the target, each d0"}], "confidence": "I", "note": "card row p11", "plannerFix": "planner gives projectile_count 4r with perExtraProjectile 0 (no hits); card: 4r extra scimitar hits from the target"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [4, 8, 12, 16, 20, 24], "per": "use", "note": "Scimitar Storm: on hit, 4r flying scimitars (no return) from the target, each d0"}], "confidence": "I", "note": "card row p11", "plannerFix": "planner gives projectile_count 4r with perExtraProjectile 0 (no hits); card: 4r extra scimitar hits from the target"},
         "name": "Scimitar Storm",
         "description": "Throw multiple scimitars in a circle around you on hit.",
         "maxRank": 3,
@@ -2372,7 +2372,7 @@
       {
         "id": "static_blade_vortex",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [6, 7, 8], "per": "use", "note": "Static Blade Vortex: vortex 1.5 s*(1+0.25r), tick 0.33 s: 1+floor((T-2)/19.8) = 6/7/8 hits of d0 per use"}], "confidence": "C", "note": "card row p13 (I on hit count)", "plannerFix": "planner gives skill_duration 25r; card: vortex hits (6/7/8) with duration 1.5 s*(1+0.25r)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [6, 7, 8, 9, 11, 12], "per": "use", "note": "Static Blade Vortex: vortex 1.5 s*(1+0.25r), tick 0.33 s: 1+floor((T-2)/19.8) = 6/7/8 hits of d0 per use"}], "confidence": "C", "note": "card row p13 (I on hit count)", "plannerFix": "planner gives skill_duration 25r; card: vortex hits (6/7/8) with duration 1.5 s*(1+0.25r)"},
         "name": "Static Blade Vortex",
         "description": "Scimitar charge now slows enemies on hit leaving behind a pulsating whirl for a short period.",
         "maxRank": 3,
@@ -2423,7 +2423,7 @@
     "kind": "active",
     "description": "Spawn a ghostly blade that attacks nearby monsters dealing physical damage and additional arcane damage.",
     "damageType": "arcane",
-    "tags": ["Cast", "Active", "Spell", "Sentry", "Strike"],
+    "tags": ["Cast", "Active", "Spell", "Sentry", "Strike", "Hybrid"],
     "movementDuringUse": 85,
     "baseCastRate": 1.85,
     "effectDuration": 8,
@@ -2544,7 +2544,7 @@
       {
         "id": "twice_the_price",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.1, 0.15, 0.2, 0.25], "per": "use", "note": "Twice The Price: second hit with chance 3%*r per attack"}], "confidence": "I", "note": "card row p8"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4], "per": "use", "note": "Twice The Price: second hit with chance 3%*r per attack"}], "confidence": "I", "note": "card row p8"},
         "name": "Twice The Price",
         "description": "Chance for phantomblades to swing an additional time on hit.",
         "maxRank": 5,
@@ -2634,7 +2634,7 @@
       {
         "id": "dimensional_ghostblade",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [20, 40, 60], "note": "LSSD += 20%/r"}, {"kind": "extra_hits", "byRank": [3, 5, 7], "per": "use", "note": "ghostBlade = r: the attack loop runs j < ghostBlade + b, b = 1 (+1 with extraProjectileChance), i.e. r + 1 Flying_Scimitar_obj (fan 10 deg, isSentry, return to the blade, scale hitboxSize*0.625) that REPLACE the Hitbox_Obj; each passes through the dummy out and back = 2(r + 1) hits (4/6/8) instead of the base 1 hitbox hit: extra = 2r + 1 = 3/5/7 per entity action (was 2r: r scimitars, base hit kept). Assumes scimitar damage = hitbox damage (I)."}], "confidence": "I", "note": "R4 90#2 (card row p14, C/I): loop and angle C, second hit on the return and start distance <= 32 px I", "plannerFix": "planner gives projectile_count 1r with perExtraProjectile 0; card: r + 1 scimitars replace the hitbox, 2 hits each (out and back)"},
+        "dummy": {"effects": [{"kind": "damage_pct", "byRank": [20, 40, 60], "note": "LSSD += 20%/r"}, {"kind": "extra_hits", "byRank": [3, 5, 7, 9, 11, 13], "per": "use", "note": "ghostBlade = r: the attack loop runs j < ghostBlade + b, b = 1 (+1 with extraProjectileChance), i.e. r + 1 Flying_Scimitar_obj (fan 10 deg, isSentry, return to the blade, scale hitboxSize*0.625) that REPLACE the Hitbox_Obj; each passes through the dummy out and back = 2(r + 1) hits (4/6/8) instead of the base 1 hitbox hit: extra = 2r + 1 = 3/5/7 per entity action (was 2r: r scimitars, base hit kept). Assumes scimitar damage = hitbox damage (I)."}], "confidence": "I", "note": "R4 90#2 (card row p14, C/I): loop and angle C, second hit on the return and start distance <= 32 px I", "plannerFix": "planner gives projectile_count 1r with perExtraProjectile 0; card: r + 1 scimitars replace the hitbox, 2 hits each (out and back)"},
         "name": "Dimensional Ghostblade",
         "description": "Phantom blades no longer attack but throw flying scimitars with increased damage.",
         "maxRank": 3,

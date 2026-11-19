@@ -8,6 +8,8 @@ use super::{
     Weapon,
 };
 
+const CONVERSION_ORDER: [&str; 5] = ["arcane", "cold", "fire", "lightning", "poison"];
+
 pub struct AttackSkillInput<'a> {
     /// Optional cast cadence for persistent attack-damage skills.
     pub action_rate_override: Option<(f64, f64)>,
@@ -45,8 +47,6 @@ fn formula_at_clamped_opt(f: Option<&DamageFormula>, rank: f64) -> f64 {
     f.map(|x| (x.base + x.per_level * rank).max(0.0))
         .unwrap_or(0.0)
 }
-
-const CONVERSION_ORDER: [&str; 5] = ["arcane", "cold", "fire", "lightning", "poison"];
 
 /// The largest physical conversion total wins; ties go arcane → cold → fire → lightning → poison.
 fn physical_conversion(input: &AttackSkillInput<'_>) -> Option<(&'static str, (f64, f64))> {

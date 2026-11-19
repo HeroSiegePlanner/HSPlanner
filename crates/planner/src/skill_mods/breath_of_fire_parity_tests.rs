@@ -60,7 +60,7 @@ fn agree(together: &[Vec<(&str, u32)>]) {
 fn pairs(a: &'static str, b: &'static str) -> Vec<Vec<(&'static str, u32)>> {
     let max = |id: &str| {
         let node = parity::nodes(CLASS, SKILL).iter().find(|n| n.id == id);
-        node.map_or(0, |n| n.max_rank)
+        node.map_or(0, |n| n.max_rank + parity::GRANTED)
     };
     let ranks = (1..=max(a)).flat_map(|ra| (1..=max(b)).map(move |rb| (ra, rb)));
     ranks.map(|(ra, rb)| vec![(a, ra), (b, rb)]).collect()

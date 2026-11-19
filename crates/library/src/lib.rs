@@ -1,8 +1,11 @@
 use hsplanner_ui::i18n::{Locale, tr, trf};
 use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::tooltip::CursorTooltipExt;
+mod create;
 mod dialogs;
+mod import;
 mod query;
+pub mod site;
 use dialogs::EditKind;
 mod presentation;
 use gpui_kit::base::{Disableable, Selectable};
@@ -107,7 +110,6 @@ pub struct LibraryView {
     search: Entity<InputState>,
     name: Entity<InputState>,
     tags: Entity<InputState>,
-    code: Entity<InputState>,
     selected: Option<String>,
     folder: Option<String>,
     favorites: bool,
@@ -120,7 +122,6 @@ pub struct LibraryView {
     preview_revision: u64,
     active: bool,
     editing: bool,
-    importing: bool,
     recent: bool,
     high_level: bool,
     unfiled: bool,
@@ -197,6 +198,8 @@ fn render_error(error: &str) -> String {
         "library.error.code_text" | "Invalid build code text." => {
             tr("library.error.code_text").to_owned()
         }
+        "library.error.clipboard" => tr("library.error.clipboard").to_owned(),
+        key if key.starts_with("site.error.") => tr(key).to_owned(),
         _ => {
             if let Some(field) = error.strip_prefix("Missing or invalid build field: ") {
                 trf("library.error.build_field", &[("field", field.to_owned())])
@@ -230,7 +233,6 @@ impl LibraryView {
         let search = cx.new(|cx| localized_input("library.search_placeholder", window, cx));
         let name = cx.new(|cx| localized_input("library.name_placeholder", window, cx));
         let tags = cx.new(|cx| localized_input("library.tags_placeholder", window, cx));
-        let code = cx.new(|cx| localized_input("library.code_placeholder", window, cx));
         let subscriptions = vec![
             cx.observe(&session, |this, _, cx| {
                 this.query_cache.get_mut().invalidate();
@@ -260,7 +262,6 @@ impl LibraryView {
             search,
             name,
             tags,
-            code,
             selected: None,
             folder: None,
             favorites: false,
@@ -273,7 +274,6 @@ impl LibraryView {
             preview_revision: 0,
             active: true,
             editing: false,
-            importing: false,
             recent: true,
             high_level: false,
             unfiled: false,
@@ -559,10 +559,12 @@ impl LibraryView {
             .build(id)
             .ok_or_else(|| "library.error.missing_build".to_string())
             .and_then(|build| {
-                hsplanner_build::codec::encode_loadouts(
+                hsplanner_build::codec::encode_loadouts_with_stash(
+                    Some(&build.name),
                     &build.snapshot,
                     &build.notes(),
                     &build.loadouts,
+                    &[],
                 )
             });
         self.error = match result {
@@ -778,12 +780,11 @@ impl Render for LibraryView {
                             .text_color(cx.global::<TooltipTheme>().accent_hot)
                             .border_color(cx.global::<TooltipTheme>().accent_deep)
                             .label(tr("library.new_build"))
-                            .on_click(cx.listener(|this, _, _, cx| {
-                                let name = this.name.read(cx).value().to_string();
-                                if this.apply(cx, |s| s.new_build(&name).map(|_| ())) {
-                                    cx.emit(Opened);
-                                }
-                            })),
+                            .on_click(
+                                cx.listener(|this, _, window, cx| {
+                                    this.new_build_dialog(window, cx)
+                                }),
+                            ),
                     )
                     .child(
                         Button::new("new-folder")
@@ -1147,6 +1148,10 @@ impl Render for LibraryView {
                     .child(self.sort_header(SortColumn::Modified, tr("library.modified"), cx)),
             );
         let import = div()
+            .id("import-build-panel")
+            .cursor_pointer()
+            .hover(|panel| panel.border_color(accent))
+            .on_click(cx.listener(|this, _, window, cx| this.import_dialog(window, cx)))
             .mx_4()
             .my_5()
             .p_6()
@@ -1165,31 +1170,7 @@ impl Render for LibraryView {
                     .text_color(muted)
                     .text_sm()
                     .child(tr("library.import_help")),
-            )
-            .when(self.importing, |view| {
-                view.child(
-                    div()
-                        .mt_3()
-                        .flex()
-                        .gap_2()
-                        .child(
-                            div()
-                                .flex_1()
-                                .child(Input::new(&self.code).planner_style(cx)),
-                        )
-                        .child(
-                            Button::new("import-build")
-                                .planner_style(cx)
-                                .label(tr("library.import"))
-                                .on_click(cx.listener(|this, _, _, cx| {
-                                    let code = this.code.read(cx).value().to_string();
-                                    if this.apply(cx, |s| s.import_code(&code).map(|_| ())) {
-                                        cx.emit(Opened);
-                                    }
-                                })),
-                        ),
-                )
-            });
+            );
         let listing = listing.child(import);
         let center = div()
             .flex_1()
@@ -1348,9 +1329,11 @@ impl Render for LibraryView {
                             .label(tr("library.toolbar_new"))
                             .text_color(accent)
                             .bg(hsplanner_ui::theme::chrome_gold_surface())
-                            .on_click(cx.listener(|this, _, window, cx| {
-                                this.edit_dialog(EditKind::NewBuild, window, cx)
-                            })),
+                            .on_click(
+                                cx.listener(|this, _, window, cx| {
+                                    this.new_build_dialog(window, cx)
+                                }),
+                            ),
                     )
                     .child(
                         toolbar_button(
@@ -1359,10 +1342,9 @@ impl Render for LibraryView {
                             "import",
                             cx,
                         )
-                        .on_click(cx.listener(|this, _, _, cx| {
-                            this.importing = !this.importing;
-                            cx.notify();
-                        })),
+                        .on_click(
+                            cx.listener(|this, _, window, cx| this.import_dialog(window, cx)),
+                        ),
                     )
                     .child(
                         toolbar_button("toolbar-copy", tr("library.copy"), "copy", cx)

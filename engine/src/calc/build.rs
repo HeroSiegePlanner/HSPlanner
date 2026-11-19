@@ -615,13 +615,23 @@ fn augment_buff_uptimes(
             deps.kills_per_sec,
         );
         let interval = aug.proc_cooldown.unwrap_or(0.0).max(ITEM_PROC_ICD_SECS);
-        let uptime = |rate: f64| ((rate * chance / 100.0).min(1.0 / interval) * duration).min(1.0);
+        let stacks = tier.meta.get("max_stacks").copied().unwrap_or(1.0);
+        let uptime = |rate: f64| {
+            let one = ((rate * chance / 100.0).min(1.0 / interval) * duration).min(1.0);
+            stacked_uptime(one, stacks)
+        };
         let uptime = (uptime(rate.0), uptime(rate.1));
         if uptime.0 < 1.0 || uptime.1 < 1.0 {
             out.insert(aug.id.clone(), uptime);
         }
     }
     out
+}
+
+/// Mean share of a refreshing buff: every further stack needs another proc inside the window.
+fn stacked_uptime(one: f64, stacks: f64) -> f64 {
+    let stacks = stacks.max(1.0) as i32;
+    (1..=stacks).map(|k| one.powi(k)).sum::<f64>() / f64::from(stacks)
 }
 
 /// Strike and attack procs need an attack skill; spell-hit and cast procs a cast.
@@ -694,22 +704,28 @@ fn proc_trigger_assumption(trigger: &str) -> &'static str {
 
 /// Per-state chance (%) that the main skill's subtree inflicts a state; nodes that
 /// apply a state without an amount count too. `ailment::AILMENTS` filters to damage.
+/// The second map holds the hit share a `conversion` state deals each second.
 fn subtree_apply_chances(
     spec: Option<&SkillSpec>,
     subskill_ranks: &HashMap<String, u32>,
     enemy_conditions: &HashMap<String, bool>,
-) -> HashMap<String, f64> {
-    let mut out: HashMap<String, f64> = HashMap::new();
+) -> (HashMap<String, f64>, HashMap<String, f64>) {
+    let mut chances: HashMap<String, f64> = HashMap::new();
+    let mut shares: HashMap<String, f64> = HashMap::new();
     let Some(spec) = spec else {
-        return out;
+        return (chances, shares);
     };
     let owner = super::stats::skill_spec_to_subskill_owner(spec);
     let agg =
         super::subskill::aggregate_subskill_stats(&owner, subskill_ranks, Some(enemy_conditions));
     for state in agg.applied_states {
-        *out.entry(state.state).or_insert(0.0) += state.chance;
+        if state.conversion {
+            *shares.entry(state.state.clone()).or_insert(0.0) +=
+                state.amount.unwrap_or(0.0) / 100.0;
+        }
+        *chances.entry(state.state).or_insert(0.0) += state.chance;
     }
-    out
+    (chances, shares)
 }
 
 struct ProcContext<'a> {
@@ -1285,7 +1301,7 @@ pub(crate) fn performance_from_stats(
             // A pulsing aura never passes through TalentUseClass, so it never echoes.
             if echo_max > 0.0
                 && active_skill.is_none_or(|s| s.pulse_frames.is_none())
-                && calc_skill.tags.iter().any(|tag| tag == "Spell")
+                && super::affix_tags::has_tag(&calc_skill.tags, "Spell")
             {
                 if is_attack_skill || super::affix_tags::is_entity(&calc_skill.tags) {
                     calculation.push(CalculationStep::new(
@@ -2229,7 +2245,7 @@ pub(crate) fn performance_from_stats(
             proc_dps_max += per_sec.1 * hit.1;
         }
     }
-    let apply_chances =
+    let (apply_chances, hit_shares) =
         subtree_apply_chances(active_skill, deps.subskill_ranks, deps.enemy_conditions);
     // Volley averages include projectiles and repeated casts; ailments use
     // one contact's mean damage and the same individual-contact rate as procs.
@@ -2266,6 +2282,7 @@ pub(crate) fn performance_from_stats(
                 &computed.stats,
                 main_scoped,
                 &apply_chances,
+                &hit_shares,
                 target_dot_immune,
             )
         } else {
@@ -2275,6 +2292,7 @@ pub(crate) fn performance_from_stats(
                 &computed.stats,
                 main_scoped,
                 &apply_chances,
+                &hit_shares,
                 target_dot_immune,
             )
         }

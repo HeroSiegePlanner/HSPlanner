@@ -6,6 +6,8 @@
 
 use std::sync::OnceLock;
 
+static LOCALE: OnceLock<NumberLocale> = OnceLock::new();
+
 #[derive(Clone, Copy)]
 enum NumberLocale {
     English,
@@ -27,7 +29,6 @@ impl NumberLocale {
     }
 
     fn system() -> Self {
-        static LOCALE: OnceLock<NumberLocale> = OnceLock::new();
         *LOCALE.get_or_init(|| Self::from_tag(&sys_locale::get_locale().unwrap_or_default()))
     }
 

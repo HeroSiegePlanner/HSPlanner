@@ -1,6 +1,12 @@
 use super::*;
 use crate::calc::types::EquippedItem;
 
+static NO_STACKS: std::sync::LazyLock<HashMap<String, u32>> =
+    std::sync::LazyLock::new(HashMap::new);
+
+static DEFAULT_RATES: std::sync::LazyLock<HashMap<String, f64>> =
+    std::sync::LazyLock::new(|| entity_rates(1.0));
+
 #[allow(clippy::too_many_arguments)]
 fn empty_deps<'a>(
     allocated: &'a HashMap<String, u32>,
@@ -42,12 +48,6 @@ fn empty_deps<'a>(
         difficulty: None,
     }
 }
-
-static NO_STACKS: std::sync::LazyLock<HashMap<String, u32>> =
-    std::sync::LazyLock::new(HashMap::new);
-
-static DEFAULT_RATES: std::sync::LazyLock<HashMap<String, f64>> =
-    std::sync::LazyLock::new(|| entity_rates(1.0));
 
 fn entity_rates(rate: f64) -> HashMap<String, f64> {
     ["sentry", "summon", "guardian"]
@@ -1015,6 +1015,27 @@ fn asphyxiating_touch_keeps_ailments_but_suppresses_direct_damage() {
         let ailment = result.ailment_dps_max.expect("burning still deals damage");
         assert!(ailment > baseline_ailment, "node {node_id}");
         assert_eq!(result.combined_dps_max, Some(ailment), "node {node_id}");
+    }
+}
+
+// LoadAuraScorching L0x37-L0x38 + PC00Skills case 18: each pulse burns for its hit x 10 %/rank a second.
+#[test]
+fn burn_them_all_burns_for_its_conversion_share_of_the_pulse() {
+    for rank in 1..=5 {
+        let p = perf(
+            "pyromancer",
+            "scorching_aura",
+            20,
+            &[("burn_them_all", rank)],
+            &[],
+        );
+        let hit = p.damage.as_ref().expect("Scorching Aura damage").avg_max as f64;
+        let burning = p.ailment_dps_max.expect("Burn Them All inflicts burning");
+        let expected = hit * 0.1 * rank as f64;
+        assert!(
+            (burning - expected).abs() < 1e-6,
+            "rank {rank}: {burning} vs {expected}"
+        );
     }
 }
 
@@ -2224,10 +2245,10 @@ fn blender_conditional_critical_and_additive_damage_bonuses() {
     assert_eq!(mult, (3.9, 3.9)); // 40 + 25 + 225%, additive.
 }
 
-// Season 11: Blender keeps a third of every other area bonus in its contact
+// Season 11: Blender keeps 40% of every other area bonus in its contact
 // coverage; its own nodes count fully.
 #[test]
-fn blender_keeps_a_third_of_area_except_its_own_nodes() {
+fn blender_keeps_forty_percent_of_area_except_its_own_nodes() {
     let dps = |nodes: &[(&str, u32)], custom: &[(&str, &str)]| {
         perf_with_stats("butcher", "blender", 20, nodes, custom, 1.0)
             .avg_hit_dps_max
@@ -2236,13 +2257,13 @@ fn blender_keeps_a_third_of_area_except_its_own_nodes() {
     let base = dps(&[], &[]);
     let sized = [("industrial_sized", 1)];
     for (nodes, custom, area) in [
-        (&[][..], &[("area_of_effect", "30")][..], 0.33 * 30.0),
-        (&[][..], &[("area_of_effect_more", "50")][..], 0.33 * 50.0),
+        (&[][..], &[("area_of_effect", "30")][..], 0.4 * 30.0),
+        (&[][..], &[("area_of_effect_more", "50")][..], 0.4 * 50.0),
         (&sized[..], &[][..], 17.5),
         (
             &sized[..],
             &[("area_of_effect", "30")][..],
-            17.5 + 0.33 * 30.0,
+            17.5 + 0.4 * 30.0,
         ),
     ] {
         let ratio = dps(nodes, custom) / base;
@@ -3167,15 +3188,41 @@ fn proc_buffs_count_at_their_uptime() {
     let base = crit(&augment_perf("missing_augment", 7, &none, &none));
     let perf = augment_perf("lethal_tempo", 7, &on, &none);
     let aps = crate::calc::skills::attacks_per_second(&perf.stats).1;
-    // Basic attacks strike once each: min(aps × 8%, 1 / 1.5 s) procs/s × 2 s. The rate
-    // comes from the pass with the buff up, so it is at least this pass's attack rate.
-    let floor = ((aps * 0.08).min(1. / 1.5) * 2.).min(1.);
+    // One strike per attack: min(aps × 12%, 1 / 1.5 s) procs/s × 4 s, at the mean share of 3 stacks.
+    let floor = stacked_uptime(((aps * 0.12).min(1. / 1.5) * 4.).min(1.), 3.);
     let gained = crit(&perf) - base;
     assert!(
-        gained >= 56. * floor - 1e-6 && gained < 56.,
+        gained >= 63. * floor - 1e-6 && gained <= 63. + 1e-6,
         "{gained} vs floor {}",
-        56. * floor
+        63. * floor
     );
+}
+
+#[test]
+fn hybrid_attacks_take_spell_nodes_and_plain_attacks_do_not() {
+    let dps = |class: &str, skill: &str, nodes: &[u32]| {
+        perf_with_tree(class, skill, 10, &[], &[], nodes)
+            .avg_hit_dps_max
+            .unwrap()
+    };
+    // Manahunger (777): +15% Total Magic Skill Damage behind the Spell tag.
+    for (class, skill) in [
+        ("pyromancer", "inferno_slash"),
+        ("marksman", "homing_missile"),
+    ] {
+        assert!(
+            dps(class, skill, &[777]) > dps(class, skill, &[]) * 1.1,
+            "{skill}"
+        );
+    }
+    assert_eq!(dps("viking", "zeal", &[777]), dps("viking", "zeal", &[]));
+}
+
+#[test]
+fn stacked_buffs_need_a_proc_per_stack() {
+    assert_eq!(stacked_uptime(1., 3.), 1.);
+    assert_eq!(stacked_uptime(0.4, 1.), 0.4);
+    assert!((stacked_uptime(0.5, 3.) - 0.875 / 3.).abs() < 1e-12);
 }
 
 fn augment_skill_perf(

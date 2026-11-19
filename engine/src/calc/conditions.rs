@@ -1,7 +1,5 @@
 use std::collections::HashMap;
 
-pub type ConditionMap = HashMap<String, bool>;
-
 // Stat-key suffix -> enemy-condition key stored by the UI. Most specific first:
 // `shadow_burning` must win over `burning`, `deep_frozen` over `frozen`.
 const SUFFIX_TO_CONDITION: &[(&str, &str)] = &[
@@ -27,16 +25,18 @@ const SUFFIX_TO_CONDITION: &[(&str, &str)] = &[
     ("slow", "slow"),
 ];
 
+/// Stats that CREATE a state instead of requiring it; gating them on the state
+/// already being present would make them unreachable.
+const STATE_APPLIER_PREFIX: &str = "chance_inflict_";
+
+pub type ConditionMap = HashMap<String, bool>;
+
 /// Matches `_<suffix>` at the end of the key; the leading `_` is required.
 fn matches_suffix(key: &str, suffix: &str) -> bool {
     key.len() > suffix.len()
         && key.ends_with(suffix)
         && key.as_bytes()[key.len() - suffix.len() - 1] == b'_'
 }
-
-/// Stats that CREATE a state instead of requiring it; gating them on the state
-/// already being present would make them unreachable.
-const STATE_APPLIER_PREFIX: &str = "chance_inflict_";
 
 /// Enemy-condition key gating `stat_key`, or `None` when the stat is unconditional.
 pub fn condition_key_for(stat_key: &str) -> Option<&'static str> {

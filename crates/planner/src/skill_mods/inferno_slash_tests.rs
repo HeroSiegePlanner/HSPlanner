@@ -13,6 +13,14 @@ const BLAST: &str = "Explosion_Item_obj";
 /// The base wave touches the in-zone dummy 16 moves into its flight.
 const BASE_HIT: u32 = 17;
 
+const CLASS: &str = "pyromancer";
+const MOLTEN: &str = "molten_ground";
+const FLIES: &str = "flies_of_agony";
+const IGNITING: &str = "igniting_wind";
+/// Objects a parity play may hold at once, well under the 256 past which the sim drops what procs
+/// make.
+const UNCUT: usize = 192;
+
 fn mods(ranks: &[(&str, u32)]) -> Mods {
     let ranks: HashMap<String, u32> = ranks
         .iter()
@@ -341,14 +349,6 @@ fn shares_of(mods: &Mods) -> Vec<f32> {
     shares(&play(&spawns_with(mods, 0)))
 }
 
-const CLASS: &str = "pyromancer";
-const MOLTEN: &str = "molten_ground";
-const FLIES: &str = "flies_of_agony";
-const IGNITING: &str = "igniting_wind";
-/// Objects a parity play may hold at once, well under the 256 past which the sim drops what procs
-/// make.
-const UNCUT: usize = 192;
-
 /// Damage-weighted hits the game lands in one use, each of the attack's rolls counted at its own
 /// node's odds, against the full hit of a build without a weapon (all fire). Infernal Cleave's
 /// 1 + 30 % × rank is left out: the engine adds its fire damage to every hit instead.
@@ -398,7 +398,7 @@ fn agree<R: AsRef<[(&'static str, u32)]>>(together: &[R]) {
 fn pairs(a: &'static str, b: &'static str) -> Vec<Vec<(&'static str, u32)>> {
     let max = |id: &str| {
         let node = parity::nodes(CLASS, SKILL).iter().find(|n| n.id == id);
-        node.map_or(0, |n| n.max_rank)
+        node.map_or(0, |n| n.max_rank + parity::GRANTED)
     };
     let ranks = (1..=max(a)).flat_map(|ra| (1..=max(b)).map(move |rb| (ra, rb)));
     ranks.map(|(ra, rb)| vec![(a, ra), (b, rb)]).collect()
@@ -408,15 +408,15 @@ fn pairs(a: &'static str, b: &'static str) -> Vec<Vec<(&'static str, u32)>> {
 fn the_engines_subskill_hits_follow_the_sim() {
     let (sim, base) = (expected(&[]), engine(&[]));
     assert!(near(sim, 1.) && near(base, 1.), "sim {sim}, engine {base}");
-    let wrong = parity::misses(CLASS, SKILL, expected, engine, 0.01);
+    let wrong = parity::misses_past(CLASS, SKILL, expected, engine, 0.01, parity::GRANTED);
     assert!(wrong.is_empty(), "\n{}", wrong.join("\n"));
 }
 
 #[test]
 fn the_engine_follows_infernal_cleave_with_searing_fork() {
     // L0x169 overwrites the cleave's 8 with the fork's count before L0x180 divides by it.
-    for cleave in 1..=3 {
-        for fork in 1..=3 {
+    for cleave in 1..=3 + parity::GRANTED {
+        for fork in 1..=3 + parity::GRANTED {
             agree(&[&[("infernal_cleave", cleave), ("searing_fork", fork)]]);
         }
     }
@@ -425,7 +425,7 @@ fn the_engine_follows_infernal_cleave_with_searing_fork() {
 #[test]
 fn the_engine_follows_what_every_fork_and_salvo_carries() {
     // Forks and Igniting Wind's salvo are whole carriers: each makes its own patch and flies.
-    for fork in 1..=3 {
+    for fork in 1..=3 + parity::GRANTED {
         agree(&[
             [("searing_fork", fork), (MOLTEN, 5)],
             [("searing_fork", fork), (FLIES, 3)],

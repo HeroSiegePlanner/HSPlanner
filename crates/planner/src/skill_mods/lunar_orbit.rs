@@ -152,8 +152,14 @@ fn moon_count(tree: &Tree) -> u32 {
 /// after skillProjectiles; a use summons for one moon's life, as the engine prices it.
 fn summons(base: &Spawn, tree: &Tree) -> Vec<Spawn> {
     let every = SUMMON_EVERY * (1. - tree.own(CRESCENT, "faster_cast_rate") / 100.);
+    // Step_0 counts skillTimer down only while it is over 0: no frequency left, no second moon.
+    let step = if every > 0. {
+        every.ceil() as usize
+    } else {
+        usize::MAX
+    };
     let frames: Vec<u32> = (SUMMON_FIRST..moon_life(base, tree))
-        .step_by(every.ceil().max(1.) as usize)
+        .step_by(step)
         .collect();
     let rings = crescent_rings(tree);
     let first = FIRST_RING + tree.cast * frames.len() as u64;

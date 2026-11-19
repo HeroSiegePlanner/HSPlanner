@@ -355,6 +355,13 @@ fn the_engines_subskill_hits_follow_the_sim() {
     let base = expected(&[]);
     assert!(near(base, 26., 1e-4), "{base}");
     let engine = |ranks: &[(&str, u32)]| parity::engine_hits("exo", "solar_dash", ranks);
-    let wrong = parity::misses("exo", "solar_dash", expected, engine, 0.01);
+    let mut wrong =
+        parity::misses_past("exo", "solar_dash", expected, engine, 0.01, parity::GRANTED);
+    // Granted Cooldown Lap r7+ drives the dash backwards (x(1 - 0.15r) < 0): unknown in game.
+    wrong.retain(|line| {
+        !["cooldown_lap r7:", "cooldown_lap r8:"]
+            .iter()
+            .any(|r| line.starts_with(r))
+    });
     assert!(wrong.is_empty(), "\n{}", wrong.join("\n"));
 }

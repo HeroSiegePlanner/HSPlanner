@@ -280,6 +280,19 @@ impl Library {
         });
         Ok(id)
     }
+    /// `base`, or `base N` with the first number no build uses yet.
+    pub fn free_name(&self, base: &str) -> String {
+        let base = base.trim();
+        let taken: std::collections::HashSet<_> =
+            self.builds.iter().map(|b| b.name.as_str()).collect();
+        if !taken.contains(base) {
+            return base.to_owned();
+        }
+        (2..)
+            .map(|n| format!("{base} {n}"))
+            .find(|name| !taken.contains(name.as_str()))
+            .unwrap_or_else(|| base.to_owned())
+    }
     pub fn duplicate(&mut self, id: &str) -> Result<String, String> {
         if self.builds.len() >= 1_000 {
             return Err("The library already contains 1,000 builds.".into());

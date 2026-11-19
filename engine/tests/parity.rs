@@ -12,6 +12,9 @@
 
 use serde_json::Value;
 
+const FIXTURE_PATH: &str = "tests/fixtures/parity.json";
+const EPSILON: f64 = 1e-9;
+
 #[derive(serde::Deserialize)]
 struct FixtureEntry {
     name: String,
@@ -22,9 +25,6 @@ struct FixtureEntry {
     #[serde(default)]
     output: Option<Value>,
 }
-
-const FIXTURE_PATH: &str = "tests/fixtures/parity.json";
-const EPSILON: f64 = 1e-9;
 
 #[test]
 fn parity_with_ts_fixtures() {

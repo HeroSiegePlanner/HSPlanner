@@ -6,6 +6,8 @@ use hsplanner_build::{
 use hsplanner_engine::calc::{data, types::ItemBase};
 use hsplanner_ui::i18n::trf;
 
+pub(crate) const MAX_STASH_COLUMNS: usize = 6;
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) enum StashRow {
     Header { group: String, count: usize },
@@ -122,8 +124,6 @@ pub(crate) fn group_stash_rows(
     }
     rows
 }
-
-pub(crate) const MAX_STASH_COLUMNS: usize = 6;
 
 /// One line of the stash list: a full-width group header or entries side by side.
 #[derive(Debug, Clone, PartialEq, Eq)]

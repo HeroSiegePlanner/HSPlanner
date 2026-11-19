@@ -38,7 +38,7 @@
       {
         "id": "endochondral_ossification",
         "positionIndex": 1,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [5, 10, 15], "note": "n = XSP(3 + p1.s9), +5 odlamkow/r"}, {"kind": "extra_hits", "byRank": [1, 2, 1.9], "per": "use", "replacesProjectileHits": true, "note": "card H(n) table at 160 px: n=3 -> 1 (base), n=8 (r1) -> 2, n=13 (r2) -> 3, n=18 (r3) -> 2.9 (Resztki D(b): 3 horizontally, 2.9 mean over azimuths, was 2); extra = H - 1; base hits 1.0 = n=3"}], "confidence": "I", "note": "card Runda 3 / Bone Shred section p1 + Resztki D(b) (aim origin (x, y) vs axis (x, y+6)); geometry: fan step max(18-n,5) deg, hit if |theta| <= atan(20/160)=7.1 deg (threshold 12+8 = 20 px is I); r1..r3 from card example n=8,13,18. Only r3 changed (2 -> 2.9)", "plannerFix": "planner converts +5 projectiles/r at perExtraProjectile (about +0.7 hits per rank at 0.14); card's explicit H(n) gives +1, +2, +1.9 (non-monotonic, step narrows then widens)"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [5, 10, 15, 20, 25, 30], "note": "n = XSP(3 + p1.s9), +5 odlamkow/r"}, {"kind": "extra_hits", "byRank": [1, 2, 1.9], "per": "use", "replacesProjectileHits": true, "note": "card H(n) table at 160 px: n=3 -> 1 (base), n=8 (r1) -> 2, n=13 (r2) -> 3, n=18 (r3) -> 2.9 (Resztki D(b): 3 horizontally, 2.9 mean over azimuths, was 2); extra = H - 1; base hits 1.0 = n=3"}], "confidence": "I", "note": "card Runda 3 / Bone Shred section p1 + Resztki D(b) (aim origin (x, y) vs axis (x, y+6)); geometry: fan step max(18-n,5) deg, hit if |theta| <= atan(20/160)=7.1 deg (threshold 12+8 = 20 px is I); r1..r3 from card example n=8,13,18. Only r3 changed (2 -> 2.9)", "plannerFix": "planner converts +5 projectiles/r at perExtraProjectile (about +0.7 hits per rank at 0.14); card's explicit H(n) gives +1, +2, +1.9 (non-monotonic, step narrows then widens)"},
         "name": "Endochondral Ossification",
         "description": "Increases the amount of bone shreds.",
         "maxRank": 3,
@@ -157,7 +157,7 @@
       {
         "id": "bone_spurs",
         "positionIndex": 10,
-        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.04, 1.08, 1.12, 1.16, 1.2], "note": "chance 4r% per cast (p10.s9) of a second full fan (outer loop limit +1); expected x(1 + 0.04r)"}], "confidence": "C", "note": "card p10 row (C), asm 0x1463b5368", "plannerFix": "planner says of_total_damage 50 (second fan at 50 percent damage); card says the second fan is a full fan (100 percent), chance 4r% per cast"},
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.04, 1.08, 1.12, 1.16, 1.2, 1.24, 1.28, 1.32], "note": "chance 4r% per cast (p10.s9) of a second full fan (outer loop limit +1); expected x(1 + 0.04r)"}], "confidence": "C", "note": "card p10 row (C), asm 0x1463b5368", "plannerFix": "planner says of_total_damage 50 (second fan at 50 percent damage); card says the second fan is a full fan (100 percent), chance 4r% per cast"},
         "name": "Bone Spurs",
         "description": "Chance on cast to unleash additional bone shreds.",
         "maxRank": 5,
@@ -173,7 +173,7 @@
       {
         "id": "bomb_of_bones",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3.4, 4.5, 5.8], "note": "transformation: n = XSP(1) bombs; each bomb lands near the cursor (x, y-24) and makes 1 Explosion_Item_obj (hit, <= 40 px < 91 px, unchanged) plus shards from the landing point; Resztki lob correction (rule 40, C asm): the target is 6 px above the cursor and the bomb lands ~12 px short of it, 16-40 px from the dummy centre; shards hit ~0.40*N on average over azimuths (was 0.31; Po R4 0.51) with N = 3 + p1 + 3*r11 = 6, 9, 12 for r11 = 1..3 at p1 = 0 -> shard hits 2.4, 3.5, 4.8 (azimuth ranges 1-6 / 1-9 / 2-12); total = 1 + shard hits = 3.4, 4.5, 5.8. Card also lists r11 = 4, 5 (N = 15, 18: 6.0, 7.1) but planner maxRank is 3. Cursor at (x, y): all N shards hit (not modelled). p1 raises N, not included"}, {"kind": "damage_pct", "base": 0, "perRank": 20, "note": "LSSD += 20r% (p11.s10)"}], "confidence": "I", "note": "card p11 row (C/I) + Resztki lob (C asm, simulation lob.py/others.py); hit counts depend on cursor azimuth", "plannerFix": "planner models +3r extra projectiles at 0.14 hits each and no bomb explosion; game replaces the fan by 1 explosion plus ~0.40*N shards from the landing point (cursor at (x,y-24))"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3.4, 4.5, 5.8, 7.0, 8.1], "note": "transformation: n = XSP(1) bombs; each bomb lands near the cursor (x, y-24) and makes 1 Explosion_Item_obj (hit, <= 40 px < 91 px, unchanged) plus shards from the landing point; Resztki lob correction (rule 40, C asm): the target is 6 px above the cursor and the bomb lands ~12 px short of it, 16-40 px from the dummy centre; shards hit ~0.40*N on average over azimuths (was 0.31; Po R4 0.51) with N = 3 + p1 + 3*r11 = 6, 9, 12 for r11 = 1..3 at p1 = 0 -> shard hits 2.4, 3.5, 4.8 (azimuth ranges 1-6 / 1-9 / 2-12); total = 1 + shard hits = 3.4, 4.5, 5.8. Card also lists r11 = 4, 5 (N = 15, 18: 6.0, 7.1) but planner maxRank is 3. Cursor at (x, y): all N shards hit (not modelled). p1 raises N, not included"}, {"kind": "damage_pct", "base": 0, "perRank": 20, "note": "LSSD += 20r% (p11.s10)"}], "confidence": "I", "note": "card p11 row (C/I) + Resztki lob (C asm, simulation lob.py/others.py); hit counts depend on cursor azimuth", "plannerFix": "planner models +3r extra projectiles at 0.14 hits each and no bomb explosion; game replaces the fan by 1 explosion plus ~0.40*N shards from the landing point (cursor at (x,y-24))"},
         "name": "Bomb of Bones",
         "description": "Throw a bonebomb that explodes into an increased amount of piercing bone shred into all directions.",
         "maxRank": 3,
@@ -185,7 +185,7 @@
       {
         "id": "shattering_carcass",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD += 15r% (p12.s10)"}, {"kind": "extra_hits", "byRank": [1.0, 1.8, 3.0], "per": "hit", "note": "[462] = 2r shards created by EACH hitting shard (R4 item 1: L31 zeroes [462] on the shard after its first hit, so the number of procs = number of base hits on the dummy, e.g. n = 8/13/18 with p1). Per proc the shards start 4 px from the ORIGIN of the hitting shard (argument[2].x/y/direction, asm 0x1451ad8a9-0x1451ada66), 12-28 px from the dummy centre, and hit on average 1.0 / 1.8 / 3.0 of N = 2, 4, 6 (r1..r3; r4 3.9, r5 4.8 of N = 8, 10); simulation shred3.py (I: event order of a new shard, mask rotation, +-15 %); the card's working formula 1 + 0.45 (N-1) does not reproduce its own table for small N, the table is used. Hits at the damage[1] of the parent"}], "confidence": "I", "note": "card p12 row, R4 item 1 (necromancer/110#1, C position / I motion); was: all 2r shards hit once per use", "plannerFix": "planner converts the 2r shards as projectiles at perExtraProjectile 0.14 (about 0.28 hits per rank); in game each hitting shard spawns 2r child shards and ~1.0 / 1.8 / 3.0 of them hit"},
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 15, "note": "LSSD += 15r% (p12.s10)"}, {"kind": "extra_hits", "byRank": [1.0, 1.8, 3.0, 3.9, 4.8], "per": "hit", "note": "[462] = 2r shards created by EACH hitting shard (R4 item 1: L31 zeroes [462] on the shard after its first hit, so the number of procs = number of base hits on the dummy, e.g. n = 8/13/18 with p1). Per proc the shards start 4 px from the ORIGIN of the hitting shard (argument[2].x/y/direction, asm 0x1451ad8a9-0x1451ada66), 12-28 px from the dummy centre, and hit on average 1.0 / 1.8 / 3.0 of N = 2, 4, 6 (r1..r3; r4 3.9, r5 4.8 of N = 8, 10); simulation shred3.py (I: event order of a new shard, mask rotation, +-15 %); the card's working formula 1 + 0.45 (N-1) does not reproduce its own table for small N, the table is used. Hits at the damage[1] of the parent"}], "confidence": "I", "note": "card p12 row, R4 item 1 (necromancer/110#1, C position / I motion); was: all 2r shards hit once per use", "plannerFix": "planner converts the 2r shards as projectiles at perExtraProjectile 0.14 (about 0.28 hits per rank); in game each hitting shard spawns 2r child shards and ~1.0 / 1.8 / 3.0 of them hit"},
         "name": "Shattering Carcass",
         "description": "Bone shreds now explode into piercing bone shards on hit.",
         "maxRank": 3,
@@ -209,7 +209,7 @@
       {
         "id": "skeletal_split",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 20, "note": "LSSD += 20r% (p14.s9)"}, {"kind": "extra_hits", "byRank": [1.0, 1.0, 1.1], "per": "hit", "note": "[463] = r shards created by EACH hitting shard (R4 item 1), start 4 px from the origin of the hitting shard; expected hits 1.0 / 1.0 / 1.1 of N = r = 1, 2, 3 (r4 1.8, r5 2.5 of N = 4, 5); shred3.py (I); damage[1] of the parent"}], "confidence": "I", "note": "card p14 row, R4 item 1 (necromancer/110#1); was: all r shards hit once per use", "plannerFix": "planner converts the r shards as projectiles at 0.14 hits each; in game each hitting shard spawns r child shards starting at the hitting shard, 1.0 / 1.0 / 1.1 of them hit"},
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 20, "note": "LSSD += 20r% (p14.s9)"}, {"kind": "extra_hits", "byRank": [1.0, 1.0, 1.1, 1.8, 2.5], "per": "hit", "note": "[463] = r shards created by EACH hitting shard (R4 item 1), start 4 px from the origin of the hitting shard; expected hits 1.0 / 1.0 / 1.1 of N = r = 1, 2, 3 (r4 1.8, r5 2.5 of N = 4, 5); shred3.py (I); damage[1] of the parent"}], "confidence": "I", "note": "card p14 row, R4 item 1 (necromancer/110#1); was: all r shards hit once per use", "plannerFix": "planner converts the r shards as projectiles at 0.14 hits each; in game each hitting shard spawns r child shards starting at the hitting shard, 1.0 / 1.0 / 1.1 of them hit"},
         "name": "Skeletal Split",
         "description": "Bone shreds split into multiple piercing shreds on hit.",
         "maxRank": 3,
@@ -364,7 +364,7 @@
       {
         "id": "double_the_meat",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.04, 1.08, 1.12, 1.16, 1.2], "note": "chance 4r% per cast (p8.s9) that every bomb is doubled (inner loop limit +1); expected x(1 + 0.04r); multiplies with p13 bomb count"}], "confidence": "C", "note": "card p8 row (C), asm 0x1463bd953"},
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.04, 1.08, 1.12, 1.16, 1.2, 1.24, 1.28, 1.32], "note": "chance 4r% per cast (p8.s9) that every bomb is doubled (inner loop limit +1); expected x(1 + 0.04r); multiplies with p13 bomb count"}], "confidence": "C", "note": "card p8 row (C), asm 0x1463bd953"},
         "name": "Double The Meat",
         "description": "Chance on cast to unleash an additional meat bomb.",
         "maxRank": 5,
@@ -393,7 +393,7 @@
       {
         "id": "fleshy_leftovers",
         "positionIndex": 10,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.01, 0.04, 0.09, 0.16, 0.25], "per": "use", "note": "chance 5r% per cast (p10.s10) of a leftover (leftOvers = 20r% of dmg) blast on landing: expected 0.05r * 0.20r = 0.01r^2 hits per use; the leftover flies in a random direction, so whether the blast reaches the dummy (a few px off) is not certain (I)"}], "confidence": "I", "note": "card p10 row (C/I), Meat_Bomb_Leftovers_obj random direction", "plannerFix": "planner rolls on_hit (per hit) with 100 percent of total damage; in game one roll per cast, leftover blast = 20r% of dmg with chance 5r% (expected 0.01r^2 hits per cast)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.01, 0.04, 0.09, 0.16, 0.25, 0.36, 0.49, 0.64], "per": "use", "note": "chance 5r% per cast (p10.s10) of a leftover (leftOvers = 20r% of dmg) blast on landing: expected 0.05r * 0.20r = 0.01r^2 hits per use; the leftover flies in a random direction, so whether the blast reaches the dummy (a few px off) is not certain (I)"}], "confidence": "I", "note": "card p10 row (C/I), Meat_Bomb_Leftovers_obj random direction", "plannerFix": "planner rolls on_hit (per hit) with 100 percent of total damage; in game one roll per cast, leftover blast = 20r% of dmg with chance 5r% (expected 0.01r^2 hits per cast)"},
         "name": "Fleshy Leftovers",
         "description": "Chance for smaller chunks of meat to explode and spawn an additional corpse.",
         "maxRank": 5,
@@ -459,7 +459,7 @@
       {
         "id": "colossal_carcass",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.75, 1.5, 2.25], "per": "use", "note": "landing hit on the dummy: lambda * floor(1.5 * r * D), physical, class 'none' (no crit, no multipliers); expected value at lambda = 1/2 (kept). R4 rule 37: lambda = 1/ceil(46/T) with T = ceil(72/c) + 1 frames (not 60/castRate): lambda = 1/2 for c <= 3.27 (T >= 23; at c = 1.75 T = 43, the next cast falls in flight and is blocked), 1/3 for T = 12..22 (c ~ 3.3..6.4); exceptions when n*T in {44, 45} (next cast relaunches inside the 44-45 window and replaces the landing): T = 22 (c ~ 3.43-3.6), T = 15 (c ~ 5.1-5.5); the old bands 2.61-2.76 / 3.92-4.17 and the 1/4 band no longer apply. Scale by 2/3 for lambda = 1/3. Also enemy knockback (zSpeed 8, jump 8) and stun, no extra hit"}, {"kind": "other", "note": "explosion scale x (1 + 4.5 + 1.5*p6%) about 5.5, radius about 173 px instead of 79 px; no extra hit beyond the bomb itself at 160 px (already hit at 79 px)"}], "confidence": "I", "note": "card p14 row (C/I), R3 pkt 5 (B47 landing, asm 0x1418bc8c1 / 0x1418bcc42) + R4 rule 37 lambda thresholds; values unchanged", "plannerFix": "planner adds arcane +150/r as LSSD; in game it is a separate physical landing hit on the dummy, lambda * floor(1.5 r D) per cast (lambda depends on castRate), plus a 5.5x explosion"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.75, 1.5, 2.25, 3.0, 3.75, 4.5], "per": "use", "note": "landing hit on the dummy: lambda * floor(1.5 * r * D), physical, class 'none' (no crit, no multipliers); expected value at lambda = 1/2 (kept). R4 rule 37: lambda = 1/ceil(46/T) with T = ceil(72/c) + 1 frames (not 60/castRate): lambda = 1/2 for c <= 3.27 (T >= 23; at c = 1.75 T = 43, the next cast falls in flight and is blocked), 1/3 for T = 12..22 (c ~ 3.3..6.4); exceptions when n*T in {44, 45} (next cast relaunches inside the 44-45 window and replaces the landing): T = 22 (c ~ 3.43-3.6), T = 15 (c ~ 5.1-5.5); the old bands 2.61-2.76 / 3.92-4.17 and the 1/4 band no longer apply. Scale by 2/3 for lambda = 1/3. Also enemy knockback (zSpeed 8, jump 8) and stun, no extra hit"}, {"kind": "other", "note": "explosion scale x (1 + 4.5 + 1.5*p6%) about 5.5, radius about 173 px instead of 79 px; no extra hit beyond the bomb itself at 160 px (already hit at 79 px)"}], "confidence": "I", "note": "card p14 row (C/I), R3 pkt 5 (B47 landing, asm 0x1418bc8c1 / 0x1418bcc42) + R4 rule 37 lambda thresholds; values unchanged", "plannerFix": "planner adds arcane +150/r as LSSD; in game it is a separate physical landing hit on the dummy, lambda * floor(1.5 r D) per cast (lambda depends on castRate), plus a 5.5x explosion"},
         "name": "Colossal Carcass",
         "description": "Throw a massive chunk of meat with increased size and damage sending monsters airborne dealing area of effect damage when landing.",
         "maxRank": 3,
@@ -552,7 +552,7 @@
       {
         "id": "contamination",
         "positionIndex": 4,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.154, 0.294, 0.422], "per": "hit", "note": "chance 8r% per hit of the breath, 2 tries per breath, one success at most ([465] zeroed): P = 1-(1-0.08r)^2 per source breath = 2 hits of a new breath, so 2P hits per breath = P per base hit (base = 2 hits per breath). Values per base hit; card: +0.31, +0.59, +0.84, +1.08, +1.28 per breath (2P). New breath origin in the dummy centre: f1 = 0, 2 hits (H_new = 2 per card R3). Planner maxRank is 3, so only r1..r3 are given (card r4 0.538, r5 0.640 omitted)"}], "confidence": "I", "note": "card p4 row (C/I), R3 pkt 1-2 (H_new = 2)", "plannerFix": "planner: independent on_hit chance 8r with no single-success cap and +3 per new breath (old); game: at most one new breath per source breath (P = 1-(1-0.08r)^2) with 2 hits each"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.154, 0.294, 0.422, 0.538, 0.64, 0.73], "per": "hit", "note": "chance 8r% per hit of the breath, 2 tries per breath, one success at most ([465] zeroed): P = 1-(1-0.08r)^2 per source breath = 2 hits of a new breath, so 2P hits per breath = P per base hit (base = 2 hits per breath). Values per base hit; card: +0.31, +0.59, +0.84, +1.08, +1.28 per breath (2P). New breath origin in the dummy centre: f1 = 0, 2 hits (H_new = 2 per card R3). Planner maxRank is 3, so only r1..r3 are given (card r4 0.538, r5 0.640 omitted)"}], "confidence": "I", "note": "card p4 row (C/I), R3 pkt 1-2 (H_new = 2)", "plannerFix": "planner: independent on_hit chance 8r with no single-success cap and +3 per new breath (old); game: at most one new breath per source breath (P = 1-(1-0.08r)^2) with 2 hits each"},
         "name": "Contamination",
         "description": "Chance on hit to chain an additional breath from the target to its closest monster.",
         "maxRank": 3,
@@ -629,7 +629,7 @@
       {
         "id": "necrotic_ward",
         "positionIndex": 10,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.7, 1.4], "per": "hit", "note": "R4 item 2: each hit of a breath carrying [467] rolls irandom(99) < 5r (every hit, [467] is not zeroed) for a Necrotic Ward (Shaman_Totem_Parent_obj_Step_0 0x149e27690 schedules alarm[1]; shot period 25 frames, first shot after ~16 frames, life 180 frames -> 7 salvos). The ward stands 44 px from the dummy centre (PC07 0x1451af03b-0x1451af1be) and always shoots; each salvo is 1 breath (extraProjectiles 0) = 2 hits (tick_hits 31 15 0), so 14 hits per ward, hits at the damage[5] of the source breath (crit lost, I). Expected wards per base hit 0.05r -> 14 * 0.05r = 0.7r hits per base hit = +1.4r hits per breath of 2 hits (card: +1.4, 2.8, 4.2, 5.6, 7.0 for r1..r5; planner maxRank 2). Every extra Contamination breath and each of the n p14 breaths adds its own rolls (hence per hit); the ward breaths themselves do not carry [467]. Entity count is not encoded separately"}], "confidence": "I", "note": "card p10 row, R4 item 2 (necromancer/113#0; C schedule and position, I phase); was: other, count only", "plannerFix": "planner rolls on_hit chance 5r with no entity effect; game spawns on average 0.05r wards per hit that each add 14 breath hits (+0.7r hits per base hit)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.7, 1.4, 2.1, 2.8, 3.5], "per": "hit", "note": "R4 item 2: each hit of a breath carrying [467] rolls irandom(99) < 5r (every hit, [467] is not zeroed) for a Necrotic Ward (Shaman_Totem_Parent_obj_Step_0 0x149e27690 schedules alarm[1]; shot period 25 frames, first shot after ~16 frames, life 180 frames -> 7 salvos). The ward stands 44 px from the dummy centre (PC07 0x1451af03b-0x1451af1be) and always shoots; each salvo is 1 breath (extraProjectiles 0) = 2 hits (tick_hits 31 15 0), so 14 hits per ward, hits at the damage[5] of the source breath (crit lost, I). Expected wards per base hit 0.05r -> 14 * 0.05r = 0.7r hits per base hit = +1.4r hits per breath of 2 hits (card: +1.4, 2.8, 4.2, 5.6, 7.0 for r1..r5; planner maxRank 2). Every extra Contamination breath and each of the n p14 breaths adds its own rolls (hence per hit); the ward breaths themselves do not carry [467]. Entity count is not encoded separately"}], "confidence": "I", "note": "card p10 row, R4 item 2 (necromancer/113#0; C schedule and position, I phase); was: other, count only", "plannerFix": "planner rolls on_hit chance 5r with no entity effect; game spawns on average 0.05r wards per hit that each add 14 breath hits (+0.7r hits per base hit)"},
         "name": "Necrotic Ward",
         "description": "Chance to spawn a necrotic ward on hit unleashing poison breath towards the nearest monster for a short period.",
         "maxRank": 2,
@@ -638,7 +638,7 @@
       {
         "id": "acid_spit",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3.15, 5.78, 8.4], "note": "transformation: n = 1 + p11.s9 (+5/r) + p14.s10 acid projectiles (p14 r = 0 here) with a random spread of 40 deg; per projectile hit chance 0.31 (projectile hits the dummy with its mask, 12.4/40 deg) plus cloud hit 0.215 (cloud only if origin enters the dummy circle, |lateral| <= 12 px) = 0.525 hits per projectile; n = 6, 11, 16 for r = 1..3 -> 3.15, 5.78, 8.40 hits. Projectile damage per card: damage[5]; cloud is singleHit with damage[5]"}, {"kind": "dot", "note": "[0] = floor(dmg * (p3.s9 + p11.s10)%) = 60r% per projectile hit (poison DoT), card. Note: p11.s10 is 60/r per card"}], "confidence": "I", "note": "card p11 row (C/I); R3: cloud only for |lateral| <= 12 px; card earlier said 0.62 per n, now 0.52", "plannerFix": "planner models of_total_damage 5/r and increased_poisoned_damage 60/r on hit; game replaces the breath by n acid projectiles with a 40 deg spread: ~0.525 hits per projectile (about 31 % direct, 21.5 % cloud)"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3.15, 5.78, 8.4, 11.03, 13.65, 16.28], "note": "transformation: n = 1 + p11.s9 (+5/r) + p14.s10 acid projectiles (p14 r = 0 here) with a random spread of 40 deg; per projectile hit chance 0.31 (projectile hits the dummy with its mask, 12.4/40 deg) plus cloud hit 0.215 (cloud only if origin enters the dummy circle, |lateral| <= 12 px) = 0.525 hits per projectile; n = 6, 11, 16 for r = 1..3 -> 3.15, 5.78, 8.40 hits. Projectile damage per card: damage[5]; cloud is singleHit with damage[5]"}, {"kind": "dot", "note": "[0] = floor(dmg * (p3.s9 + p11.s10)%) = 60r% per projectile hit (poison DoT), card. Note: p11.s10 is 60/r per card"}], "confidence": "I", "note": "card p11 row (C/I); R3: cloud only for |lateral| <= 12 px; card earlier said 0.62 per n, now 0.52", "plannerFix": "planner models of_total_damage 5/r and increased_poisoned_damage 60/r on hit; game replaces the breath by n acid projectiles with a 40 deg spread: ~0.525 hits per projectile (about 31 % direct, 21.5 % cloud)"},
         "name": "Acid Spit",
         "description": "Spew out multiple poison projectiles exploding into acid novas inflicting increased poisoned damage.",
         "maxRank": 3,
@@ -762,7 +762,7 @@
       {
         "id": "raising_spirits",
         "positionIndex": 3,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.048, 0.096, 0.144, 0.192, 0.24], "per": "use", "note": "chance 6r% per cast ([469]) that one Bone Spirit (explosion only, spirits 0, damage[1] of the spear, ratio 1) is created; R4 (I): PC07 [469] creates the spirit at argument[1].x/y = the PLAYER, not at the hit point (asm 0x1451af9a5-0x1451af9b4); with no target set it searches only distance_to_object < 128 (Bone_Spirit_obj_Step_0 L13-L18) and the dummy at 160 px has a bbox gap of 137 px > 128, so it explodes only for ~80 % of azimuths (after flying past): expected 0.06r * 0.8 = 0.048r hits per use"}], "confidence": "I", "note": "card p3 row, R4 (I) note in the Bone Spear body (spirit spawned at the player); was 0.06r", "plannerFix": "planner rolls on_hit with chance 6r and no damage effect; game rolls once per cast, creates the spirit at the player and it explodes on the dummy in ~80 % of cases (0.048r expected hits per cast)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.048, 0.096, 0.144, 0.192, 0.24, 0.288, 0.336, 0.384], "per": "use", "note": "chance 6r% per cast ([469]) that one Bone Spirit (explosion only, spirits 0, damage[1] of the spear, ratio 1) is created; R4 (I): PC07 [469] creates the spirit at argument[1].x/y = the PLAYER, not at the hit point (asm 0x1451af9a5-0x1451af9b4); with no target set it searches only distance_to_object < 128 (Bone_Spirit_obj_Step_0 L13-L18) and the dummy at 160 px has a bbox gap of 137 px > 128, so it explodes only for ~80 % of azimuths (after flying past): expected 0.06r * 0.8 = 0.048r hits per use"}], "confidence": "I", "note": "card p3 row, R4 (I) note in the Bone Spear body (spirit spawned at the player); was 0.06r", "plannerFix": "planner rolls on_hit with chance 6r and no damage effect; game rolls once per cast, creates the spirit at the player and it explodes on the dummy in ~80 % of cases (0.048r expected hits per cast)"},
         "name": "Raising Spirits",
         "description": "Chance on hit to summon a bone spirit.",
         "maxRank": 5,
@@ -884,7 +884,7 @@
       {
         "id": "bone_nova",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2, 3, 4], "per": "use", "note": "one nova object created at the first hit point (inside the dummy, full circle mask r 32 -> 148 px) with damage[1] = floor(dmg * (1 + r)): 1 hit with ratio (1 + r) per use; [470] = 100r%, [51] stun 2 s (zero)"}], "confidence": "I", "note": "card p12 row (C/I)", "plannerFix": "planner adds arcane +100/r as LSSD; in game it is a separate nova object that hits once with damage dmg*(1+r), so +1 hit of ratio (1+r)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2, 3, 4, 5, 6, 7], "per": "use", "note": "one nova object created at the first hit point (inside the dummy, full circle mask r 32 -> 148 px) with damage[1] = floor(dmg * (1 + r)): 1 hit with ratio (1 + r) per use; [470] = 100r%, [51] stun 2 s (zero)"}], "confidence": "I", "note": "card p12 row (C/I)", "plannerFix": "planner adds arcane +100/r as LSSD; in game it is a separate nova object that hits once with damage dmg*(1+r), so +1 hit of ratio (1+r)"},
         "name": "Bone Nova",
         "description": "Bone spear now explodes into a bone nova on hit dealing increased damage and stunning on hit.",
         "maxRank": 3,
@@ -896,7 +896,7 @@
       {
         "id": "plenty_of_bone",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6], "note": "n = XSP(1 + 2r) spears in an 8 deg arc, smaller spears; on the dummy at 160 px only the central spear hits (+-8 deg = 22 px)"}, {"kind": "extra_hits", "byRank": [0.49, 0.49, 0.49], "per": "use", "replacesProjectileHits": true, "note": "Resztki D(a) (game bug: spear start (x + 8 cos, y + 8 cos) via lengthdir_x for y, asm 0x1463ca568 / 0x1463ca5d4): for n = 3, 5, 7 spears (r1..r3) the card gives on average 1.49 spears hitting at 160 px (1 or 2 depending on azimuth: 2 when aiming right, 1 when aiming left; 1.57 with the 6 px offset alone); base 1 -> extra 0.49 for every rank (I: spear mask rotation with the direction assumed as in R3). Po R4 had 'only the central spear' (extra 0)"}, {"kind": "damage_pct", "base": 0, "perRank": 35, "note": "LSSD += 35r% (p13.s10)"}], "confidence": "I", "note": "card p13 row + Resztki D(a); near-range gain not modelled; was extra 0 (only the central spear)", "plannerFix": "planner converts +2r projectiles at perExtraProjectile 0.14 (+0.28r hits); card gives +0.49 hits for every rank at 160 px (n = 3, 5, 7)"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6, 8, 10, 12], "note": "n = XSP(1 + 2r) spears in an 8 deg arc, smaller spears; on the dummy at 160 px only the central spear hits (+-8 deg = 22 px)"}, {"kind": "extra_hits", "byRank": [0.49, 0.49, 0.49], "per": "use", "replacesProjectileHits": true, "note": "Resztki D(a) (game bug: spear start (x + 8 cos, y + 8 cos) via lengthdir_x for y, asm 0x1463ca568 / 0x1463ca5d4): for n = 3, 5, 7 spears (r1..r3) the card gives on average 1.49 spears hitting at 160 px (1 or 2 depending on azimuth: 2 when aiming right, 1 when aiming left; 1.57 with the 6 px offset alone); base 1 -> extra 0.49 for every rank (I: spear mask rotation with the direction assumed as in R3). Po R4 had 'only the central spear' (extra 0)"}, {"kind": "damage_pct", "base": 0, "perRank": 35, "note": "LSSD += 35r% (p13.s10)"}], "confidence": "I", "note": "card p13 row + Resztki D(a); near-range gain not modelled; was extra 0 (only the central spear)", "plannerFix": "planner converts +2r projectiles at perExtraProjectile 0.14 (+0.28r hits); card gives +0.49 hits for every rank at 160 px (n = 3, 5, 7)"},
         "name": "Plenty of Bone",
         "description": "Throw multiple smaller bone spears in an arc.",
         "maxRank": 3,
@@ -908,7 +908,7 @@
       {
         "id": "bone_splinters",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 40, "note": "LSSD += 40r% (p14.s10)"}, {"kind": "extra_hits", "byRank": [2, 4, 6], "per": "hit", "note": "R4 item 3: every parent spear that hits the dummy spawns [471] = p14.s9 = 2r splinters (same damage[1]) 10 px from the dummy centre ahead of it, tail towards the dummy; the first collision check (frame f+1, Alarm_0 sets deadly, Step_0 collision before the built-in movement) hits with the mask tail 10 px < 12 px, so all 2r splinters hit once (separate hit maps): +2r hits per parent hit (x(1 + 2r) with n = 1 spear). C code / distribution, I runner order (if the runner moves before Step_0 of the new instance the tail is 19 px away and the result is 0). Was: 0 or 2r"}], "confidence": "I", "note": "card p14 row, R4 item 3 (necromancer/114#0); was: other, 0 or 2r", "plannerFix": "planner converts +2r projectiles at 0.14 hits each; in game each parent spear hit spawns 2r splinters that all hit once (+2r hits per parent hit)"},
+        "dummy": {"effects": [{"kind": "damage_pct", "base": 0, "perRank": 40, "note": "LSSD += 40r% (p14.s10)"}, {"kind": "extra_hits", "byRank": [2, 4, 6, 8, 10, 12], "per": "hit", "note": "R4 item 3: every parent spear that hits the dummy spawns [471] = p14.s9 = 2r splinters (same damage[1]) 10 px from the dummy centre ahead of it, tail towards the dummy; the first collision check (frame f+1, Alarm_0 sets deadly, Step_0 collision before the built-in movement) hits with the mask tail 10 px < 12 px, so all 2r splinters hit once (separate hit maps): +2r hits per parent hit (x(1 + 2r) with n = 1 spear). C code / distribution, I runner order (if the runner moves before Step_0 of the new instance the tail is 19 px away and the result is 0). Was: 0 or 2r"}], "confidence": "I", "note": "card p14 row, R4 item 3 (necromancer/114#0); was: other, 0 or 2r", "plannerFix": "planner converts +2r projectiles at 0.14 hits each; in game each parent spear hit spawns 2r splinters that all hit once (+2r hits per parent hit)"},
         "name": "Bone Splinters",
         "description": "Bone spears split into multiple smaller bone spears on hit.",
         "maxRank": 3,
@@ -1069,7 +1069,7 @@
       {
         "id": "assured_passing",
         "positionIndex": 10,
-        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.02, 1.04, 1.06, 1.08, 1.1], "note": "chance 2r% per cast that the corpses explode twice (counter +1, card L752): expected x(1 + 0.02r); the counter itself not verified (I)"}], "confidence": "I", "note": "card p10 row (C/I)", "plannerFix": "planner has an on_hit proc with chance 2r and no effect; game: once per cast, corpses explode a second time (x(1 + 0.02r) expected hits)"},
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.02, 1.04, 1.06, 1.08, 1.1, 1.12, 1.14, 1.16], "note": "chance 2r% per cast that the corpses explode twice (counter +1, card L752): expected x(1 + 0.02r); the counter itself not verified (I)"}], "confidence": "I", "note": "card p10 row (C/I)", "plannerFix": "planner has an on_hit proc with chance 2r and no effect; game: once per cast, corpses explode a second time (x(1 + 0.02r) expected hits)"},
         "name": "Assured Passing",
         "description": "Corpses have a chance to explode twice.",
         "maxRank": 5,
@@ -1312,7 +1312,7 @@
       {
         "id": "ghouls_of_agony",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3.0, 4.5, 6.0], "note": "transformation: the spirit becomes a ghoul (Bone_Spirit_Shred_obj) with damage dmg*(1 + r) that passes through the dummy at 2 px/frame: 1-2 hits (midpoint 1.5 used) with ratio (1 + r) -> hits = 1.5 * (1 + r). The explosion and the shards are NOT created (ret in the ghoul branch, asm 0x148bec929). Range 1-2 hits per card (I)"}], "confidence": "I", "note": "card p11 row (C/I)", "plannerFix": "planner adds arcane +100/r LSSD to the explosion; in game the explosion and shards are replaced by a ghoul passing through the dummy: 1-2 hits of dmg*(1+r)"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [3.0, 4.5, 6.0, 7.5, 9.0, 10.5], "note": "transformation: the spirit becomes a ghoul (Bone_Spirit_Shred_obj) with damage dmg*(1 + r) that passes through the dummy at 2 px/frame: 1-2 hits (midpoint 1.5 used) with ratio (1 + r) -> hits = 1.5 * (1 + r). The explosion and the shards are NOT created (ret in the ghoul branch, asm 0x148bec929). Range 1-2 hits per card (I)"}], "confidence": "I", "note": "card p11 row (C/I)", "plannerFix": "planner adds arcane +100/r LSSD to the explosion; in game the explosion and shards are replaced by a ghoul passing through the dummy: 1-2 hits of dmg*(1+r)"},
         "name": "Ghouls of Agony",
         "description": "No longer explodes on hit but travels forwards slowly dealing damage over time.",
         "maxRank": 3,
@@ -1429,7 +1429,7 @@
       {
         "id": "hollow_fangs",
         "positionIndex": 1,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6, 8, 10], "note": "n = XSP(5 + 2r) ring projectiles; at 160 px only the aimed one hits (ring spacing does not add a second hit below n = 30)"}, {"kind": "extra_hits", "byRank": [0, 0, 0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "card: 0 extra hits at 160 px (ring, 1 hit) for every rank"}], "confidence": "C", "note": "card p1 row (C); Poison Nova base note"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6, 8, 10, 12, 14, 16], "note": "n = XSP(5 + 2r) ring projectiles; at 160 px only the aimed one hits (ring spacing does not add a second hit below n = 30)"}, {"kind": "extra_hits", "byRank": [0, 0, 0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "card: 0 extra hits at 160 px (ring, 1 hit) for every rank"}], "confidence": "C", "note": "card p1 row (C); Poison Nova base note"},
         "name": "Hollow Fangs",
         "description": "Increases the amount of poison projectiles.",
         "maxRank": 5,
@@ -1565,7 +1565,7 @@
       {
         "id": "poison_cloud",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0, 0, 16], "note": "transformation: XSP(1) cloud around the player (singleHit, deadlyFrames 15, scale lerp 0.1 -> maxScale, mask r ~114 px * scale) with damage[5] = floor(LTD(V1) * (1 + LSSD + (5 + p1) * r11 %)): ratio 1 + 5r at p1 = 0 (6, 11, 16) IF the cloud reaches the dummy. R4 item 7 (C formula, I frames +-1): maxScale = 1 + 0.20*r9 + 0.45*r11 (asm 0x1463dc9f0, 0x1463de280, 0x1463dfd58), reach 114*s_14 + 12 = 125.8 / 159.9 / 194 px for r11 = 1, 2, 3 (r9 = 0) vs the dummy at 160 px: r1 NO hit (0), r2 borderline (0, I, error 1 px), r3 hits (ratio 16); every p9 rank adds 0.20 to maxScale (r1 hits from p9 >= 3). Dummy-side condition 0.665*M + 0.0335 >= (160 - 12)/114. LSSD cross term ignored"}], "confidence": "I", "note": "card p11 row + R4 item 7 (necromancer/118#0); was set_hits [6, 11, 16] assuming a hit", "plannerFix": "planner adds of_total_damage 100/r; game: one cloud with damage ratio (1 + 5r) that hits the dummy at 160 px only from r11 >= 3 (maxScale 1 + 0.2 r9 + 0.45 r11)"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0, 0, 16, 21, 26, 31], "note": "transformation: XSP(1) cloud around the player (singleHit, deadlyFrames 15, scale lerp 0.1 -> maxScale, mask r ~114 px * scale) with damage[5] = floor(LTD(V1) * (1 + LSSD + (5 + p1) * r11 %)): ratio 1 + 5r at p1 = 0 (6, 11, 16) IF the cloud reaches the dummy. R4 item 7 (C formula, I frames +-1): maxScale = 1 + 0.20*r9 + 0.45*r11 (asm 0x1463dc9f0, 0x1463de280, 0x1463dfd58), reach 114*s_14 + 12 = 125.8 / 159.9 / 194 px for r11 = 1, 2, 3 (r9 = 0) vs the dummy at 160 px: r1 NO hit (0), r2 borderline (0, I, error 1 px), r3 hits (ratio 16); every p9 rank adds 0.20 to maxScale (r1 hits from p9 >= 3). Dummy-side condition 0.665*M + 0.0335 >= (160 - 12)/114. LSSD cross term ignored"}], "confidence": "I", "note": "card p11 row + R4 item 7 (necromancer/118#0); was set_hits [6, 11, 16] assuming a hit", "plannerFix": "planner adds of_total_damage 100/r; game: one cloud with damage ratio (1 + 5r) that hits the dummy at 160 px only from r11 >= 3 (maxScale 1 + 0.2 r9 + 0.45 r11)"},
         "name": "Poison Cloud",
         "description": "Instead of releasing projectiles poison nova instead causes an explosion centered around the necromancer dealing increased damage based on projectile amount.",
         "maxRank": 3,
@@ -1589,7 +1589,7 @@
       {
         "id": "center_of_epidemy",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.08, 0.16, 0.24], "per": "use", "note": "chance 8r% per projectile (p13.s10) that the projectile returns to the player (centerOfEpidemy) and passes the dummy again with singleHitListClear: +1 hit at chance 8r% for the projectile on the dummy line (1 projectile hits)"}], "confidence": "I", "note": "card p13 row (C/I)", "plannerFix": "planner rolls on_hit with chance 8r and no damage effect; game adds a returning projectile that hits the dummy again with chance 8r per projectile on the dummy line"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.08, 0.16, 0.24, 0.32, 0.4, 0.48], "per": "use", "note": "chance 8r% per projectile (p13.s10) that the projectile returns to the player (centerOfEpidemy) and passes the dummy again with singleHitListClear: +1 hit at chance 8r% for the projectile on the dummy line (1 projectile hits)"}], "confidence": "I", "note": "card p13 row (C/I)", "plannerFix": "planner rolls on_hit with chance 8r and no damage effect; game adds a returning projectile that hits the dummy again with chance 8r per projectile on the dummy line"},
         "name": "Center of Epidemy",
         "description": "Poison nova projectiles have a chance to return to the necromancer dealing damage and increasing the necromancers poison damage on return.",
         "maxRank": 3,
@@ -1961,7 +1961,7 @@
       {
         "id": "reflection",
         "positionIndex": 3,
-        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.04, 1.07, 1.1, 1.13, 1.16], "note": "burst chance (1 + 3r)% per attack (p3.s9 = 3r, base 1%): B = 1 + (1 + 3r)/100 full salvos; the factor includes the base 1%; the extra salvo is a full salvo (x1 damage)"}], "confidence": "C", "note": "card p3 row (C)", "plannerFix": "planner models of_total_damage 50 on an on_hit proc with chance 3r; game adds a full second salvo with chance (1 + 3r)% per attack (B = 1 + (1 + 3r)/100)"},
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.04, 1.07, 1.1, 1.13, 1.16, 1.19, 1.22, 1.25], "note": "burst chance (1 + 3r)% per attack (p3.s9 = 3r, base 1%): B = 1 + (1 + 3r)/100 full salvos; the factor includes the base 1%; the extra salvo is a full salvo (x1 damage)"}], "confidence": "C", "note": "card p3 row (C)", "plannerFix": "planner models of_total_damage 50 on an on_hit proc with chance 3r; game adds a full second salvo with chance (1 + 3r)% per attack (B = 1 + (1 + 3r)/100)"},
         "name": "Reflection",
         "description": "Chance for skeleton mages to fire an additional projectile on attack.",
         "maxRank": 5,
@@ -2065,7 +2065,7 @@
       {
         "id": "cursed_blast",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.3, 0.6, 0.9], "per": "use", "note": "+1 blast hit at ratio 0.30r * D on the first hit of each hitting bolt ([476] zeroed on the bolt); card: one hitting bolt per use at 160 px, so expected 0.30r hits per use; scales with the number of hitting bolts (p6, I)"}], "confidence": "I", "note": "card p11 row (C/I); Destroy_0 copy order (I)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.3, 0.6, 0.9, 1.2, 1.5, 1.8], "per": "use", "note": "+1 blast hit at ratio 0.30r * D on the first hit of each hitting bolt ([476] zeroed on the bolt); card: one hitting bolt per use at 160 px, so expected 0.30r hits per use; scales with the number of hitting bolts (p6, I)"}], "confidence": "I", "note": "card p11 row (C/I); Destroy_0 copy order (I)"},
         "name": "Cursed Blast",
         "description": "Unleash an arcane nova on hit dealing a portion of the damage.",
         "maxRank": 3,
@@ -2077,7 +2077,7 @@
       {
         "id": "chaining_scorn",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [4.6, 5.2, 5.8], "per": "use", "note": "chain T0 starting on the dummy with damage floor(D*(1 + 0.15r)): 4 hits (1 + floor(9/3), max_bounces unset -> 8) per hitting bolt, so 4 * (1 + 0.15r) hits-equivalent per use (one bolt hits at 160 px); exact start point I"}], "confidence": "I", "note": "card p12 row (C/I); reguly 23 (chains.md 7-8)", "plannerFix": "planner adds arcane +15/r to LSSD for the whole skill and projectile_bounces +3/r; game: a separate 4-hit chain with ratio (1 + 0.15r) per bolt hit"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [4.6, 5.2, 5.8, 6.4, 7.0, 7.6], "per": "use", "note": "chain T0 starting on the dummy with damage floor(D*(1 + 0.15r)): 4 hits (1 + floor(9/3), max_bounces unset -> 8) per hitting bolt, so 4 * (1 + 0.15r) hits-equivalent per use (one bolt hits at 160 px); exact start point I"}], "confidence": "I", "note": "card p12 row (C/I); reguly 23 (chains.md 7-8)", "plannerFix": "planner adds arcane +15/r to LSSD for the whole skill and projectile_bounces +3/r; game: a separate 4-hit chain with ratio (1 + 0.15r) per bolt hit"},
         "name": "Chaining Scorn",
         "description": "Attacks now chain on hit dealing increased damage.",
         "maxRank": 3,
@@ -2267,7 +2267,7 @@
       {
         "id": "vile_shock",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.061, 0.153, 0.277, 0.432, 0.619], "per": "use", "note": "chance 3r% per attack: cascade of 5 explosions in a line (60 px apart, 0.135 s) with damage (1 + 0.35r) * dmg, stun 2 s; card: 1-2 of the 5 blasts reach the dummy (midpoint 1.5 used): expected 1.5 * 0.03r * (1 + 0.35r) per attack"}], "confidence": "I", "note": "card p5 row (C/I)", "plannerFix": "planner adds physical_skill_damage 35/r on on_hit chance 3r; game adds 1-2 explosion hits of (1 + 0.35r) * dmg per proc, and the explosions are arcane"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.061, 0.153, 0.277, 0.432, 0.619, 0.837, 1.087, 1.368], "per": "use", "note": "chance 3r% per attack: cascade of 5 explosions in a line (60 px apart, 0.135 s) with damage (1 + 0.35r) * dmg, stun 2 s; card: 1-2 of the 5 blasts reach the dummy (midpoint 1.5 used): expected 1.5 * 0.03r * (1 + 0.35r) per attack"}], "confidence": "I", "note": "card p5 row (C/I)", "plannerFix": "planner adds physical_skill_damage 35/r on on_hit chance 3r; game adds 1-2 explosion hits of (1 + 0.35r) * dmg per proc, and the explosions are arcane"},
         "name": "Vile Shock",
         "description": "Chance on attack to cast shockwave dealing area of effect damage and stunning monsters in a line.",
         "maxRank": 5,
@@ -2308,7 +2308,7 @@
       {
         "id": "profane_zeal",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.04, 1.08, 1.12, 1.16, 1.2], "note": "burst chance 4r% per attack (B = 1 + p8.s9/100): extra full salvo, expected x(1 + 0.04r)"}], "confidence": "C", "note": "card p8 row (C)"},
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.04, 1.08, 1.12, 1.16, 1.2, 1.24, 1.28, 1.32], "note": "burst chance 4r% per attack (B = 1 + p8.s9/100): extra full salvo, expected x(1 + 0.04r)"}], "confidence": "C", "note": "card p8 row (C)"},
         "name": "Profane Zeal",
         "description": "Chance to perform an additional attack.",
         "maxRank": 5,
@@ -2480,7 +2480,7 @@
       {
         "id": "forking_bolts",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "hit", "note": "chance 3r% per chain hit ([479]) makes a new Summon_Chain_Lightning_obj (N0) that jumps to the dummy and hits once: +0.03r hits per chain hit (base 1 hit per attack); only without p11 (the p11 attack object fails the object_index check in PC07 L332)"}], "confidence": "I", "note": "card p5 row (C/I); asm 0x1451b7500", "plannerFix": "planner rolls on_hit chance 3r with no damage effect; game: a new N0 chain that hits the dummy once with chance 3r% (+0.03r hits per base hit), not with p11"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15, 0.18, 0.21, 0.24], "per": "hit", "note": "chance 3r% per chain hit ([479]) makes a new Summon_Chain_Lightning_obj (N0) that jumps to the dummy and hits once: +0.03r hits per chain hit (base 1 hit per attack); only without p11 (the p11 attack object fails the object_index check in PC07 L332)"}], "confidence": "I", "note": "card p5 row (C/I); asm 0x1451b7500", "plannerFix": "planner rolls on_hit chance 3r with no damage effect; game: a new N0 chain that hits the dummy once with chance 3r% (+0.03r hits per base hit), not with p11"},
         "name": "Forking Bolts",
         "description": "Attacks by vengeful spirit have a chance to fork creating multiple chain lightnings.",
         "maxRank": 5,
@@ -2489,7 +2489,7 @@
       {
         "id": "critical_wrath",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.75, 2.5, 3.25, 4.0, 4.75], "per": "use", "note": "on a hit on a target at FULL life a Universal_Damage_Return_obj with damage floor(D*(1 + 0.75r)) is created at the dummy (hits once, 2 s stun): +1 hit with ratio (1 + 0.75r) per attack. R4 item 14 (C flow, I HP write): the dummy always has full HP at the first hit of every frame (Attack_Dummy_obj_Step_2 0x1471642e0 resets enemy_hp = max_hp each frame and the PC07 check enemy_hp >= max_hp is evaluated before CalculateEndDamage), so it applies on every attack (no longer an upper bound; slightly lower only when two hits fall in the same frame, e.g. two spirits)"}], "confidence": "I", "note": "card p6 row + R4 item 14 (necromancer/127#0); was 'upper bound: dummy must be at full life (I)'", "plannerFix": "planner models spell_crit_damage 75/r; game adds a full-life return hit x(1 + 0.75r) (conditional on full life of the target)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.75, 2.5, 3.25, 4.0, 4.75, 5.5, 6.25, 7.0], "per": "use", "note": "on a hit on a target at FULL life a Universal_Damage_Return_obj with damage floor(D*(1 + 0.75r)) is created at the dummy (hits once, 2 s stun): +1 hit with ratio (1 + 0.75r) per attack. R4 item 14 (C flow, I HP write): the dummy always has full HP at the first hit of every frame (Attack_Dummy_obj_Step_2 0x1471642e0 resets enemy_hp = max_hp each frame and the PC07 check enemy_hp >= max_hp is evaluated before CalculateEndDamage), so it applies on every attack (no longer an upper bound; slightly lower only when two hits fall in the same frame, e.g. two spirits)"}], "confidence": "I", "note": "card p6 row + R4 item 14 (necromancer/127#0); was 'upper bound: dummy must be at full life (I)'", "plannerFix": "planner models spell_crit_damage 75/r; game adds a full-life return hit x(1 + 0.75r) (conditional on full life of the target)"},
         "name": "Critical Wrath",
         "description": "Attacks always critically strike targets at max health dealing increased damage stunning them.",
         "maxRank": 5,
@@ -2513,7 +2513,7 @@
       {
         "id": "vacuuming_apparation",
         "positionIndex": 8,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.005, 0.01, 0.015, 0.02, 0.025], "per": "use", "note": "chance 2r% per attack ([481] = p8.s9) of a vortex with 25 % of damage (ratio 0.25): expected 0.02r * 0.25 = 0.005r hits per use (small, I)"}], "confidence": "I", "note": "card p8 row (C/I)", "plannerFix": "planner rolls on_hit chance 2r with no damage effect; game vortex deals 25 % of damage on that chance"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.005, 0.01, 0.015, 0.02, 0.025, 0.03, 0.035, 0.04], "per": "use", "note": "chance 2r% per attack ([481] = p8.s9) of a vortex with 25 % of damage (ratio 0.25): expected 0.02r * 0.25 = 0.005r hits per use (small, I)"}], "confidence": "I", "note": "card p8 row (C/I)", "plannerFix": "planner rolls on_hit chance 2r with no damage effect; game vortex deals 25 % of damage on that chance"},
         "name": "Vacuuming Apparation",
         "description": "Chance on attack to summon a ghastly whirlpool that pulls nearby targets into it.",
         "maxRank": 5,
@@ -2546,7 +2546,7 @@
       {
         "id": "contaminated_spirit",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "dot", "note": "green chain with poison [0] = floor(D * 33r%) per hit (B2); DoT modelled separately by the engine"}, {"kind": "extra_hits", "byRank": [1.2, 2.4, 3.6], "per": "use", "note": "chance 10r% per attack ([483]) to create 12 Poison_Nova_obj from the hit spot: up to 12 nova hits -> upper bound 12 * 0.1r expected (depends on how many novas hit the dummy from its own position, I)"}], "confidence": "I", "note": "card p11 row (C/I)", "plannerFix": "planner models increased_poisoned_damage +33/r on hit; game adds a poison DoT floor(D*33r%) and a chance 10r% of up to 12 nova hits"},
+        "dummy": {"effects": [{"kind": "dot", "note": "green chain with poison [0] = floor(D * 33r%) per hit (B2); DoT modelled separately by the engine"}, {"kind": "extra_hits", "byRank": [1.2, 2.4, 3.6, 4.8, 6.0, 7.2], "per": "use", "note": "chance 10r% per attack ([483]) to create 12 Poison_Nova_obj from the hit spot: up to 12 nova hits -> upper bound 12 * 0.1r expected (depends on how many novas hit the dummy from its own position, I)"}], "confidence": "I", "note": "card p11 row (C/I)", "plannerFix": "planner models increased_poisoned_damage +33/r on hit; game adds a poison DoT floor(D*33r%) and a chance 10r% of up to 12 nova hits"},
         "name": "Contaminated Spirit",
         "description": "Vengeful spirit now deals poison damage inflicting poisoned for a portion of its damage. Additionally gains a chance to unleash a poison nova on hit.",
         "maxRank": 3,
@@ -2589,7 +2589,7 @@
       {
         "id": "vengeful_poltergeist",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.25, 4.5, 6.75], "per": "use", "note": "each attack also makes a Bone_Spirit with spirits = 3 and damage floor(D*0.45r) (blast and shards) and a Poltergeist tornado with the same damage: R4 items 4 and 15 (C code, I trajectory/frames): +1 blast + 3 shards (ALL hit: homing snaps onto the dummy, Sum H_s = spirits; was ~2.3 of 3) + 1 tornado hit (tick_frequency 0, singleHit, passes the dummy at 2-11 px, hit 32-46 frames after creation) = 5 hits at ratio 0.45r per attack = 2.25r"}], "confidence": "I", "note": "card p14 row + R4 items 4, 15 (necromancer/127#1); was [1.485, 2.97, 4.455] = (1 + 2.3) * 0.45r without the tornado", "plannerFix": "planner adds of_total_damage 45/r per attack; game adds an explosion and about 2.3 shards at 0.45r D each, plus a tornado"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.25, 4.5, 6.75, 9.0, 11.25, 13.5], "per": "use", "note": "each attack also makes a Bone_Spirit with spirits = 3 and damage floor(D*0.45r) (blast and shards) and a Poltergeist tornado with the same damage: R4 items 4 and 15 (C code, I trajectory/frames): +1 blast + 3 shards (ALL hit: homing snaps onto the dummy, Sum H_s = spirits; was ~2.3 of 3) + 1 tornado hit (tick_frequency 0, singleHit, passes the dummy at 2-11 px, hit 32-46 frames after creation) = 5 hits at ratio 0.45r per attack = 2.25r"}], "confidence": "I", "note": "card p14 row + R4 items 4, 15 (necromancer/127#1); was [1.485, 2.97, 4.455] = (1 + 2.3) * 0.45r without the tornado", "plannerFix": "planner adds of_total_damage 45/r per attack; game adds an explosion and about 2.3 shards at 0.45r D each, plus a tornado"},
         "name": "Vengeful Poltergeist",
         "description": "Vengeful spirit now summons bone spirits and tornados in addition to its normal attack.",
         "maxRank": 3,

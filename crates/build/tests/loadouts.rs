@@ -487,6 +487,7 @@ fn share_code_with_stash_imports_the_stash_and_plain_code_does_not() {
     });
     let draft = session.draft().clone();
     let with_stash = codec::encode_loadouts_with_stash(
+        None,
         &draft.snapshot,
         &draft.notes,
         &draft.loadouts,

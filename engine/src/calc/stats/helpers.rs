@@ -1,14 +1,5 @@
 use super::*;
 
-// ---------- inline helpers ----------
-
-#[inline]
-pub fn is_zero(v: Ranged) -> bool {
-    v.0 == 0.0 && v.1 == 0.0
-}
-
-// ---------- stat-def lookup with `_more` suffix fallback ----------
-
 pub(crate) static STAT_DEFS_MAP: LazyLock<HashMap<&'static str, &'static StatDef>> =
     LazyLock::new(|| {
         let mut m: HashMap<&'static str, &'static StatDef> = HashMap::new();
@@ -17,6 +8,15 @@ pub(crate) static STAT_DEFS_MAP: LazyLock<HashMap<&'static str, &'static StatDef
         }
         m
     });
+
+// ---------- inline helpers ----------
+
+#[inline]
+pub fn is_zero(v: Ranged) -> bool {
+    v.0 == 0.0 && v.1 == 0.0
+}
+
+// ---------- stat-def lookup with `_more` suffix fallback ----------
 
 // `_more` keys fall back to the base key.
 pub fn stat_def(key: &str) -> Option<&'static StatDef> {

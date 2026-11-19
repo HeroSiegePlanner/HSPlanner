@@ -8,6 +8,13 @@ const SKILL: &str = "solar_flare";
 const BURNING: &str = "everburning_fire";
 const BURST: &str = "burst_of_power";
 
+/// Rings past both maxima that outgrow the preview's 256 live objects; the engine counts them all.
+const OUTGROWN: [[(&str, u32); 2]; 3] = [
+    [("solar_orbs", 5), ("searing_flares", 6)],
+    [("solar_orbs", 6), ("searing_flares", 5)],
+    [("solar_orbs", 6), ("searing_flares", 6)],
+];
+
 type Ranks = Vec<(&'static str, u32)>;
 
 /// The odds, 0 to 1, of `node`'s cast roll in `ranks`.
@@ -99,8 +106,8 @@ fn agree(sim: impl Fn(&[(&str, u32)]) -> f32, together: &[Ranks]) {
 
 /// Every rank of `a` with every rank of `b`.
 fn pairs(a: (&'static str, u32), b: (&'static str, u32)) -> Vec<Ranks> {
-    let with = move |at| (1..=b.1).map(move |bt| vec![(a.0, at), (b.0, bt)]);
-    (1..=a.1).flat_map(with).collect()
+    let with = move |at| (1..=b.1 + parity::GRANTED).map(move |bt| vec![(a.0, at), (b.0, bt)]);
+    (1..=a.1 + parity::GRANTED).flat_map(with).collect()
 }
 
 /// `ranks` without the nodes at rank 0.
@@ -121,7 +128,7 @@ fn the_engines_subskill_hits_follow_the_sim() {
         parity::owned(CLASS, SKILL),
         ["explosive_flares", "solars_edge"]
     );
-    let wrong = parity::misses(CLASS, SKILL, expected, engine, 0.01);
+    let wrong = parity::misses_past(CLASS, SKILL, expected, engine, 0.01, parity::GRANTED);
     assert!(wrong.is_empty(), "\n{}", wrong.join("\n"));
     agree(expected, &pairs((BURST, 5), ("solar_fireworks", 4)));
     agree(expected, &pairs((BURST, 5), ("searing_flares", 3)));
@@ -131,9 +138,9 @@ fn the_engines_subskill_hits_follow_the_sim() {
 fn the_engine_follows_the_transformations_and_the_flares_they_ring_out() {
     let mut together = Vec::new();
     // Solar Orbs win over Grand Flare, which wins over Sun's Orbit (L0xeb-L0x139).
-    for orbs in 0..=3 {
-        for grand in 0..=3 {
-            for suns in 0..=3 {
+    for orbs in 0..=3 + parity::GRANTED {
+        for grand in 0..=3 + parity::GRANTED {
+            for suns in 0..=3 + parity::GRANTED {
                 together.push(learned(&[
                     ("solar_orbs", orbs),
                     ("grand_flare", grand),
@@ -147,9 +154,9 @@ fn the_engine_follows_the_transformations_and_the_flares_they_ring_out() {
         together.extend(pairs(ring, ("searing_flares", 3)));
     }
     together.extend(pairs(("solar_orbs", 3), (BURST, 5)));
-    for suns in 1..=3 {
-        for fireworks in 0..=4 {
-            for searing in 0..=3 {
+    for suns in 1..=3 + parity::GRANTED {
+        for fireworks in 0..=4 + parity::GRANTED {
+            for searing in 0..=3 + parity::GRANTED {
                 together.push(learned(&[
                     ("suns_orbit", suns),
                     ("solar_fireworks", fireworks),
@@ -158,7 +165,7 @@ fn the_engine_follows_the_transformations_and_the_flares_they_ring_out() {
             }
         }
     }
-    together.retain(|ranks| !ranks.is_empty());
+    together.retain(|ranks| !ranks.is_empty() && !OUTGROWN.iter().any(|c| ranks.as_slice() == c));
     agree(expected, &together);
 }
 

@@ -5698,7 +5698,7 @@
           "scale": [1.1, 1.1],
           "mask": "4037",
           "at": [-26, 8],
-          "bonus": 1.0,
+          "bonus": 0.5,
           "growth": "add",
           "reach": 60.4,
           "spins": true

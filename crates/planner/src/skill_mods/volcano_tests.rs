@@ -20,6 +20,8 @@ const SHOTS: [usize; 13] = [34, 50, 66, 82, 98, 114, 130, 146, 162, 178, 194, 21
 const DRAWN: usize = 1;
 const EXPLODES: usize = 62;
 
+const CLASS: &str = "pyromancer";
+
 fn mods(ranks: &[(&str, u32)]) -> Mods {
     let ranks: HashMap<String, u32> = ranks
         .iter()
@@ -474,8 +476,6 @@ fn only_the_nodes_the_game_reads_its_own_way_keep_their_damage_off_the_hit() {
     assert_eq!(owned, ["too_hot_to_touch"]);
 }
 
-const CLASS: &str = "pyromancer";
-
 fn engine(ranks: &[(&str, u32)]) -> f32 {
     parity::engine_hits(CLASS, super::SKILL, ranks)
 }
@@ -496,7 +496,7 @@ fn the_engines_subskill_hits_follow_the_sim() {
     let uncapped = super::parity::uncapped;
     let (sim, base) = (uncapped(&[]), engine(&[]));
     assert!(near(sim, 8.) && near(base, 8.), "sim {sim}, engine {base}");
-    let wrong = parity::misses(CLASS, super::SKILL, uncapped, engine, 0.01);
+    let wrong = parity::misses_past(CLASS, super::SKILL, uncapped, engine, 0.01, parity::GRANTED);
     assert!(wrong.is_empty(), "\n{}", wrong.join("\n"));
 }
 
@@ -504,7 +504,7 @@ fn the_engines_subskill_hits_follow_the_sim() {
 fn the_engine_follows_the_fragments_yellowstone_and_the_player_volcano_land() {
     let i_am = ("i_am_the_volcano_now", 2);
     let mut together: Vec<Vec<(&str, u32)>> = Vec::new();
-    for rank in 1..=5 {
+    for rank in 1..=5 + parity::GRANTED {
         for node in ["eruption", "danger_zone", "crushing_fragment"] {
             together.push(vec![i_am, (node, rank)]);
         }
@@ -520,7 +520,7 @@ fn the_engine_follows_the_fragments_yellowstone_and_the_player_volcano_land() {
         together.push(vec![("yellowstone", 3), ("crushing_fragment", rank)]);
         together.push(vec![("yellowstone", 2), ("crushing_fragment", rank)]);
     }
-    for rank in 1..=3 {
+    for rank in 1..=3 + parity::GRANTED {
         together.push(vec![i_am, ("lava_trail", rank)]);
         together.push(vec![i_am, ("yellowstone", rank)]);
         together.push(vec![("yellowstone", rank), ("lava_trail", 2)]);

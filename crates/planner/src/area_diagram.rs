@@ -20,7 +20,7 @@ pub(crate) static TOWN: LazyLock<Arc<Image>> = LazyLock::new(|| {
 /// Grid step in game pixels.
 const GRID_STEP: f32 = 64.;
 /// Tags that decide which size stats reach a skill.
-const SIZE_TAGS: [&str; 9] = [
+const SIZE_TAGS: [&str; 10] = [
     "Area of Effect",
     "Explosion",
     "Orbital",
@@ -28,6 +28,7 @@ const SIZE_TAGS: [&str; 9] = [
     "Melee",
     "Ranged",
     "Spell",
+    "Hybrid",
     "Shield",
     "Relic",
 ];

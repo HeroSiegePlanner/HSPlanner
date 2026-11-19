@@ -11,6 +11,23 @@ pub(crate) const FPS: f64 = 60.;
 /// Damage objects vanish this far from where they spawned.
 pub(crate) const LIMIT: f64 = 1500.;
 
+static SPEEDS: LazyLock<Speeds> = LazyLock::new(|| {
+    serde_json::from_str(include_str!("../../../data/skill-projectile-speed.json"))
+        .expect("embedded projectile speeds must be valid")
+});
+
+/// Item stats ignore tags; the incarnation's Melee and Ranged nodes need the tag and Projectile.
+const SPEED_KEYS: [(&str, Option<&str>, bool); 6] = [
+    ("projectile_speed_pct", None, false),
+    ("projectile_speed", None, true),
+    ("melee_projectile_speed_pct", Some("Melee"), false),
+    ("melee_projectile_speed", Some("Melee"), true),
+    ("ranged_projectile_speed_pct", Some("Ranged"), false),
+    ("ranged_projectile_speed", Some("Ranged"), true),
+];
+/// Titans Power: a separate multiplier while the buff lasts, not part of the sum.
+const TITAN: &str = "projectile_speed_more";
+
 #[derive(Deserialize)]
 struct Speeds {
     skills: HashMap<String, SkillFlight>,
@@ -91,26 +108,9 @@ impl Flyer {
     }
 }
 
-static SPEEDS: LazyLock<Speeds> = LazyLock::new(|| {
-    serde_json::from_str(include_str!("../../../data/skill-projectile-speed.json"))
-        .expect("embedded projectile speeds must be valid")
-});
-
 pub(crate) fn skill(id: &str) -> Option<&'static SkillFlight> {
     SPEEDS.skills.get(id)
 }
-
-/// Item stats ignore tags; the incarnation's Melee and Ranged nodes need the tag and Projectile.
-const SPEED_KEYS: [(&str, Option<&str>, bool); 6] = [
-    ("projectile_speed_pct", None, false),
-    ("projectile_speed", None, true),
-    ("melee_projectile_speed_pct", Some("Melee"), false),
-    ("melee_projectile_speed", Some("Melee"), true),
-    ("ranged_projectile_speed_pct", Some("Ranged"), false),
-    ("ranged_projectile_speed", Some("Ranged"), true),
-];
-/// Titans Power: a separate multiplier while the buff lasts, not part of the sum.
-const TITAN: &str = "projectile_speed_more";
 
 pub(crate) fn is_speed_stat(key: &str) -> bool {
     key == TITAN || SPEED_KEYS.iter().any(|(k, _, _)| *k == key)

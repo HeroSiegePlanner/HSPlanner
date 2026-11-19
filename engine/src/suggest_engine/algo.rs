@@ -4,16 +4,16 @@ use rayon::prelude::*;
 
 use super::types::{SuggestResult, SuggestStep, TreeGraph};
 
+// Bounds apply to expensive full-build evaluations, not the tree's point budget.
+const BEAM_WIDTH: usize = 6;
+const SEARCH_PROBES: usize = 12_000;
+const EPSILON: f64 = 1e-6;
+
 pub struct SearchInput<'a> {
     pub graph: &'a TreeGraph,
     pub allocated: HashSet<u32>,
     pub budget: u32,
 }
-
-// Bounds apply to expensive full-build evaluations, not the tree's point budget.
-const BEAM_WIDTH: usize = 6;
-const SEARCH_PROBES: usize = 12_000;
-const EPSILON: f64 = 1e-6;
 
 #[derive(Clone)]
 struct Allocation {

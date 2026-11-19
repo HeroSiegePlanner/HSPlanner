@@ -38,6 +38,45 @@ use std::{collections::HashMap, sync::Arc};
 mod custom;
 use custom::custom_text;
 
+const ENEMY_CONDITIONS: &[(&str, &str, &str)] = &[
+    ("cc_immune", "planner.condition.cc_immune", ""),
+    ("dot_immune", "planner.condition.dot_immune", ""),
+    ("burning", "planner.condition.burning", "fire"),
+    ("poisoned", "planner.condition.poisoned", "poison"),
+    ("frozenbite", "planner.condition.frostbitten", "cold"),
+    ("stunned", "planner.condition.stunned", ""),
+    ("bleeding", "planner.condition.bleeding", ""),
+    ("shocked", "planner.condition.stasis", "lightning"),
+    ("deep_frozen", "planner.condition.deep_frozen", "cold"),
+    ("shadow_burn", "planner.condition.shadow_burned", "arcane"),
+    ("frozen", "planner.condition.frozen", "cold"),
+    ("slow", "planner.condition.slowed", ""),
+    ("low_life", "planner.condition.low_life", ""),
+    ("serrated_chains", "planner.condition.serrated_chains", ""),
+    (
+        "lightning_break",
+        "planner.condition.lightning_break",
+        "lightning",
+    ),
+    ("fire_break", "planner.condition.fire_break", "fire"),
+    ("cold_break", "planner.condition.cold_break", "cold"),
+    ("arcane_break", "planner.condition.arcane_break", "arcane"),
+    ("poison_break", "planner.condition.poison_break", "poison"),
+    ("is_boss", "planner.condition.boss", ""),
+];
+const PLAYER_CONDITIONS: &[(&str, &str, &str)] = &[
+    ("overheated", "planner.condition.overheated", ""),
+    (
+        "flask_regeneration",
+        "planner.condition.flask_regeneration",
+        "",
+    ),
+    ("phasing", "planner.condition.phasing", ""),
+    ("full_life", "planner.condition.full_life", ""),
+    ("crit_chance_below_40", "planner.condition.crit_below", ""),
+    ("life_below_40", "planner.condition.life_below", ""),
+];
+
 #[derive(Clone)]
 struct Choice {
     id: String,
@@ -2253,45 +2292,6 @@ fn group_heading(id: &'static str, title: &str, subtitle: &str, cx: &App) -> Div
                 .child(subtitle.to_owned()),
         )
 }
-
-const ENEMY_CONDITIONS: &[(&str, &str, &str)] = &[
-    ("cc_immune", "planner.condition.cc_immune", ""),
-    ("dot_immune", "planner.condition.dot_immune", ""),
-    ("burning", "planner.condition.burning", "fire"),
-    ("poisoned", "planner.condition.poisoned", "poison"),
-    ("frozenbite", "planner.condition.frostbitten", "cold"),
-    ("stunned", "planner.condition.stunned", ""),
-    ("bleeding", "planner.condition.bleeding", ""),
-    ("shocked", "planner.condition.stasis", "lightning"),
-    ("deep_frozen", "planner.condition.deep_frozen", "cold"),
-    ("shadow_burn", "planner.condition.shadow_burned", "arcane"),
-    ("frozen", "planner.condition.frozen", "cold"),
-    ("slow", "planner.condition.slowed", ""),
-    ("low_life", "planner.condition.low_life", ""),
-    ("serrated_chains", "planner.condition.serrated_chains", ""),
-    (
-        "lightning_break",
-        "planner.condition.lightning_break",
-        "lightning",
-    ),
-    ("fire_break", "planner.condition.fire_break", "fire"),
-    ("cold_break", "planner.condition.cold_break", "cold"),
-    ("arcane_break", "planner.condition.arcane_break", "arcane"),
-    ("poison_break", "planner.condition.poison_break", "poison"),
-    ("is_boss", "planner.condition.boss", ""),
-];
-const PLAYER_CONDITIONS: &[(&str, &str, &str)] = &[
-    ("overheated", "planner.condition.overheated", ""),
-    (
-        "flask_regeneration",
-        "planner.condition.flask_regeneration",
-        "",
-    ),
-    ("phasing", "planner.condition.phasing", ""),
-    ("full_life", "planner.condition.full_life", ""),
-    ("crit_chance_below_40", "planner.condition.crit_below", ""),
-    ("life_below_40", "planner.condition.life_below", ""),
-];
 
 #[cfg(test)]
 mod tests {

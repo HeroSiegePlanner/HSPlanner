@@ -66,6 +66,8 @@ use std::{
 };
 use tree::{Camera, TreeKind};
 
+const EXAMPLES: &[usize] = &[0, 1025, 67, 5, 253, 853, 412, 90];
+
 gpui_kit::actions!(
     tree_prototype,
     [ShowTooltipExample, ToggleTextEffects, ToggleInspectedNode]
@@ -746,7 +748,6 @@ impl TreeView {
     }
 
     fn show_tooltip_example(&mut self, cx: &mut Context<Self>) {
-        const EXAMPLES: &[usize] = &[0, 1025, 67, 5, 253, 853, 412, 90];
         self.stop_motion();
         let id = EXAMPLES[self.example_ix % EXAMPLES.len()];
         self.example_ix += 1;
@@ -945,6 +946,7 @@ impl Render for TreeView {
                         self.build_input.tree_socketed.get(&(node.id as u32)),
                         self.selected.contains(&ix),
                     )
+                    .skills(&self.build_input)
                     .performance(self.build.preview(), self.build.in_flight),
                 ),
             )

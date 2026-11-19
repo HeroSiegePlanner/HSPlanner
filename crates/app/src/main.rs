@@ -10,6 +10,7 @@ mod loadouts;
 mod release_notes;
 mod settings;
 mod setup;
+mod share;
 mod shell;
 mod startup;
 mod update;

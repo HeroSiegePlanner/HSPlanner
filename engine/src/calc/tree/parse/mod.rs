@@ -13,6 +13,62 @@ mod rules;
 pub(crate) use conversion::*;
 pub(crate) use rules::RULES;
 
+pub const ELEMENTS: &[&str] = &["arcane", "cold", "fire", "lightning", "poison"];
+
+pub(crate) static CONVERSION_TARGET_STATS: LazyLock<HashMap<&'static str, &'static str>> =
+    LazyLock::new(|| {
+        [
+            ("magic skill damage", "magic_skill_damage"),
+            ("ranged projectile damage", "ranged_projectile_damage"),
+            ("damage return", "damage_return"),
+            ("increased maximum life", "increased_life"),
+            ("maximum life", "life"),
+            ("maximum mana", "mana"),
+            ("physical damage", "additive_physical_damage"),
+            ("attack damage", "attack_damage"),
+            ("ranged physical damage", "flat_ranged_physical_damage"),
+            ("increased life", "increased_life"),
+            ("increased damage", "enhanced_damage"),
+        ]
+        .into_iter()
+        .collect()
+    });
+
+static SELF_CONDITION_SUFFIXES: LazyLock<Vec<(Regex, SelfConditionKey)>> = LazyLock::new(|| {
+    vec![
+        (Regex::new(r"(?i)\s+when\s+at\s+Full\s+Life$").unwrap(), SelfConditionKey::FullLife),
+        (
+            Regex::new(r"(?i)\s+when\s+critical\s+strike\s+chance\s+is\s+below\s+40%$").unwrap(),
+            SelfConditionKey::CritChanceBelow40,
+        ),
+        (
+            Regex::new(
+                r"(?i)\s+(?:when|while)\s+(?:current\s+life\s+is\s+)?below\s+40%(?:\s+of)?\s+maximum\s+life$",
+            )
+            .unwrap(),
+            SelfConditionKey::LifeBelow40,
+        ),
+    ]
+});
+
+static WEAPON_CONTEXT_SUFFIX: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(
+        r"(?i)\s+(?:when|while)\s+(?:using|wielding|dual\s+wielding)\s+(?:a\s+|an\s+)?(?:two\s+handed\s+)?(?:melee\s+)?(?:axe[s]?|sword[s]?|bow[s]?|gun[s]?|wand[s]?|staff(?:\s+or\s+a\s+cane)?|cane|shield[s]?|throwing\s+weapon[s]?|two\s+handed\s+weapon|two\s+handed\s+melee\s+weapon)$",
+    )
+    .unwrap()
+});
+
+static MOD_CACHE: LazyLock<Mutex<HashMap<String, Option<ParsedMod>>>> =
+    LazyLock::new(|| Mutex::new(HashMap::new()));
+
+static META_CACHE: LazyLock<Mutex<HashMap<String, Option<ParsedMeta>>>> =
+    LazyLock::new(|| Mutex::new(HashMap::new()));
+
+// The optimizer re-classifies the same node lines for every candidate it scores,
+// so an uncached classify would rerun every rule regex millions of times per run.
+static CLASS_CACHE: LazyLock<Mutex<HashMap<String, TreeLineClass>>> =
+    LazyLock::new(|| Mutex::new(HashMap::new()));
+
 // ---------- types ----------
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -86,8 +142,6 @@ pub enum ParsedMeta {
     Disable(ParsedDisable),
 }
 
-pub const ELEMENTS: &[&str] = &["arcane", "cold", "fire", "lightning", "poison"];
-
 // ---------- rule shapes ----------
 
 type ModBuild = fn(&Captures<'_>) -> Option<ParsedMod>;
@@ -108,50 +162,7 @@ pub(crate) struct DisableRule {
     pub target: DisableTarget,
 }
 
-pub(crate) static CONVERSION_TARGET_STATS: LazyLock<HashMap<&'static str, &'static str>> =
-    LazyLock::new(|| {
-        [
-            ("magic skill damage", "magic_skill_damage"),
-            ("ranged projectile damage", "ranged_projectile_damage"),
-            ("damage return", "damage_return"),
-            ("increased maximum life", "increased_life"),
-            ("maximum life", "life"),
-            ("maximum mana", "mana"),
-            ("physical damage", "additive_physical_damage"),
-            ("attack damage", "attack_damage"),
-            ("ranged physical damage", "flat_ranged_physical_damage"),
-            ("increased life", "increased_life"),
-            ("increased damage", "enhanced_damage"),
-        ]
-        .into_iter()
-        .collect()
-    });
-
 // ---------- regex helpers (lazily compiled once) ----------
-
-static SELF_CONDITION_SUFFIXES: LazyLock<Vec<(Regex, SelfConditionKey)>> = LazyLock::new(|| {
-    vec![
-        (Regex::new(r"(?i)\s+when\s+at\s+Full\s+Life$").unwrap(), SelfConditionKey::FullLife),
-        (
-            Regex::new(r"(?i)\s+when\s+critical\s+strike\s+chance\s+is\s+below\s+40%$").unwrap(),
-            SelfConditionKey::CritChanceBelow40,
-        ),
-        (
-            Regex::new(
-                r"(?i)\s+(?:when|while)\s+(?:current\s+life\s+is\s+)?below\s+40%(?:\s+of)?\s+maximum\s+life$",
-            )
-            .unwrap(),
-            SelfConditionKey::LifeBelow40,
-        ),
-    ]
-});
-
-static WEAPON_CONTEXT_SUFFIX: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(
-        r"(?i)\s+(?:when|while)\s+(?:using|wielding|dual\s+wielding)\s+(?:a\s+|an\s+)?(?:two\s+handed\s+)?(?:melee\s+)?(?:axe[s]?|sword[s]?|bow[s]?|gun[s]?|wand[s]?|staff(?:\s+or\s+a\s+cane)?|cane|shield[s]?|throwing\s+weapon[s]?|two\s+handed\s+weapon|two\s+handed\s+melee\s+weapon)$",
-    )
-    .unwrap()
-});
 
 pub(crate) fn strip_weapon_context(line: &str) -> String {
     let stripped = WEAPON_CONTEXT_SUFFIX.replace(line, "");
@@ -175,17 +186,6 @@ pub(crate) fn num(s: &str) -> f64 {
 }
 
 // ---------- caches ----------
-
-static MOD_CACHE: LazyLock<Mutex<HashMap<String, Option<ParsedMod>>>> =
-    LazyLock::new(|| Mutex::new(HashMap::new()));
-
-static META_CACHE: LazyLock<Mutex<HashMap<String, Option<ParsedMeta>>>> =
-    LazyLock::new(|| Mutex::new(HashMap::new()));
-
-// The optimizer re-classifies the same node lines for every candidate it scores,
-// so an uncached classify would rerun every rule regex millions of times per run.
-static CLASS_CACHE: LazyLock<Mutex<HashMap<String, TreeLineClass>>> =
-    LazyLock::new(|| Mutex::new(HashMap::new()));
 
 // ---------- dispatchers ----------
 

@@ -540,7 +540,9 @@ mod tests {
         a: (&'static str, u32),
         b: (&'static str, u32),
     ) -> Vec<Vec<(&'static str, u32)>> {
-        let ranks = |(node, max): (&'static str, u32)| (1..=max).map(move |rank| (node, rank));
+        let ranks = |(node, max): (&'static str, u32)| {
+            (1..=max + parity::GRANTED).map(move |rank| (node, rank))
+        };
         let rows = ranks(a).flat_map(|x| ranks(b).map(move |y| [x, y]));
         rows.map(|pair| with.iter().copied().chain(pair).collect())
             .collect()
@@ -550,7 +552,7 @@ mod tests {
     fn the_engines_subskill_hits_follow_the_sim() {
         let (sim, base) = (expected(&[]), engine(&[]));
         assert!(near(sim, 1.) && near(base, 1.), "sim {sim}, engine {base}");
-        let wrong = parity::misses("exo", "tsunami", expected, engine, 0.01);
+        let wrong = parity::misses_past("exo", "tsunami", expected, engine, 0.01, parity::GRANTED);
         assert!(wrong.is_empty(), "\n{}", wrong.join("\n"));
     }
 
@@ -566,7 +568,7 @@ mod tests {
         together.extend(pairs(&[], fan, back));
         together.extend(pairs(&[], giant, fan));
         together.extend(pairs(&[], trembling, fan));
-        for rank in 1..=3 {
+        for rank in 1..=3 + parity::GRANTED {
             together.extend(pairs(&[("watery_turbulence", rank)], giant, trembling));
         }
         together.extend(pairs(&[], ("arctic_aqua", 5), ("salt_balance", 5)));

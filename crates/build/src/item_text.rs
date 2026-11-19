@@ -9,6 +9,18 @@ use std::{
     sync::LazyLock,
 };
 
+static VALUE: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"^([+-]?)(?:\[([0-9.]+)-([0-9.]+)\]|([0-9.]+))%?\s+(.+)$").unwrap()
+});
+static SUFFIX: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"(?i)^(.+?)\s+\[T(\d+)(?:,\s*(roll\s+([0-9.]+)|custom))?\]$").unwrap()
+});
+static SOCKET: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"(?i)^\[(\d+)\]\s*\((Normal|Rainbow)\):\s*(.+)$").unwrap());
+
+static NUMBERS: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"[+-]?(?:\[[0-9.]+-[0-9.]+\]|[0-9.]+)%?").unwrap());
+
 #[derive(Clone, Debug)]
 pub struct Diagnostic {
     pub line: usize,
@@ -19,14 +31,6 @@ pub struct ParseResult {
     pub item: Option<EquippedItem>,
     pub diagnostics: Vec<Diagnostic>,
 }
-static VALUE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"^([+-]?)(?:\[([0-9.]+)-([0-9.]+)\]|([0-9.]+))%?\s+(.+)$").unwrap()
-});
-static SUFFIX: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"(?i)^(.+?)\s+\[T(\d+)(?:,\s*(roll\s+([0-9.]+)|custom))?\]$").unwrap()
-});
-static SOCKET: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"(?i)^\[(\d+)\]\s*\((Normal|Rainbow)\):\s*(.+)$").unwrap());
 
 pub fn custom_stats() -> Vec<(String, String, bool)> {
     let mut by_name = BTreeMap::new();
@@ -95,8 +99,6 @@ fn prefix(line: &str) -> Option<(f64, bool, String)> {
 }
 fn description_key(text: &str) -> String {
     let text = hsplanner_engine::calc::resistance::canonical_text(text);
-    static NUMBERS: LazyLock<Regex> =
-        LazyLock::new(|| Regex::new(r"[+-]?(?:\[[0-9.]+-[0-9.]+\]|[0-9.]+)%?").unwrap());
     NUMBERS
         .replace_all(&text, "")
         .split_whitespace()

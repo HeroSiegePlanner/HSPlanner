@@ -1,13 +1,38 @@
 //! Skill hitboxes (data/skill-hitboxes.json) and how the game's size stats grow them.
 use hsplanner_build::BuildSnapshot;
 use hsplanner_engine::calc::{
-    data,
+    affix_tags, data,
     stats::{ComputedStats, SourceType},
     subskill::effective_skill_tags,
 };
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::sync::LazyLock;
+
+static HITBOXES: LazyLock<Hitboxes> = LazyLock::new(|| {
+    serde_json::from_str(include_str!("../../../data/skill-hitboxes.json"))
+        .expect("embedded skill hitboxes must be valid")
+});
+
+/// Stats that can change a skill's size, in display order.
+const SIZE_KEYS: [&str; 12] = [
+    "area_of_effect",
+    "spell_aoe_radius",
+    "attack_radius",
+    "explosion_aoe",
+    "orbital_skill_size",
+    "projectile_size_increase",
+    "spell_projectile_size",
+    "melee_projectile_size",
+    "shield_skill_radius",
+    "melee_range",
+    "orbiting_relic_size",
+    "skill_relic_projectile_size",
+];
+/// Total Chaos raises both the AoE and the explosion radius.
+const TOTAL_AREA: &str = "area_of_effect_more";
+/// Skill-scoped subtree size, which only ever belongs to its own skill.
+const SUBTREE_SIZE: &str = "projectile_size";
 
 #[derive(Deserialize)]
 struct Hitboxes {
@@ -106,11 +131,6 @@ fn one() -> f64 {
     1.
 }
 
-static HITBOXES: LazyLock<Hitboxes> = LazyLock::new(|| {
-    serde_json::from_str(include_str!("../../../data/skill-hitboxes.json"))
-        .expect("embedded skill hitboxes must be valid")
-});
-
 pub(crate) fn skill(id: &str) -> Option<&'static SkillHitbox> {
     HITBOXES.skills.get(id)
 }
@@ -131,33 +151,13 @@ pub(crate) struct SizeTerm {
     pub scale: f64,
 }
 
-/// Stats that can change a skill's size, in display order.
-const SIZE_KEYS: [&str; 12] = [
-    "area_of_effect",
-    "spell_aoe_radius",
-    "attack_radius",
-    "explosion_aoe",
-    "orbital_skill_size",
-    "projectile_size_increase",
-    "spell_projectile_size",
-    "melee_projectile_size",
-    "shield_skill_radius",
-    "melee_range",
-    "orbiting_relic_size",
-    "skill_relic_projectile_size",
-];
-/// Total Chaos raises both the AoE and the explosion radius.
-const TOTAL_AREA: &str = "area_of_effect_more";
-/// Skill-scoped subtree size, which only ever belongs to its own skill.
-const SUBTREE_SIZE: &str = "projectile_size";
-
 pub(crate) fn is_size_stat(key: &str) -> bool {
     SIZE_KEYS.contains(&key) || key == TOTAL_AREA || key == SUBTREE_SIZE
 }
 
 /// (key, weight) the tags take; melee range counts half and ignores abilityAOEScale.
 fn counted_keys(tags: &[String]) -> Vec<(&'static str, f64)> {
-    let has = |tag: &str| tags.iter().any(|t| t == tag);
+    let has = |tag: &str| affix_tags::has_tag(tags, tag);
     let (melee, ranged, spell, projectile) =
         (has("Melee"), has("Ranged"), has("Spell"), has("Projectile"));
     let mut keys = Vec::new();

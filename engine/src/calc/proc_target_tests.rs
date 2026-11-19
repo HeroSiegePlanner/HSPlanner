@@ -398,8 +398,8 @@ fn explicit_hybrid_proc_level_is_shared_by_both_components() {
         .extend([("all_skills", "40"), ("arcane_skills", "20")]);
     let (target, _) = fixture.run();
     assert_eq!(attack(&target).effective_rank_max, 80.0);
-    // Homing Missile: W·(1 + V2/100), V2 = 28·L (game natives) → 100 + 28·80.
-    assert_eq!(attack(&target).weapon_damage_pct_max, 2340.0);
+    // Homing Missile: W·(1 + V2/100), V2 = 22·L (Season 11) → 100 + 22·80.
+    assert_eq!(attack(&target).weapon_damage_pct_max, 1860.0);
     let elemental_rank = target
         .calculation()
         .iter()

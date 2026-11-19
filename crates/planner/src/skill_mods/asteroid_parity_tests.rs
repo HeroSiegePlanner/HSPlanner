@@ -96,7 +96,9 @@ fn agree(together: &[Vec<(&str, u32)>], within: f32) {
 fn every_node_with(with: &[(&'static str, u32)]) -> Vec<Vec<(&'static str, u32)>> {
     let nodes = parity::nodes(CLASS, SKILL).iter();
     let others = nodes.filter(|node| with.iter().all(|(id, _)| *id != node.id));
-    let ranks = others.flat_map(|node| [(node.id.as_str(), 1), (node.id.as_str(), node.max_rank)]);
+    let ranks = others.flat_map(|node| {
+        [1, node.max_rank, node.max_rank + parity::GRANTED].map(|rank| (node.id.as_str(), rank))
+    });
     ranks.map(|rank| [with, &[rank]].concat()).collect()
 }
 
@@ -104,7 +106,7 @@ fn every_node_with(with: &[(&'static str, u32)]) -> Vec<Vec<(&'static str, u32)>
 fn the_engines_subskill_hits_follow_the_sim() {
     let (sim, base) = (expected(&[]), engine(&[]));
     assert!((sim - base).abs() < 0.01, "sim {sim}, engine {base}");
-    let wrong = parity::misses(CLASS, SKILL, expected, engine, 0.01);
+    let wrong = parity::misses_past(CLASS, SKILL, expected, engine, 0.01, parity::GRANTED);
     assert!(wrong.is_empty(), "\n{}", wrong.join("\n"));
 }
 
@@ -112,11 +114,11 @@ fn the_engines_subskill_hits_follow_the_sim() {
 fn the_engine_follows_the_nodes_the_game_plays_together() {
     let mut together = Vec::new();
     for node in ["asteroid_aftershock", "perseids"] {
-        for rank in [1, 3, 5] {
+        for rank in [1, 3, 5, 5 + parity::GRANTED] {
             together.extend(every_node_with(&[(node, rank)]));
         }
     }
-    for rank in 1..=3 {
+    for rank in 1..=3 + parity::GRANTED {
         together.extend(every_node_with(&[("geomagnetic_reversal", rank)]));
         together.extend(every_node_with(&[("planetary_collapse", rank)]));
     }
@@ -128,8 +130,8 @@ fn the_engine_follows_the_nodes_the_game_plays_together() {
 fn the_engine_follows_the_cataclysms_rain_under_every_node_that_reaches_it() {
     let mut together = every_node_with(&[(CATACLYSM, 1)]);
     together.extend(every_node_with(&[(CATACLYSM, 3)]));
-    for planetary in 0..=3 {
-        for world_ending in 0..=5 {
+    for planetary in 0..=3 + parity::GRANTED {
+        for world_ending in 0..=5 + parity::GRANTED {
             let size = [
                 ("planetary_collapse", planetary),
                 ("world_ending_impact", world_ending),

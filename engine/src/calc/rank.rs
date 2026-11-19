@@ -5,6 +5,10 @@ use super::data::can_star_forge;
 use super::skills::{r_max, r_min, rg, ItemSkillBonuses, Ranged, Skill, StatMap};
 use super::types::{EquippedItem, Inventory, ItemBase};
 
+/// Item data names the roll, not a skill: "+X to Random Skill" only lands once
+/// the user picks which skill from the item's pool it rolled.
+pub const RANDOM_SKILL_NAME: &str = "Random Skill";
+
 pub fn normalize_skill_name(name: &str) -> String {
     name.trim().to_lowercase()
 }
@@ -40,10 +44,6 @@ pub fn item_skill_rank_range(
     // Star scaling already floors; round fractional unstarred fallback data.
     (r_min(scaled).round(), r_max(scaled).round())
 }
-
-/// Item data names the roll, not a skill: "+X to Random Skill" only lands once
-/// the user picks which skill from the item's pool it rolled.
-pub const RANDOM_SKILL_NAME: &str = "Random Skill";
 
 // "+X to <Tag> Skills" raises the rank of any skill carrying the tag,
 // independent of its damage type. Which key pairs with which tag lives in

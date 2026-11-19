@@ -7,17 +7,6 @@ const DUMMY_RADIUS: f32 = 12.;
 /// GameMaker's epsilon when it compares reals.
 const EPSILON: f32 = 1e-5;
 
-/// The direction turns toward the target by at most the turn rate, which starts at `turn` and
-/// grows by `gain` a Step; from `snap` on the object faces its target outright.
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub(crate) struct Homing {
-    pub turn: f32,
-    pub gain: f32,
-    pub snap: f32,
-    /// The direction it starts from when nothing sets one, whatever it is made with.
-    pub start: Option<f32>,
-}
-
 /// Objects whose own Step homes and ends on touching: Exo_Solar_Flare_obj Create_0 (turnRate 1.75)
 /// and Step_0 L0x13-L0x16 (0.025 more a Step, straight at it from 5) and L0x1f-L0x22; Fireflies'
 /// Pyromancer_Fire_Ball_Fly_obj the same from 3.5 (Create_0, Step_0 L5-L7), its direction left
@@ -51,6 +40,17 @@ const HOMERS: [(&str, Homing); 3] = [
         },
     ),
 ];
+
+/// The direction turns toward the target by at most the turn rate, which starts at `turn` and
+/// grows by `gain` a Step; from `snap` on the object faces its target outright.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub(crate) struct Homing {
+    pub turn: f32,
+    pub gain: f32,
+    pub snap: f32,
+    /// The direction it starts from when nothing sets one, whatever it is made with.
+    pub start: Option<f32>,
+}
 
 /// What an instance does on its own: homes unless it circles (isOrbital skips the homing) and
 /// ends when its centre meets the enemy.

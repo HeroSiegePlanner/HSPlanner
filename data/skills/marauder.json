@@ -86,7 +86,7 @@
       {
         "id": "ace_up_your_sleeve",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.04, 1.08, 1.12, 1.16, 1.2], "note": "extra cast with chance 4r% per cast (x(1+p5%))"}], "confidence": "C", "note": "card p5 row; planner on_cast 4r% + of_total_damage 100 agrees"},
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.04, 1.08, 1.12, 1.16, 1.2, 1.24, 1.28, 1.32], "note": "extra cast with chance 4r% per cast (x(1+p5%))"}], "confidence": "C", "note": "card p5 row; planner on_cast 4r% + of_total_damage 100 agrees"},
         "name": "Ace Up Your Sleeve",
         "description": "Chance on cast to unleash an additional bouncing grenade.",
         "maxRank": 5,
@@ -216,7 +216,7 @@
       {
         "id": "coast_to_coast",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3], "note": "XSP(1 + p14.s9): +1 grenade per rank, symmetric 12 deg fan aim + 12*(k-(n-1)/2), start host + lengthdir(8, angle), target host + lengthdir(max(cursor distance, 64), angle) (R4 255#0, C)"}, {"kind": "extra_hits", "byRank": [2.7, 4.21, 4.61], "per": "use", "replacesProjectileHits": true, "note": "R4 fan table, cursor above the dummy (Resztki E base landings): n = 2,3,4 grenades -> AOE nr 1 hits 2,3,3 (x1.1 D), AOE nr 2 hits 1,1,1 (x1.2 D), plus the shrapnel 0.403 per grenade (I for off-axis grenades): total 4.21 / 5.71 / 6.11 minus the base 1.50 = +2.70 / +4.21 / +4.61 (cursor on the dummy: AOE 1 hits 2,3,4 and AOE 2 hits 2,1,2 for n = 2,3,4)"}, {"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD += 25/rank (fire)"}], "confidence": "I", "note": "card p14 row (R4 255#0 fan table, C geometry; shrapnel of the extra grenades I); replaces 'fan spread I' with perExtraProjectile 1.0"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [1, 2, 3, 4, 5, 6], "note": "XSP(1 + p14.s9): +1 grenade per rank, symmetric 12 deg fan aim + 12*(k-(n-1)/2), start host + lengthdir(8, angle), target host + lengthdir(max(cursor distance, 64), angle) (R4 255#0, C)"}, {"kind": "extra_hits", "byRank": [2.7, 4.21, 4.61], "per": "use", "replacesProjectileHits": true, "note": "R4 fan table, cursor above the dummy (Resztki E base landings): n = 2,3,4 grenades -> AOE nr 1 hits 2,3,3 (x1.1 D), AOE nr 2 hits 1,1,1 (x1.2 D), plus the shrapnel 0.403 per grenade (I for off-axis grenades): total 4.21 / 5.71 / 6.11 minus the base 1.50 = +2.70 / +4.21 / +4.61 (cursor on the dummy: AOE 1 hits 2,3,4 and AOE 2 hits 2,1,2 for n = 2,3,4)"}, {"kind": "damage_pct", "byRank": [25, 50, 75], "note": "LSSD += 25/rank (fire)"}], "confidence": "I", "note": "card p14 row (R4 255#0 fan table, C geometry; shrapnel of the extra grenades I); replaces 'fan spread I' with perExtraProjectile 1.0"},
         "name": "Coast to Coast",
         "description": "Throw multiple bouncing grenades in an arc.",
         "maxRank": 3,
@@ -322,7 +322,7 @@
       {
         "id": "multi_wield",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4], "note": "+1 attack projectile per rank ([226] += r)"}, {"kind": "extra_hits", "byRank": [2, 2], "per": "use", "replacesProjectileHits": true, "note": "H(n)-H(1) from the R4 circle-mask table (r_p = 31.5 px) at 160 px: n = 2,3,4,5 -> 2,3,4,3 hits -> +1,+2,+3,+2 (was +1,0,+1,0); n = 1 + r"}], "confidence": "I", "note": "card p5 row (R4 254#1, circle mask r 31.5 px C) and 'Trafienia na kukle' table; flight range of the projectile to 160 px still I S11: +2 projectiles per rank: n = 1 + 2r = 3, 5 -> H(n) - H(1) = 2, 2.", "plannerFix": "planner perExtraProjectile (linear) cannot express the H(n) table; card (R4): n_traf(n, 160 px) = 1,2,3,4,3,4,3,4,3"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6, 8, 10], "note": "+1 attack projectile per rank ([226] += r)"}, {"kind": "extra_hits", "byRank": [2, 2], "per": "use", "replacesProjectileHits": true, "note": "H(n)-H(1) from the R4 circle-mask table (r_p = 31.5 px) at 160 px: n = 2,3,4,5 -> 2,3,4,3 hits -> +1,+2,+3,+2 (was +1,0,+1,0); n = 1 + r"}], "confidence": "I", "note": "card p5 row (R4 254#1, circle mask r 31.5 px C) and 'Trafienia na kukle' table; flight range of the projectile to 160 px still I S11: +2 projectiles per rank: n = 1 + 2r = 3, 5 -> H(n) - H(1) = 2, 2.", "plannerFix": "planner perExtraProjectile (linear) cannot express the H(n) table; card (R4): n_traf(n, 160 px) = 1,2,3,4,3,4,3,4,3"},
         "name": "Multi Wield",
         "description": "Increases the amount of heavy balls.",
         "maxRank": 2,
@@ -413,7 +413,7 @@
       {
         "id": "sharpened_spikes",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "other", "byRank": [1.4, 1.8, 2.2], "note": "V1 x(1+0.4r) on part V only (multiplier on V part, not whole hit); exact D ratio depends on weapon W"}, {"kind": "projectiles", "byRank": [2, 3, 4], "note": "[226] += r+1 extra projectiles"}, {"kind": "extra_hits", "byRank": [2, 3, 2], "per": "use", "replacesProjectileHits": true, "note": "H(n)-H(1) with n = 1+(r+1) = r+2 at 160 px (R4 circle mask): n=3 -> 3, n=4 -> 4, n=5 -> 3 hits -> +2, +3, +2 (was +0, +1, +0)"}, {"kind": "dot", "byRank": [0.5, 1.0, 1.5], "note": "always-on bleed [22] = floor(hit*50r%) (100 % chance)"}], "confidence": "C", "note": "card p12 row (C); H(n) from the R4 circle-mask table (254#1), n = base + r + 1"},
+        "dummy": {"effects": [{"kind": "other", "byRank": [1.4, 1.8, 2.2], "note": "V1 x(1+0.4r) on part V only (multiplier on V part, not whole hit); exact D ratio depends on weapon W"}, {"kind": "projectiles", "byRank": [2, 3, 4, 5, 6, 7], "note": "[226] += r+1 extra projectiles"}, {"kind": "extra_hits", "byRank": [2, 3, 2], "per": "use", "replacesProjectileHits": true, "note": "H(n)-H(1) with n = 1+(r+1) = r+2 at 160 px (R4 circle mask): n=3 -> 3, n=4 -> 4, n=5 -> 3 hits -> +2, +3, +2 (was +0, +1, +0)"}, {"kind": "dot", "byRank": [0.5, 1.0, 1.5], "note": "always-on bleed [22] = floor(hit*50r%) (100 % chance)"}], "confidence": "C", "note": "card p12 row (C); H(n) from the R4 circle-mask table (254#1), n = base + r + 1"},
         "name": "Sharpened Spikes",
         "description": "Unleash multiple smaller heavy balls dealing a portion of the damage dealing increased damage to bleeding targets.",
         "maxRank": 3,
@@ -432,7 +432,7 @@
       {
         "id": "warlord_lees_apprentice",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.675, 1.7, 3.075], "per": "use", "note": "r Warlord hits, each W*(1+0.35r*v)/(1+v) with v=V1(1+LSSD)/100 assumed 1 (weapon dependent); bounded by Alarm_2 frequency (I): one hit per skill use assumed"}], "confidence": "I", "note": "card p13 row (C/I), Warlord analysis", "plannerFix": "planner of_total_damage 35/rank + projectile_count is a proxy; Warlord is an independent pursuing ally with its own hit"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.675, 1.7, 3.075, 4.8, 6.875, 9.3], "per": "use", "note": "r Warlord hits, each W*(1+0.35r*v)/(1+v) with v=V1(1+LSSD)/100 assumed 1 (weapon dependent); bounded by Alarm_2 frequency (I): one hit per skill use assumed"}], "confidence": "I", "note": "card p13 row (C/I), Warlord analysis", "plannerFix": "planner of_total_damage 35/rank + projectile_count is a proxy; Warlord is an independent pursuing ally with its own hit"},
         "name": "Warlord Lee's Apprentice",
         "description": "Summon multiple heavy balls permanently dragging them behind you. When attacking or casting unleash the heavy balls towards a nearby enemy. Using this skill again will destroy the heavy balls.",
         "maxRank": 3,
@@ -622,7 +622,7 @@
       {
         "id": "rollin_rollin_rollin",
         "positionIndex": 10,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.4, 4.8, 7.2, 9.6, 12.0], "per": "use", "note": "rolling Molten patches: 2 patches (k=0,1, 33 px apart) x 3 ticks x floor(dmg*0.4r) = 2.4r D per use"}], "confidence": "I", "note": "card p10 row (C/I)", "plannerFix": "planner of_total_damage 40/rank counts only 0.4r; card gives 6 ticks x 0.4r D"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.4, 4.8, 7.2, 9.6, 12.0, 14.4, 16.8, 19.2], "per": "use", "note": "rolling Molten patches: 2 patches (k=0,1, 33 px apart) x 3 ticks x floor(dmg*0.4r) = 2.4r D per use"}], "confidence": "I", "note": "card p10 row (C/I)", "plannerFix": "planner of_total_damage 40/rank counts only 0.4r; card gives 6 ticks x 0.4r D"},
         "name": "Rollin' Rollin' Rollin'",
         "description": "Big bo-om rolls on the ground leaving behind a trail of burning flames.",
         "maxRank": 5,
@@ -646,7 +646,7 @@
       {
         "id": "crashboom",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [-2.05, -1.3, 1.7], "per": "use", "note": "transformation: the main bomb breaks at the apex into crashBoom = 4r bombs in a RING (360/n degrees, 8 px from the split, 17 movement frames x 2.59 px), each explosion 0.75r*D (V1 x p12.s9%); the base explosion and its shards (2.8 D) are lost. Bombs landing <= 43.0 px from the dummy hit: cursor above 1,1,2,2,3 for r12 = 1..5 (nearest bomb 41.1 px at n = 4, Resztki E), cursor on the dummy 1,1,1,2,3. Extra = n_hit*0.75r - 2.8 = 0.75-2.8, 1.5-2.8, 2*2.25-2.8. Shards of the crash bombs (hand-copied pe, x f_shred) are not counted (I)"}], "confidence": "I", "note": "card p12 row (R4 257#0 ring, C formula, I mask margins 41.1 vs 43.0 px) + Resztki E; was a flat -3 for all ranks", "plannerFix": "planner of_total_damage 75/rank + projectile_count 4r; card: transformation, dummy hits drop"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [-2.05, -1.3, 1.7, 3.2, 8.45], "per": "use", "note": "transformation: the main bomb breaks at the apex into crashBoom = 4r bombs in a RING (360/n degrees, 8 px from the split, 17 movement frames x 2.59 px), each explosion 0.75r*D (V1 x p12.s9%); the base explosion and its shards (2.8 D) are lost. Bombs landing <= 43.0 px from the dummy hit: cursor above 1,1,2,2,3 for r12 = 1..5 (nearest bomb 41.1 px at n = 4, Resztki E), cursor on the dummy 1,1,1,2,3. Extra = n_hit*0.75r - 2.8 = 0.75-2.8, 1.5-2.8, 2*2.25-2.8. Shards of the crash bombs (hand-copied pe, x f_shred) are not counted (I)"}], "confidence": "I", "note": "card p12 row (R4 257#0 ring, C formula, I mask margins 41.1 vs 43.0 px) + Resztki E; was a flat -3 for all ranks", "plannerFix": "planner of_total_damage 75/rank + projectile_count 4r; card: transformation, dummy hits drop"},
         "name": "Crashboom",
         "description": "Throw big bo-om high into the air scattering additional bombs into all directions.",
         "maxRank": 3,
@@ -670,7 +670,7 @@
       {
         "id": "molten_boom",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "dot", "byRank": [0.65, 1.3, 1.95], "per": "use", "note": "burning [18] += floor(dmg*75r%) always (per use, D fraction)"}, {"kind": "extra_hits", "byRank": [6.9, 9.2, 11.5], "per": "use", "note": "R4 257#1 (C structure, I mask): 2r trails of 9 segments (96x60 ellipse, life 60 frames, tick 30 frames -> 2 hits per overlapping segment, full damage[3]); expected overlapping segments per trail 1.15 for the cursor 29.5 px above (1.3 on the dummy, range 0.9-1.5) -> ~2.3 hits per trail -> 4.6*r hits per use (5.3*r with the cursor on the dummy)"}], "confidence": "I", "note": "card p14 row (R4 257#1 + Resztki E recomputation 4.6*r); the old entry did not count the trails S11: trails 2 + r (3, 4, 5) at ~2.3 hits each; burning 65r %."},
+        "dummy": {"effects": [{"kind": "dot", "byRank": [0.65, 1.3, 1.95], "per": "use", "note": "burning [18] += floor(dmg*75r%) always (per use, D fraction)"}, {"kind": "extra_hits", "byRank": [6.9, 9.2, 11.5, 13.8, 16.1, 18.4], "per": "use", "note": "R4 257#1 (C structure, I mask): 2r trails of 9 segments (96x60 ellipse, life 60 frames, tick 30 frames -> 2 hits per overlapping segment, full damage[3]); expected overlapping segments per trail 1.15 for the cursor 29.5 px above (1.3 on the dummy, range 0.9-1.5) -> ~2.3 hits per trail -> 4.6*r hits per use (5.3*r with the cursor on the dummy)"}], "confidence": "I", "note": "card p14 row (R4 257#1 + Resztki E recomputation 4.6*r); the old entry did not count the trails S11: trails 2 + r (3, 4, 5) at ~2.3 hits each; burning 65r %."},
         "name": "Molten Boom",
         "description": "Unleashes multiple burning trails of fire in random directions after exploding.",
         "maxRank": 3,
@@ -786,7 +786,7 @@
       {
         "id": "in_flames",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.0, 4.0, 6.0], "per": "use", "note": "In Flames: k_fl x 5 ticks x 0.08r D with k_fl = 5 flames overlapping the dummy (cursor above; 4 for the cursor on the dummy), ring of 9 flames at absolute angles 40*i deg, radius 64 px + the centre one, Marauder_Flame_spr bitmap mask; 5 hits per flame (tick_hits.py 148 30, not 6)"}], "confidence": "I", "note": "card p6 row (R4 259#1: k_fl 5/4 instead of 6/9, 5 ticks instead of 6; Resztki E unchanged; mask approximation I)", "plannerFix": "planner of_total_damage 8/rank; game spawns 10 burning flame objects, 6 ticks each, on the landing"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.0, 4.0, 6.0, 8.0, 10.0, 12.0], "per": "use", "note": "In Flames: k_fl x 5 ticks x 0.08r D with k_fl = 5 flames overlapping the dummy (cursor above; 4 for the cursor on the dummy), ring of 9 flames at absolute angles 40*i deg, radius 64 px + the centre one, Marauder_Flame_spr bitmap mask; 5 hits per flame (tick_hits.py 148 30, not 6)"}], "confidence": "I", "note": "card p6 row (R4 259#1: k_fl 5/4 instead of 6/9, 5 ticks instead of 6; Resztki E unchanged; mask approximation I)", "plannerFix": "planner of_total_damage 8/rank; game spawns 10 burning flame objects, 6 ticks each, on the landing"},
         "name": "In Flames",
         "description": "Scorch the ground around the point of impact dealing damage over time.",
         "maxRank": 3,
@@ -879,7 +879,7 @@
       {
         "id": "cannonade_grapple",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9], "note": "cannonade: 3r unstable bombs per salvo in a ring (kierunek_kuli + 360/n*i), 2 salvos (frames 17 and 26) along the ball flight"}, {"kind": "extra_hits", "byRank": [0, 1, 2], "per": "use", "replacesProjectileHits": true, "note": "bomb blasts on the dummy for r12 = 1..3: 0,1,2 (cursor above, Resztki E; 1,1,2 for the cursor on the dummy); each bomb flies 60 px from the ball and explodes (r 43 px), nearest bombs 24.9-25.8 px (above) / 37.7-38.6 px (on dummy) from the centre, margins I; each blast = 1 D"}], "confidence": "I", "note": "card p12 row (R4 259#2 ring + Resztki E recount); was the midpoint 1.5/3.0/4.5 of the old '0-3r' range", "plannerFix": "planner projectile_count 3/rank has no hit conversion; card: 0-3r explosions on dummy (I)"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [3, 6, 9, 12, 15, 18], "note": "cannonade: 3r unstable bombs per salvo in a ring (kierunek_kuli + 360/n*i), 2 salvos (frames 17 and 26) along the ball flight"}, {"kind": "extra_hits", "byRank": [0, 1, 2], "per": "use", "replacesProjectileHits": true, "note": "bomb blasts on the dummy for r12 = 1..3: 0,1,2 (cursor above, Resztki E; 1,1,2 for the cursor on the dummy); each bomb flies 60 px from the ball and explodes (r 43 px), nearest bombs 24.9-25.8 px (above) / 37.7-38.6 px (on dummy) from the centre, margins I; each blast = 1 D"}], "confidence": "I", "note": "card p12 row (R4 259#2 ring + Resztki E recount); was the midpoint 1.5/3.0/4.5 of the old '0-3r' range", "plannerFix": "planner projectile_count 3/rank has no hit conversion; card: 0-3r explosions on dummy (I)"},
         "name": "Cannonade Grapple",
         "description": "Throw bombs around you while flying towards the ball.",
         "maxRank": 3,
@@ -891,7 +891,7 @@
       {
         "id": "arena_master",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1, 1, 0], "note": "transformation: orbiting ball (Arena_obj, 10 deg/frame, 2 s): hits per use 1/1/0 for r13 = 1/2/3 (r=4,5 in card: 1,1); replaces base 2 (ball + AOE). Hits per use (dummy at 160 px)"}], "confidence": "C", "note": "card p13 row (C), Zmiany round 2 (reguly 14, 18)", "plannerFix": "planner skill_range 20/rank + 2 hits model; card: orbit transformation, no AOE, no jump; hits 1/1/0"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [1, 1, 0, 1, 1], "note": "transformation: orbiting ball (Arena_obj, 10 deg/frame, 2 s): hits per use 1/1/0 for r13 = 1/2/3 (r=4,5 in card: 1,1); replaces base 2 (ball + AOE). Hits per use (dummy at 160 px)"}], "confidence": "C", "note": "card p13 row (C), Zmiany round 2 (reguly 14, 18)", "plannerFix": "planner skill_range 20/rank + 2 hits model; card: orbit transformation, no AOE, no jump; hits 1/1/0"},
         "name": "Arena Master",
         "description": "Sweep your surroundings with the spike ball gathering monsters on hit and bringing them back in front of you stunning them.",
         "maxRank": 3,
@@ -1059,7 +1059,7 @@
       {
         "id": "spikeballrdment",
         "positionIndex": 2,
-        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.0225, 1.09, 1.2025, 1.36, 1.5625], "note": "Spikeballrdment: chance s10 = 15r% x bomb damage x(1+15r%) -> average 1 + 0.0225 r^2 (I: per bomb vs per wave)"}], "confidence": "I", "note": "card p2 row + R4 261#2 (zapis damage[idx], idx = 0 in the spike branch 0x148781fbc, C); the factor 1 + 0.0225 r^2 is exact only without gear (fire vs physical multipliers differ); chance per bomb vs per wave still I", "plannerFix": "the spike bomb deals PHYSICAL damage (damage[0], not fire damage[3]): fire modifiers do not apply to it, physical ones do; the planner's fire 15/rank proc is the wrong damage type; ratio to the fire bomb is gear dependent (1 without gear)"},
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.0225, 1.09, 1.2025, 1.36, 1.5625, 1.81, 2.05, 2.2], "note": "Spikeballrdment: chance s10 = 15r% x bomb damage x(1+15r%) -> average 1 + 0.0225 r^2 (I: per bomb vs per wave)"}], "confidence": "I", "note": "card p2 row + R4 261#2 (zapis damage[idx], idx = 0 in the spike branch 0x148781fbc, C); the factor 1 + 0.0225 r^2 is exact only without gear (fire vs physical multipliers differ); chance per bomb vs per wave still I", "plannerFix": "the spike bomb deals PHYSICAL damage (damage[0], not fire damage[3]): fire modifiers do not apply to it, physical ones do; the planner's fire 15/rank proc is the wrong damage type; ratio to the fire bomb is gear dependent (1 without gear)"},
         "name": "Spikeballrdment",
         "description": "Chance for bombs to turn into spike balls dealing increased physical damage.",
         "maxRank": 5,
@@ -1178,7 +1178,7 @@
       {
         "id": "all_around_annihilation",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [2.72, 3.59, 4.62], "note": "bombs spread over 360 deg (skillRadius = 2 + p8 + 3r, first at phi0), damage x(1+0.13r) after each wave. At scale 1 only 2 bombs reach the dummy: i = 0 of wave 2 (6.2 px) with D*(1+0.13r)^2 and i = 0 of wave 3 (39.3 px) with D*(1+0.13r)^3 -> equivalent hits (1+0.13r)^2 + (1+0.13r)^3 = 2.72 / 3.59 / 4.62 for r11 = 1..3 (was 1 hit x (1+0.13r)^2). With explosion scale 1.45 (p9 r3) 3,3,3,3,5 hits for r11 = 1..5 (Resztki D)"}], "confidence": "I", "note": "card p11 row (PoR4 rule 40 + Resztki D: 2 hits at scale 1); replaces extra_hits -2 + damage_mult", "plannerFix": "planner fire_skill_damage 13/rank + projectile_count 3r; card: 1 hit with (1+0.13r)^2 multiplier"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [2.72, 3.59, 4.62, 5.82, 7.21, 8.81], "note": "bombs spread over 360 deg (skillRadius = 2 + p8 + 3r, first at phi0), damage x(1+0.13r) after each wave. At scale 1 only 2 bombs reach the dummy: i = 0 of wave 2 (6.2 px) with D*(1+0.13r)^2 and i = 0 of wave 3 (39.3 px) with D*(1+0.13r)^3 -> equivalent hits (1+0.13r)^2 + (1+0.13r)^3 = 2.72 / 3.59 / 4.62 for r11 = 1..3 (was 1 hit x (1+0.13r)^2). With explosion scale 1.45 (p9 r3) 3,3,3,3,5 hits for r11 = 1..5 (Resztki D)"}], "confidence": "I", "note": "card p11 row (PoR4 rule 40 + Resztki D: 2 hits at scale 1); replaces extra_hits -2 + damage_mult", "plannerFix": "planner fire_skill_damage 13/rank + projectile_count 3r; card: 1 hit with (1+0.13r)^2 multiplier"},
         "name": "All Around Annihilation",
         "description": "Unleash bombardment in a circle around you increasing bomb damage over time.",
         "maxRank": 3,
@@ -1206,7 +1206,7 @@
       {
         "id": "big_bo_ombing",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [7.8, 10.2, 11.3], "note": "transformation: Big Bo-oM on the -5 deg track each wave (skillRadius 1, skillAmount XSP(2+p8+3r)); through-centre convention (phi0 = +2.15 deg, bomb lands at 96 % of 64+48k px): r13 = 1..5 -> 7.8 / 10.2 / 11.3 / 12.0 / 13.6 hits (PoR4 7.8/10.0/10.6/11.5/12.5 at phi0 = 0); planner maxRank 3 keeps the first 3. Cursor (x, y-24): 7.8 / 9.7 / 11.2 / 12.7 / 14.2. Scale S = (1+0.2 r13)(1+0.15 r9), shard radius 20.5*S + 11.5 (I model)"}, {"kind": "damage_pct", "byRank": [30, 60, 90], "note": "LSSD += 30/rank"}, {"kind": "cooldown_s", "byRank": [3, 3, 3], "note": "cooldown +3 s"}], "confidence": "I", "note": "card p13 row (PoR4 rule 40 + Resztki D, I: explosion scale and shard directions C, geometry +-1 px I); was 7 / 10.3 / 10.8", "plannerFix": "planner fire 30/rank + area 20 + projectile_count 3r; card: Big Bo-oM per wave with cooldown +3 s"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [7.8, 10.2, 11.3, 12.0, 13.6], "note": "transformation: Big Bo-oM on the -5 deg track each wave (skillRadius 1, skillAmount XSP(2+p8+3r)); through-centre convention (phi0 = +2.15 deg, bomb lands at 96 % of 64+48k px): r13 = 1..5 -> 7.8 / 10.2 / 11.3 / 12.0 / 13.6 hits (PoR4 7.8/10.0/10.6/11.5/12.5 at phi0 = 0); planner maxRank 3 keeps the first 3. Cursor (x, y-24): 7.8 / 9.7 / 11.2 / 12.7 / 14.2. Scale S = (1+0.2 r13)(1+0.15 r9), shard radius 20.5*S + 11.5 (I model)"}, {"kind": "damage_pct", "byRank": [30, 60, 90], "note": "LSSD += 30/rank"}, {"kind": "cooldown_s", "byRank": [3, 3, 3], "note": "cooldown +3 s"}], "confidence": "I", "note": "card p13 row (PoR4 rule 40 + Resztki D, I: explosion scale and shard directions C, geometry +-1 px I); was 7 / 10.3 / 10.8", "plannerFix": "planner fire 30/rank + area 20 + projectile_count 3r; card: Big Bo-oM per wave with cooldown +3 s"},
         "name": "Big Bo-Ombing",
         "description": "Unleash a single trail of big bo-oms with increased damage and area of effect radius.",
         "maxRank": 3,
@@ -1393,7 +1393,7 @@
       {
         "id": "bouncing_chains",
         "positionIndex": 10,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "use", "note": "Bouncing Chains proc chance 3r% per use: +1 HIT (chain placed at hit location hits dummy once); bounces 0 on single dummy"}], "confidence": "C", "note": "card p10 row (C/I)", "plannerFix": "planner projectile_bounces 2/rank on proc; game: +1 HIT on proc, no bounce hits on single dummy"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15, 0.18, 0.21, 0.24], "per": "use", "note": "Bouncing Chains proc chance 3r% per use: +1 HIT (chain placed at hit location hits dummy once); bounces 0 on single dummy"}], "confidence": "C", "note": "card p10 row (C/I)", "plannerFix": "planner projectile_bounces 2/rank on proc; game: +1 HIT on proc, no bounce hits on single dummy"},
         "name": "Bouncing Chains",
         "description": "Chance to unleash chains bouncing between multiple monsters on hit inflicting serrated chains.",
         "maxRank": 5,
@@ -1602,7 +1602,7 @@
       {
         "id": "target_for_destruction",
         "positionIndex": 6,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15], "per": "hit", "note": "chance 3r% per hit: Unstable Bomb at target with damage = net damage (100 % of D, fire): 1 hit"}], "confidence": "C", "note": "card p6 row", "plannerFix": "planner of_total_damage 50 (flat) on proc; card: bomb with 100 % of net damage at chance 3r%"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.03, 0.06, 0.09, 0.12, 0.15, 0.18, 0.21, 0.24], "per": "hit", "note": "chance 3r% per hit: Unstable Bomb at target with damage = net damage (100 % of D, fire): 1 hit"}], "confidence": "C", "note": "card p6 row", "plannerFix": "planner of_total_damage 50 (flat) on proc; card: bomb with 100 % of net damage at chance 3r%"},
         "name": "Target for Destruction",
         "description": "Chance to rain down a spike ball on hit dealing additional damage.",
         "maxRank": 5,
@@ -1705,7 +1705,7 @@
       {
         "id": "ricocheting_net",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.08, 1.16, 1.24], "per": "use", "note": "[716] chain on net hit: 1 hit at damage x(1 + 8r%), chain bounces 0 on single dummy"}], "confidence": "I", "note": "card p13 row (C/I)", "plannerFix": "planner projectile_bounces 4/rank; card: +1 chain hit amplified 8r %, bounces give no hits on single dummy"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.08, 1.16, 1.24, 1.32, 1.4, 1.48], "per": "use", "note": "[716] chain on net hit: 1 hit at damage x(1 + 8r%), chain bounces 0 on single dummy"}], "confidence": "I", "note": "card p13 row (C/I)", "plannerFix": "planner projectile_bounces 4/rank; card: +1 chain hit amplified 8r %, bounces give no hits on single dummy"},
         "name": "Ricocheting Net",
         "description": "Retiarius net bounces between multiple monsters increasing its damage dealt with every bounce.",
         "maxRank": 3,
@@ -1765,13 +1765,13 @@
     "tree": "Gladiator",
     "position": { "row": 2, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0, "perLevel": 8.75 },
+    "damageFormula": { "base": 0, "perLevel": 15 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Retiarius Net", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
       { "source": "Rend Flesh", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
       { "source": "Master Trap Maker", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
-      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.15, "per": "attribute_point" }
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.75, "per": "attribute_point" }
     ],
     "subskills": [
       {
@@ -1845,7 +1845,7 @@
       {
         "id": "double_trouble",
         "positionIndex": 5,
-        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.03, 1.06, 1.09, 1.12, 1.15], "note": "chance 3r% per cast for +1 trap (x(1+p5%))"}], "confidence": "C", "note": "card p5 row; planner on_cast 3r% of_total_damage 100 agrees"},
+        "dummy": {"effects": [{"kind": "hits_mult", "byRank": [1.03, 1.06, 1.09, 1.12, 1.15, 1.18, 1.21, 1.24], "note": "chance 3r% per cast for +1 trap (x(1+p5%))"}], "confidence": "C", "note": "card p5 row; planner on_cast 3r% of_total_damage 100 agrees"},
         "name": "Double Trouble",
         "description": "Chance on cast to unleash an additional chain trap.",
         "maxRank": 5,
@@ -1909,7 +1909,7 @@
       {
         "id": "c4_charged_trap",
         "positionIndex": 10,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75], "per": "use", "note": "C4 explosion at trap: damage floor(dmg*(1+0.15r)), reach 43 px vs trap 24 px from dummy: 1 hit"}], "confidence": "I", "note": "card p10 row (C/I)", "plannerFix": "planner arcane_skill_damage 15/rank; card adds a C4 explosion hit at 1+0.15r D"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [1.15, 1.3, 1.45, 1.6, 1.75, 1.9, 2.05, 2.2], "per": "use", "note": "C4 explosion at trap: damage floor(dmg*(1+0.15r)), reach 43 px vs trap 24 px from dummy: 1 hit"}], "confidence": "I", "note": "card p10 row (C/I)", "plannerFix": "planner arcane_skill_damage 15/rank; card adds a C4 explosion hit at 1+0.15r D"},
         "name": "C4 Charged Trap",
         "description": "After hooking monsters cause chain trap to explode dealing area of effect damage.",
         "maxRank": 5,
@@ -1952,7 +1952,7 @@
       {
         "id": "betrayal",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.75, 1.5, 2.25], "per": "use", "requires": "c4_charged_trap", "note": "c4Charge += 75r% increments the C4 explosion (requires p10 explosion to exist); betrayal attach only at cursor on dummy"}], "confidence": "I", "note": "card p13 row (C/I)", "plannerFix": "planner arcane 75/rank; card: C4 charge increment on the p10 explosion, plus attach mechanic"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.75, 1.5, 2.25, 3.0, 3.75, 4.5], "per": "use", "requires": "c4_charged_trap", "note": "c4Charge += 75r% increments the C4 explosion (requires p10 explosion to exist); betrayal attach only at cursor on dummy"}], "confidence": "I", "note": "card p13 row (C/I)", "plannerFix": "planner arcane 75/rank; card: C4 charge increment on the p10 explosion, plus attach mechanic"},
         "name": "Betrayal",
         "description": "Chain trap now attaches to a monster on hit causing the monster to explode dealing increased damage after hooking nearby monsters in.",
         "maxRank": 3,
@@ -1964,7 +1964,7 @@
       {
         "id": "wait_for_the_prey",
         "positionIndex": 14,
-        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0.41, 0.61, 0.82], "note": "R4 265#1 (L1136, C): with p14 new traps are created only when NO Marauder_Chain_Trap_obj exists (every existing trap gets activate = 1 and the creation flag is cleared). Steady state: cast A creates 1 + r14 traps (activate = 0), cast B activates them, further casts only re-activate the living traps (>= 2 s after phase 2): one batch of (1 + r14) hook hits per ~3.5 s (card 'rzad 3-4 s na partie', phase-2 length unknown, I), NOT +r traps on every cast. Per cast: (1 + r14) * t_cast / T_batch = (1 + r14) * 0.717 s / 3.5 s = 0.41 / 0.61 / 0.82 (castRate 1.75, animation lock 43 frames); depends on t_cast / T_batch. The XSP(1 + p14) loop of the base is replaced, so no 'projectiles' effect is emitted (old: +1 hit per extra trap per cast)"}], "confidence": "I", "note": "card p14 row + R4 265#1 (mechanism C, batch period I); old entry: projectiles [1,2,3] (each trap +1 hit per cast)", "plannerFix": "planner projectile_count/XSP model gives +r traps on every cast; in the game the extra traps fire once per batch (creation only while no trap exists), so single-target DPS per cast drops below the base 1 hit"},
+        "dummy": {"effects": [{"kind": "set_hits", "byRank": [0.41, 0.61, 0.82, 1.02, 1.23, 1.43], "note": "R4 265#1 (L1136, C): with p14 new traps are created only when NO Marauder_Chain_Trap_obj exists (every existing trap gets activate = 1 and the creation flag is cleared). Steady state: cast A creates 1 + r14 traps (activate = 0), cast B activates them, further casts only re-activate the living traps (>= 2 s after phase 2): one batch of (1 + r14) hook hits per ~3.5 s (card 'rzad 3-4 s na partie', phase-2 length unknown, I), NOT +r traps on every cast. Per cast: (1 + r14) * t_cast / T_batch = (1 + r14) * 0.717 s / 3.5 s = 0.41 / 0.61 / 0.82 (castRate 1.75, animation lock 43 frames); depends on t_cast / T_batch. The XSP(1 + p14) loop of the base is replaced, so no 'projectiles' effect is emitted (old: +1 hit per extra trap per cast)"}], "confidence": "I", "note": "card p14 row + R4 265#1 (mechanism C, batch period I); old entry: projectiles [1,2,3] (each trap +1 hit per cast)", "plannerFix": "planner projectile_count/XSP model gives +r traps on every cast; in the game the extra traps fire once per batch (creation only while no trap exists), so single-target DPS per cast drops below the base 1 hit"},
         "name": "Wait for the Prey",
         "description": "Throw multiple deactivated chain traps. Casting chain trap again will cause the traps to activate.",
         "maxRank": 3,
@@ -2137,7 +2137,7 @@
       {
         "id": "explosive_delivery",
         "positionIndex": 10,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2], "per": "hit", "note": "Blood Ripple (arcane, damage = hit) on proc 4r% per hit: 1 hit x 0.04r"}], "confidence": "C", "note": "card p10 row + R4 271#2: Marauder_Annihilation_Blood_Ripple_obj is a PDP with singleHit = 1, no tick_frequency, 16-frame animation -> exactly 1 hit per proc (C, Create_0 0x14877a9b0), damage[1] = damage[0]; proc chance 4r% per hit", "plannerFix": "planner on_hit chance 4/rank without effect; card: Blood Ripple object hits once (I)"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.04, 0.08, 0.12, 0.16, 0.2, 0.24, 0.28, 0.32], "per": "hit", "note": "Blood Ripple (arcane, damage = hit) on proc 4r% per hit: 1 hit x 0.04r"}], "confidence": "C", "note": "card p10 row + R4 271#2: Marauder_Annihilation_Blood_Ripple_obj is a PDP with singleHit = 1, no tick_frequency, 16-frame animation -> exactly 1 hit per proc (C, Create_0 0x14877a9b0), damage[1] = damage[0]; proc chance 4r% per hit", "plannerFix": "planner on_hit chance 4/rank without effect; card: Blood Ripple object hits once (I)"},
         "name": "Explosive Delivery",
         "description": "Chance to unleash a bloody explosion on hit.",
         "maxRank": 5,
@@ -2158,7 +2158,7 @@
       {
         "id": "symphony_of_chains",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6], "note": "N = 2r Spin hooks around player"}, {"kind": "extra_hits", "byRank": [4.0, 9.0, 12.5], "per": "use", "replacesProjectileHits": true, "note": "hook ~1.0 + chain ~2.1 hit-equivalents per hook (0.5 x D chain): 2.1 N (N=2: 4.0; N=4: 8.5-9.5; N=6: 12.5)"}, {"kind": "dot", "byRank": [0.25, 0.5, 0.75], "per": "use", "note": "bleed [22] += floor(hit*25r%) always"}], "confidence": "I", "note": "card p12 row (C/I) and Zmiany (2.1 N)", "plannerFix": "planner projectile_count 2/rank + bleeding 25/rank; game: orbiting hooks + chains, ~2.1 hits per hook"},
+        "dummy": {"effects": [{"kind": "projectiles", "byRank": [2, 4, 6, 8, 10, 12], "note": "N = 2r Spin hooks around player"}, {"kind": "extra_hits", "byRank": [4.0, 9.0, 12.5], "per": "use", "replacesProjectileHits": true, "note": "hook ~1.0 + chain ~2.1 hit-equivalents per hook (0.5 x D chain): 2.1 N (N=2: 4.0; N=4: 8.5-9.5; N=6: 12.5)"}, {"kind": "dot", "byRank": [0.25, 0.5, 0.75], "per": "use", "note": "bleed [22] += floor(hit*25r%) always"}], "confidence": "I", "note": "card p12 row (C/I) and Zmiany (2.1 N)", "plannerFix": "planner projectile_count 2/rank + bleeding 25/rank; game: orbiting hooks + chains, ~2.1 hits per hook"},
         "name": "Symphony of Chains",
         "description": "Unleash multiple spinning chains around you inflicting bleeding on hit.",
         "maxRank": 3,
@@ -2177,7 +2177,7 @@
       {
         "id": "megadeath",
         "positionIndex": 13,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [3.5, 4.0, 4.5], "per": "use", "note": "Megadeath: every blast spawns a Big Bo-oM on the target (damage = blast damage, no cast roll, handler L66-77): 1 explosion + E[k_odl] shards x f_shred with the bomb falling on the dummy centre, scale 1 + 0.1*r13 ([718][1]; [718][0] is dead): E = 2.0 / 2.5 / 3.0 / 3.5 / 3.5 / 4.0 for r13 = 0..5 (Resztki B: C) -> 1 + 2.5 / 3.0 / 3.5 = 3.5 / 4.0 / 4.5 (f_shred = 1; was 4.0 with E = 3.0 for every rank)"}], "confidence": "C", "note": "card p13 row (R4 271#3 scale 1+0.1r13, PoR4 base E 2.0, Resztki B: C); shard blasts are hand-copied pe (rule 32), f_shred < 1 with gear", "plannerFix": "planner physical_skill_damage 20/rank + area 10/rank; card: extra Big Bo-oM with shards on each blast"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [3.5, 4.0, 4.5, 4.5, 5.0], "per": "use", "note": "Megadeath: every blast spawns a Big Bo-oM on the target (damage = blast damage, no cast roll, handler L66-77): 1 explosion + E[k_odl] shards x f_shred with the bomb falling on the dummy centre, scale 1 + 0.1*r13 ([718][1]; [718][0] is dead): E = 2.0 / 2.5 / 3.0 / 3.5 / 3.5 / 4.0 for r13 = 0..5 (Resztki B: C) -> 1 + 2.5 / 3.0 / 3.5 = 3.5 / 4.0 / 4.5 (f_shred = 1; was 4.0 with E = 3.0 for every rank)"}], "confidence": "C", "note": "card p13 row (R4 271#3 scale 1+0.1r13, PoR4 base E 2.0, Resztki B: C); shard blasts are hand-copied pe (rule 32), f_shred < 1 with gear", "plannerFix": "planner physical_skill_damage 20/rank + area 10/rank; card: extra Big Bo-oM with shards on each blast"},
         "name": "Megadeath",
         "description": "Rain down large bombs at monsters on hit.",
         "maxRank": 3,
@@ -2335,7 +2335,7 @@
       {
         "id": "boom_boom_boom",
         "positionIndex": 7,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.09, 0.18, 0.27, 0.36, 0.45], "per": "use", "note": "chance 3r% per hook hit (handler on the HOOK hit; read as once per use because the hook hits once): a Big Bo-oM falls on the dummy centre with damage = hook damage (as fire), scale 1: 1 explosion + E[k_odl] = 2.0 shards (was 3.0; Resztki B: C) = 3.0 D per proc -> 3.0 x 0.03r = 0.09r per use. Was per 'hit' [0.12r]: with the base of 6.0 hits per cast a per-hit rolling would multiply the proc by the 6 base hits, but the card ties it to the hook hit"}], "confidence": "C", "note": "card p7 row (PoR4: E 3.0 -> 2.0; Resztki B 'bomb on the dummy centre 2.0: potwierdzone C'); per changed from 'hit' to 'use' (hook hit only)", "plannerFix": "planner of_total_damage 50 flat; card: full bomb (1 explosion + 3 shards) with hook damage at chance 3r%"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [0.09, 0.18, 0.27, 0.36, 0.45, 0.54, 0.63, 0.72], "per": "use", "note": "chance 3r% per hook hit (handler on the HOOK hit; read as once per use because the hook hits once): a Big Bo-oM falls on the dummy centre with damage = hook damage (as fire), scale 1: 1 explosion + E[k_odl] = 2.0 shards (was 3.0; Resztki B: C) = 3.0 D per proc -> 3.0 x 0.03r = 0.09r per use. Was per 'hit' [0.12r]: with the base of 6.0 hits per cast a per-hit rolling would multiply the proc by the 6 base hits, but the card ties it to the hook hit"}], "confidence": "C", "note": "card p7 row (PoR4: E 3.0 -> 2.0; Resztki B 'bomb on the dummy centre 2.0: potwierdzone C'); per changed from 'hit' to 'use' (hook hit only)", "plannerFix": "planner of_total_damage 50 flat; card: full bomb (1 explosion + 3 shards) with hook damage at chance 3r%"},
         "name": "Boom Boom BOOM",
         "description": "Chance to rain down additional bombs at targets on hit.",
         "maxRank": 5,
@@ -2392,7 +2392,7 @@
       {
         "id": "surging_madness",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.0, 4.0, 6.0], "per": "use", "note": "bomb damage x(1+0.4r) on the explosion and the shards in the bomb zone: bomb hits 1 + E = 1 + 4.0 = 5.0, extra 5.0 x 0.4r (was 5.2 x 0.4r with E 4.2; the card text writes '2 + E' hits, see cardIssues)"}], "confidence": "I", "note": "card p11 row; scaled to E = 4.0 (PoR4)", "plannerFix": "planner arcane 40/rank; card: bomb (fire) damage multiplier 1+0.4r"},
+        "dummy": {"effects": [{"kind": "extra_hits", "byRank": [2.0, 4.0, 6.0, 8.0, 10.0, 12.0], "per": "use", "note": "bomb damage x(1+0.4r) on the explosion and the shards in the bomb zone: bomb hits 1 + E = 1 + 4.0 = 5.0, extra 5.0 x 0.4r (was 5.2 x 0.4r with E 4.2; the card text writes '2 + E' hits, see cardIssues)"}], "confidence": "I", "note": "card p11 row; scaled to E = 4.0 (PoR4)", "plannerFix": "planner arcane 40/rank; card: bomb (fire) damage multiplier 1+0.4r"},
         "name": "Surging Madness",
         "description": "After hooking monsters in knock them back with intense force dealing increased damage stunning them.",
         "maxRank": 3,

@@ -20,6 +20,9 @@ const BURST: &str = "Pyromancer_Scorching_Searing_Burst_obj";
 const SURE_MARGIN: f32 = 3.;
 const DUMMY_RADIUS: f32 = 12.;
 
+static KNOWN: LazyLock<Mutex<HashMap<String, Seen>>> = LazyLock::new(Default::default);
+static KNOWN_BURST_ODDS: LazyLock<Mutex<HashMap<u32, f32>>> = LazyLock::new(Default::default);
+
 /// Damage-weighted hits the game lands on the in-zone dummy per pulse with `ranks`: the bursts at
 /// the odds of their spots, the rest at the odds of the pulse's rolls.
 pub(super) fn uncapped(ranks: &[(&str, u32)]) -> f32 {
@@ -107,7 +110,6 @@ type Seen = (f32, Vec<f32>);
 
 /// Hits `spawn` and each of its ends land when a hit on the dummy makes it, every object alone.
 fn sighted(spawn: &Spawn) -> Seen {
-    static KNOWN: LazyLock<Mutex<HashMap<String, Seen>>> = LazyLock::new(Default::default);
     let key = geometry(spawn);
     if let Some(known) = KNOWN.lock().expect("cache").get(&key) {
         return known.clone();
@@ -172,9 +174,8 @@ fn geometry(spawn: &Spawn) -> String {
 /// Odds that a burst irandom(360)° and irandom(floor(64 × scale)) px from the player meets the
 /// dummy, every pair as likely; its round mask is replayed only near the edge of its reach.
 pub(super) fn burst_odds(scale: f32) -> f32 {
-    static KNOWN: LazyLock<Mutex<HashMap<u32, f32>>> = LazyLock::new(Default::default);
     let spread = (BURST_SPREAD * scale).floor() as u32;
-    if let Some(known) = KNOWN.lock().expect("cache").get(&spread) {
+    if let Some(known) = KNOWN_BURST_ODDS.lock().expect("cache").get(&spread) {
         return *known;
     }
     let dummy = [crate::skill_sim::skill(SKILL).expect("motion").dummy, 0.];
@@ -197,7 +198,7 @@ pub(super) fn burst_odds(scale: f32) -> f32 {
     let spots = (0..=FULL_TURN).flat_map(|heading| (0..=spread).map(move |out| (heading, out)));
     let hits: f32 = spots.map(|(heading, out)| landed(heading, out)).sum();
     let odds = hits / ((FULL_TURN + 1) * (spread + 1)) as f32;
-    KNOWN.lock().expect("cache").insert(spread, odds);
+    KNOWN_BURST_ODDS.lock().expect("cache").insert(spread, odds);
     odds
 }
 

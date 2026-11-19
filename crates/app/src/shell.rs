@@ -11,6 +11,8 @@ use hsplanner_ui::i18n::{tr, trf};
 use hsplanner_ui::theme::TooltipTheme;
 use std::{rc::Rc, sync::Arc, time::Duration};
 
+const WINDOW_FIT_RATIO: f32 = 0.9;
+
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Section {
     Library,
@@ -78,7 +80,6 @@ gpui_kit::actions!(
         Quit,
         ToggleAutoSave,
         SaveAs,
-        ShareWithStash,
         ToggleDebugOverlay,
         OpenSettings
     ]
@@ -373,23 +374,6 @@ impl Shell {
             });
         }));
     }
-    fn copy_build_code(&mut self, include_stash: bool, cx: &mut Context<Self>) {
-        let draft = self.session.read(cx).draft();
-        let stash = if include_stash { &draft.stash[..] } else { &[] };
-        match hsplanner_build::codec::encode_loadouts_with_stash(
-            &draft.snapshot,
-            &draft.notes,
-            &draft.loadouts,
-            stash,
-        ) {
-            Ok(code) => {
-                cx.write_to_clipboard(ClipboardItem::new_string(code));
-                self.status = "shell.copied".into();
-            }
-            Err(error) => self.error = Some(error),
-        }
-        cx.notify();
-    }
     fn save_as_dialog(&mut self, window: &mut Window, cx: &mut Context<Self>) {
         self.error = None;
         let build_id = self.session.read(cx).draft().build_id.clone();
@@ -561,9 +545,6 @@ impl Render for Shell {
                 let _ = (this, cx);
             }))
             .on_action(cx.listener(|this, _: &SaveAs, window, cx| this.save_as_dialog(window, cx)))
-            .on_action(
-                cx.listener(|this, _: &ShareWithStash, _, cx| this.copy_build_code(true, cx)),
-            )
             .on_action(cx.listener(|this, _: &OpenSettings, window, cx| {
                 crate::settings::open(this.session.clone(), window, cx);
             }))
@@ -595,7 +576,9 @@ impl Render for Shell {
                             this.switch(Section::Library, window, cx)
                         }),
                     ),
-                    Box::new(cx.listener(|this, _, _, cx| this.copy_build_code(false, cx))),
+                    Box::new(cx.listener(|this, _, window, cx| {
+                        crate::share::open(this.session.clone(), window, cx)
+                    })),
                 )
                 .document(title, auto_save)
                 .ui_zoom(self.session.read(cx).state().settings.ui_zoom)
@@ -744,8 +727,6 @@ pub fn run(
             }
         });
 }
-
-const WINDOW_FIT_RATIO: f32 = 0.9;
 
 fn fit_window(work_area: Bounds<Pixels>, desired: Size<Pixels>) -> Bounds<Pixels> {
     let limit = size(

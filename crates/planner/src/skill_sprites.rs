@@ -6,8 +6,6 @@ use serde::Deserialize;
 use std::collections::HashMap;
 use std::sync::{Arc, LazyLock, Mutex, PoisonError};
 
-include!(concat!(env!("OUT_DIR"), "/skill-sprites.rs"));
-
 /// Turned frames are baked and kept once per this many degrees.
 const TURN_STEP: f32 = 5.;
 /// Spun frames are baked one at a time, per half degree, at half size, and forgotten all at
@@ -15,6 +13,19 @@ const TURN_STEP: f32 = 5.;
 const SPIN_STEP: f32 = 0.5;
 const SPIN_RESOLUTION: f32 = 0.5;
 const MAX_SPUN: usize = 1024;
+
+static FILE: LazyLock<SpritesFile> = LazyLock::new(|| {
+    serde_json::from_str(include_str!("../../../data/skill-sprites.json"))
+        .expect("embedded skill sprites must be valid")
+});
+
+static FRAMES: LazyLock<Mutex<HashMap<Look, Arc<Frames>>>> = LazyLock::new(Default::default);
+
+static RINGS: LazyLock<Mutex<HashMap<Bent, Arc<Frames>>>> = LazyLock::new(Default::default);
+
+static SPUN: LazyLock<Mutex<HashMap<Spin, Arc<Frames>>>> = LazyLock::new(Default::default);
+
+include!(concat!(env!("OUT_DIR"), "/skill-sprites.rs"));
 
 #[derive(Deserialize)]
 struct SpritesFile {
@@ -159,22 +170,11 @@ pub(crate) struct Frames {
 /// Sprite, tint, additive blend and the whole degrees it is turned.
 type Look = (&'static str, Option<[u8; 3]>, bool, i32);
 
-static FILE: LazyLock<SpritesFile> = LazyLock::new(|| {
-    serde_json::from_str(include_str!("../../../data/skill-sprites.json"))
-        .expect("embedded skill sprites must be valid")
-});
-
-static FRAMES: LazyLock<Mutex<HashMap<Look, Arc<Frames>>>> = LazyLock::new(Default::default);
-
 /// Sprite, tint, additive blend and the whole radius and width it is bent to.
 type Bent = (&'static str, Option<[u8; 3]>, bool, [u32; 2]);
 
-static RINGS: LazyLock<Mutex<HashMap<Bent, Arc<Frames>>>> = LazyLock::new(Default::default);
-
 /// Sprite, tint, additive blend, half degrees, thousandths of scale and frame.
 type Spin = (&'static str, Option<[u8; 3]>, bool, i32, [i32; 2], usize);
-
-static SPUN: LazyLock<Mutex<HashMap<Spin, Arc<Frames>>>> = LazyLock::new(Default::default);
 
 /// How a skill's object is drawn, bottom layer first.
 pub(crate) fn layers(skill_id: &str, object: &str) -> Option<&'static [Layer]> {

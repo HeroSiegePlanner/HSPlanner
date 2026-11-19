@@ -1,0 +1,23 @@
+[Unit]
+Description=hspaste, the HSPlanner build pastebin
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/local/bin/hspaste
+Environment=HSPASTE_ADDR=127.0.0.1:8787
+Environment=HSPASTE_DATA_DIR=/var/lib/hspaste
+Environment=HSPASTE_PUBLIC_URL=https://hsplanner.app
+Environment=HSPASTE_TRUST_PROXY=1
+DynamicUser=yes
+StateDirectory=hspaste
+Restart=on-failure
+RestartSec=2
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+MemoryMax=512M
+
+[Install]
+WantedBy=multi-user.target

@@ -12,6 +12,19 @@ use hsplanner_ui::controls::segment;
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use hsplanner_ui::tooltip_text::TooltipText;
 
+const RARITY_ORDER: [&str; 10] = [
+    "unholy",
+    "angelic",
+    "heroic",
+    "satanic_set",
+    "satanic",
+    "common",
+    "relic",
+    "mythic",
+    "rare",
+    "uncommon",
+];
+
 pub(super) type SortSelect = SelectState<Vec<SharedString>>;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -57,19 +70,6 @@ pub(super) struct ItemRow {
     sort_values: HashMap<String, f64>,
     item: Option<EquippedItem>,
 }
-
-const RARITY_ORDER: [&str; 10] = [
-    "unholy",
-    "angelic",
-    "heroic",
-    "satanic_set",
-    "satanic",
-    "common",
-    "relic",
-    "mythic",
-    "rare",
-    "uncommon",
-];
 
 fn rarity_rank(rarity: &str) -> usize {
     RARITY_ORDER.iter().position(|r| *r == rarity).unwrap_or(99)

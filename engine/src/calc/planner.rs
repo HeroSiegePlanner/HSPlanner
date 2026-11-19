@@ -14,6 +14,10 @@ use super::{
     types::Inventory,
 };
 
+static ETHER: LazyLock<EtherData> = LazyLock::new(|| {
+    serde_json::from_str(include_str!("../../../data/ether-tree.json")).expect("valid Ether data")
+});
+
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]
 #[serde(default, rename_all = "camelCase")]
 pub struct PlannerInput {
@@ -407,9 +411,6 @@ struct EtherStat {
     desc: String,
     value: String,
 }
-static ETHER: LazyLock<EtherData> = LazyLock::new(|| {
-    serde_json::from_str(include_str!("../../../data/ether-tree.json")).expect("valid Ether data")
-});
 
 pub fn summarize_ether(ids: &[u32]) -> Vec<EtherSummary> {
     let mut counts: BTreeMap<&str, u32> = BTreeMap::new();

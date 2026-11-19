@@ -12,6 +12,8 @@ const PATCH: &str = "Pyromancer_Blazing_Trail_obj";
 const METEOR: &str = "Pyromancer_Armageddon_obj";
 const DUMMY: [f32; 2] = [160., 0.];
 
+const CLASS: &str = "pyromancer";
+
 fn mods(ranks: &[(&str, u32)]) -> Mods {
     let ranks: HashMap<String, u32> = ranks
         .iter()
@@ -321,8 +323,6 @@ fn orbital_fire_circles_balls_out_from_the_player_until_they_touch_or_time_out()
     assert!(small.hits.is_empty(), "{:?}", small.hits);
 }
 
-const CLASS: &str = "pyromancer";
-
 use super::parity::expected;
 
 fn engine(ranks: &[(&str, u32)]) -> f32 {
@@ -333,7 +333,7 @@ fn engine(ranks: &[(&str, u32)]) -> f32 {
 fn the_engines_subskill_hits_follow_the_sim() {
     let (sim, base) = (expected(&[]), engine(&[]));
     assert!(near(sim, 1.) && near(base, 1.), "sim {sim}, engine {base}");
-    let wrong = parity::misses(CLASS, "fireball", expected, engine, 0.01);
+    let wrong = parity::misses_past(CLASS, "fireball", expected, engine, 0.01, parity::GRANTED);
     assert!(wrong.is_empty(), "\n{}", wrong.join("\n"));
 }
 

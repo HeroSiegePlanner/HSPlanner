@@ -18,6 +18,18 @@ const DUMMY: [f32; 2] = [120., 0.];
 /// Pulses a lucky roll is looked for in.
 const TRIES: u64 = 101;
 
+const CLASS: &str = "pyromancer";
+
+/// The on-hit procs, each of whose objects rolls the others; Release the Chaos' balls are Ignite
+/// the Flames' objects.
+const PROCS: [&str; 5] = [
+    "flaming_fissure",
+    "ignite_the_flames",
+    "ground_blaze",
+    "scorching_harvester",
+    "release_the_chaos",
+];
+
 fn mods(ranks: &[(&str, u32)]) -> Mods {
     let ranks: HashMap<String, u32> = ranks
         .iter()
@@ -440,8 +452,6 @@ fn only_the_nodes_the_game_reads_its_own_way_keep_their_damage_off_the_hit() {
     );
 }
 
-const CLASS: &str = "pyromancer";
-
 /// The engine's damage-weighted hits per pulse.
 fn engine(ranks: &[(&str, u32)]) -> f32 {
     parity::engine_hits(CLASS, SKILL, ranks)
@@ -455,7 +465,7 @@ fn the_engines_subskill_hits_follow_the_sim() {
         near(sim, 1., 1e-4) && near(base, 1., 1e-4),
         "sim {sim}, engine {base}"
     );
-    let wrong = parity::misses(CLASS, SKILL, uncapped, engine, 0.01);
+    let wrong = parity::misses_past(CLASS, SKILL, uncapped, engine, 0.01, parity::GRANTED);
     assert!(wrong.is_empty(), "\n{}", wrong.join("\n"));
 }
 
@@ -516,15 +526,20 @@ fn the_engine_follows_searing_burst_spread_by_scorched_lands() {
     agree(&pairs(&[], ("searing_burst", 3), ("scorched_lands", 5)));
 }
 
-/// The on-hit procs, each of whose objects rolls the others; Release the Chaos' balls are Ignite
-/// the Flames' objects.
-const PROCS: [&str; 5] = [
-    "flaming_fissure",
-    "ignite_the_flames",
-    "ground_blaze",
-    "scorching_harvester",
-    "release_the_chaos",
-];
+#[test]
+fn granted_ranks_past_the_highest_keep_following_the_sim() {
+    use parity::GRANTED;
+    agree(&pairs(
+        &[],
+        ("ignite_the_flames", 5 + GRANTED),
+        ("release_the_chaos", 3 + GRANTED),
+    ));
+    agree(&pairs(
+        &[],
+        ("searing_burst", 3 + GRANTED),
+        ("scorched_lands", 5 + GRANTED),
+    ));
+}
 
 #[test]
 fn the_engine_chains_three_and_more_procs_as_the_sim_does() {

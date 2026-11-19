@@ -36,16 +36,6 @@ mod supernova;
 mod tsunami;
 mod volcano;
 
-/// A modelled skill: its id, its class, how its modifiers rewrite one use's spawns, and the nodes
-/// whose whole-cast bonus it rolls per cast while the engine averages it into the hit. Nodes
-/// whose damage the game keeps to their own objects carry `ownDamage` in the data instead.
-type Modelled = (
-    &'static str,
-    &'static str,
-    fn(&[Spawn], &Tree) -> Vec<Spawn>,
-    &'static [&'static str],
-);
-
 const MODELLED: &[Modelled] = &[
     ("black_hole", "exo", black_hole::apply, &[]),
     ("asteroid", "exo", asteroid::apply, &[]),
@@ -72,6 +62,16 @@ const MODELLED: &[Modelled] = &[
     ("blazing_trail", "pyromancer", blazing_trail::apply, &[]),
     ("scorching_aura", "pyromancer", scorching_aura::apply, &[]),
 ];
+
+/// A modelled skill: its id, its class, how its modifiers rewrite one use's spawns, and the nodes
+/// whose whole-cast bonus it rolls per cast while the engine averages it into the hit. Nodes
+/// whose damage the game keeps to their own objects carry `ownDamage` in the data instead.
+type Modelled = (
+    &'static str,
+    &'static str,
+    fn(&[Spawn], &Tree) -> Vec<Spawn>,
+    &'static [&'static str],
+);
 
 /// Learned subskill ranks of the previewed skill, by node id, and the build's stats that stretch it.
 #[derive(Clone, PartialEq, Debug)]
@@ -278,6 +278,7 @@ impl Tree<'_> {
                 AppliedStateValue::Full {
                     state: name,
                     amount: Some(amount),
+                    ..
                 } if name == state => Some(at(amount.base, amount.per_rank, rank)),
                 _ => None,
             })

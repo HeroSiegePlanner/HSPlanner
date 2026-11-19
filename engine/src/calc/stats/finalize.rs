@@ -1,5 +1,157 @@
 use super::*;
 
+// Ailments with a modeled base duration in game-config defaultBaseStats.
+pub(crate) const AILMENT_DURATION_PREFIXES: &[&str] = &[
+    "bleed",
+    "burning",
+    "frostbite",
+    "permafrost",
+    "poisoned",
+    "rabies",
+    "shadowburn",
+    "stasis",
+];
+
+// "+X <stat> per N <source>" tree lines. The source total is only final after
+// the multiplier pass, so these run late and return touched keys for re-sum.
+const PER_MANA_STATS: &[(&str, &str, f64)] = &[
+    (
+        "magic_skill_damage_per_750_mana",
+        "magic_skill_damage",
+        750.0,
+    ),
+    (
+        "magic_skill_damage_per_100_mana",
+        "magic_skill_damage",
+        100.0,
+    ),
+    (
+        "ranged_physical_per_500_mana",
+        "ranged_projectile_damage",
+        500.0,
+    ),
+    ("additive_physical_per_500_mana", "enhanced_damage", 500.0),
+];
+
+const PER_LIGHT_RADIUS_STATS: &[(&str, &str, f64)] = &[
+    (
+        "magic_skill_damage_per_light_radius",
+        "magic_skill_damage",
+        1.0,
+    ),
+    (
+        "flat_magic_skill_damage_per_light_radius",
+        "flat_magic_skill_damage",
+        1.0,
+    ),
+];
+
+/// Item "X% of A converted to B" stats: (item stat, A, whether A is an attribute, B).
+const ITEM_STAT_CONVERSIONS: [(&str, &str, bool, &str); 17] = [
+    (
+        "intelligence_converted_to_magic_skill_dmg",
+        "intelligence",
+        true,
+        "magic_skill_damage",
+    ),
+    (
+        "vitality_converted_to_magic_skill_dmg",
+        "vitality",
+        true,
+        "magic_skill_damage",
+    ),
+    (
+        "energy_converted_to_magic_skill_dmg",
+        "energy",
+        true,
+        "magic_skill_damage",
+    ),
+    (
+        "armor_converted_to_magic_skill_dmg",
+        "armor",
+        true,
+        "magic_skill_damage",
+    ),
+    (
+        "vitality_converted_to_attack_dmg",
+        "vitality",
+        true,
+        "attack_damage",
+    ),
+    (
+        "armor_converted_to_attack_dmg",
+        "armor",
+        true,
+        "attack_damage",
+    ),
+    (
+        "intelligence_converted_to_arcane_skill_dmg",
+        "intelligence",
+        true,
+        "arcane_skill_damage",
+    ),
+    (
+        "intelligence_converted_to_cold_skill_dmg",
+        "intelligence",
+        true,
+        "cold_skill_damage",
+    ),
+    (
+        "intelligence_converted_to_fire_skill_dmg",
+        "intelligence",
+        true,
+        "fire_skill_damage",
+    ),
+    (
+        "intelligence_converted_to_lightning_skill_dmg",
+        "intelligence",
+        true,
+        "lightning_skill_damage",
+    ),
+    (
+        "energy_converted_to_cold_skill_dmg",
+        "energy",
+        true,
+        "cold_skill_damage",
+    ),
+    (
+        "energy_converted_to_lightning_skill_dmg",
+        "energy",
+        true,
+        "lightning_skill_damage",
+    ),
+    (
+        "cold_resistance_converted_to_cold_damage",
+        "cold_resistance",
+        false,
+        "cold_skill_damage",
+    ),
+    (
+        "poison_resistance_converted_to_poison_damage",
+        "poison_resistance",
+        false,
+        "poison_skill_damage",
+    ),
+    (
+        "lightning_resistance_converted_to_lightning_damage",
+        "lightning_resistance",
+        false,
+        "lightning_skill_damage",
+    ),
+    (
+        "faster_cast_rate_percent_converted_to_movement_speed",
+        "faster_cast_rate",
+        false,
+        "movement_speed",
+    ),
+    (
+        "movement_speed_to_total_damage",
+        "movement_speed",
+        false,
+        "damage",
+    ),
+];
+
 // ---------- finalization helpers ----------
 
 // Display name; `_more` variants are prefixed with "Total ".
@@ -173,52 +325,6 @@ pub fn refresh_converted_resources(
         }
     }
 }
-
-// Ailments with a modeled base duration in game-config defaultBaseStats.
-pub(crate) const AILMENT_DURATION_PREFIXES: &[&str] = &[
-    "bleed",
-    "burning",
-    "frostbite",
-    "permafrost",
-    "poisoned",
-    "rabies",
-    "shadowburn",
-    "stasis",
-];
-
-// "+X <stat> per N <source>" tree lines. The source total is only final after
-// the multiplier pass, so these run late and return touched keys for re-sum.
-const PER_MANA_STATS: &[(&str, &str, f64)] = &[
-    (
-        "magic_skill_damage_per_750_mana",
-        "magic_skill_damage",
-        750.0,
-    ),
-    (
-        "magic_skill_damage_per_100_mana",
-        "magic_skill_damage",
-        100.0,
-    ),
-    (
-        "ranged_physical_per_500_mana",
-        "ranged_projectile_damage",
-        500.0,
-    ),
-    ("additive_physical_per_500_mana", "enhanced_damage", 500.0),
-];
-
-const PER_LIGHT_RADIUS_STATS: &[(&str, &str, f64)] = &[
-    (
-        "magic_skill_damage_per_light_radius",
-        "magic_skill_damage",
-        1.0,
-    ),
-    (
-        "flat_magic_skill_damage_per_light_radius",
-        "flat_magic_skill_damage",
-        1.0,
-    ),
-];
 
 /// "+X% magic skill damage per attack per second" (Magistriker) reads the final attack rate.
 pub fn apply_per_attack_rate_stats(
@@ -487,112 +593,6 @@ pub fn apply_tree_conversions(
     }
     touched
 }
-
-/// Item "X% of A converted to B" stats: (item stat, A, whether A is an attribute, B).
-const ITEM_STAT_CONVERSIONS: [(&str, &str, bool, &str); 17] = [
-    (
-        "intelligence_converted_to_magic_skill_dmg",
-        "intelligence",
-        true,
-        "magic_skill_damage",
-    ),
-    (
-        "vitality_converted_to_magic_skill_dmg",
-        "vitality",
-        true,
-        "magic_skill_damage",
-    ),
-    (
-        "energy_converted_to_magic_skill_dmg",
-        "energy",
-        true,
-        "magic_skill_damage",
-    ),
-    (
-        "armor_converted_to_magic_skill_dmg",
-        "armor",
-        true,
-        "magic_skill_damage",
-    ),
-    (
-        "vitality_converted_to_attack_dmg",
-        "vitality",
-        true,
-        "attack_damage",
-    ),
-    (
-        "armor_converted_to_attack_dmg",
-        "armor",
-        true,
-        "attack_damage",
-    ),
-    (
-        "intelligence_converted_to_arcane_skill_dmg",
-        "intelligence",
-        true,
-        "arcane_skill_damage",
-    ),
-    (
-        "intelligence_converted_to_cold_skill_dmg",
-        "intelligence",
-        true,
-        "cold_skill_damage",
-    ),
-    (
-        "intelligence_converted_to_fire_skill_dmg",
-        "intelligence",
-        true,
-        "fire_skill_damage",
-    ),
-    (
-        "intelligence_converted_to_lightning_skill_dmg",
-        "intelligence",
-        true,
-        "lightning_skill_damage",
-    ),
-    (
-        "energy_converted_to_cold_skill_dmg",
-        "energy",
-        true,
-        "cold_skill_damage",
-    ),
-    (
-        "energy_converted_to_lightning_skill_dmg",
-        "energy",
-        true,
-        "lightning_skill_damage",
-    ),
-    (
-        "cold_resistance_converted_to_cold_damage",
-        "cold_resistance",
-        false,
-        "cold_skill_damage",
-    ),
-    (
-        "poison_resistance_converted_to_poison_damage",
-        "poison_resistance",
-        false,
-        "poison_skill_damage",
-    ),
-    (
-        "lightning_resistance_converted_to_lightning_damage",
-        "lightning_resistance",
-        false,
-        "lightning_skill_damage",
-    ),
-    (
-        "faster_cast_rate_percent_converted_to_movement_speed",
-        "faster_cast_rate",
-        false,
-        "movement_speed",
-    ),
-    (
-        "movement_speed_to_total_damage",
-        "movement_speed",
-        false,
-        "damage",
-    ),
-];
 
 // Adds each item conversion's share of the source total to its target, as the tree's
 // conversions do; returns touched keys for re-sum. (#206)

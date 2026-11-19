@@ -6,6 +6,8 @@ use crate::skill_sim::Spawn;
 use crate::skill_steer::{Steer, Steering, travel};
 use serde::Deserialize;
 
+const FULL_TURN: f32 = 360.;
+
 /// GameMaker's deltaSpeed ramp: the object starts at `from` px a frame and after each move its
 /// speed grows by `rate` of itself plus `step`, until it reaches its spawn's speed; a negative
 /// `rate` slows it down instead, to its spawn's speed at the least.
@@ -59,8 +61,6 @@ pub(crate) struct Course {
     age: u32,
     hits: u32,
 }
-
-const FULL_TURN: f32 = 360.;
 
 /// A lunge: frames left flying toward the enemy hit and the direction, then the way back.
 #[derive(Clone, Copy)]

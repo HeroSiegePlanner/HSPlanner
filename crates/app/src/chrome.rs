@@ -1,4 +1,4 @@
-use crate::shell::{OpenSettings, Save, SaveAs, Section, SelectSection, ShareWithStash};
+use crate::shell::{OpenSettings, Save, SaveAs, Section, SelectSection};
 use gpui_kit::base::Disableable;
 use gpui_kit::component::{
     Icon, IconName, Sizable,
@@ -31,6 +31,27 @@ const BUILD_CHANNEL: &str = if cfg!(debug_assertions) {
 } else {
     "chrome.stable"
 };
+
+static ICONS: std::sync::LazyLock<std::collections::HashMap<&str, Arc<Image>>> =
+    std::sync::LazyLock::new(|| {
+        [
+            (
+                "bookmark",
+                include_bytes!("../assets/bookmark.svg").as_slice(),
+            ),
+            ("share", include_bytes!("../assets/share.svg").as_slice()),
+            ("bug", include_bytes!("../assets/bug.svg").as_slice()),
+            ("coffee", include_bytes!("../assets/coffee.svg").as_slice()),
+        ]
+        .into_iter()
+        .map(|(name, data)| {
+            (
+                name,
+                Arc::new(Image::from_bytes(ImageFormat::Svg, data.to_vec())),
+            )
+        })
+        .collect()
+    });
 
 // The reference layout is authored in CSS pixels at the theme's 13px base font,
 // so these rem values keep the same proportions and follow the native zoom.
@@ -442,7 +463,6 @@ impl RenderOnce for TopBar {
                             .dropdown_menu(|menu, _, _| {
                                 menu.menu(tr("shell.save"), Box::new(Save))
                                     .menu(tr("loadouts.save_as"), Box::new(SaveAs))
-                                    .menu(tr("chrome.share_with_stash"), Box::new(ShareWithStash))
                             }),
                     )
                     .child(
@@ -792,26 +812,6 @@ fn chrome_button(id: &'static str, label: &'static str, cx: &App) -> Button {
 }
 
 fn chrome_icon(name: &str) -> impl IntoElement {
-    static ICONS: std::sync::LazyLock<std::collections::HashMap<&str, Arc<Image>>> =
-        std::sync::LazyLock::new(|| {
-            [
-                (
-                    "bookmark",
-                    include_bytes!("../assets/bookmark.svg").as_slice(),
-                ),
-                ("share", include_bytes!("../assets/share.svg").as_slice()),
-                ("bug", include_bytes!("../assets/bug.svg").as_slice()),
-                ("coffee", include_bytes!("../assets/coffee.svg").as_slice()),
-            ]
-            .into_iter()
-            .map(|(name, data)| {
-                (
-                    name,
-                    Arc::new(Image::from_bytes(ImageFormat::Svg, data.to_vec())),
-                )
-            })
-            .collect()
-        });
     img(ICONS[name].clone()).size(web_px(12.)).flex_shrink_0()
 }
 

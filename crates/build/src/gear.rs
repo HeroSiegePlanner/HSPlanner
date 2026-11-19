@@ -16,6 +16,8 @@ pub use affix_pools::{
     is_unholy_group, jewel_affix_allowed, set_affix_value, set_forge_value,
 };
 
+pub const RELIC_MAX_TIER: u32 = 10;
+
 pub fn make_item(base_id: &str) -> Result<EquippedItem, String> {
     let base = data::get_item(base_id).ok_or("Unknown item.")?;
     let mut item = EquippedItem {
@@ -94,8 +96,6 @@ pub fn set_forge(item: &mut EquippedItem, id: Option<&str>) -> Result<(), String
     set_socket_count(item, item.socket_count);
     Ok(())
 }
-
-pub const RELIC_MAX_TIER: u32 = 10;
 
 pub fn is_relic(base: &ItemBase) -> bool {
     base.rarity == "relic"

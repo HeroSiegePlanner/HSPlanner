@@ -93,8 +93,8 @@ fn agree(together: &[Ranks]) {
 
 /// Every rank of `a` with every rank of `b`.
 fn pairs(a: (&'static str, u32), b: (&'static str, u32)) -> Vec<Ranks> {
-    let with = move |at| (1..=b.1).map(move |bt| vec![(a.0, at), (b.0, bt)]);
-    (1..=a.1).flat_map(with).collect()
+    let with = move |at| (1..=b.1 + parity::GRANTED).map(move |bt| vec![(a.0, at), (b.0, bt)]);
+    (1..=a.1 + parity::GRANTED).flat_map(with).collect()
 }
 
 #[test]
@@ -112,16 +112,16 @@ fn the_engines_subskill_hits_follow_the_sim() {
             "devastating_nebula"
         ]
     );
-    let wrong = parity::misses(CLASS, SKILL, expected, engine, 0.01);
+    let wrong = parity::misses_past(CLASS, SKILL, expected, engine, 0.01, parity::GRANTED);
     assert!(wrong.is_empty(), "\n{}", wrong.join("\n"));
 }
 
 #[test]
 fn the_engine_follows_lunar_architects_moons_and_crescent_moons_rings() {
     let mut together = pairs(("extrasolar_moons", 4), ("lunar_architect", 3));
-    for crescent in 1..=3 {
-        for extrasolar in 0..=4 {
-            for architect in 0..=3 {
+    for crescent in 1..=3 + parity::GRANTED {
+        for extrasolar in 0..=4 + parity::GRANTED {
+            for architect in 0..=3 + parity::GRANTED {
                 let ranks = [
                     ("crescent_moon", crescent),
                     ("extrasolar_moons", extrasolar),
@@ -151,7 +151,7 @@ fn the_engine_follows_full_moon_and_magnetic_pull_on_every_kind_of_cast() {
         together.extend(pairs((cast, 3), ("full_moon", 5)));
         together.extend(pairs((cast, 3), ("magnetic_pull", 4)));
     }
-    for crescent in 1..=3 {
+    for crescent in 1..=3 + parity::GRANTED {
         for both in pairs(("full_moon", 5), ("magnetic_pull", 4)) {
             together.push([vec![("crescent_moon", crescent)], both].concat());
         }
@@ -170,7 +170,7 @@ fn the_engine_follows_the_procs_the_shrapnel_and_the_breakouts_together() {
         together.extend(pairs(("celestial_collapse", 5), node));
         together.extend(pairs(("orbit_breakout", 3), node));
     }
-    for architect in 1..=3 {
+    for architect in 1..=3 + parity::GRANTED {
         for node in [("full_moon", 5), ("magnetic_pull", 4)] {
             for ranks in pairs(("celestial_collapse", 5), node) {
                 together.push([vec![("lunar_architect", architect)], ranks].concat());

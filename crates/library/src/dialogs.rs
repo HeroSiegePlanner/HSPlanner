@@ -3,7 +3,6 @@ use hsplanner_ui::components::{ModalSize, PlannerDialogExt, name_form};
 
 #[derive(Clone, Copy)]
 pub(super) enum EditKind {
-    NewBuild,
     NewFolder,
     RenameFolder,
     Rename,
@@ -17,7 +16,6 @@ impl LibraryView {
         cx: &mut Context<Self>,
     ) {
         let title_key = match kind {
-            EditKind::NewBuild => "library.new_build",
             EditKind::NewFolder => "library.new_folder",
             EditKind::RenameFolder => "library.rename_folder",
             EditKind::Rename => "library.rename_build",
@@ -74,8 +72,7 @@ impl LibraryView {
                     target
                         .update(cx, |this, cx| {
                             let folder = this.folder.clone();
-                            let success = this.apply(cx, |session| match kind {
-                                EditKind::NewBuild => session.new_build(&name).map(|_| ()),
+                            this.apply(cx, |session| match kind {
                                 EditKind::NewFolder => session.edit_library(|library| {
                                     library.create_folder(&name, folder).map(|_| ())
                                 }),
@@ -91,11 +88,7 @@ impl LibraryView {
                                         &name,
                                     )
                                 }),
-                            });
-                            if success && matches!(kind, EditKind::NewBuild) {
-                                cx.emit(Opened);
-                            }
-                            success
+                            })
                         })
                         .unwrap_or(false)
                 })

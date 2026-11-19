@@ -4891,8 +4891,8 @@
     "requiresLevel": 62,
     "implicit": {
       "enhanced_damage": [
-        430,
-        580
+        525,
+        656
       ],
       "attack_rating_pct": 3,
       "increased_attack_speed": 25,
@@ -5009,8 +5009,8 @@
     "requiresLevel": 37,
     "implicit": {
       "enhanced_damage": [
-        290,
-        340
+        300,
+        350
       ],
       "attack_rating_pct": 15,
       "damage_based_on_level": 65,
@@ -5047,8 +5047,8 @@
     "requiresLevel": 78,
     "implicit": {
       "enhanced_damage": [
-        285,
-        320
+        525,
+        560
       ],
       "all_skills": [
         2,
@@ -5160,8 +5160,8 @@
         2
       ],
       "enhanced_damage": [
-        360,
-        400
+        410,
+        450
       ],
       "attack_rating_pct": 15,
       "to_strength": 20,
@@ -5253,8 +5253,8 @@
     "requiresLevel": 78,
     "implicit": {
       "enhanced_damage": [
-        240,
-        270
+        525,
+        555
       ],
       "increased_attack_speed": [
         75,
@@ -5300,8 +5300,8 @@
     "requiresLevel": 63,
     "implicit": {
       "enhanced_damage": [
-        410,
-        540
+        525,
+        655
       ],
       "all_skills": [
         1,
@@ -5452,8 +5452,8 @@
     "requiresLevel": 45,
     "implicit": {
       "enhanced_damage": [
-        280,
-        310
+        300,
+        330
       ],
       "all_skills": [
         1,
@@ -5546,8 +5546,8 @@
     "requiresLevel": 10,
     "implicit": {
       "enhanced_damage": [
-        125,
-        180
+        200,
+        250
       ],
       "deadly_blow": 15,
       "defense_ignored": 25,
@@ -5604,8 +5604,8 @@
     "requiresLevel": 11,
     "implicit": {
       "enhanced_damage": [
-        180,
-        210
+        200,
+        230
       ],
       "crushing_blow_chance": 20,
       "attack_rating_pct": [
@@ -5749,8 +5749,8 @@
     "requiresLevel": 68,
     "implicit": {
       "enhanced_damage": [
-        520,
-        580
+        525,
+        585
       ],
       "increased_attack_speed": [
         30,
@@ -5787,8 +5787,8 @@
     "requiresLevel": 30,
     "implicit": {
       "enhanced_damage": [
-        110,
-        140
+        260,
+        290
       ],
       "increased_attack_speed": 20,
       "crit_chance": 20,
@@ -5817,8 +5817,8 @@
     "requiresLevel": 87,
     "implicit": {
       "enhanced_damage": [
-        240,
-        270
+        700,
+        730
       ],
       "mana": [
         150,
@@ -5847,8 +5847,8 @@
     "requiresLevel": 66,
     "implicit": {
       "enhanced_damage": [
-        450,
-        500
+        525,
+        575
       ],
       "movement_speed": [
         20,
@@ -5887,8 +5887,8 @@
     "requiresLevel": 58,
     "implicit": {
       "enhanced_damage": [
-        430,
-        580
+        525,
+        656
       ],
       "increased_attack_speed": 25,
       "crushing_blow_chance": 15,
@@ -5990,8 +5990,8 @@
     "requiresLevel": 37,
     "implicit": {
       "enhanced_damage": [
-        275,
-        325
+        300,
+        350
       ],
       "all_skills": [
         1,
@@ -6025,8 +6025,8 @@
     "requiresLevel": 25,
     "implicit": {
       "enhanced_damage": [
-        180,
-        190
+        260,
+        270
       ],
       "attack_rating": [
         110,
@@ -6116,8 +6116,8 @@
     "requiresLevel": 33,
     "implicit": {
       "enhanced_damage": [
-        180,
-        190
+        300,
+        310
       ],
       "open_wounds": 20,
       "slow_target": 40,
@@ -6163,8 +6163,8 @@
     "requiresLevel": 76,
     "implicit": {
       "enhanced_damage": [
-        220,
-        280
+        700,
+        760
       ],
       "all_skills": [
         3,
@@ -6284,8 +6284,8 @@
     "requiresLevel": 61,
     "implicit": {
       "enhanced_damage": [
-        260,
-        380
+        410,
+        512
       ],
       "increased_attack_speed": [
         15,
@@ -6331,8 +6331,8 @@
     "requiresLevel": 8,
     "implicit": {
       "enhanced_damage": [
-        110,
-        200
+        200,
+        250
       ],
       "additive_arcane_damage": [
         6,
@@ -6522,8 +6522,8 @@
     "requiresLevel": 84,
     "implicit": {
       "enhanced_damage": [
-        350,
-        550
+        525,
+        656
       ],
       "increased_attack_speed": 40,
       "movement_speed": 40,
@@ -6564,8 +6564,8 @@
     "requiresLevel": 82,
     "implicit": {
       "enhanced_damage": [
-        450,
-        500
+        525,
+        575
       ],
       "increased_attack_speed": [
         50,
@@ -6639,8 +6639,8 @@
     "requiresLevel": 38,
     "implicit": {
       "enhanced_damage": [
-        150,
-        250
+        300,
+        375
       ],
       "attack_rating": [
         150,
@@ -6688,8 +6688,8 @@
     "requiresLevel": 66,
     "implicit": {
       "enhanced_damage": [
-        650,
-        800
+        700,
+        850
       ],
       "all_skills": 4,
       "movement_speed": [
@@ -6912,8 +6912,8 @@
     "requiresLevel": 50,
     "implicit": {
       "enhanced_damage": [
-        375,
-        425
+        410,
+        460
       ],
       "attack_rating_pct": 20,
       "enhanced_damage_based_on_level": 200,
@@ -6951,8 +6951,8 @@
     "requiresLevel": 26,
     "implicit": {
       "enhanced_damage": [
-        190,
-        210
+        260,
+        280
       ],
       "life_steal": 5,
       "to_vitality": [
@@ -7087,8 +7087,8 @@
     "requiresLevel": 94,
     "implicit": {
       "enhanced_damage": [
-        620,
-        680
+        700,
+        760
       ],
       "increased_attack_speed": 30,
       "attack_rating": 625,
@@ -7184,8 +7184,8 @@
     "requiresLevel": 81,
     "implicit": {
       "enhanced_damage": [
-        410,
-        540
+        525,
+        655
       ],
       "crushing_blow_chance": 75,
       "defense_ignored": 35,
@@ -7228,8 +7228,8 @@
     "requiresLevel": 57,
     "implicit": {
       "enhanced_damage": [
-        280,
-        360
+        410,
+        490
       ],
       "increased_attack_speed": 50,
       "crushing_blow_chance": 35,
@@ -7265,8 +7265,8 @@
     "requiresLevel": 28,
     "implicit": {
       "enhanced_damage": [
-        225,
-        280
+        260,
+        315
       ],
       "movement_speed": 10,
       "increased_attack_speed": [
@@ -7306,8 +7306,8 @@
     "requiresLevel": 66,
     "implicit": {
       "enhanced_damage": [
-        220,
-        280
+        410,
+        470
       ],
       "all_skills": 1,
       "arcane_skills": [
@@ -7354,8 +7354,8 @@
     "requiresLevel": 47,
     "implicit": {
       "enhanced_damage": [
-        400,
-        465
+        410,
+        475
       ],
       "increased_life": 3,
       "to_vitality": [
@@ -7403,8 +7403,8 @@
     "requiresLevel": 57,
     "implicit": {
       "enhanced_damage": [
-        170,
-        200
+        410,
+        440
       ],
       "faster_cast_rate": 40,
       "to_energy": 20,
@@ -7441,7 +7441,7 @@
     "grade": "S",
     "requiresLevel": 68,
     "implicit": {
-      "enhanced_damage": 250,
+      "enhanced_damage": 525,
       "additive_fire_damage": [
         1850,
         1950
@@ -7516,8 +7516,8 @@
     "requiresLevel": 27,
     "implicit": {
       "enhanced_damage": [
-        225,
-        280
+        260,
+        315
       ],
       "to_strength": [
         5,
@@ -7551,8 +7551,8 @@
     "requiresLevel": 62,
     "implicit": {
       "enhanced_damage": [
-        210,
-        240
+        410,
+        440
       ],
       "crushing_blow_chance": 20,
       "to_vitality": 20,
@@ -7601,8 +7601,8 @@
     "requiresLevel": 58,
     "implicit": {
       "enhanced_damage": [
-        360,
-        400
+        525,
+        565
       ],
       "movement_speed": 40,
       "increased_attack_speed": [
@@ -7636,8 +7636,8 @@
     "requiresLevel": 70,
     "implicit": {
       "enhanced_damage": [
-        365,
-        380
+        525,
+        540
       ],
       "increased_attack_speed": [
         40,
@@ -7730,8 +7730,8 @@
     "requiresLevel": 64,
     "implicit": {
       "enhanced_damage": [
-        440,
-        520
+        525,
+        605
       ],
       "increased_attack_speed": [
         15,
@@ -7772,8 +7772,8 @@
     "requiresLevel": 85,
     "implicit": {
       "enhanced_damage": [
-        430,
-        480
+        525,
+        575
       ],
       "increased_attack_speed": 20,
       "deadly_blow": 20,
@@ -7838,8 +7838,8 @@
     "requiresLevel": 8,
     "implicit": {
       "enhanced_damage": [
-        90,
-        120
+        200,
+        230
       ],
       "attack_rating": [
         20,
@@ -7871,8 +7871,8 @@
     "requiresLevel": 86,
     "implicit": {
       "enhanced_damage": [
-        650,
-        725
+        700,
+        775
       ],
       "fire_skills": [
         3,
@@ -7920,8 +7920,8 @@
     "requiresLevel": 86,
     "implicit": {
       "enhanced_damage": [
-        420,
-        500
+        525,
+        605
       ],
       "movement_speed": 35,
       "attack_rating": 600,
@@ -8086,8 +8086,8 @@
     "requiresLevel": 40,
     "implicit": {
       "enhanced_damage": [
-        400,
-        475
+        410,
+        485
       ],
       "increased_attack_speed": [
         30,
@@ -8126,8 +8126,8 @@
         3
       ],
       "enhanced_damage": [
-        340,
-        390
+        700,
+        750
       ],
       "increased_attack_speed": [
         40,
@@ -8172,8 +8172,8 @@
     "requiresLevel": 51,
     "implicit": {
       "enhanced_damage": [
-        520,
-        580
+        525,
+        585
       ],
       "movement_speed": [
         20,
@@ -8210,8 +8210,8 @@
     "requiresLevel": 65,
     "implicit": {
       "enhanced_damage": [
-        275,
-        305
+        525,
+        555
       ],
       "additive_physical_damage": [
         18,
@@ -8249,8 +8249,8 @@
     "requiresLevel": 65,
     "implicit": {
       "enhanced_damage": [
-        280,
-        340
+        410,
+        470
       ],
       "damage_based_on_level": 100,
       "increased_attack_speed": [
@@ -8297,8 +8297,8 @@
     "requiresLevel": 78,
     "implicit": {
       "enhanced_damage": [
-        510,
-        570
+        525,
+        585
       ],
       "deadly_blow": 10,
       "open_wounds": [
@@ -8341,8 +8341,8 @@
     "requiresLevel": 83,
     "implicit": {
       "enhanced_damage": [
-        630,
-        780
+        700,
+        850
       ],
       "increased_attack_speed": [
         15,
@@ -8377,8 +8377,8 @@
     "requiresLevel": 82,
     "implicit": {
       "enhanced_damage": [
-        630,
-        780
+        700,
+        850
       ],
       "crit_chance": 25,
       "crit_damage": [
@@ -8459,8 +8459,8 @@
     "requiresLevel": 22,
     "implicit": {
       "enhanced_damage": [
-        150,
-        175
+        260,
+        285
       ],
       "movement_speed": 10,
       "increased_attack_speed": [
@@ -8606,8 +8606,8 @@
     "requiresLevel": 42,
     "implicit": {
       "enhanced_damage": [
-        320,
-        380
+        410,
+        470
       ],
       "crit_chance": 10,
       "life_steal": [
@@ -8642,8 +8642,8 @@
     "requiresLevel": 70,
     "implicit": {
       "enhanced_damage": [
-        500,
-        550
+        525,
+        575
       ],
       "all_skills": [
         2,
@@ -8687,8 +8687,8 @@
     "requiresLevel": 77,
     "implicit": {
       "enhanced_damage": [
-        480,
-        520
+        525,
+        565
       ],
       "all_skills": 2,
       "crushing_blow_chance": 50,
@@ -8725,8 +8725,8 @@
     "requiresLevel": 65,
     "implicit": {
       "enhanced_damage": [
-        280,
-        320
+        410,
+        450
       ],
       "increased_attack_speed": 30,
       "crushing_blow_chance": 50,
@@ -8761,8 +8761,8 @@
     "requiresLevel": 42,
     "implicit": {
       "enhanced_damage": [
-        180,
-        220
+        300,
+        340
       ],
       "increased_attack_speed": [
         20,
@@ -8794,8 +8794,8 @@
     "requiresLevel": 41,
     "implicit": {
       "enhanced_damage": [
-        240,
-        270
+        300,
+        330
       ],
       "all_skills": 1,
       "attack_rating": [
@@ -8860,8 +8860,8 @@
     "requiresLevel": 30,
     "implicit": {
       "enhanced_damage": [
-        150,
-        175
+        260,
+        285
       ],
       "attack_rating_pct": 5,
       "life_replenish_pct": 8,
@@ -8924,8 +8924,8 @@
     "requiresLevel": 58,
     "implicit": {
       "enhanced_damage": [
-        225,
-        250
+        410,
+        435
       ],
       "increased_attack_speed": [
         40,
@@ -9109,8 +9109,8 @@
     "requiresLevel": 37,
     "implicit": {
       "enhanced_damage": [
-        180,
-        220
+        300,
+        340
       ],
       "all_skills": 1,
       "faster_cast_rate": 20,
@@ -9137,8 +9137,8 @@
     "requiresLevel": 82,
     "implicit": {
       "enhanced_damage": [
-        255,
-        320
+        525,
+        590
       ],
       "all_skills": [
         2,
@@ -9227,8 +9227,8 @@
     "requiresLevel": 54,
     "implicit": {
       "enhanced_damage": [
-        440,
-        590
+        525,
+        656
       ],
       "increased_attack_speed": [
         20,
@@ -9283,8 +9283,8 @@
     "requiresLevel": 58,
     "implicit": {
       "enhanced_damage": [
-        490,
-        560
+        525,
+        595
       ],
       "increased_attack_speed": [
         15,
@@ -9349,8 +9349,8 @@
         3
       ],
       "enhanced_damage": [
-        440,
-        580
+        525,
+        656
       ],
       "attack_rating_pct": 20,
       "slow_target": 75,
@@ -9487,8 +9487,8 @@
     "requiresLevel": 24,
     "implicit": {
       "enhanced_damage": [
-        140,
-        180
+        260,
+        300
       ],
       "faster_cast_rate": 35,
       "to_energy": [
@@ -9524,8 +9524,8 @@
     "requiresLevel": 14,
     "implicit": {
       "enhanced_damage": [
-        140,
-        160
+        200,
+        220
       ],
       "crushing_blow_chance": 40,
       "attack_rating": 60,
@@ -9564,8 +9564,8 @@
     "requiresLevel": 42,
     "implicit": {
       "enhanced_damage": [
-        75,
-        125
+        260,
+        310
       ],
       "arcane_skills": [
         2,
@@ -9648,8 +9648,8 @@
     "requiresLevel": 56,
     "implicit": {
       "enhanced_damage": [
-        420,
-        580
+        525,
+        656
       ],
       "arcane_skills": [
         2,
@@ -9786,8 +9786,8 @@
     "requiresLevel": 64,
     "implicit": {
       "enhanced_damage": [
-        170,
-        200
+        410,
+        440
       ],
       "faster_cast_rate": 30,
       "to_intelligence": [
@@ -9879,8 +9879,8 @@
     "requiresLevel": 48,
     "implicit": {
       "enhanced_damage": [
-        370,
-        410
+        410,
+        450
       ],
       "life": [
         400,
@@ -9922,8 +9922,8 @@
     "requiresLevel": 60,
     "implicit": {
       "enhanced_damage": [
-        310,
-        450
+        410,
+        512
       ],
       "damage_based_on_level": 100,
       "open_wounds": 15,
@@ -9967,8 +9967,8 @@
     "requiresLevel": 44,
     "implicit": {
       "enhanced_damage": [
-        160,
-        190
+        300,
+        330
       ],
       "deadly_blow": 20,
       "attack_rating": 275,
@@ -10009,8 +10009,8 @@
     "requiresLevel": 61,
     "implicit": {
       "enhanced_damage": [
-        320,
-        380
+        525,
+        585
       ],
       "movement_speed": 15,
       "increased_attack_speed": 20,
@@ -10058,10 +10058,7 @@
         2
       ],
       "to_intelligence": 25,
-      "all_attributes": [
-        10,
-        20
-      ],
+      "to_energy": 20,
       "summon_damage": [
         10,
         20
@@ -10134,8 +10131,8 @@
     "requiresLevel": 13,
     "implicit": {
       "enhanced_damage": [
-        120,
-        180
+        200,
+        250
       ],
       "increased_attack_speed": [
         20,
@@ -10208,8 +10205,8 @@
     "requiresLevel": 61,
     "implicit": {
       "enhanced_damage": [
-        240,
-        280
+        410,
+        450
       ],
       "increased_attack_speed": [
         30,
@@ -10253,8 +10250,8 @@
     "requiresLevel": 87,
     "implicit": {
       "enhanced_damage": [
-        500,
-        600
+        525,
+        625
       ],
       "increased_attack_speed": [
         50,
@@ -10931,7 +10928,7 @@
     "damageMax": 62,
     "implicit": {
       "enhanced_damage": [
-        380,
+        410,
         520
       ],
       "crushing_blow_chance": 30,
@@ -10973,7 +10970,7 @@
     "implicit": {
       "all_skills": 1,
       "enhanced_damage": [
-        210,
+        260,
         350
       ],
       "increased_attack_speed": [
@@ -11010,8 +11007,8 @@
     "damageMax": 36,
     "implicit": {
       "enhanced_damage": [
-        280,
-        340
+        410,
+        470
       ],
       "attack_rating_pct": [
         7,
@@ -11079,8 +11076,8 @@
         4
       ],
       "enhanced_damage": [
-        480,
-        530
+        525,
+        575
       ],
       "melee_range": [
         10,
@@ -11133,8 +11130,8 @@
     "damageMax": 54,
     "implicit": {
       "enhanced_damage": [
-        425,
-        580
+        525,
+        656
       ],
       "increased_attack_speed": [
         30,

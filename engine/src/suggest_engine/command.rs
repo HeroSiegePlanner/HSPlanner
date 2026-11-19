@@ -1,9 +1,12 @@
 use std::collections::HashSet;
+use std::sync::OnceLock;
 
 use super::algo::{suggest_with_oracle, SearchInput};
 use super::types::{SuggestInput, SuggestResult};
 use crate::calc::build::compute_build_performance;
 use crate::calc::commands::{combined_dps_mid, perf_deps, BuildPerformanceInput};
+
+static POOL: OnceLock<rayon::ThreadPool> = OnceLock::new();
 
 pub fn run_suggest(input: &SuggestInput, progress: impl Fn(u32, u32) + Sync) -> SuggestResult {
     let oracle = |alloc: &HashSet<u32>| -> f64 {
@@ -30,8 +33,6 @@ pub fn run_suggest(input: &SuggestInput, progress: impl Fn(u32, u32) + Sync) -> 
 
 /// Workers shared by the native searches; two cores stay free for input and node previews.
 pub fn suggest_pool() -> &'static rayon::ThreadPool {
-    use std::sync::OnceLock;
-    static POOL: OnceLock<rayon::ThreadPool> = OnceLock::new();
     POOL.get_or_init(|| {
         rayon::ThreadPoolBuilder::new()
             .num_threads(

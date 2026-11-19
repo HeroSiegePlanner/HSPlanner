@@ -1,0 +1,21 @@
+# Replace the host name; Caddy fetches the certificate itself.
+{
+	servers {
+		timeouts {
+			read_header 10s
+			read_body 15s
+		}
+	}
+}
+
+builds.example.com {
+	encode zstd gzip
+	header Strict-Transport-Security "max-age=31536000"
+	request_body {
+		max_size 640KB
+	}
+	# Buffering keeps slow uploads away from hspaste's few worker threads.
+	reverse_proxy 127.0.0.1:8787 {
+		request_buffers 640KB
+	}
+}

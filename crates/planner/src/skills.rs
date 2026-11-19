@@ -2,7 +2,7 @@
 use hsplanner_ui::components::{
     ModalSize, PlannerDialogExt, modal_eyebrow, modal_footer, modal_header, modal_layout,
 };
-use hsplanner_ui::i18n::{tr, trf};
+use hsplanner_ui::i18n::{tr, tr_or, trf};
 use hsplanner_ui::scroll::PageScroll;
 use hsplanner_ui::tooltip::CursorTooltipExt;
 use std::{
@@ -66,6 +66,48 @@ static ICONS: LazyLock<HashMap<&'static str, Arc<Image>>> = LazyLock::new(|| {
 });
 const CELL: f32 = 84.;
 const STEP: f32 = 102.;
+
+const SUB_POSITIONS: [(f32, f32); 15] = [
+    (0.5, 0.87),
+    (0.453, 0.724),
+    (0.547, 0.724),
+    (0.253, 0.579),
+    (0.406, 0.579),
+    (0.5, 0.579),
+    (0.594, 0.579),
+    (0.747, 0.579),
+    (0.347, 0.399),
+    (0.653, 0.399),
+    (0.5, 0.289),
+    (0.1, 0.579),
+    (0.253, 0.109),
+    (0.747, 0.109),
+    (0.9, 0.579),
+];
+const SUB_EDGES: [(usize, usize); 20] = [
+    (0, 1),
+    (0, 2),
+    (1, 4),
+    (2, 6),
+    (3, 4),
+    (3, 11),
+    (4, 5),
+    (4, 8),
+    (5, 6),
+    (6, 7),
+    (6, 9),
+    (7, 14),
+    (8, 10),
+    (8, 11),
+    (8, 12),
+    (9, 10),
+    (9, 13),
+    (9, 14),
+    (10, 12),
+    (10, 13),
+];
+// Tile diameter as a share of the board, by template role (minor, notable, keystone).
+const TILE_PCT: [f32; 3] = [7.8, 9.8, 12.4];
 
 fn units(value: f32) -> Rems {
     rems(value / 13.)
@@ -1125,47 +1167,6 @@ impl Render for SkillsView {
     }
 }
 
-const SUB_POSITIONS: [(f32, f32); 15] = [
-    (0.5, 0.87),
-    (0.453, 0.724),
-    (0.547, 0.724),
-    (0.253, 0.579),
-    (0.406, 0.579),
-    (0.5, 0.579),
-    (0.594, 0.579),
-    (0.747, 0.579),
-    (0.347, 0.399),
-    (0.653, 0.399),
-    (0.5, 0.289),
-    (0.1, 0.579),
-    (0.253, 0.109),
-    (0.747, 0.109),
-    (0.9, 0.579),
-];
-const SUB_EDGES: [(usize, usize); 20] = [
-    (0, 1),
-    (0, 2),
-    (1, 4),
-    (2, 6),
-    (3, 4),
-    (3, 11),
-    (4, 5),
-    (4, 8),
-    (5, 6),
-    (6, 7),
-    (6, 9),
-    (7, 14),
-    (8, 10),
-    (8, 11),
-    (8, 12),
-    (9, 10),
-    (9, 13),
-    (9, 14),
-    (10, 12),
-    (10, 13),
-];
-// Tile diameter as a share of the board, by template role (minor, notable, keystone).
-const TILE_PCT: [f32; 3] = [7.8, 9.8, 12.4];
 fn tile_role(position: usize) -> usize {
     if position == 0 {
         2
@@ -1213,6 +1214,20 @@ fn stat_display(key: &str, value: f64) -> (String, String) {
         .unwrap_or_else(|| key.to_owned());
     let percent = definition.is_some_and(|s| s.format.as_deref() == Some("percent"));
     (label, format_range((value, value), percent))
+}
+
+/// The game's tooltip name for `key` on `node`, else `fallback`.
+fn node_stat_label(node: &SubskillNodeSpec, key: &str, fallback: String) -> String {
+    let Some(id) = node.stat_labels.as_ref().and_then(|labels| labels.get(key)) else {
+        return fallback;
+    };
+    tr_or(&format!("planner.skills.game_stat.{id}"), &fallback).to_owned()
+}
+
+/// The chance-weighted proc value, unless the game keeps the node's damage to its own objects.
+fn proc_average(node: &SubskillNodeSpec, chance: f64, value: f64) -> Option<f64> {
+    let average = chance / 100. * value;
+    (average > 0. && !node.owns_damage()).then_some(average)
 }
 
 struct SubtreeView {
@@ -1985,7 +2000,10 @@ impl Render for SubskillTooltip {
                     div()
                         .text_size(units(12.))
                         .text_color(p.text)
-                        .child(description.clone()),
+                        .child(description.clone())
+                        .when_some(self.node.tooltip_note.as_ref(), |text, note| {
+                            text.child(div().mt_1().text_color(p.muted).child(note.clone()))
+                        }),
                 ),
             );
         }
@@ -2051,6 +2069,7 @@ impl Render for SubskillTooltip {
             let mut section = Self::section(cx);
             for (key, current, upcoming) in rows {
                 let (label, shown) = stat_display(&key, current);
+                let label = node_stat_label(&self.node, &key, label);
                 let format = |value: f64| stat_display(&key, value).1;
                 section = section.child(Self::stat(
                     label,
@@ -2121,10 +2140,11 @@ impl Render for SubskillTooltip {
             ));
             for (key, current, upcoming) in effect_rows(proc.effects.as_ref(), self.rank, next) {
                 let (label, shown) = stat_display(&key, current);
+                let label = node_stat_label(&self.node, &key, label);
                 let format = |value: f64| stat_display(&key, value).1;
-                let average = chance / 100. * current;
+                let average = proc_average(&self.node, chance, current);
                 let value = Self::rank_value(shown, next_value(current, upcoming, &format), cx)
-                    .when(average > 0., |v| {
+                    .when_some(average, |v, average| {
                         v.child(div().text_size(units(10.)).text_color(p.faint).child(trf(
                             "planner.skills.average",
                             &[("0", (stat_display(&key, average).1).to_string())],
@@ -2133,7 +2153,7 @@ impl Render for SubskillTooltip {
                 section = section.child(Self::stat(label, value, cx));
             }
             for state in proc.applies_states.iter().flatten() {
-                if let AppliedStateValue::Full { state, amount } = state {
+                if let AppliedStateValue::Full { state, amount, .. } = state {
                     let amount = amount.as_ref();
                     let current = at_rank(
                         amount.and_then(|a| a.base),
@@ -2146,7 +2166,7 @@ impl Render for SubskillTooltip {
                         next,
                     );
                     section = section.child(Self::stat(
-                        state.replace('_', " "),
+                        node_stat_label(&self.node, state, state.replace('_', " ")),
                         Self::rank_value(
                             percent(current),
                             next_value(current, upcoming, &percent),
@@ -2185,13 +2205,65 @@ impl Render for SubskillTooltip {
 mod tests {
     use super::*;
 
+    const KNOWN_GAPS: &[&str] = &[
+        "necromancer/summon_mastery",
+        "pirate/grenade_jump",
+        "viking/defensive_shout",
+    ];
+
+    fn scorching_aura_node(id: &str) -> &'static SubskillNodeSpec {
+        let aura = data::get_skills_by_class("pyromancer")
+            .iter()
+            .find(|skill| skill.id == "scorching_aura")
+            .expect("scorching aura");
+        aura.subskills
+            .iter()
+            .flatten()
+            .find(|node| node.id == id)
+            .expect(id)
+    }
+
+    // #237, #239: the game's tooltip names, the planner's where the game's match them.
+    #[::core::prelude::v1::test]
+    fn scorching_aura_nodes_use_the_games_stat_names() {
+        let label = |node, key| node_stat_label(scorching_aura_node(node), key, "planner".into());
+        assert_eq!(label("flaming_fissure", "fire_skill_damage"), "Damage");
+        assert_eq!(label("sixt_degree_burns", "subtree_damage"), "Damage");
+        assert_eq!(label("scorching_harvester", "life_steal"), "Life Steal");
+        assert_eq!(label("burn_them_all", "burning"), "Conversion");
+        assert_eq!(
+            label("burning_soul", "subtree_damage_per_100_max_life"),
+            "Damage Based on Life"
+        );
+        assert_eq!(label("scorched_lands", "area_of_effect"), "planner");
+    }
+
+    #[::core::prelude::v1::test]
+    fn every_game_stat_label_has_a_translation() {
+        let classes = data::data().classes.keys().map(String::as_str);
+        for skill in classes.flat_map(data::get_skills_by_class) {
+            for node in skill.subskills.iter().flatten() {
+                for id in node.stat_labels.iter().flat_map(|labels| labels.values()) {
+                    let key = format!("planner.skills.game_stat.{id}");
+                    assert_ne!(tr_or(&key, ""), "", "{}:{} {key}", skill.id, node.id);
+                }
+            }
+        }
+    }
+
+    // #237: a share of the hit means nothing where the game keeps the damage to the node's objects.
+    #[::core::prelude::v1::test]
+    fn owned_damage_shows_no_proc_average() {
+        assert_eq!(
+            proc_average(scorching_aura_node("flaming_fissure"), 15., 50.),
+            None
+        );
+        let shared = SubskillNodeSpec::default();
+        assert_eq!(proc_average(&shared, 15., 50.), Some(7.5));
+    }
+
     #[::core::prelude::v1::test]
     fn every_positioned_skill_has_an_icon_except_known_gaps() {
-        const KNOWN_GAPS: &[&str] = &[
-            "necromancer/summon_mastery",
-            "pirate/grenade_jump",
-            "viking/defensive_shout",
-        ];
         let mut missing: Vec<&str> = visuals::SKILL_POSITIONS
             .iter()
             .map(|&(id, _, _)| id)

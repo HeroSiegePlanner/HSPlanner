@@ -6,6 +6,13 @@ use crate::skill_effects::{Frostbite, Proc, Ramp, Scatter, Stacks};
 use crate::skill_motion::{Accel, Rebound, Trail};
 use hsplanner_engine::calc::data;
 
+const ASTEROID: &str = "Exo_Asteroid_obj";
+const BLAST: &str = "Explosion_Item_obj";
+
+const WAVE: &str = "Exo_Tsunami_obj";
+
+const FLARE: &str = "Exo_Solar_Flare_obj";
+
 /// The engine's base dummy hits of a skill, whatever its class; none when it counts none.
 fn engine_hits(skill: &str) -> Option<f64> {
     let classes = std::fs::read_dir(concat!(env!("CARGO_MANIFEST_DIR"), "/../../data/skills"))
@@ -89,9 +96,6 @@ fn print_hits_per_projectile_count() {
         eprintln!("{skill}: {counts:?} engine {:?}", engine_hits(skill));
     }
 }
-
-const ASTEROID: &str = "Exo_Asteroid_obj";
-const BLAST: &str = "Explosion_Item_obj";
 
 fn play_on(skill_id: &str, spawns: &[Spawn], n: u64) -> Timeline {
     let fx = skill(skill_id).expect("skill motion");
@@ -275,8 +279,6 @@ fn every_spawn_of_a_use_shares_one_frostbite_roll_and_hands_it_down() {
     assert!(frosts.contains(&0) && frosts.contains(&2), "{frosts:?}");
 }
 
-const WAVE: &str = "Exo_Tsunami_obj";
-
 #[test]
 fn an_accelerating_object_speeds_up_to_its_speed() {
     let wave = Spawn {
@@ -440,8 +442,6 @@ fn a_trail_leaves_its_spawn_behind_after_every_period_of_moves() {
         .collect();
     assert_eq!(born, [(0, 0.), (9, 40.), (17, 80.), (25, 120.), (33, 160.)]);
 }
-
-const FLARE: &str = "Exo_Solar_Flare_obj";
 
 /// A solar flare thrown straight up from 24 px above the player, exploding where it ends.
 fn thrown_flare() -> Spawn {

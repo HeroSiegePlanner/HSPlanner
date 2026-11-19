@@ -20,7 +20,6 @@ use std::{
     sync::{Arc, LazyLock},
 };
 
-include!("mercenary_icons.rs");
 static IMAGES: LazyLock<HashMap<&'static str, Arc<RenderImage>>> = LazyLock::new(|| {
     MERC_ICONS
         .iter()
@@ -38,6 +37,8 @@ static IMAGES: LazyLock<HashMap<&'static str, Arc<RenderImage>>> = LazyLock::new
         })
         .collect()
 });
+
+include!("mercenary_icons.rs");
 
 pub struct MercenaryView {
     session: Entity<Session>,

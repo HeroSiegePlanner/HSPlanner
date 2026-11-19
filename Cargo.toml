@@ -1,11 +1,11 @@
 [workspace]
 resolver = "2"
-members = ["engine", "crates/app", "crates/build", "crates/planner", "crates/ui", "crates/library", "crates/notes", "crates/installer"]
+members = ["engine", "crates/app", "crates/build", "crates/planner", "crates/ui", "crates/library", "crates/notes", "crates/installer", "crates/paste"]
 default-members = ["crates/app"]
 exclude = ["legacy/src-tauri", "prototypes/gpui-tree", "tree-renderer"]
 
 [workspace.package]
-version = "1.2.2-beta.5"
+version = "1.2.2-beta.6"
 edition = "2024"
 publish = false
 
