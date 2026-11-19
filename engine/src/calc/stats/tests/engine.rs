@@ -1324,6 +1324,50 @@ fn item_granted_conditional_blessing_gated_by_toggle() {
 }
 
 #[test]
+fn avatar_of_fire_grants_flat_fire_skill_damage() {
+    // In game the fire line carries no % mark: +20 at rank 1, averaged over its 40 s / 60 s uptime (#242).
+    let ranks = HashMap::from([("avatar_of_fire".to_string(), 1_u32)]);
+    let buffs = HashMap::from([("avatar_of_fire".to_string(), true)]);
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_skill_ranks(
+        Some("pyromancer"),
+        &ranks,
+        None,
+        &buffs,
+        &HashMap::new(),
+        &HashMap::new(),
+        &mut attrs,
+        &mut stats,
+    );
+    let (low, high) = sum_contributions(&stats["flat_fire_skill_damage"]);
+    assert!((low - 20.0 * 40.0 / 60.0).abs() < 1e-3 && low == high);
+    assert!(!stats.contains_key("fire_skill_damage"));
+}
+
+#[test]
+fn berserkers_rage_raises_attack_and_magic_skill_damage() {
+    // Elixir of Death's skill: "Increases your Attack Damage and Magic skill damage" (#243).
+    let ranks = HashMap::from([("Berserker's Rage".to_string(), (1.0, 1.0))]);
+    let toggles = HashMap::from([("berserker_s_rage_buff".to_string(), true)]);
+    let mut attrs: SourceMap = HashMap::new();
+    let mut stats: SourceMap = HashMap::new();
+    apply_item_granted_passive_stats(
+        &HashMap::new(),
+        Some(&ranks),
+        &toggles,
+        &mut attrs,
+        &mut stats,
+    );
+    assert_eq!(sum_contributions(&stats["attack_damage"]), (27.0, 27.0));
+    assert_eq!(
+        sum_contributions(&stats["magic_skill_damage"]),
+        (27.0, 27.0)
+    );
+    assert!(!stats.contains_key("damage"));
+}
+
+#[test]
 fn radiant_power_converts_mana_with_base_pct() {
     // Tooltip: every 500 max mana → 3.75% [+0.25% per level] damage at
     // rank 1, i.e. (0.7 + 0.05 × rank)% of mana as magic skill damage.

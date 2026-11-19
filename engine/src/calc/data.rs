@@ -682,8 +682,11 @@ mod tests {
             };
             get(&passive.base) + get(&passive.per_rank) * rank
         };
-        assert_eq!(at_rank("Berserker's Rage", "damage", 1.), 27.);
-        assert_eq!(at_rank("Berserker's Rage", "damage", 5.), 39.);
+        for key in ["attack_damage", "magic_skill_damage"] {
+            assert_eq!(at_rank("Berserker's Rage", key, 1.), 27.);
+            assert_eq!(at_rank("Berserker's Rage", key, 5.), 39.);
+        }
+        assert_eq!(at_rank("Berserker's Rage", "damage", 5.), 0.);
         assert_eq!(at_rank("Berserker's Rage", "life_steal", 5.), 0.);
         assert_eq!(at_rank("Drunken Infused Wisdom", "all_skills", 1.), 1.);
         assert_eq!(at_rank("Drunken Infused Wisdom", "all_skills", 5.), 5.);

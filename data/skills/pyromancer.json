@@ -839,8 +839,8 @@
     "manaCostFormula": { "base": 9, "perLevel": 1 },
     "buffUptime": { "duration": 40, "cooldown": 60 },
     "passiveStats": {
-      "base": { "increased_attack_speed": 30, "fire_skill_damage": 20, "spell_crit_damage": 20, "spell_crit_chance": 15 },
-      "perRank": { "increased_attack_speed": 1.5, "fire_skill_damage": 2, "spell_crit_damage": 2.5, "spell_crit_chance": 0 }
+      "base": { "increased_attack_speed": 30, "flat_fire_skill_damage": 20, "spell_crit_damage": 20, "spell_crit_chance": 15 },
+      "perRank": { "increased_attack_speed": 1.5, "flat_fire_skill_damage": 2, "spell_crit_damage": 2.5, "spell_crit_chance": 0 }
     }
   },
   {

@@ -1516,14 +1516,16 @@
   {
     "id": "berserker_s_rage",
     "name": "Berserker's Rage",
-    "description": "Increases your damage for a short period of time",
+    "description": "Increases your Attack Damage and Magic skill damage for a short period of time",
     "condition": "berserker_s_rage_buff",
     "passiveStats": {
       "base": {
-        "damage": 24
+        "attack_damage": 24,
+        "magic_skill_damage": 24
       },
       "perRank": {
-        "damage": 3
+        "attack_damage": 3,
+        "magic_skill_damage": 3
       }
     }
   },
