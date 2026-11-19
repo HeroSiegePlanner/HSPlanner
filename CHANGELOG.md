@@ -1,3 +1,12 @@
+## Season 11
+
+- Class skills take the newer patch notes' damage, synergy and Intelligence scaling, cooldowns and subskill values.
+- Skills the notes tag [Hybrid], such as Inferno Slash, Homing Missile and Shield Wall, also take Spell nodes and Spell-only bonuses, and the listed Spell and Strike tags are added or removed.
+- Angelic augments use their new proc chances and values, and Lethal Tempo and Wizard's Wrath stack up to 3 times, counted at their average stacks.
+- Satanic and set weapons roll the new Enhanced Damage ranges, and the listed relics, charms, amulets and affixes take their new values.
+- Blender keeps 40% of other area bonuses, Slicing Throw takes half the size bonus, and Charged Bolts and Lightning Surge fly faster.
+- The Strange Encounters ether node gives 8%.
+
 ## Interface
 
 - New build opens a dialog to pick the name, class and level, and files the build in the folder you are viewing.

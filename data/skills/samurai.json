@@ -1513,7 +1513,8 @@
       "Active",
       "Spell",
       "Orbital",
-      "Strike"
+      "Strike",
+      "Hybrid"
     ],
     "tree": "Emperor's Blade",
     "position": {
@@ -1788,8 +1789,7 @@
       "Active",
       "Melee",
       "Projectile",
-      "Explosion",
-      "Strike"
+      "Explosion"
     ],
     "tree": "Emperor's Blade",
     "position": {
@@ -2465,7 +2465,8 @@
       "Movement",
       "Blink",
       "Area of Effect",
-      "Strike"
+      "Strike",
+      "Hybrid"
     ],
     "tree": "Emperor's Blade",
     "position": {

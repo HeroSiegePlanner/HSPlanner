@@ -447,7 +447,7 @@
     "baseType": "Amulet",
     "slot": "amulet",
     "rarity": "satanic",
-    "grade": "B",
+    "grade": "A",
     "requiresLevel": 38,
     "implicit": {
       "faster_cast_rate": 20,

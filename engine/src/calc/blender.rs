@@ -7,7 +7,7 @@ use super::subskill::subskill_key;
 use super::types::SkillSpec;
 use std::collections::HashMap;
 
-const GLOBAL_AREA_SHARE: f64 = 0.33;
+const GLOBAL_AREA_SHARE: f64 = 0.4;
 
 pub(crate) fn rank(spec: &SkillSpec, ranks: &HashMap<String, u32>, id: &str) -> u32 {
     let cap = spec
@@ -50,7 +50,7 @@ pub(crate) fn contacts(
     } else {
         rg(stats, "orbital_skill_speed")
     };
-    // Season 11: Blender gets a third of every area bonus except its own nodes'.
+    // Season 11: Blender gets 40% of every area bonus except its own nodes'.
     // Node area reaches the shared stat map with the rest, so split it out first.
     let node_area: f64 = spec
         .subskills
@@ -105,7 +105,7 @@ pub(crate) fn contacts(
     } else {
         "Blender: (240*T + 17.1*T²) / 360 local rotations at 60 updates/s"
     };
-    trace.push(CalculationStep::new("Blender contacts per blade per cast", format!("Estimated {mode}; T = {}s × (1 + ({} global + {} subtree + {} orbital)% duration / 100); orbital speed {}%; coverage min(1, 0.75 × (1 + {}% area / 100)), area = 33% of other area bonuses + {}% from Blender's nodes; casts may overlap", number(spec.effect_duration.unwrap_or(5.0)), range(duration), range(scoped_duration), range(orbital_duration), range(speed), range(area), number(node_area)), hits));
+    trace.push(CalculationStep::new("Blender contacts per blade per cast", format!("Estimated {mode}; T = {}s × (1 + ({} global + {} subtree + {} orbital)% duration / 100); orbital speed {}%; coverage min(1, 0.75 × (1 + {}% area / 100)), area = {}% of other area bonuses + {}% from Blender's nodes; casts may overlap", number(spec.effect_duration.unwrap_or(5.0)), range(duration), range(scoped_duration), range(orbital_duration), range(speed), range(area), number(GLOBAL_AREA_SHARE * 100.0), number(node_area)), hits));
     hits
 }
 

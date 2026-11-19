@@ -33,7 +33,7 @@
     ],
     "damageFormula": {
       "base": 0,
-      "perLevel": 12
+      "perLevel": 12.5
     },
     "manaCostFormula": {
       "base": 5,
@@ -290,7 +290,7 @@
         "manaCost": 5
       }
     ],
-    "damageFormula": { "base": 0, "perLevel": 12 },
+    "damageFormula": { "base": 0, "perLevel": 16 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -544,7 +544,7 @@
         "manaCost": 5
       }
     ],
-    "damageFormula": { "base": 0, "perLevel": 16.5 },
+    "damageFormula": { "base": 0, "perLevel": 18 },
     "manaCostFormula": {
       "base": 5,
       "perLevel": 1
@@ -559,13 +559,13 @@
       {
         "source": "Summon Ent",
         "stat": "poison_skill_damage",
-        "value": 12.5,
+        "value": 16,
         "per": "skill_level"
       },
       {
         "source": "Summon Ent Colossus",
         "stat": "poison_skill_damage",
-        "value": 15,
+        "value": 22.5,
         "per": "skill_level"
       },
       {
@@ -1424,7 +1424,7 @@
     ],
     "damageFormula": {
       "base": 0,
-      "perLevel": 10
+      "perLevel": 11
     },
     "manaCostFormula": {
       "base": 5,
@@ -2488,7 +2488,7 @@
     ],
     "damageFormula": {
       "base": 35,
-      "perLevel": 15
+      "perLevel": 12.5
     },
     "manaCostFormula": {
       "base": 5,
@@ -2743,7 +2743,7 @@
     ],
     "damageFormula": {
       "base": 6.5,
-      "perLevel": 1.5
+      "perLevel": 3
     },
     "manaCostFormula": {
       "base": 5,
@@ -2751,10 +2751,10 @@
     },
     "passiveStats": {
       "base": {
-        "life": 15
+        "life": 16.5
       },
       "perRank": {
-        "life": 1
+        "life": 2.5
       }
     },
     "bonusSources": [
@@ -2969,7 +2969,8 @@
       "Cast",
       "Active",
       "Melee",
-      "Area of Effect"
+      "Area of Effect",
+      "Hybrid"
     ],
     "movementDuringUse": 65,
     "range": 320,
@@ -3342,7 +3343,7 @@
     ],
     "damageFormula": {
       "base": 8,
-      "perLevel": 2
+      "perLevel": 4.5
     },
     "manaCostFormula": {
       "base": 5,
@@ -3350,11 +3351,11 @@
     },
     "passiveStats": {
       "base": {
-        "increased_attack_speed": 30,
+        "increased_attack_speed": 31,
         "movement_speed": 25
       },
       "perRank": {
-        "increased_attack_speed": 1,
+        "increased_attack_speed": 2,
         "movement_speed": 0
       }
     },

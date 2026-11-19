@@ -1918,7 +1918,8 @@
     ],
     "tags": [
       "Active",
-      "Spell"
+      "Spell",
+      "Hybrid"
     ],
     "tree": "Logger",
     "position": {
@@ -2217,7 +2218,8 @@
     "tags": [
       "Active",
       "Melee",
-      "Strike"
+      "Strike",
+      "Hybrid"
     ],
     "tree": "Logger",
     "position": {

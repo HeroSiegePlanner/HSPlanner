@@ -1765,13 +1765,13 @@
     "tree": "Gladiator",
     "position": { "row": 2, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0, "perLevel": 8.75 },
+    "damageFormula": { "base": 0, "perLevel": 15 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Retiarius Net", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
       { "source": "Rend Flesh", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
       { "source": "Master Trap Maker", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
-      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.15, "per": "attribute_point" }
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.75, "per": "attribute_point" }
     ],
     "subskills": [
       {

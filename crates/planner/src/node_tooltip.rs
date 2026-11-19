@@ -9,7 +9,7 @@ use gpui_kit::{
     div, linear_color_stop, linear_gradient, point, px, relative, rems,
 };
 use hsplanner_build::BuildSnapshot;
-use hsplanner_engine::calc::{data, subskill::effective_skill_tags};
+use hsplanner_engine::calc::{affix_tags, data, subskill::effective_skill_tags};
 use serde::Deserialize;
 
 use crate::{
@@ -67,7 +67,7 @@ pub struct NodeTooltip {
 
 /// The game's tooltip rule: every node tag, with the Explosion/AoE and Melee/Ranged pairs either-or.
 fn benefits(node_tags: &[String], skill_tags: &[String]) -> bool {
-    let has = |tag: &str| skill_tags.iter().any(|t| t == tag);
+    let has = |tag: &str| affix_tags::has_tag(skill_tags, tag);
     let pair = |tag: &str| {
         EITHER_TAGS.into_iter().find(|pair| {
             pair.contains(&tag) && pair.iter().all(|p| node_tags.iter().any(|t| t == p))
@@ -489,6 +489,14 @@ mod tests {
         assert!(benefits(&tags(&["Melee", "Ranged"]), &tags(&["Melee"])));
         assert!(!benefits(&tags(&["Melee", "Ranged"]), &tags(&["Spell"])));
         assert!(!benefits(&tags(&["Explosion"]), &tags(&["Area of Effect"])));
+    }
+
+    #[test]
+    fn hybrid_skills_take_spell_nodes() {
+        let inferno_slash = tags(&["Attack", "Active", "Melee", "Hybrid"]);
+        assert!(benefits(&tags(&["Spell"]), &inferno_slash));
+        assert!(benefits(&tags(&["Melee", "Ranged"]), &inferno_slash));
+        assert!(!benefits(&tags(&["Spell", "Projectile"]), &inferno_slash));
     }
 
     #[test]

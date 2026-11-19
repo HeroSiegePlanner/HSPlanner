@@ -1,7 +1,7 @@
 //! Skill hitboxes (data/skill-hitboxes.json) and how the game's size stats grow them.
 use hsplanner_build::BuildSnapshot;
 use hsplanner_engine::calc::{
-    data,
+    affix_tags, data,
     stats::{ComputedStats, SourceType},
     subskill::effective_skill_tags,
 };
@@ -157,7 +157,7 @@ pub(crate) fn is_size_stat(key: &str) -> bool {
 
 /// (key, weight) the tags take; melee range counts half and ignores abilityAOEScale.
 fn counted_keys(tags: &[String]) -> Vec<(&'static str, f64)> {
-    let has = |tag: &str| tags.iter().any(|t| t == tag);
+    let has = |tag: &str| affix_tags::has_tag(tags, tag);
     let (melee, ranged, spell, projectile) =
         (has("Melee"), has("Ranged"), has("Spell"), has("Projectile"));
     let mut keys = Vec::new();

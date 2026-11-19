@@ -22,7 +22,8 @@
       "Attack",
       "Ranged",
       "Projectile",
-      "Strike"
+      "Strike",
+      "Hybrid"
     ],
     "tree": "Gunner",
     "position": {
@@ -614,7 +615,8 @@
       "Ranged",
       "Projectile",
       "Explosion",
-      "Strike"
+      "Strike",
+      "Hybrid"
     ],
     "tree": "Gunner",
     "position": {
@@ -873,7 +875,8 @@
       "Ranged",
       "Projectile",
       "Explosion",
-      "Strike"
+      "Strike",
+      "Hybrid"
     ],
     "tree": "Gunner",
     "position": {
@@ -2011,7 +2014,8 @@
       "Attack",
       "Ranged",
       "Projectile",
-      "Strike"
+      "Strike",
+      "Hybrid"
     ],
     "tree": "Plunderer",
     "position": {

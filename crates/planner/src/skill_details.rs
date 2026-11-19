@@ -432,6 +432,7 @@ fn tag_translation_key(tag: &str) -> Option<&'static str> {
         "Shape Shift" => "planner.skills.tag_shape_shift",
         "Charge" => "planner.skills.tag_charge",
         "Shield" => "planner.skills.tag_shield",
+        "Hybrid" => "planner.skills.tag_hybrid",
         _ => return None,
     })
 }

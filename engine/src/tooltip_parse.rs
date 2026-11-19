@@ -1438,7 +1438,7 @@ SACRED WHIP
 SATANIC 1-HANDED MACE
 ATTACK DAMAGE: 100 TO 143 [35[32-36]
 ATTACKS PER SECOND: 2.27 [1.75]
-+308% ENHANCED DAMAGE 280-320]
++438% ENHANCED DAMAGE 410-450]
 +30% NCREASED ATTACK SPEED
 +50% CHANCE FOR A CRUSHING BLOW
 +763 TO ADDITIVE LIGHTNING DAMAGE [675-785)
@@ -1738,7 +1738,7 @@ TO";
         assert!(warnings(&result).is_empty(), "{:?}", warnings(&result));
         // Its fixed "Increased Attack Speed" and "Chance for a Crushing Blow" are implicits, not affixes.
         assert!(result.equipped.as_ref().unwrap().affixes.is_empty());
-        assert_eq!(implicit(&result, "enhanced_damage"), Some(308.));
+        assert_eq!(implicit(&result, "enhanced_damage"), Some(438.));
     }
 
     #[test]

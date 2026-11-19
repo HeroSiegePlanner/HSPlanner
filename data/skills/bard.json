@@ -1234,7 +1234,6 @@
     "tags": [
       "Attack",
       "Active",
-      "Spell",
       "Area of Effect",
       "Charge",
       "Strike"
@@ -1543,7 +1542,8 @@
       "Movement",
       "Blink",
       "Area of Effect",
-      "Strike"
+      "Strike",
+      "Hybrid"
     ],
     "movementDuringUse": 100,
     "maxRank": 20,
@@ -2252,9 +2252,9 @@
     "tags": [
       "Cast",
       "Active",
-      "Spell",
       "Summon",
-      "Orbital"
+      "Orbital",
+      "Strike"
     ],
     "movementDuringUse": 65,
     "baseCooldown": 5,

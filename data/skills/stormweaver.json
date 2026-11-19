@@ -570,7 +570,7 @@
     "classId": "stormweaver",
     "name": "Gateway",
     "kind": "active",
-    "description": "Instantly teleport to target spot. Each rank increases teleport range by +2%.",
+    "description": "Instantly teleport to target spot. Each rank increases teleport range by +4%.",
     "tags": ["Cast", "Active", "Movement", "Blink"],
     "movementDuringUse": 0,
     "baseCastRate": 1.75,

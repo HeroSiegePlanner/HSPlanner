@@ -300,6 +300,7 @@ fn compute_skill_damage_with_rank(
     let keys = s.damage_type.as_deref().and_then(element_keys);
     let staged_elemental = s.damage_scaling == DamageScaling::RankAndFlat;
     let is_spell = s.tags.iter().any(|t| t == "Spell");
+    let takes_spell_nodes = affix_tags::has_tag(&s.tags, "Spell");
 
     let all_skills = rg(input.stats, "all_skills");
     let (elem_min, elem_max): Ranged = match keys {
@@ -453,7 +454,7 @@ fn compute_skill_damage_with_rank(
     );
     let total_damage = if staged_elemental {
         let total = rg(input.stats, "damage");
-        let spell_total = if is_spell {
+        let spell_total = if takes_spell_nodes {
             rg(input.stats, "spell_damage_more")
         } else {
             (0.0, 0.0)
@@ -742,7 +743,7 @@ fn compute_skill_damage_with_rank(
     let crit_max_f = hit_max * crit.on_crit_mult;
     // The shared multicast stat stays Spell-gated; a subtree that grants
     // multicast to its own skill applies whatever that skill is tagged.
-    let shared_multicast = if is_spell {
+    let shared_multicast = if takes_spell_nodes {
         r_max(rg(input.stats, "multicast_chance"))
     } else {
         0.0
@@ -1115,7 +1116,7 @@ fn compute_skill_damage_with_rank(
         ),
         scalar(crit.avg_mult),
     ));
-    if is_spell {
+    if takes_spell_nodes {
         stat_inputs(&mut calculation, input.stats, ["multicast_chance"]);
     }
     calculation.push(CalculationStep::new(

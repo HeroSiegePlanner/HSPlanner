@@ -458,7 +458,7 @@
         {
           "name": "Stormweaver_Charged_Bolts_obj",
           "result": "yes",
-          "speed": 2.5,
+          "speed": 3.5,
           "lifetime": 120.0,
           "limited": true,
           "origin": [40, 40],
@@ -941,7 +941,7 @@
         {
           "name": "Stormweaver_Lightning_Surge_obj",
           "result": "partly",
-          "speed": 6.0,
+          "speed": 7.5,
           "limited": true,
           "why": "The bonus applies at launch, but Step_0 later sets the speed to a fixed value (for example when it homes, returns or slows down).",
           "origin": [110, 38],

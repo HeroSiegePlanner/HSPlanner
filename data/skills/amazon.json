@@ -48,7 +48,8 @@
       "Projectile",
       "Strike",
       "Poison",
-      "Physical"
+      "Physical",
+      "Hybrid"
     ],
     "movementDuringUse": 85,
     "maxRank": 20,
@@ -620,7 +621,8 @@
       "Projectile",
       "Strike",
       "Poison",
-      "Physical"
+      "Physical",
+      "Hybrid"
     ],
     "movementDuringUse": 65,
     "maxRank": 20,
@@ -1554,7 +1556,8 @@
       "Ranged",
       "Strike",
       "Lightning",
-      "Physical"
+      "Physical",
+      "Hybrid"
     ],
     "movementDuringUse": 65,
     "maxRank": 20,
@@ -1902,7 +1905,8 @@
       "Chaining",
       "Strike",
       "Lightning",
-      "Physical"
+      "Physical",
+      "Hybrid"
     ],
     "movementDuringUse": 65,
     "maxRank": 20,
@@ -2186,7 +2190,8 @@
       "Projectile",
       "Strike",
       "Lightning",
-      "Physical"
+      "Physical",
+      "Hybrid"
     ],
     "movementDuringUse": 65,
     "range": 320,
@@ -2734,7 +2739,8 @@
       "Projectile",
       "Strike",
       "Lightning",
-      "Physical"
+      "Physical",
+      "Hybrid"
     ],
     "movementDuringUse": 65,
     "maxRank": 20,

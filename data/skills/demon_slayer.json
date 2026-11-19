@@ -733,7 +733,7 @@
     "kind": "active",
     "description": "Throw a shredder on the ground spinning with deadly speed dealing physical damage.",
     "damageType": "physical",
-    "tags": ["Attack", "Active", "Ranged", "Projectile", "Physical"],
+    "tags": ["Attack", "Active", "Ranged", "Projectile", "Physical", "Strike"],
     "movementDuringUse": 85,
     "baseCooldown": 1,
     "effectDuration": 4,

@@ -6,13 +6,17 @@ use super::data;
 use super::skills::{r_max, r_min, rg, Ranged, StatMap};
 use super::types::AffixEffect;
 
+/// Whether the skill counts as `need`; Season 11 [Hybrid] skills also count as Spell.
+pub fn has_tag(tags: &[String], need: &str) -> bool {
+    tags.iter()
+        .any(|t| t == need || (need == "Spell" && t == "Hybrid"))
+}
+
 /// Stat keys of `effect` whose required tags the skill all carries.
 pub fn keys_for(effect: AffixEffect, tags: &[String]) -> Vec<&'static str> {
     data::affix_tags()
         .iter()
-        .filter(|(_, def)| {
-            def.effect == effect && def.tags.iter().all(|need| tags.iter().any(|t| t == need))
-        })
+        .filter(|(_, def)| def.effect == effect && def.tags.iter().all(|need| has_tag(tags, need)))
         .map(|(key, _)| key.as_str())
         .collect()
 }
@@ -42,7 +46,7 @@ pub fn entity_tag_for(tags: &[String]) -> Option<&'static str> {
         .values()
         .find(|def| {
             def.effect == AffixEffect::AttackSpeed
-                && def.tags.iter().all(|need| tags.iter().any(|t| t == need))
+                && def.tags.iter().all(|need| has_tag(tags, need))
         })
         .and_then(|def| def.tags.first())
         .map(|t| t.as_str())
@@ -85,6 +89,16 @@ mod tests {
             !keys_for(AffixEffect::Damage, &tags(&["Spell"])).contains(&"spell_aoe_damage"),
             "Spell alone must not pick up the Spell+AoE affix"
         );
+    }
+
+    #[test]
+    fn hybrid_attacks_take_spell_keys() {
+        let hybrid = tags(&["Attack", "Melee", "Hybrid"]);
+        assert!(keys_for(AffixEffect::Damage, &hybrid).contains(&"spell_damage"));
+        assert!(
+            !keys_for(AffixEffect::Damage, &tags(&["Attack", "Melee"])).contains(&"spell_damage")
+        );
+        assert!(!has_tag(&hybrid, "Ranged"));
     }
 
     #[test]

@@ -1063,6 +1063,7 @@ pub(crate) fn augment_model(augment: &AngelicAugment) -> ItemTooltipModel {
         ("range", "item.augment_range", ""),
         ("projectiles", "item.augment_projectiles", ""),
         ("summon_life", "item.augment_summon_life", ""),
+        ("max_stacks", "item.augment_stacks", ""),
     ] {
         if let Some(value) = range(&|tier| tier.meta.get(key).copied()) {
             facts.push((span(value, unit), tr(label).to_owned()));

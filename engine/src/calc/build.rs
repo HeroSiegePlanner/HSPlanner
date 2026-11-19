@@ -615,13 +615,23 @@ fn augment_buff_uptimes(
             deps.kills_per_sec,
         );
         let interval = aug.proc_cooldown.unwrap_or(0.0).max(ITEM_PROC_ICD_SECS);
-        let uptime = |rate: f64| ((rate * chance / 100.0).min(1.0 / interval) * duration).min(1.0);
+        let stacks = tier.meta.get("max_stacks").copied().unwrap_or(1.0);
+        let uptime = |rate: f64| {
+            let one = ((rate * chance / 100.0).min(1.0 / interval) * duration).min(1.0);
+            stacked_uptime(one, stacks)
+        };
         let uptime = (uptime(rate.0), uptime(rate.1));
         if uptime.0 < 1.0 || uptime.1 < 1.0 {
             out.insert(aug.id.clone(), uptime);
         }
     }
     out
+}
+
+/// Mean share of a refreshing buff: every further stack needs another proc inside the window.
+fn stacked_uptime(one: f64, stacks: f64) -> f64 {
+    let stacks = stacks.max(1.0) as i32;
+    (1..=stacks).map(|k| one.powi(k)).sum::<f64>() / f64::from(stacks)
 }
 
 /// Strike and attack procs need an attack skill; spell-hit and cast procs a cast.
@@ -1291,7 +1301,7 @@ pub(crate) fn performance_from_stats(
             // A pulsing aura never passes through TalentUseClass, so it never echoes.
             if echo_max > 0.0
                 && active_skill.is_none_or(|s| s.pulse_frames.is_none())
-                && calc_skill.tags.iter().any(|tag| tag == "Spell")
+                && super::affix_tags::has_tag(&calc_skill.tags, "Spell")
             {
                 if is_attack_skill || super::affix_tags::is_entity(&calc_skill.tags) {
                     calculation.push(CalculationStep::new(

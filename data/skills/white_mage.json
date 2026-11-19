@@ -872,12 +872,13 @@
       }
     ],
     "tags": [
-      "Aura"
+      "Aura",
+      "Spell"
     ],
     "damageType": "arcane",
     "damageFormula": {
       "base": 1,
-      "perLevel": 13
+      "perLevel": 16.5
     },
     "bonusSources": [
       {
@@ -901,7 +902,7 @@
       {
         "source": "Intelligence",
         "stat": "arcane_skill_damage",
-        "value": 7.75,
+        "value": 8.75,
         "per": "attribute_point"
       }
     ],
@@ -1026,13 +1027,13 @@
         "maxRank": 5,
         "effects": {
           "base": {"arcane_break": 0},
-          "perRank": {"arcane_break": 15}
+          "perRank": {"arcane_break": 25}
         },
         "proc": {
           "trigger": "on_hit",
           "chance": { "base": 0, "perRank": 3 },
           "appliesStates": [
-            { "state": "arcane_break", "amount": { "base": 0, "perRank": 15 } }
+            { "state": "arcane_break", "amount": { "base": 0, "perRank": 25 } }
           ]
         }
       },
@@ -2626,7 +2627,7 @@
     "damageType": "arcane",
     "damageFormula": {
       "base": 0,
-      "perLevel": 24
+      "perLevel": 12
     },
     "passiveStats": {
       "base": {
@@ -2640,25 +2641,25 @@
       {
         "source": "Flash Heal",
         "stat": "arcane_skill_damage",
-        "value": 13.26,
+        "value": 12.5,
         "per": "skill_level"
       },
       {
         "source": "Healing Zone",
         "stat": "arcane_skill_damage",
-        "value": 11.75,
+        "value": 10,
         "per": "skill_level"
       },
       {
         "source": "Burst of Light",
         "stat": "arcane_skill_damage",
-        "value": 15.26,
+        "value": 15,
         "per": "skill_level"
       },
       {
         "source": "Intelligence",
         "stat": "arcane_skill_damage",
-        "value": 10,
+        "value": 8.5,
         "per": "attribute_point"
       }
     ],

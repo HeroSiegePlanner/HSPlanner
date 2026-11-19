@@ -832,7 +832,7 @@
         "maxRank": 5,
         "effects": {
           "base": {"projectile_speed_pct": 0},
-          "perRank": {"projectile_speed_pct": 15}
+          "perRank": {"projectile_speed_pct": 8}
         }
       },
       {
@@ -2423,7 +2423,7 @@
     "kind": "active",
     "description": "Spawn a ghostly blade that attacks nearby monsters dealing physical damage and additional arcane damage.",
     "damageType": "arcane",
-    "tags": ["Cast", "Active", "Spell", "Sentry", "Strike"],
+    "tags": ["Cast", "Active", "Spell", "Sentry", "Strike", "Hybrid"],
     "movementDuringUse": 85,
     "baseCastRate": 1.85,
     "effectDuration": 8,

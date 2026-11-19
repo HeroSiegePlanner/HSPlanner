@@ -22,16 +22,16 @@
     "name": "Artillery Aid",
     "description": "Call for artillery, raining arrows to monsters around the initial target dealing physical damage.",
     "trigger": "on_strike",
-    "triggerNote": "OnStrike (10%)",
+    "triggerNote": "OnStrike (14%)",
     "primaryStats": ["enhanced_damage"],
     "levels": [
-      { "level": 1, "stats": { "enhanced_damage": 135 }, "procChance": 10, "cost": 0 },
-      { "level": 2, "stats": { "enhanced_damage": 270 }, "procChance": 10, "cost": 0 },
-      { "level": 3, "stats": { "enhanced_damage": 405 }, "procChance": 10, "cost": 1 },
-      { "level": 4, "stats": { "enhanced_damage": 540 }, "procChance": 10, "cost": 2 },
-      { "level": 5, "stats": { "enhanced_damage": 675 }, "procChance": 10, "cost": 3 },
-      { "level": 6, "stats": { "enhanced_damage": 810 }, "procChance": 10, "cost": 4 },
-      { "level": 7, "stats": { "enhanced_damage": 945 }, "procChance": 10, "cost": 5 }
+      { "level": 1, "stats": { "enhanced_damage": 135 }, "procChance": 14, "cost": 0 },
+      { "level": 2, "stats": { "enhanced_damage": 270 }, "procChance": 14, "cost": 0 },
+      { "level": 3, "stats": { "enhanced_damage": 405 }, "procChance": 14, "cost": 1 },
+      { "level": 4, "stats": { "enhanced_damage": 540 }, "procChance": 14, "cost": 2 },
+      { "level": 5, "stats": { "enhanced_damage": 675 }, "procChance": 14, "cost": 3 },
+      { "level": 6, "stats": { "enhanced_damage": 810 }, "procChance": 14, "cost": 4 },
+      { "level": 7, "stats": { "enhanced_damage": 945 }, "procChance": 14, "cost": 5 }
     ],
     "calc": "proc"
   },
@@ -59,15 +59,15 @@
     "description": "Increases movement speed for a short period.",
     "trigger": "on_strike",
     "triggerNote": "OnStrike (25%, 5s)",
-    "primaryStats": ["movement_speed"],
+    "primaryStats": ["movement_speed", "increased_attack_speed"],
     "levels": [
-      { "level": 1, "stats": { "movement_speed": 30 }, "procChance": 25, "procDurationSec": 5, "cost": 0 },
-      { "level": 2, "stats": { "movement_speed": 38 }, "procChance": 25, "procDurationSec": 5, "cost": 0 },
-      { "level": 3, "stats": { "movement_speed": 46 }, "procChance": 25, "procDurationSec": 5, "cost": 1 },
-      { "level": 4, "stats": { "movement_speed": 54 }, "procChance": 25, "procDurationSec": 5, "cost": 2 },
-      { "level": 5, "stats": { "movement_speed": 62 }, "procChance": 25, "procDurationSec": 5, "cost": 3 },
-      { "level": 6, "stats": { "movement_speed": 70 }, "procChance": 25, "procDurationSec": 5, "cost": 4 },
-      { "level": 7, "stats": { "movement_speed": 78 }, "procChance": 25, "procDurationSec": 5, "cost": 5 }
+      { "level": 1, "stats": { "movement_speed": 30, "increased_attack_speed": 3 }, "procChance": 25, "procDurationSec": 5, "cost": 0 },
+      { "level": 2, "stats": { "movement_speed": 38, "increased_attack_speed": 6 }, "procChance": 25, "procDurationSec": 5, "cost": 0 },
+      { "level": 3, "stats": { "movement_speed": 46, "increased_attack_speed": 9 }, "procChance": 25, "procDurationSec": 5, "cost": 1 },
+      { "level": 4, "stats": { "movement_speed": 54, "increased_attack_speed": 12 }, "procChance": 25, "procDurationSec": 5, "cost": 2 },
+      { "level": 5, "stats": { "movement_speed": 62, "increased_attack_speed": 15 }, "procChance": 25, "procDurationSec": 5, "cost": 3 },
+      { "level": 6, "stats": { "movement_speed": 70, "increased_attack_speed": 18 }, "procChance": 25, "procDurationSec": 5, "cost": 4 },
+      { "level": 7, "stats": { "movement_speed": 78, "increased_attack_speed": 21 }, "procChance": 25, "procDurationSec": 5, "cost": 5 }
     ],
     "calc": "toggle"
   },
@@ -280,13 +280,13 @@
     "triggerNote": "OnStrike (8%, 5s)",
     "primaryStats": ["dodge_chance"],
     "levels": [
-      { "level": 1, "stats": { "dodge_chance": 10 }, "procChance": 8, "procDurationSec": 5, "cost": 0 },
-      { "level": 2, "stats": { "dodge_chance": 20 }, "procChance": 8, "procDurationSec": 5, "cost": 0 },
-      { "level": 3, "stats": { "dodge_chance": 30 }, "procChance": 8, "procDurationSec": 5, "cost": 1 },
-      { "level": 4, "stats": { "dodge_chance": 40 }, "procChance": 8, "procDurationSec": 5, "cost": 2 },
-      { "level": 5, "stats": { "dodge_chance": 50 }, "procChance": 8, "procDurationSec": 5, "cost": 3 },
-      { "level": 6, "stats": { "dodge_chance": 60 }, "procChance": 8, "procDurationSec": 5, "cost": 4 },
-      { "level": 7, "stats": { "dodge_chance": 70 }, "procChance": 8, "procDurationSec": 5, "cost": 5 }
+      { "level": 1, "stats": { "dodge_chance": 6 }, "procChance": 8, "procDurationSec": 5, "cost": 0 },
+      { "level": 2, "stats": { "dodge_chance": 12 }, "procChance": 8, "procDurationSec": 5, "cost": 0 },
+      { "level": 3, "stats": { "dodge_chance": 18 }, "procChance": 8, "procDurationSec": 5, "cost": 1 },
+      { "level": 4, "stats": { "dodge_chance": 24 }, "procChance": 8, "procDurationSec": 5, "cost": 2 },
+      { "level": 5, "stats": { "dodge_chance": 30 }, "procChance": 8, "procDurationSec": 5, "cost": 3 },
+      { "level": 6, "stats": { "dodge_chance": 36 }, "procChance": 8, "procDurationSec": 5, "cost": 4 },
+      { "level": 7, "stats": { "dodge_chance": 42 }, "procChance": 8, "procDurationSec": 5, "cost": 5 }
     ],
     "calc": "toggle"
   },
@@ -332,17 +332,17 @@
     "name": "Grave's Grasp",
     "description": "Summon a shadow anomaly to fight for you for a short period.",
     "trigger": "on_spell_hit",
-    "triggerNote": "OnSpellHit (8%)",
+    "triggerNote": "OnSpellHit (15%)",
     "primaryStats": ["flat_arcane_skill_damage", "life"],
     "synergyPerLevel": 125.0,
     "levels": [
-      { "level": 1, "stats": { "flat_arcane_skill_damage": 925 }, "procChance": 8, "cost": 0, "meta": { "summon_life": 6000 } },
-      { "level": 2, "stats": { "flat_arcane_skill_damage": 1550 }, "procChance": 8, "cost": 0, "meta": { "summon_life": 7500 } },
-      { "level": 3, "stats": { "flat_arcane_skill_damage": 2175 }, "procChance": 8, "cost": 1, "meta": { "summon_life": 9000 } },
-      { "level": 4, "stats": { "flat_arcane_skill_damage": 2800 }, "procChance": 8, "cost": 2, "meta": { "summon_life": 10500 } },
-      { "level": 5, "stats": { "flat_arcane_skill_damage": 3425 }, "procChance": 8, "cost": 3, "meta": { "summon_life": 12000 } },
-      { "level": 6, "stats": { "flat_arcane_skill_damage": 4050 }, "procChance": 8, "cost": 4, "meta": { "summon_life": 13500 } },
-      { "level": 7, "stats": { "flat_arcane_skill_damage": 4675 }, "procChance": 8, "cost": 5, "meta": { "summon_life": 15000 } }
+      { "level": 1, "stats": { "flat_arcane_skill_damage": 925 }, "procChance": 15, "cost": 0, "meta": { "summon_life": 6000 } },
+      { "level": 2, "stats": { "flat_arcane_skill_damage": 1550 }, "procChance": 15, "cost": 0, "meta": { "summon_life": 7500 } },
+      { "level": 3, "stats": { "flat_arcane_skill_damage": 2175 }, "procChance": 15, "cost": 1, "meta": { "summon_life": 9000 } },
+      { "level": 4, "stats": { "flat_arcane_skill_damage": 2800 }, "procChance": 15, "cost": 2, "meta": { "summon_life": 10500 } },
+      { "level": 5, "stats": { "flat_arcane_skill_damage": 3425 }, "procChance": 15, "cost": 3, "meta": { "summon_life": 12000 } },
+      { "level": 6, "stats": { "flat_arcane_skill_damage": 4050 }, "procChance": 15, "cost": 4, "meta": { "summon_life": 13500 } },
+      { "level": 7, "stats": { "flat_arcane_skill_damage": 4675 }, "procChance": 15, "cost": 5, "meta": { "summon_life": 15000 } }
     ],
     "calc": "proc"
   },
@@ -459,18 +459,18 @@
   {
     "id": "lethal_tempo",
     "name": "Lethal Tempo",
-    "description": "Increases your attack speed and critical strike damage for a short period.",
+    "description": "Increases your attack speed and critical strike damage for a short period, stacking up to 3 times.",
     "trigger": "on_strike",
-    "triggerNote": "OnStrike (8%, 2s)",
+    "triggerNote": "OnStrike (12%, 4s, up to 3 stacks)",
     "primaryStats": ["increased_attack_speed", "crit_damage"],
     "levels": [
-      { "level": 1, "stats": { "increased_attack_speed": 40, "crit_damage": 8 }, "procChance": 8, "procDurationSec": 2, "cost": 0 },
-      { "level": 2, "stats": { "increased_attack_speed": 50, "crit_damage": 16 }, "procChance": 8, "procDurationSec": 2, "cost": 0 },
-      { "level": 3, "stats": { "increased_attack_speed": 60, "crit_damage": 24 }, "procChance": 8, "procDurationSec": 2, "cost": 1 },
-      { "level": 4, "stats": { "increased_attack_speed": 70, "crit_damage": 32 }, "procChance": 8, "procDurationSec": 2, "cost": 2 },
-      { "level": 5, "stats": { "increased_attack_speed": 80, "crit_damage": 40 }, "procChance": 8, "procDurationSec": 2, "cost": 3 },
-      { "level": 6, "stats": { "increased_attack_speed": 90, "crit_damage": 48 }, "procChance": 8, "procDurationSec": 2, "cost": 4 },
-      { "level": 7, "stats": { "increased_attack_speed": 100, "crit_damage": 56 }, "procChance": 8, "procDurationSec": 2, "cost": 5 }
+      { "level": 1, "stats": { "increased_attack_speed": 15, "crit_damage": 9 }, "procChance": 12, "procDurationSec": 4, "cost": 0, "meta": { "max_stacks": 3 } },
+      { "level": 2, "stats": { "increased_attack_speed": 30, "crit_damage": 18 }, "procChance": 12, "procDurationSec": 4, "cost": 0, "meta": { "max_stacks": 3 } },
+      { "level": 3, "stats": { "increased_attack_speed": 45, "crit_damage": 27 }, "procChance": 12, "procDurationSec": 4, "cost": 1, "meta": { "max_stacks": 3 } },
+      { "level": 4, "stats": { "increased_attack_speed": 60, "crit_damage": 36 }, "procChance": 12, "procDurationSec": 4, "cost": 2, "meta": { "max_stacks": 3 } },
+      { "level": 5, "stats": { "increased_attack_speed": 75, "crit_damage": 45 }, "procChance": 12, "procDurationSec": 4, "cost": 3, "meta": { "max_stacks": 3 } },
+      { "level": 6, "stats": { "increased_attack_speed": 90, "crit_damage": 54 }, "procChance": 12, "procDurationSec": 4, "cost": 4, "meta": { "max_stacks": 3 } },
+      { "level": 7, "stats": { "increased_attack_speed": 105, "crit_damage": 63 }, "procChance": 12, "procDurationSec": 4, "cost": 5, "meta": { "max_stacks": 3 } }
     ],
     "calc": "toggle"
   },
@@ -735,16 +735,16 @@
     "name": "Rupturing Strike",
     "description": "Deal increased attack damage and cause monsters struck to Bleed.",
     "trigger": "on_strike",
-    "triggerNote": "OnStrike (8%)",
+    "triggerNote": "OnStrike (15%)",
     "primaryStats": ["enhanced_damage", "increased_bleeding_damage"],
     "levels": [
-      { "level": 1, "stats": { "enhanced_damage": 100, "increased_bleeding_damage": 18 }, "procChance": 8, "cost": 0 },
-      { "level": 2, "stats": { "enhanced_damage": 150, "increased_bleeding_damage": 36 }, "procChance": 8, "cost": 1 },
-      { "level": 3, "stats": { "enhanced_damage": 200, "increased_bleeding_damage": 54 }, "procChance": 8, "cost": 2 },
-      { "level": 4, "stats": { "enhanced_damage": 250, "increased_bleeding_damage": 72 }, "procChance": 8, "cost": 3 },
-      { "level": 5, "stats": { "enhanced_damage": 300, "increased_bleeding_damage": 90 }, "procChance": 8, "cost": 4 },
-      { "level": 6, "stats": { "enhanced_damage": 350, "increased_bleeding_damage": 108 }, "procChance": 8, "cost": 5 },
-      { "level": 7, "stats": { "enhanced_damage": 400, "increased_bleeding_damage": 126 }, "procChance": 8, "cost": 6 }
+      { "level": 1, "stats": { "enhanced_damage": 100, "increased_bleeding_damage": 25 }, "procChance": 15, "cost": 0 },
+      { "level": 2, "stats": { "enhanced_damage": 150, "increased_bleeding_damage": 50 }, "procChance": 15, "cost": 1 },
+      { "level": 3, "stats": { "enhanced_damage": 200, "increased_bleeding_damage": 75 }, "procChance": 15, "cost": 2 },
+      { "level": 4, "stats": { "enhanced_damage": 250, "increased_bleeding_damage": 100 }, "procChance": 15, "cost": 3 },
+      { "level": 5, "stats": { "enhanced_damage": 300, "increased_bleeding_damage": 125 }, "procChance": 15, "cost": 4 },
+      { "level": 6, "stats": { "enhanced_damage": 350, "increased_bleeding_damage": 150 }, "procChance": 15, "cost": 5 },
+      { "level": 7, "stats": { "enhanced_damage": 400, "increased_bleeding_damage": 175 }, "procChance": 15, "cost": 6 }
     ],
     "calc": "proc"
   },
@@ -753,17 +753,17 @@
     "name": "Seed of Destruction",
     "description": "Plant the seed of destruction on all monsters around the target location exploding after a delay dealing Arcane area of effect damage.",
     "trigger": "on_spell_hit",
-    "triggerNote": "OnSpellHit (8%, 3s)",
+    "triggerNote": "OnSpellHit (15%, 3s)",
     "primaryStats": ["flat_arcane_skill_damage"],
     "synergyPerLevel": 125.0,
     "levels": [
-      { "level": 1, "stats": { "flat_arcane_skill_damage": 1600 }, "procChance": 8, "procDurationSec": 3, "cost": 0 },
-      { "level": 2, "stats": { "flat_arcane_skill_damage": 2450 }, "procChance": 8, "procDurationSec": 3, "cost": 1 },
-      { "level": 3, "stats": { "flat_arcane_skill_damage": 3300 }, "procChance": 8, "procDurationSec": 3, "cost": 2 },
-      { "level": 4, "stats": { "flat_arcane_skill_damage": 4150 }, "procChance": 8, "procDurationSec": 3, "cost": 3 },
-      { "level": 5, "stats": { "flat_arcane_skill_damage": 5000 }, "procChance": 8, "procDurationSec": 3, "cost": 4 },
-      { "level": 6, "stats": { "flat_arcane_skill_damage": 5850 }, "procChance": 8, "procDurationSec": 3, "cost": 5 },
-      { "level": 7, "stats": { "flat_arcane_skill_damage": 6700 }, "procChance": 8, "procDurationSec": 3, "cost": 6 }
+      { "level": 1, "stats": { "flat_arcane_skill_damage": 1600 }, "procChance": 15, "procDurationSec": 3, "cost": 0 },
+      { "level": 2, "stats": { "flat_arcane_skill_damage": 2450 }, "procChance": 15, "procDurationSec": 3, "cost": 1 },
+      { "level": 3, "stats": { "flat_arcane_skill_damage": 3300 }, "procChance": 15, "procDurationSec": 3, "cost": 2 },
+      { "level": 4, "stats": { "flat_arcane_skill_damage": 4150 }, "procChance": 15, "procDurationSec": 3, "cost": 3 },
+      { "level": 5, "stats": { "flat_arcane_skill_damage": 5000 }, "procChance": 15, "procDurationSec": 3, "cost": 4 },
+      { "level": 6, "stats": { "flat_arcane_skill_damage": 5850 }, "procChance": 15, "procDurationSec": 3, "cost": 5 },
+      { "level": 7, "stats": { "flat_arcane_skill_damage": 6700 }, "procChance": 15, "procDurationSec": 3, "cost": 6 }
     ],
     "calc": "proc"
   },
@@ -847,16 +847,16 @@
     "name": "Soul Tap",
     "description": "Infuses the souls of all monsters in target area to increase your life Steal for a short period.",
     "trigger": "on_strike",
-    "triggerNote": "OnStrike (8%)",
-    "primaryStats": ["life_steal"],
+    "triggerNote": "OnStrike (15%)",
+    "primaryStats": ["life_steal", "mana_steal"],
     "levels": [
-      { "level": 1, "stats": { "life_steal": 9 }, "procChance": 8, "procDurationSec": 4, "cost": 0 },
-      { "level": 2, "stats": { "life_steal": 18 }, "procChance": 8, "procDurationSec": 4.4, "cost": 1 },
-      { "level": 3, "stats": { "life_steal": 27 }, "procChance": 8, "procDurationSec": 4.8, "cost": 2 },
-      { "level": 4, "stats": { "life_steal": 36 }, "procChance": 8, "procDurationSec": 5.2, "cost": 3 },
-      { "level": 5, "stats": { "life_steal": 45 }, "procChance": 8, "procDurationSec": 5.6, "cost": 4 },
-      { "level": 6, "stats": { "life_steal": 54 }, "procChance": 8, "procDurationSec": 6, "cost": 5 },
-      { "level": 7, "stats": { "life_steal": 63 }, "procChance": 8, "procDurationSec": 6.4, "cost": 6 }
+      { "level": 1, "stats": { "life_steal": 9, "mana_steal": 4.5 }, "procChance": 15, "procDurationSec": 4, "cost": 0 },
+      { "level": 2, "stats": { "life_steal": 18, "mana_steal": 9 }, "procChance": 15, "procDurationSec": 4.4, "cost": 1 },
+      { "level": 3, "stats": { "life_steal": 27, "mana_steal": 13.5 }, "procChance": 15, "procDurationSec": 4.8, "cost": 2 },
+      { "level": 4, "stats": { "life_steal": 36, "mana_steal": 18 }, "procChance": 15, "procDurationSec": 5.2, "cost": 3 },
+      { "level": 5, "stats": { "life_steal": 45, "mana_steal": 22.5 }, "procChance": 15, "procDurationSec": 5.6, "cost": 4 },
+      { "level": 6, "stats": { "life_steal": 54, "mana_steal": 27 }, "procChance": 15, "procDurationSec": 6, "cost": 5 },
+      { "level": 7, "stats": { "life_steal": 63, "mana_steal": 31.5 }, "procChance": 15, "procDurationSec": 6.4, "cost": 6 }
     ],
     "calc": "toggle"
   },
@@ -1085,16 +1085,16 @@
     "name": "Warsong",
     "description": "Curse monsters in target location to deal reduced damage.",
     "trigger": "on_strike",
-    "triggerNote": "OnStrike (8%)",
+    "triggerNote": "OnStrike (15%)",
     "primaryStats": ["all_damage_taken_reduced_pct"],
     "levels": [
-      { "level": 1, "stats": { "all_damage_taken_reduced_pct": 20 }, "procChance": 8, "procDurationSec": 2, "cost": 1 },
-      { "level": 2, "stats": { "all_damage_taken_reduced_pct": 24 }, "procChance": 8, "procDurationSec": 2.25, "cost": 2 },
-      { "level": 3, "stats": { "all_damage_taken_reduced_pct": 28 }, "procChance": 8, "procDurationSec": 2.5, "cost": 3 },
-      { "level": 4, "stats": { "all_damage_taken_reduced_pct": 32 }, "procChance": 8, "procDurationSec": 2.75, "cost": 4 },
-      { "level": 5, "stats": { "all_damage_taken_reduced_pct": 36 }, "procChance": 8, "procDurationSec": 3, "cost": 5 },
-      { "level": 6, "stats": { "all_damage_taken_reduced_pct": 40 }, "procChance": 8, "procDurationSec": 3.25, "cost": 6 },
-      { "level": 7, "stats": { "all_damage_taken_reduced_pct": 44 }, "procChance": 8, "procDurationSec": 3.5, "cost": 7 }
+      { "level": 1, "stats": { "all_damage_taken_reduced_pct": 20 }, "procChance": 15, "procDurationSec": 4.5, "cost": 1 },
+      { "level": 2, "stats": { "all_damage_taken_reduced_pct": 24 }, "procChance": 15, "procDurationSec": 5, "cost": 2 },
+      { "level": 3, "stats": { "all_damage_taken_reduced_pct": 28 }, "procChance": 15, "procDurationSec": 5.5, "cost": 3 },
+      { "level": 4, "stats": { "all_damage_taken_reduced_pct": 32 }, "procChance": 15, "procDurationSec": 6, "cost": 4 },
+      { "level": 5, "stats": { "all_damage_taken_reduced_pct": 36 }, "procChance": 15, "procDurationSec": 6.5, "cost": 5 },
+      { "level": 6, "stats": { "all_damage_taken_reduced_pct": 40 }, "procChance": 15, "procDurationSec": 7, "cost": 6 },
+      { "level": 7, "stats": { "all_damage_taken_reduced_pct": 44 }, "procChance": 15, "procDurationSec": 7.5, "cost": 7 }
     ],
     "calc": "toggle"
   },
@@ -1120,18 +1120,18 @@
   {
     "id": "wizards_wrath",
     "name": "Wizards Wrath",
-    "description": "Increases your cast rate and arcane damage for a short period.",
+    "description": "Increases your cast rate and magic damage for a short period, stacking up to 3 times.",
     "trigger": "on_cast",
-    "triggerNote": "OnCast (8%, 3s)",
-    "primaryStats": ["faster_cast_rate", "arcane_skill_damage"],
+    "triggerNote": "OnCast (12%, 4s, up to 3 stacks)",
+    "primaryStats": ["faster_cast_rate", "magic_skill_damage"],
     "levels": [
-      { "level": 1, "stats": { "faster_cast_rate": 15, "arcane_skill_damage": 10 }, "procChance": 8, "procDurationSec": 3, "cost": 1 },
-      { "level": 2, "stats": { "faster_cast_rate": 19, "arcane_skill_damage": 13 }, "procChance": 8, "procDurationSec": 3, "cost": 2 },
-      { "level": 3, "stats": { "faster_cast_rate": 23, "arcane_skill_damage": 16 }, "procChance": 8, "procDurationSec": 3, "cost": 3 },
-      { "level": 4, "stats": { "faster_cast_rate": 27, "arcane_skill_damage": 19 }, "procChance": 8, "procDurationSec": 3, "cost": 4 },
-      { "level": 5, "stats": { "faster_cast_rate": 31, "arcane_skill_damage": 22 }, "procChance": 8, "procDurationSec": 3, "cost": 5 },
-      { "level": 6, "stats": { "faster_cast_rate": 35, "arcane_skill_damage": 25 }, "procChance": 8, "procDurationSec": 3, "cost": 6 },
-      { "level": 7, "stats": { "faster_cast_rate": 39, "arcane_skill_damage": 28 }, "procChance": 8, "procDurationSec": 3, "cost": 7 }
+      { "level": 1, "stats": { "faster_cast_rate": 12, "magic_skill_damage": 6 }, "procChance": 12, "procDurationSec": 4, "cost": 1, "meta": { "max_stacks": 3 } },
+      { "level": 2, "stats": { "faster_cast_rate": 18, "magic_skill_damage": 9 }, "procChance": 12, "procDurationSec": 4, "cost": 2, "meta": { "max_stacks": 3 } },
+      { "level": 3, "stats": { "faster_cast_rate": 24, "magic_skill_damage": 12 }, "procChance": 12, "procDurationSec": 4, "cost": 3, "meta": { "max_stacks": 3 } },
+      { "level": 4, "stats": { "faster_cast_rate": 30, "magic_skill_damage": 15 }, "procChance": 12, "procDurationSec": 4, "cost": 4, "meta": { "max_stacks": 3 } },
+      { "level": 5, "stats": { "faster_cast_rate": 36, "magic_skill_damage": 18 }, "procChance": 12, "procDurationSec": 4, "cost": 5, "meta": { "max_stacks": 3 } },
+      { "level": 6, "stats": { "faster_cast_rate": 42, "magic_skill_damage": 21 }, "procChance": 12, "procDurationSec": 4, "cost": 6, "meta": { "max_stacks": 3 } },
+      { "level": 7, "stats": { "faster_cast_rate": 48, "magic_skill_damage": 24 }, "procChance": 12, "procDurationSec": 4, "cost": 7, "meta": { "max_stacks": 3 } }
     ],
     "calc": "toggle"
   },

@@ -22,7 +22,7 @@
     "attackScaling": {
       "weaponBonusScaling": true,
       "weaponSubtreeScalesFullHit": false,
-      "weaponDamagePct": { "base": 182, "perLevel": 22 },
+      "weaponDamagePct": { "base": 182, "perLevel": 24 },
       "flatPhysicalMin": { "base": 4, "perLevel": 0 },
       "flatPhysicalMax": { "base": 11, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
@@ -235,7 +235,7 @@
     "kind": "active",
     "description": "Vault in the direction aimed unleashing arrows towards nearby monsters dealing increased damage.",
     "damageType": "physical",
-    "tags": ["Cast", "Active", "Movement", "Spell", "Strike", "Leap", "Ranged", "Projectile"],
+    "tags": ["Cast", "Active", "Movement", "Strike", "Leap", "Ranged", "Projectile"],
     "movementDuringUse": 0,
     "baseCastRate": 3,
     "maxRank": 20,
@@ -405,13 +405,13 @@
       {
         "id": "leaping_cyclone",
         "positionIndex": 12,
-        "dummy": {"effects": [{"kind": "projectiles", "base": 0, "perRank": 3}, {"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "Leaping Cyclone: the extra arrows orbit the player (orbit radius 12) and share the pack; the dummy at 160 px is out of their reach: 0"}], "confidence": "I", "note": "Leaping Cyclone (maxRank 3), card table p12.", "plannerFix": "planner adds projectile_count 3/r as hits; game: orbiting arrows around the player never reach the dummy"},
+        "dummy": {"effects": [{"kind": "projectiles", "base": 2, "perRank": 1}, {"kind": "extra_hits", "byRank": [0, 0, 0], "per": "use", "replacesProjectileHits": true, "note": "Leaping Cyclone: the extra arrows orbit the player (orbit radius 12) and share the pack; the dummy at 160 px is out of their reach: 0"}], "confidence": "I", "note": "Leaping Cyclone (maxRank 3), card table p12.", "plannerFix": "planner adds projectile_count 2 + 1/r as hits; game: orbiting arrows around the player never reach the dummy"},
         "name": "Leaping Cyclone",
         "description": "Vault fires orbiting projectiles that fly in all directions.",
         "maxRank": 3,
         "effects": {
-          "base": {"projectile_count": 0},
-          "perRank": {"projectile_count": 3}
+          "base": {"projectile_count": 2, "subtree_damage": 0},
+          "perRank": {"projectile_count": 1, "subtree_damage": 25}
         }
       },
       {
@@ -463,15 +463,15 @@
     "attackScaling": {
       "weaponBonusScaling": true,
       "weaponSubtreeScalesFullHit": false,
-      "weaponDamagePct": { "base": 180, "perLevel": 26.5 },
+      "weaponDamagePct": { "base": 180, "perLevel": 28 },
       "flatPhysicalMin": { "base": 4, "perLevel": 0 },
       "flatPhysicalMax": { "base": 11, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 5 }
     },
     "bonusSources": [
-      { "source": "Trickshot", "stat": "attack_damage", "value": 2, "per": "skill_level" },
-      { "source": "Critical Accuracy", "stat": "attack_damage", "value": 4, "per": "skill_level" },
-      { "source": "Arrow Rain", "stat": "attack_damage", "value": 6, "per": "skill_level" }
+      { "source": "Trickshot", "stat": "attack_damage", "value": 3, "per": "skill_level" },
+      { "source": "Critical Accuracy", "stat": "attack_damage", "value": 5.5, "per": "skill_level" },
+      { "source": "Arrow Rain", "stat": "attack_damage", "value": 8, "per": "skill_level" }
     ],
     "subskills": [
       {
@@ -676,7 +676,7 @@
     "kind": "active",
     "description": "Launch a barrage of homing missiles which seeks down its target dealing area of effect arcane and physical damage.",
     "damageType": "arcane",
-    "tags": ["Attack", "Active", "Ranged", "Projectile", "Explosion", "Strike"],
+    "tags": ["Attack", "Active", "Ranged", "Projectile", "Explosion", "Strike", "Hybrid"],
     "movementDuringUse": 65,
     "baseCooldown": 2,
     "maxRank": 20,
@@ -690,7 +690,7 @@
     "attackScaling": {
       "weaponBonusScaling": true,
       "weaponSubtreeScalesFullHit": false,
-      "weaponDamagePct": { "base": 100, "perLevel": 28 },
+      "weaponDamagePct": { "base": 100, "perLevel": 22 },
       "flatPhysicalMin": { "base": 2, "perLevel": 0 },
       "flatPhysicalMax": { "base": 6, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 3 }
@@ -721,8 +721,8 @@
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "buffUptime": { "duration": 25, "cooldown": 70 },
     "passiveStats": {
-      "base": { "increased_attack_speed": 20, "movement_speed": 20 },
-      "perRank": { "increased_attack_speed": 1, "movement_speed": 1 }
+      "base": { "increased_attack_speed": 20.4, "movement_speed": 20 },
+      "perRank": { "increased_attack_speed": 1.4, "movement_speed": 1 }
     }
   },
   {
@@ -754,9 +754,9 @@
       "attackRatingPct": { "base": 0, "perLevel": 3.75 }
     },
     "bonusSources": [
-      { "source": "Agility", "stat": "attack_damage", "value": 3, "per": "skill_level" },
-      { "source": "Critical Accuracy", "stat": "attack_damage", "value": 4, "per": "skill_level" },
-      { "source": "Trickshot", "stat": "attack_damage", "value": 5, "per": "skill_level" }
+      { "source": "Agility", "stat": "attack_damage", "value": 3.5, "per": "skill_level" },
+      { "source": "Critical Accuracy", "stat": "attack_damage", "value": 5, "per": "skill_level" },
+      { "source": "Trickshot", "stat": "attack_damage", "value": 6.5, "per": "skill_level" }
     ],
     "subskills": [
       {
@@ -958,8 +958,8 @@
     "position": { "row": 3, "col": 1 },
     "ranks": [{ "rank": 1 }],
     "passiveStats": {
-      "base": { "attack_rating_pct": 2, "crit_damage": 1 },
-      "perRank": { "attack_rating_pct": 2, "crit_damage": 1 }
+      "base": { "attack_rating_pct": 2, "crit_damage": 1.5 },
+      "perRank": { "attack_rating_pct": 2, "crit_damage": 1.5 }
     }
   },
   {
@@ -987,7 +987,7 @@
     "attackScaling": {
       "weaponBonusScaling": true,
       "weaponSubtreeScalesFullHit": true,
-      "weaponDamagePct": { "base": 100, "perLevel": 18 },
+      "weaponDamagePct": { "base": 100, "perLevel": 22 },
       "flatPhysicalMin": { "base": 2, "perLevel": 0 },
       "flatPhysicalMax": { "base": 6, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 3 }
@@ -1209,7 +1209,7 @@
     "kind": "active",
     "description": "Unleash a swarm of arrows towards the direction aimed dealing arcane and physical damage.",
     "damageType": "arcane",
-    "tags": ["Cast", "Active", "Ranged", "Projectile", "Strike"],
+    "tags": ["Cast", "Active", "Ranged", "Projectile", "Strike", "Hybrid"],
     "movementDuringUse": 85,
     "baseCastRate": 2,
     "baseCooldown": 10,
@@ -1222,7 +1222,7 @@
     "damageFormula": { "base": 0, "perLevel": 16.75 },
     "manaCostFormula": { "base": 9, "perLevel": 1 },
     "attackScaling": {
-      "weaponDamagePct": { "base": 8, "perLevel": 18 },
+      "weaponDamagePct": { "base": 8, "perLevel": 22 },
       "flatPhysicalMin": { "base": 2, "perLevel": 0 },
       "flatPhysicalMax": { "base": 6, "perLevel": 1 },
       "attackRatingPct": { "base": 0, "perLevel": 3 }
@@ -1468,7 +1468,7 @@
     "tree": "Engineer",
     "position": { "row": 0, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 8, "perLevel": 18 },
+    "damageFormula": { "base": 0, "perLevel": 20 },
     "manaCostFormula": { "base": 4.25, "perLevel": 0.75, "rankIndexing": "fullRank" },
     "bonusSources": [
       { "source": "Landmine", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
@@ -1694,13 +1694,13 @@
     "tree": "Engineer",
     "position": { "row": 0, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 7, "perLevel": 9.5 },
+    "damageFormula": { "base": 7, "perLevel": 11.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Multishot", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
       { "source": "Trickshot", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
       { "source": "B.E.A.C.O.N", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
-      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.75, "per": "attribute_point" }
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 9.5, "per": "attribute_point" }
     ],
     "subskills": [
       {
@@ -1906,7 +1906,7 @@
     "tree": "Engineer",
     "position": { "row": 1, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0, "perLevel": 18.5 },
+    "damageFormula": { "base": 0, "perLevel": 23 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Cannon Turret", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
@@ -2177,7 +2177,7 @@
     "tree": "Engineer",
     "position": { "row": 2, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0, "perLevel": 9.5 },
+    "damageFormula": { "base": 0, "perLevel": 13.5 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Arrow Turret", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
@@ -2424,13 +2424,13 @@
     "tree": "Engineer",
     "position": { "row": 4, "col": 0 },
     "ranks": [{ "rank": 1, "manaCost": 12 }],
-    "damageFormula": { "base": 0, "perLevel": 9 },
+    "damageFormula": { "base": 0, "perLevel": 10 },
     "manaCostFormula": { "base": 10.5, "perLevel": 1.5, "rankIndexing": "fullRank" },
     "bonusSources": [
       { "source": "Master Mechanic", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
       { "source": "Frag Grenade", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
       { "source": "Arrow Turret", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
-      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.15, "per": "attribute_point" }
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 8.75, "per": "attribute_point" }
     ],
     "subskills": [
       {
@@ -2513,7 +2513,7 @@
         "maxRank": 5,
         "effects": {
           "base": {"skill_range": 0},
-          "perRank": {"skill_range": 15}
+          "perRank": {"skill_range": 8}
         }
       },
       {
@@ -2659,13 +2659,13 @@
     "tree": "Engineer",
     "position": { "row": 4, "col": 2 },
     "ranks": [{ "rank": 1, "manaCost": 5 }],
-    "damageFormula": { "base": 0, "perLevel": 13.5 },
+    "damageFormula": { "base": 0, "perLevel": 14 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "bonusSources": [
       { "source": "Homing Missile", "stat": "arcane_skill_damage", "value": 15, "per": "skill_level" },
       { "source": "Cannon Turret", "stat": "arcane_skill_damage", "value": 12.5, "per": "skill_level" },
       { "source": "Landmine", "stat": "arcane_skill_damage", "value": 10, "per": "skill_level" },
-      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 7.15, "per": "attribute_point" }
+      { "source": "Intelligence", "stat": "arcane_skill_damage", "value": 9.25, "per": "attribute_point" }
     ],
     "subskills": [
       {

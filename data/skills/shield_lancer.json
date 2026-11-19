@@ -1179,12 +1179,12 @@
       {
         "id": "groundquake_bulwark",
         "positionIndex": 11,
-        "dummy": {"effects": [{"kind": "cooldown_s", "byRank": [6, 6, 6], "note": "Cooldown +6 s (scaled by haste: 6 s/(1 + 0.005*h_eff)); binds the period."}, {"kind": "extra_hits", "byRank": [6, 6, 6], "per": "use", "note": "Groundquake: lives ~141 frames (fissureTimer reset to tick_frequency = 24 frames, fissures at steps 16, 41, 66, 91, 116, 141, destroyed at 142), tick 0.4 s -> tick_hits(~140; 24) = 6 hits per use (was 4). Rule 24 in-zone value: the object sits 27.3 px in front of the player (r ~58 px), so the dummy is hit only when <= ~97 px from the player; at the strict 160 px: 0 (6 for <= 97 px). Damage per tick taken as d0 (the card gives [777] = 6%/r, ratio unresolved)."}, {"kind": "other", "note": "LSSD += armour * 0.01 * 6%/r (armour conversion); engine evaluates."}], "confidence": "I", "note": "R4 299#1 + Shield Slam body p11 + Planer (2): life 141 frames and 6 hits are C; the geometry (<= 97 px) and the per-tick damage ratio are I. Cooldown 6 s (haste) does not overlap the 2.35 s life.", "plannerFix": "Planner has no 6 s cooldown and no Groundquake hits; card: 6 hits per use in zone (<= 97 px, 0 at 160 px), period 6 s/(1 + 0.005*h_eff)."},
+        "dummy": {"effects": [{"kind": "cooldown_s", "byRank": [3, 3, 3], "note": "Cooldown +3 s (scaled by haste: 3 s/(1 + 0.005*h_eff)); binds the period."}, {"kind": "extra_hits", "byRank": [6, 6, 6], "per": "use", "note": "Groundquake: lives ~141 frames (fissureTimer reset to tick_frequency = 24 frames, fissures at steps 16, 41, 66, 91, 116, 141, destroyed at 142), tick 0.4 s -> tick_hits(~140; 24) = 6 hits per use (was 4). Rule 24 in-zone value: the object sits 27.3 px in front of the player (r ~58 px), so the dummy is hit only when <= ~97 px from the player; at the strict 160 px: 0 (6 for <= 97 px). Damage per tick taken as d0 (the card gives [777] = 6%/r, ratio unresolved)."}, {"kind": "other", "note": "LSSD += armour * 0.01 * 6%/r (armour conversion); engine evaluates."}], "confidence": "I", "note": "R4 299#1 + Shield Slam body p11 + Planer (2): life 141 frames and 6 hits are C; the geometry (<= 97 px) and the per-tick damage ratio are I. Cooldown 3 s (haste) does not overlap the 2.35 s life.", "plannerFix": "Planner has no 3 s cooldown and no Groundquake hits; card: 6 hits per use in zone (<= 97 px, 0 at 160 px), period 3 s/(1 + 0.005*h_eff)."},
         "name": "Groundquake Bulwark",
         "description": "Smash your shield into the ground unleashing an earthquake pulling monsters towards you on hit. Earthquake damage and area of effect radius are increased based on your armor. Shield slam now has a cooldown.",
         "maxRank": 3,
         "effects": {
-          "base": {"conversion_armor": 0, "cooldown_added": 6},
+          "base": {"conversion_armor": 0, "cooldown_added": 3},
           "perRank": {"conversion_armor": 6, "cooldown_added": 0}
         }
       },
@@ -1435,7 +1435,7 @@
         },
         "proc": {
           "trigger": "on_hit",
-          "chance": { "base": 0, "perRank": 12 },
+          "chance": { "base": 18, "perRank": 8 },
           "effects": {
             "base": { "of_total_damage": 0 },
             "perRank": { "of_total_damage": 125 }
@@ -1513,7 +1513,7 @@
     "kind": "buff",
     "description": "Cast a wall of shields around you blocking monster projectiles dealing arcane and physical damage on hit. Hitting an enemy with Shield Wall generates a Honed Defenses stack.",
     "damageType": "arcane",
-    "tags": ["Cast", "Active", "Spell", "Shield", "Orbital"],
+    "tags": ["Cast", "Active", "Spell", "Shield", "Orbital", "Hybrid"],
     "movementDuringUse": 65,
     "baseCastRate": 1.75,
     "effectDuration": 25,
@@ -1526,7 +1526,7 @@
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "attackKind": "attack",
     "attackScaling": {
-      "weaponDamagePct": { "base": 15, "perLevel": 18 },
+      "weaponDamagePct": { "base": 15, "perLevel": 5 },
       "flatPhysicalMin": { "base": 1, "perLevel": 1 },
       "flatPhysicalMax": { "base": 5, "perLevel": 2 }
     },
@@ -1775,7 +1775,7 @@
     "movementDuringUse": 100,
     "range": 320,
     "baseCastRate": 1.75,
-    "baseCooldown": 15,
+    "baseCooldown": 12,
     "effectDuration": 6,
     "maxRank": 20,
     "requiresLevel": 24,

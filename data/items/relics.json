@@ -66,12 +66,12 @@
       {
         "trigger": "on_hit",
         "chance": 8,
-        "description": "cast Poisonous Hit Level [1-10]",
+        "description": "cast Poisonous Hit Level [2-50]",
         "grantedSkill": {
           "name": "Poisonous Hit",
           "rank": [
-            1,
-            10
+            2,
+            50
           ]
         }
       }
@@ -409,12 +409,12 @@
     "maxSockets": 0,
     "implicit": {
       "increased_attack_speed": [
-        1,
-        10
+        1.5,
+        15
       ],
       "crit_damage": [
-        2,
-        20
+        4,
+        40
       ]
     }
   },
@@ -454,8 +454,8 @@
     "maxSockets": 0,
     "implicit": {
       "increased_life": [
-        2,
-        20
+        2.5,
+        25
       ]
     }
   },
@@ -1488,8 +1488,8 @@
     "maxSockets": 0,
     "implicit": {
       "increased_attack_speed": [
-        2,
-        20
+        3,
+        30
       ]
     }
   },
@@ -1810,12 +1810,12 @@
       {
         "trigger": "on_hit",
         "chance": 8,
-        "description": "cast Divine Scorch Level [1-10]",
+        "description": "cast Divine Scorch Level [2-50]",
         "grantedSkill": {
           "name": "Divine Scorch",
           "rank": [
-            1,
-            10
+            2,
+            50
           ]
         }
       }
@@ -2154,8 +2154,8 @@
     "maxSockets": 0,
     "skillBonuses": {
       "Mass Hex": [
-        1,
-        10
+        2,
+        50
       ]
     },
     "uniqueEffects": [
@@ -2451,12 +2451,12 @@
     "maxSockets": 0,
     "implicit": {
       "to_vitality": [
-        3,
-        30
+        4,
+        40
       ],
       "to_strength": [
-        3,
-        30
+        4,
+        40
       ]
     }
   },
@@ -2884,7 +2884,7 @@
     "implicit": {
       "to_dexterity": [
         5,
-        10
+        50
       ],
       "increased_dexterity": [
         0.5,

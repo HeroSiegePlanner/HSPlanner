@@ -328,8 +328,8 @@ fn relic_tiers_preserve_fractional_stats_and_negative_scaling() {
 fn refreshed_relics_have_source_stats_without_neighbour_contamination() {
     let butterfly = data::get_item("relic_relic_butterfly_knife").unwrap();
     let stats = butterfly.implicit.as_ref().unwrap();
-    assert_eq!(stats["increased_attack_speed"].as_ranged(), (1., 10.));
-    assert_eq!(stats["crit_damage"].as_ranged(), (2., 20.));
+    assert_eq!(stats["increased_attack_speed"].as_ranged(), (1.5, 15.));
+    assert_eq!(stats["crit_damage"].as_ranged(), (4., 40.));
     let globe = data::get_item("relic_relic_arcane_globe").unwrap();
     let stats = globe.implicit.as_ref().unwrap();
     assert_eq!(stats.len(), 2);

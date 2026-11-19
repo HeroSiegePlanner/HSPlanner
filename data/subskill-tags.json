@@ -264,6 +264,9 @@
     "circular_cutting": {
       "add": [
         "Orbital"
+      ],
+      "remove": [
+        "Projectile"
       ]
     }
   },

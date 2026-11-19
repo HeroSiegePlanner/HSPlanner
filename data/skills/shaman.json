@@ -2641,7 +2641,7 @@
     "damageFormula": { "base": 0, "perLevel": 15.75 },
     "manaCostFormula": { "base": 5, "perLevel": 1 },
     "baseCastRate": 1.75,
-    "baseCooldown": 30,
+    "baseCooldown": 15,
     "movementDuringUse": 85,
     "bonusSources": [
       { "source": "Earth Totem", "stat": "arcane_skill_damage", "value": 13, "per": "skill_level" },
